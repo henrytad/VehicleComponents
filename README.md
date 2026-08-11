@@ -40,3 +40,19 @@ can run the provided example models by doing the following:
    try `plot(World(stop=20, h=1.4))`.  The supported model parameters are
    `T_inf` and `h`; run `WorldSpec()` in the REPL to inspect all available
    simulation and model keyword arguments.
+
+## Testing in Docker
+
+Runs the test suite in the same Linux environment CI uses. The image build instantiates the project and runs its tests against the committed Julia files in `generated/`.
+
+### Run it locally
+
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) and start it.
+
+1. Build the image to run the tests:
+
+   ```powershell
+   docker buildx build --progress=plain --output type=cacheonly .
+   ```
+
+The command exits non-zero if dependency installation or a test fails. It does not compile `.dyad` sources, so regenerate `generated/` in Dyad Studio and commit it whenever a model changes.

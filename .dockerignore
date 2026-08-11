@@ -1,0 +1,8 @@
+*
+!Project.toml
+!Manifest.toml
+!assets/**
+!dyad/**
+!generated/**
+!src/**
+!test/**
