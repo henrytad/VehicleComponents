@@ -1,0 +1,25 @@
+name: PR Title
+
+on:
+  pull_request:
+    types: [opened, edited, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Conventional Commit format
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          pattern='^(feat|fix|docs|maintenance): .+$'
+
+          if [[ ! "$PR_TITLE" =~ $pattern ]]; then
+            echo "PR title must start with feat:, fix:, docs:, or maintenance:"
+            echo "Examples: feat: add brake model; fix: correct heat loss"
+            exit 1
+          fi
