@@ -1,0 +1,13 @@
+## Normalize text files to LF across all platforms.
+* text=auto eol=lf
+
+## Mark generated and documentation artifacts for GitHub Linguist.
+/generated/** linguist-generated
+/docs/src/components/** linguist-generated
+/docs/src/tests/** linguist-generated
+/docs/src/types/** linguist-generated
+/test/snapshots/** linguist-generated
+Manifest*.toml linguist-generated
+
+## Generated sources are owned by their generators, including formatting.
+/generated/** -whitespace
