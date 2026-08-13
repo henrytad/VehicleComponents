@@ -10,7 +10,7 @@ const DEG = 180 / π
 @named model = VehicleComponents.FullVehicleTestStatic()
 ssys = multibody(model)
 
-data_path = joinpath(pwd(), "assets", "vehicles", "MR25.json")
+data_path = joinpath(pwd(), "assets", "vehicles", "Test.json")
 data = JSON3.read(read(data_path, String))
 
 car = ssys.vehicle
@@ -198,4 +198,4 @@ Plots.plot(
     bottom_margin=5Plots.PlotMeasures.mm
 )
 
-render(model, sol; filename="output/full_vehicle_staic.gif", up=[0, 0, 1], x=1.5, y=0.4, z=0.7, lookat=[0, 0.05, 0.3])
+render(model, sol; filename="output/full_vehicle_static.gif", up=[0, 0, 1], x=1.5, y=0.4, z=0.7, lookat=[0, 0.05, 0.3])
