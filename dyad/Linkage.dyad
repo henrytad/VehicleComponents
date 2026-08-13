@@ -34,7 +34,6 @@ component Linkage
   # Upper control arm loop
   uca_rod_front = MultibodyComponents.JointUSR(
     n1_a = uca_n1_a,
-    positive_branch = is_left,
     rRod1_ia = kingpin_vec,
     rRod2_ib = uca_outer - uca_front,
     n_b = uca_axis,
@@ -50,7 +49,6 @@ component Linkage
   # Tie rod loop
   tie_rod = MultibodyComponents.JointUSR(
     n1_a = tie_n1_a,
-    positive_branch = is_left,
     rRod1_ia = tierod_vec,
     rRod2_ib = tierod_outer - lca_outer,
     n_b = kingpin_axis,
@@ -84,9 +82,6 @@ component Linkage
     radius = sty_rod_radius,
     color = sty_grey_light
   ) {^pushrod_to_uca}
-  
-  # Corner side
-  structural parameter is_left::Boolean
 
   # Hardpoints
   parameter lca_front::Position[3]
@@ -142,6 +137,8 @@ component Linkage
   variable wc_axis_delta::Dyad.Position[3]
 
 relations
+  
+  guess lca_rev.phi = 0.0
 
   # Measurements
   wc_axis_delta = wc_axis.frame_b.r_0 - wc_axis.frame_a.r_0

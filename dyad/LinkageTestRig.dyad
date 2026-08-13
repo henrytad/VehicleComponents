@@ -14,7 +14,6 @@ test component LinkageTestRig
   
   # Linkage
   linkage = VehicleComponents.Linkage(
-    is_left = is_left,
     lca_front = [0.100, 0.195, 0.125],
     lca_outer = [0.005, 0.560, 0.130],
     lca_rear = [-0.100, 0.205, 0.115],
@@ -32,9 +31,6 @@ test component LinkageTestRig
     upright_I_22 = 0.05,
     upright_I_33 = 0.05
   ) {^linkage}
-
-  # Corner side
-  structural parameter is_left::Boolean = true
 
   # Wheel centre
   parameter wheel_center::Position[3] = [0.000, 0.600, 0.230]

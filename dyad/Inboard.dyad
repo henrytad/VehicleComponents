@@ -18,7 +18,6 @@ component Inboard
     rRod2_ib = rocker_arm_left,
     n_b = rocker_axis_left,
     n1_a = pushrod_n1a_left,
-    positive_branch = true,
     rod_radius = sty_rod_radius,
     rod_color = sty_grey_medium
   ) {^rocker_left}
@@ -27,7 +26,6 @@ component Inboard
     rRod2_ib = rocker_arm_right,
     n_b = rocker_axis_right,
     n1_a = pushrod_n1a_right,
-    positive_branch = true,
     rod_radius = sty_rod_radius,
     rod_color = sty_grey_medium
   ) {^rocker_right}
