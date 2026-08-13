@@ -24,7 +24,7 @@ component Suspension
     pushrod_outer = pushrod_outer_right
   ) {^linkage_right}
   
-  # Shared referencese
+  # Shared references
   parameter wheel_center_left::Position[3]
   parameter wheel_center_right::Position[3]
   parameter pushrod_outer_left::Position[3]

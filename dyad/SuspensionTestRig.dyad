@@ -78,7 +78,7 @@ test component SuspensionTestRig
   actuation_rod_right = MultibodyComponents.SphericalSpherical(r_0 = [0, 0, jack_rod_length], radius = 0.02, render = false) {^actuation_rod_right}
   wheel_position_right = TranslationalComponents.Sources.Position(v = initial 0.0) {^wheel_position_right}
  
-  # Shared referencese
+  # Shared references
   parameter wheel_center_left::Position[3] = [0.000, 0.600, 0.230]
   parameter wheel_center_right::Position[3] = [0.000, -0.600, 0.230]
   parameter pushrod_outer_left::Position[3] = [0.000, 0.480, 0.340]
@@ -222,7 +222,7 @@ metadata {
         "tags": []
       }
     },
-    "fixedR": {
+    "fixed_right": {
       "Dyad": {
         "placement": {
           "diagram": {"iconName": "default", "x1": 720, "y1": 640, "x2": 820, "y2": 740, "rot": 270}
@@ -230,7 +230,7 @@ metadata {
         "tags": []
       }
     },
-    "prismaticR": {
+    "prismatic_right": {
       "Dyad": {
         "placement": {
           "diagram": {"iconName": "default", "x1": 720, "y1": 450, "x2": 820, "y2": 550, "rot": 270}
@@ -238,7 +238,7 @@ metadata {
         "tags": []
       }
     },
-    "actuationRodL": {
+    "actuation_rod_left": {
       "Dyad": {
         "placement": {
           "diagram": {"iconName": "default", "x1": 200, "y1": 260, "x2": 300, "y2": 360, "rot": 270}
@@ -246,7 +246,7 @@ metadata {
         "tags": []
       }
     },
-    "actuationRodR": {
+    "actuation_rod_right": {
       "Dyad": {
         "placement": {
           "diagram": {"iconName": "default", "x1": 720, "y1": 260, "x2": 820, "y2": 360, "rot": 270}
@@ -254,7 +254,7 @@ metadata {
         "tags": []
       }
     },
-    "fixedL": {
+    "fixed_left": {
       "Dyad": {
         "placement": {
           "diagram": {"iconName": "default", "x1": 200, "y1": 640, "x2": 300, "y2": 740, "rot": 270}
@@ -262,7 +262,7 @@ metadata {
         "tags": []
       }
     },
-    "prismaticL": {
+    "prismatic_left": {
       "Dyad": {
         "placement": {
           "diagram": {"iconName": "default", "x1": 200, "y1": 450, "x2": 300, "y2": 550, "rot": 270}
@@ -270,7 +270,7 @@ metadata {
         "tags": []
       }
     },
-    "wheelPositionL": {
+    "wheel_position_left": {
       "Dyad": {
         "placement": {
           "diagram": {"iconName": "default", "x1": 30, "y1": 450, "x2": 130, "y2": 550, "rot": 0}
@@ -278,7 +278,7 @@ metadata {
         "tags": []
       }
     },
-    "wheelPositionR": {
+    "wheel_position_right": {
       "Dyad": {
         "placement": {
           "diagram": {"iconName": "default", "x1": 550, "y1": 450, "x2": 650, "y2": 550, "rot": 0}
