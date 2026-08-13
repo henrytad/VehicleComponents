@@ -1,0 +1,287 @@
+component Inboard
+  "Decoupled heave/roll inboard suspension for one axle."
+
+  extends Styles
+
+  # External frames
+  chassis = Dyad.Frame3D() {^chassis}
+  linkage_left = Dyad.Frame3D() {^linkage_left}
+  linkage_right = Dyad.Frame3D() {^linkage_right}
+
+  # Chassis mounts
+  mount_rocker_left = MultibodyComponents.FixedTranslation(r = rocker_pivot_left, render = false) {^mount_rocker_left}
+  mount_rocker_right = MultibodyComponents.FixedTranslation(r = rocker_pivot_right, render = false) {^mount_rocker_right}
+  
+  # Rockers
+  rocker_left = MultibodyComponents.JointUSR(
+    rRod1_ia = pushrod_rod_left,
+    rRod2_ib = rocker_arm_left,
+    n_b = rocker_axis_left,
+    n1_a = pushrod_n1a_left,
+    positive_branch = true,
+    rod_radius = sty_rod_radius,
+    rod_color = sty_grey_medium
+  ) {^rocker_left}
+  rocker_right = MultibodyComponents.JointUSR(
+    rRod1_ia = pushrod_rod_right,
+    rRod2_ib = rocker_arm_right,
+    n_b = rocker_axis_right,
+    n1_a = pushrod_n1a_right,
+    positive_branch = true,
+    rod_radius = sty_rod_radius,
+    rod_color = sty_grey_medium
+  ) {^rocker_right}
+  
+  # Rocker arms
+  heave_arm_left = MultibodyComponents.FixedTranslation(
+    r = heave_arm_vec_left,
+    radius = sty_rod_radius,
+    color = sty_grey_medium
+  ) {^heave_arm_left}
+  roll_arm_left = MultibodyComponents.FixedTranslation(
+    r = roll_arm_vec_left,
+    radius = sty_rod_radius,
+    color = sty_grey_medium
+  ) {^roll_arm_left}
+  heave_arm_right = MultibodyComponents.FixedTranslation(
+    r = heave_arm_vec_right,
+    radius = sty_rod_radius,
+    color = sty_grey_medium
+  ) {^heave_arm_right}
+  roll_arm_right = MultibodyComponents.FixedTranslation(
+    r = roll_arm_vec_right,
+    radius = sty_rod_radius,
+    color = sty_grey_medium
+  ) {^roll_arm_right}
+  
+  # Springs
+  heave_spring = MultibodyComponents.SpringDamperParallel(
+    c = heave_stiffness,
+    d = heave_damping,
+    s_unstretched = heave_install_length + heave_preload,
+    radius = 0.02,
+    num_windings = 15,
+    N = 600,
+    color = sty_purple
+  ) {^heave_spring}
+  roll_spring = MultibodyComponents.SpringDamperParallel(
+    c = roll_stiffness,
+    d = roll_damping,
+    s_unstretched = roll_install_length + roll_preload,
+    radius = 0.02,
+    num_windings = 15,
+    N = 600,
+    color = sty_orange
+  ) {^roll_spring}
+  
+  # Hardpoints
+  parameter rocker_pivot_left::Position[3]
+  parameter rocker_pivot_right::Position[3]
+  parameter pushrod_inner_left::Position[3]
+  parameter pushrod_inner_right::Position[3]
+  parameter pushrod_outer_left::Position[3]
+  parameter pushrod_outer_right::Position[3]
+  parameter heave_pickup_left::Position[3]
+  parameter heave_pickup_right::Position[3]
+  parameter roll_pickup_left::Position[3]
+  parameter roll_pickup_right::Position[3]
+  
+  # Spring rates and damping
+  parameter heave_stiffness::TranslationalSpringConstant
+  parameter heave_damping::TranslationalDampingConstant
+  parameter roll_stiffness::TranslationalSpringConstant
+  parameter roll_damping::TranslationalDampingConstant
+  
+  # Setup. Positive = spring compressed
+  parameter heave_preload::Length
+  parameter roll_preload::Length
+  parameter pushrod_adjust_left::Length
+  parameter pushrod_adjust_right::Length
+  
+  # Pushrods
+  final parameter pushrod_vec_left::Position[3] = pushrod_inner_left - pushrod_outer_left
+  final parameter pushrod_nominal_left::Length = LinearAlgebra.norm(pushrod_vec_left)
+  final parameter pushrod_axis_left::Real[3] = pushrod_vec_left / pushrod_nominal_left
+  final parameter pushrod_rod_left::Position[3] = pushrod_axis_left * (pushrod_nominal_left + pushrod_adjust_left)
+  final parameter pushrod_vec_right::Position[3] = pushrod_inner_right - pushrod_outer_right
+  final parameter pushrod_nominal_right::Length = LinearAlgebra.norm(pushrod_vec_right)
+  final parameter pushrod_axis_right::Real[3] = pushrod_vec_right / pushrod_nominal_right
+  final parameter pushrod_rod_right::Position[3] = pushrod_axis_right * (pushrod_nominal_right + pushrod_adjust_right)
+  final parameter pushrod_n1a_raw_left::Real[3] = LinearAlgebra.cross(pushrod_axis_left, [1, 0, 0])
+  final parameter pushrod_n1a_left::Real[3] = pushrod_n1a_raw_left / LinearAlgebra.norm(pushrod_n1a_raw_left)
+  final parameter pushrod_n1a_raw_right::Real[3] = LinearAlgebra.cross(pushrod_axis_right, [1, 0, 0])
+  final parameter pushrod_n1a_right::Real[3] = pushrod_n1a_raw_right / LinearAlgebra.norm(pushrod_n1a_raw_right)
+  
+  # Rocker arms
+  final parameter rocker_arm_left::Position[3] = pushrod_inner_left - rocker_pivot_left
+  final parameter rocker_arm_right::Position[3] = pushrod_inner_right - rocker_pivot_right
+  final parameter heave_arm_vec_left::Position[3] = heave_pickup_left - rocker_pivot_left
+  final parameter heave_arm_vec_right::Position[3] = heave_pickup_right - rocker_pivot_right
+  final parameter roll_arm_vec_left::Position[3] = roll_pickup_left - rocker_pivot_left
+  final parameter roll_arm_vec_right::Position[3] = roll_pickup_right - rocker_pivot_right
+  
+  # Rocker pivot axes
+  final parameter rocker_axis_raw_left::Real[3] = LinearAlgebra.cross(rocker_arm_left, heave_arm_vec_left)
+  final parameter rocker_axis_left::Real[3] = rocker_axis_raw_left / LinearAlgebra.norm(rocker_axis_raw_left)
+  final parameter rocker_axis_raw_right::Real[3] = LinearAlgebra.cross(rocker_arm_right, heave_arm_vec_right)
+  final parameter rocker_axis_right::Real[3] = rocker_axis_raw_right / LinearAlgebra.norm(rocker_axis_raw_right)
+  
+  # Spring lengths
+  final parameter heave_install_length::Length = LinearAlgebra.norm(heave_pickup_right - heave_pickup_left)
+  final parameter roll_install_length::Length = LinearAlgebra.norm(roll_pickup_right - roll_pickup_left)
+  final parameter heave_unstretched::Length = heave_install_length + heave_preload
+  final parameter roll_unstretched::Length = roll_install_length + roll_preload
+  
+  # Outputs. Positive = compression
+  variable heave_deflection::Length
+  variable roll_deflection::Length
+  variable heave_force::Force
+  variable roll_force::Force
+  variable heave_spring_force::Force
+  variable roll_spring_force::Force
+  variable heave_damper_force::Force
+  variable roll_damper_force::Force
+
+relations
+
+  # Deflection
+  heave_deflection = heave_install_length - heave_spring.s
+  roll_deflection = roll_install_length - roll_spring.s
+  
+  # Total force
+  heave_force = -heave_spring.f
+  roll_force = -roll_spring.f
+  
+  # Spring force
+  heave_spring_force = heave_stiffness * (heave_unstretched - heave_spring.s)
+  roll_spring_force = roll_stiffness * (roll_unstretched - roll_spring.s)
+  
+  # Damper force
+  heave_damper_force = heave_force - heave_spring_force
+  roll_damper_force = roll_force - roll_spring_force
+  
+  # Chassis mounts
+  connect(mount_rocker_left.frame_a, chassis) {^id14}
+  connect(mount_rocker_right.frame_a, chassis) {^id15}
+  
+  # Rockers
+  connect(rocker_left.frame_a, linkage_left) {^id16}
+  connect(rocker_right.frame_a, linkage_right) {^id17}
+  connect(rocker_left.frame_b, mount_rocker_left.frame_b) {^id18}
+  connect(rocker_right.frame_b, mount_rocker_right.frame_b) {^id19}
+  
+  # Rocker arms
+  connect(rocker_left.frame_ib, heave_arm_left.frame_a) {^id20}
+  connect(rocker_left.frame_ib, roll_arm_left.frame_a) {^id21}
+  connect(rocker_right.frame_ib, heave_arm_right.frame_a) {^id22}
+  connect(rocker_right.frame_ib, roll_arm_right.frame_a) {^id23}
+  
+  # Springs
+  connect(heave_arm_left.frame_b, heave_spring.frame_a) {^id24}
+  connect(heave_arm_right.frame_b, heave_spring.frame_b) {^id25}
+  connect(roll_arm_left.frame_b, roll_spring.frame_a) {^id26}
+  connect(roll_arm_right.frame_b, roll_spring.frame_b) {^id27}
+
+metadata {
+  "_links": {
+    "chassis": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 450, "y1": 950, "x2": 550, "y2": 1050, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "linkage_left": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": -50, "y1": 450, "x2": 50, "y2": 550, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "linkage_right": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 950, "y1": 450, "x2": 1050, "y2": 550, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "mount_rocker_left": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 390, "y1": 660, "x2": 490, "y2": 760, "rot": 270}
+        },
+        "tags": []
+      }
+    },
+    "mount_rocker_right": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 510, "y1": 660, "x2": 610, "y2": 760, "rot": 270}
+        },
+        "tags": []
+      }
+    },
+    "rocker_left": {
+      "Dyad": {"placement": {"diagram": {"x1": 180, "x2": 280, "y1": 450, "y2": 550}}}
+    },
+    "rocker_right": {
+      "Dyad": {"placement": {"diagram": {"x1": 820, "x2": 720, "y1": 450, "y2": 550}}}
+    },
+    "heave_arm_left": {
+      "Dyad": {"placement": {"diagram": {"x1": 310, "x2": 410, "y1": 80, "y2": 180}}}
+    },
+    "roll_arm_left": {
+      "Dyad": {"placement": {"diagram": {"x1": 310, "x2": 410, "y1": 230, "y2": 330}}}
+    },
+    "heave_arm_right": {
+      "Dyad": {"placement": {"diagram": {"x1": 690, "x2": 590, "y1": 80, "y2": 180}}}
+    },
+    "roll_arm_right": {
+      "Dyad": {"placement": {"diagram": {"x1": 690, "x2": 590, "y1": 230, "y2": 330}}}
+    },
+    "heave_spring": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 450, "y1": 80, "x2": 550, "y2": 180, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "roll_spring": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 450, "y1": 230, "x2": 550, "y2": 330, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "id14": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 440, "y": 1000}], "E": 2}],
+        "renderStyle": "standard"
+      }
+    },
+    "id15": {
+      "Dyad": {
+        "renderStyle": "standard",
+        "edges": [{"S": 1, "M": [{"x": 560, "y": 1000}], "E": 2}]
+      }
+    },
+    "id16": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id17": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id18": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 440, "y": 500}], "E": 2}], "path": {}}},
+    "id19": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 560, "y": 500}], "E": 2}], "path": {}}},
+    "id20": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 252, "y": 130}], "E": 2}], "path": {}}},
+    "id21": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 252, "y": 280}], "E": 2}], "path": {}}},
+    "id22": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 748, "y": 130}], "E": 2}], "path": {}}},
+    "id23": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 748, "y": 280}], "E": 2}], "path": {}}},
+    "id24": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id25": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id26": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id27": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+  }
+}
+end

@@ -11,30 +11,37 @@ const MM = 1000
 @named model = VehicleComponents.LinkageTestRig(is_left=true)
 ssys = multibody(model)
 
-data_path = joinpath(pwd(), "assets", "vehicle_Test.json")
+data_path = joinpath(pwd(), "assets", "vehicles", "Test.json")
 data = JSON3.read(read(data_path, String))
 
-linkage = data.suspension.front.left_linkage
-parameter_map = Dict([
-    # Test Rig
-    ssys.wheel_center => linkage.wheel_center
+front = data.suspension.front
+geom, setup = front.geometry, front.setup
+linkage, align = geom.linkages.left, setup.alignment.left
 
-    # Linkage
-    ssys.linkage.lca_front => linkage.lca_front
-    ssys.linkage.lca_outer => linkage.lca_outer
-    ssys.linkage.lca_rear => linkage.lca_rear
-    ssys.linkage.uca_front => linkage.uca_front
-    ssys.linkage.uca_outer => linkage.uca_outer
-    ssys.linkage.uca_rear => linkage.uca_rear
-    ssys.linkage.tierod_inner => linkage.tierod_inner
-    ssys.linkage.tierod_outer => linkage.tierod_outer
-    ssys.linkage.pushrod_outer => linkage.pushrod
-    ssys.linkage.static_toe => linkage.static_toe
-    ssys.linkage.static_camber => linkage.static_camber
-    ssys.linkage.upright_mass => linkage.upright.mass
-    ssys.linkage.upright_I_11 => linkage.upright.I11
-    ssys.linkage.upright_I_22 => linkage.upright.I22
-    ssys.linkage.upright_I_33 => linkage.upright.I33
+parameter_map = Dict([
+    # Test rig
+    ssys.wheel_center => linkage.wheel_center,
+
+    # Geometry
+    ssys.linkage.lca_front => linkage.lca_front,
+    ssys.linkage.lca_rear => linkage.lca_rear,
+    ssys.linkage.lca_outer => linkage.lca_outer,
+    ssys.linkage.uca_front => linkage.uca_front,
+    ssys.linkage.uca_rear => linkage.uca_rear,
+    ssys.linkage.uca_outer => linkage.uca_outer,
+    ssys.linkage.tierod_inner => linkage.tierod_inner,
+    ssys.linkage.tierod_outer => linkage.tierod_outer,
+    ssys.linkage.pushrod_outer => linkage.pushrod_outer,
+
+    # Upright
+    ssys.linkage.upright_mass => linkage.upright.mass,
+    ssys.linkage.upright_I_11 => linkage.upright.i_11,
+    ssys.linkage.upright_I_22 => linkage.upright.i_22,
+    ssys.linkage.upright_I_33 => linkage.upright.i_33,
+
+    # Alignment
+    ssys.linkage.static_camber => align.static_camber,
+    ssys.linkage.static_toe => align.static_toe,
 ])
 
 prob = ODEProblem(ssys, parameter_map, (0.0, 2.0))

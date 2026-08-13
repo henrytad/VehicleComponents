@@ -9,5 +9,7 @@ if isfile(joinpath((@__DIR__) |> Base.dirname, "dyad", "experiments.jl"))
 end
 
 
+include("InboardTestRig_experiment.jl")
+include("Inboard_experiment.jl")
 include("LinkageTestRig_experiment.jl")
 include("Linkage_experiment.jl")
