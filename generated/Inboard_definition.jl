@@ -194,9 +194,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings[pushrod_nominal_right] = LinearAlgebra.norm(pushrod_vec_right)
   __bindings[pushrod_axis_right] = pushrod_vec_right / pushrod_nominal_right
   __bindings[pushrod_rod_right] = pushrod_axis_right * (pushrod_nominal_right + pushrod_adjust_right)
-  __bindings[pushrod_n1a_raw_left] = LinearAlgebra.cross(pushrod_axis_left, [0, 0, 1])
+  __bindings[pushrod_n1a_raw_left] = LinearAlgebra.cross(pushrod_axis_left, [1, 0, 0])
   __bindings[pushrod_n1a_left] = pushrod_n1a_raw_left / LinearAlgebra.norm(pushrod_n1a_raw_left)
-  __bindings[pushrod_n1a_raw_right] = LinearAlgebra.cross(pushrod_axis_right, [0, 0, 1])
+  __bindings[pushrod_n1a_raw_right] = LinearAlgebra.cross(pushrod_axis_right, [1, 0, 0])
   __bindings[pushrod_n1a_right] = pushrod_n1a_raw_right / LinearAlgebra.norm(pushrod_n1a_raw_right)
   __bindings[rocker_arm_left] = pushrod_inner_left - rocker_pivot_left
   __bindings[rocker_arm_right] = pushrod_inner_right - rocker_pivot_right

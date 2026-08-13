@@ -11,7 +11,7 @@ const MM = 1000
 @named model = VehicleComponents.LinkageTestRig(is_left=true)
 ssys = multibody(model)
 
-data_path = joinpath(pwd(), "assets", "vehicles", "MR25.json")
+data_path = joinpath(pwd(), "assets", "vehicles", "Test.json")
 data = JSON3.read(read(data_path, String))
 
 front = data.suspension.front

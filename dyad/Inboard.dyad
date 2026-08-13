@@ -107,9 +107,9 @@ component Inboard
   final parameter pushrod_nominal_right::Length = LinearAlgebra.norm(pushrod_vec_right)
   final parameter pushrod_axis_right::Real[3] = pushrod_vec_right / pushrod_nominal_right
   final parameter pushrod_rod_right::Position[3] = pushrod_axis_right * (pushrod_nominal_right + pushrod_adjust_right)
-  final parameter pushrod_n1a_raw_left::Real[3] = LinearAlgebra.cross(pushrod_axis_left, [0, 0, 1])
+  final parameter pushrod_n1a_raw_left::Real[3] = LinearAlgebra.cross(pushrod_axis_left, [1, 0, 0])
   final parameter pushrod_n1a_left::Real[3] = pushrod_n1a_raw_left / LinearAlgebra.norm(pushrod_n1a_raw_left)
-  final parameter pushrod_n1a_raw_right::Real[3] = LinearAlgebra.cross(pushrod_axis_right, [0, 0, 1])
+  final parameter pushrod_n1a_raw_right::Real[3] = LinearAlgebra.cross(pushrod_axis_right, [1, 0, 0])
   final parameter pushrod_n1a_right::Real[3] = pushrod_n1a_raw_right / LinearAlgebra.norm(pushrod_n1a_raw_right)
   
   # Rocker arms
