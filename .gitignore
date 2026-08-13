@@ -1,7 +1,17 @@
-/docs/build/
-*.jl.*.cov
-*.jl.cov
-*.jl.mem
-/docs/Manifest*.toml
-/agent_resources/
-/.migration-backups/
+# Everything ignored unless explicitly allowed
+/*
+
+# Allowlist
+!/.github/
+!/.vscode/
+!/dyad/
+!/generated/
+!/scripts/
+!/src/
+!/test/
+!/.dockerignore
+!/.gitignore
+!/Dockerfile
+!/Manifest.toml
+!/Project.toml
+!/README.md

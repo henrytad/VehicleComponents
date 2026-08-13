@@ -18,5 +18,6 @@ end
 include("test_internals.jl")
 
 @testset "`VehicleComponents`" begin
-include("Hello_test.jl")
+include("LinkageTestRig_test.jl")
+include("Linkage_test.jl")
 end

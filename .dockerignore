@@ -1,8 +1,9 @@
-*
-!Project.toml
-!Manifest.toml
-!assets/**
-!dyad/**
-!generated/**
-!src/**
-!test/**
+# Everything ignored unless explicitly allowed
+/*
+
+# Allowlist
+!/generated/
+!/src/
+!/test/
+!/Manifest.toml
+!/Project.toml
