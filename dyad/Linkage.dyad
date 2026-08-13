@@ -1,0 +1,345 @@
+component Linkage
+  """
+  Double-wishbone suspension linkage model.
+  
+  Defines chassis, wheel, and pushrod frames from configurable hardpoints,
+  and reports wheel camber, toe, and ride height.
+  """
+  
+  extends Styles
+  
+  # External frames
+  wheel = Dyad.Frame3D() {^wheel}
+  chassis = Dyad.Frame3D() {^chassis}
+  pushrod = Dyad.Frame3D() {^pushrod}
+  
+  # Chassis mounts
+  mount_tierod = MultibodyComponents.FixedTranslation(r = tierod_inner, render = false) {^mount_tierod}
+  mount_uca_front = MultibodyComponents.FixedTranslation(r = uca_front, render = false) {^mount_uca_front}
+  mount_lca_front = MultibodyComponents.FixedTranslation(r = lca_front, render = false) {^mount_lca_front}
+  
+  # Lower control arm
+  lca_rev = MultibodyComponents.Revolute(n = lca_axis, render = false) {^lca_rev}
+  lca_rod_front = MultibodyComponents.FixedTranslation(
+    r = lca_outer - lca_front,
+    radius = sty_rod_radius,
+    color = sty_grey_medium
+  ) {^lca_rod_front}
+  lca_rod_rear = MultibodyComponents.FixedTranslation(
+    r = lca_outer - lca_rear,
+    radius = sty_rod_radius,
+    color = sty_grey_medium
+  ) {^lca_rod_rear}
+  
+  # Upper control arm loop
+  uca_rod_front = MultibodyComponents.JointUSR(
+    n1_a = uca_n1_a,
+    positive_branch = is_left,
+    rRod1_ia = kingpin_vec,
+    rRod2_ib = uca_outer - uca_front,
+    n_b = uca_axis,
+    rod_radius = sty_rod_radius,
+    rod_color = sty_grey_medium
+  ) {^uca_rod_front}
+  uca_rod_rear = MultibodyComponents.FixedTranslation(
+    r = uca_outer - uca_rear,
+    radius = sty_rod_radius,
+    color = sty_grey_medium
+  ) {^uca_rod_rear}
+  
+  # Tie rod loop
+  tie_rod = MultibodyComponents.JointUSR(
+    n1_a = tie_n1_a,
+    positive_branch = is_left,
+    rRod1_ia = tierod_vec,
+    rRod2_ib = tierod_outer - lca_outer,
+    n_b = kingpin_axis,
+    rod_radius = sty_rod_radius,
+    rod_color = sty_grey_medium
+  ) {^tie_rod}
+  
+  # Upright and wheel
+  lca_to_wc = MultibodyComponents.FixedTranslation(
+    r = wheel_center - lca_outer,
+    radius = sty_rod_radius,
+    color = sty_grey_light
+  ) {^lca_to_wc}
+  wc_axis = MultibodyComponents.FixedTranslation(
+    r = wc_axis_vec,
+    radius = sty_rod_radius,
+    color = sty_grey_light
+  ) {^wc_axis}
+  upright_body = MultibodyComponents.Body(
+    m = upright_mass,
+    I_11 = upright_I_11,
+    I_22 = upright_I_22,
+    I_33 = upright_I_33,
+    radius = sty_body_radius,
+    color = sty_grey_dark
+  ) {^upright_body}
+  
+  # Push rod pickup
+  pushrod_to_uca = MultibodyComponents.FixedTranslation(
+    r = uca_outer - pushrod_outer,
+    radius = sty_rod_radius,
+    color = sty_grey_light
+  ) {^pushrod_to_uca}
+  
+  # Corner side
+  structural parameter is_left::Boolean
+
+  # Hardpoints
+  parameter lca_front::Position[3]
+  parameter lca_outer::Position[3]
+  parameter lca_rear::Position[3]
+  parameter uca_front::Position[3]
+  parameter uca_outer::Position[3]
+  parameter uca_rear::Position[3]
+  parameter tierod_inner::Position[3]
+  parameter tierod_outer::Position[3]
+  parameter wheel_center::Position[3]
+  parameter pushrod_outer::Position[3]
+
+  # Static alignment
+  parameter static_camber::Angle
+  parameter static_toe::Angle
+
+  # Upright
+  parameter upright_mass::Mass
+  parameter upright_I_11::Inertia
+  parameter upright_I_22::Inertia
+  parameter upright_I_33::Inertia
+
+  # Control arm hinge axes
+  final parameter lca_axis::Real[3] = (lca_front - lca_rear) / LinearAlgebra.norm(lca_front - lca_rear)
+  final parameter uca_axis::Real[3] = (uca_front - uca_rear) / LinearAlgebra.norm(uca_front - uca_rear)
+
+  # Kingpin
+  final parameter kingpin_vec::Dyad.Position[3] = uca_outer - lca_outer
+  final parameter kingpin_axis::Real[3] = kingpin_vec / LinearAlgebra.norm(kingpin_vec)
+  final parameter uca_n1_raw::Real[3] = LinearAlgebra.cross(kingpin_axis, [1, 0, 0])
+  final parameter uca_n1_a::Real[3] = uca_n1_raw / LinearAlgebra.norm(uca_n1_raw)
+
+  # Tie rod
+  final parameter tierod_vec::Dyad.Position[3] = tierod_outer - tierod_inner
+  final parameter tierod_axis::Real[3] = tierod_vec / LinearAlgebra.norm(tierod_vec)
+  final parameter tie_n1_raw::Real[3] = LinearAlgebra.cross(tierod_axis, [0, 0, 1])
+  final parameter tie_n1_a::Real[3] = tie_n1_raw / LinearAlgebra.norm(tie_n1_raw)
+
+  # Wheel spin axis
+  final parameter wc_axis_length::Dyad.Length = 0.1
+  final parameter wc_axis_dir::Real[3] = sign(wheel_center[2]) * [
+    sin(static_toe),
+    cos(static_camber) * cos(static_toe),
+    sin(static_camber)
+  ]
+  final parameter wc_axis_vec::Dyad.Position[3] = wc_axis_length * wc_axis_dir
+
+  # Outputs
+  variable toe::Dyad.Angle
+  variable camber::Dyad.Angle
+  variable wc_height::Dyad.Length
+  variable wc_axis_delta::Dyad.Position[3]
+
+relations
+
+  # Measurements
+  wc_axis_delta = wc_axis.frame_b.r_0 - wc_axis.frame_a.r_0
+  camber = -atan(wc_axis_delta[3], abs(wc_axis_delta[2]))
+  toe = atan(wc_axis_delta[1], abs(wc_axis_delta[2]))
+  wc_height = wc_axis.frame_a.r_0[3] - wheel_center[3]
+
+  # Chassis mounts
+  connect(mount_uca_front.frame_a, chassis) {^id17}
+  connect(mount_tierod.frame_a, chassis) {^id18}
+  connect(mount_lca_front.frame_a, chassis) {^id19}
+
+  # Lower control arm
+  connect(mount_lca_front.frame_b, lca_rev.frame_a) {^id20}
+  connect(lca_rev.frame_b, lca_rod_front.frame_a) {^id21}
+  connect(lca_rod_rear.frame_b, lca_rod_front.frame_b) {^id22}
+
+  # Upper control arm loop
+  connect(mount_uca_front.frame_b, uca_rod_front.frame_b) {^id23}
+  connect(uca_rod_front.frame_a, lca_rod_front.frame_b) {^id24}
+  connect(uca_rod_front.frame_im, uca_rod_rear.frame_b) {^id25}
+
+  # Tie rod loop
+  connect(mount_tierod.frame_b, tie_rod.frame_a) {^id26}
+  connect(tie_rod.frame_b, uca_rod_front.frame_ia) {^id27}
+
+  # Upright and wheel
+  connect(lca_to_wc.frame_a, tie_rod.frame_ib) {^id28}
+  connect(lca_to_wc.frame_b, wheel) {^id29}
+  connect(lca_to_wc.frame_b, wc_axis.frame_a) {^id30}
+  connect(upright_body.frame_a, lca_to_wc.frame_b) {^id31}
+  connect(pushrod_to_uca.frame_b, uca_rod_front.frame_im) {^id32}
+  connect(pushrod_to_uca.frame_a, pushrod) {^id33}
+
+metadata {
+  "_links": {
+    "wheel": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 950, "y1": 450, "x2": 1050, "y2": 550, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "chassis": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": -50, "y1": 450, "x2": 50, "y2": 550, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "pushrod": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "y1": -50, "x2": 550, "y2": 50}}}
+    },
+    "mount_tierod": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 80, "y1": 450, "x2": 180, "y2": 550, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "mount_uca_front": {
+      "Dyad": {"placement": {"diagram": {"x1": 90, "y1": 210, "x2": 190, "y2": 310}}}
+    },
+    "mount_lca_front": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 80, "y1": 670, "x2": 180, "y2": 770, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "lca_rev": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 220, "y1": 670, "x2": 320, "y2": 770, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "lca_rod_front": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 410, "y1": 670, "x2": 510, "y2": 770, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "lca_rod_rear": {
+      "Dyad": {"placement": {"diagram": {"x1": 410, "y1": 810, "x2": 510, "y2": 910}}}
+    },
+    "uca_rod_front": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 560, "y1": 210, "x2": 460, "y2": 310, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "uca_rod_rear": {
+      "Dyad": {"placement": {"diagram": {"x1": 90, "y1": 100, "x2": 190, "y2": 200}}}
+    },
+    "tie_rod": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 460, "y1": 450, "x2": 560, "y2": 550, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "lca_to_wc": {
+      "Dyad": {"placement": {"diagram": {"x1": 680, "y1": 450, "x2": 780, "y2": 550}}}
+    },
+    "wc_axis": {
+      "Dyad": {"placement": {"diagram": {"x1": 810, "y1": 530, "x2": 910, "y2": 630}}}
+    },
+    "upright_body": {
+      "Dyad": {"placement": {"diagram": {"x1": 810, "y1": 360, "x2": 910, "y2": 460}}}
+    },
+    "pushrod_to_uca": {
+      "Dyad": {"placement": {"diagram": {"x1": 700, "y1": 100, "x2": 600, "y2": 200}}}
+    },
+    "id17": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 0, "y": 260}], "E": 2}], "path": {}}},
+    "id18": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id19": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 0, "y": 720}], "E": 2}],
+        "renderStyle": "standard"
+      }
+    },
+    "id20": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id21": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id22": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 550, "y": 860}, {"x": 550, "y": 720}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id23": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id24": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 610, "y": 260}, {"x": 610, "y": 720}], "E": 2}],
+        "renderStyle": "standard"
+      }
+    },
+    "id25": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 510, "y": 150}], "E": 2}], "path": {}}},
+    "id26": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id27": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [{"x": 580, "y": 500}, {"x": 580, "y": 380}, {"x": 535, "y": 380}],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id28": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {"x": 650, "y": 500},
+              {"x": 650, "y": 530},
+              {"x": 530, "y": 530},
+              {"x": 530, "y": 500}
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id29": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id30": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 790, "y": 500}, {"x": 790, "y": 580}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id31": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 790, "y": 410}, {"x": 790, "y": 500}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id32": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 510, "y": 150}], "E": 2}], "path": {}}},
+    "id33": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 740, "y": 150}, {"x": 740, "y": 0}], "E": 2}],
+        "path": {}
+      }
+    }
+  }
+}
+end

@@ -1,0 +1,164 @@
+test component LinkageTestRig
+  """
+  Single-corner suspension test rig.
+ 
+  Jacks the wheel through a sinusoidal travel sweep and records various
+  signals against a stored reference trajectory.
+  """
+  # World and jack
+  world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
+  fixed = MultibodyComponents.Fixed(r = base, render = false) {^fixed}
+  prismatic = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic}
+  actuation_rod = MultibodyComponents.SphericalSpherical(r_0 = [0, 0, actuation_rod_length], render = false) {^actuation_rod}
+  wheel_position = TranslationalComponents.Sources.Position(v = initial 0.0) {^wheel_position}
+  
+  # Linkage
+  linkage = VehicleComponents.Linkage(
+    is_left = is_left,
+    lca_front = [0.100, 0.195, 0.125],
+    lca_outer = [0.005, 0.560, 0.130],
+    lca_rear = [-0.100, 0.205, 0.115],
+    uca_front = [0.080, 0.245, 0.305],
+    uca_outer = [-0.010, 0.530, 0.330],
+    uca_rear = [-0.080, 0.255, 0.295],
+    tierod_inner = [0.080, 0.220, 0.150],
+    tierod_outer = [0.075, 0.550, 0.160],
+    pushrod_outer = [0.000, 0.480, 0.340],
+    wheel_center = wheel_center,
+    static_camber = 0.0,
+    static_toe = 0.0,
+    upright_mass = 5.0,
+    upright_I_11 = 0.05,
+    upright_I_22 = 0.05,
+    upright_I_33 = 0.05
+  ) {^linkage}
+
+  # Corner side
+  structural parameter is_left::Boolean = true
+
+  # Wheel centre
+  parameter wheel_center::Position[3] = [0.000, 0.600, 0.230]
+ 
+  # Rig hardware
+  final parameter actuation_rod_length::Length = 0.1
+  final parameter base::Position[3] = wheel_center - [0, 0, actuation_rod_length]
+ 
+  # Excitation
+  parameter stroke::Length = 0.0254
+  parameter freq::Frequency = 0.5
+
+relations
+  
+  wheel_position.s_ref = stroke * sin(2 * π * freq * time)
+
+  connect(fixed.frame_b, prismatic.frame_a) {^id7}
+  connect(prismatic.frame_b, actuation_rod.frame_a) {^id8}
+  connect(prismatic.support, wheel_position.support) {^id9}
+  connect(wheel_position.flange, prismatic.axis) {^id10}
+  connect(linkage.chassis, world.frame_b) {^id11}
+  connect(linkage.wheel, actuation_rod.frame_b) {^id12}
+
+metadata {
+  "Dyad": {
+    "experiments": {},
+    "tests": {
+      "sweep": {
+        "stop": 2.0,
+        "atol": {
+          "linkage.camber": 1e-5,
+          "linkage.toe": 1e-5,
+          "linkage.wc_height": 1e-5
+        },
+        "expect": {
+          "initial": {
+            "linkage.camber": 0.0,
+            "linkage.toe": 0.0,
+            "linkage.wc_height": 0.0
+          },
+          "signals": ["linkage.camber", "linkage.toe", "linkage.wc_height"]
+        }
+      }
+    },
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "rot": 0,
+        "layer": "icon",
+        "attrs": {}
+      }
+    ],
+    "icons": {"default": "dyad://Dyad/Default.svg"},
+    "path": {},
+    "doc": {"behavior": true},
+    "deprecated": null
+  },
+  "_links": {
+    "world": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 220, "y1": 130, "x2": 320, "y2": 230, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "fixed": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 720, "y1": 640, "x2": 820, "y2": 740, "rot": 270}
+        },
+        "tags": []
+      }
+    },
+    "prismatic": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 720, "y1": 450, "x2": 820, "y2": 550, "rot": 270}
+        },
+        "tags": []
+      }
+    },
+    "actuation_rod": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 720, "y1": 260, "x2": 820, "y2": 360, "rot": 270}
+        },
+        "tags": []
+      }
+    },
+    "wheel_position": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 550, "y1": 450, "x2": 650, "y2": 550, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "linkage": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 450, "y1": 130, "x2": 550, "y2": 230, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id8": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id9": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 820, "y": 600}, {"x": 600, "y": 600}], "E": 2}],
+        "renderStyle": "standard"
+      }
+    },
+    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id12": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 770, "y": 180}], "E": 2}],
+        "renderStyle": "standard"
+      }
+    }
+  }
+}
+end

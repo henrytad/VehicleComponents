@@ -1,0 +1,18 @@
+partial component Styles
+  """
+  Shared visual style parameters for vehicle linkages.
+
+  Defines global colors and geometry settings, such as rod radius,
+  used consistently across different linkage models.
+  """
+  
+  final parameter sty_rod_radius::Real = 0.008
+  final parameter sty_body_radius::Real = 0.02
+
+  final parameter sty_black::Real[4] = [0.15, 0.15, 0.15, 1.0]
+  final parameter sty_orange::Real[4] = [0.9921875, 0.3125, 0, 1]
+  final parameter sty_purple::Real[4] = [0.4296875, 0.2734375, 0.78125, 1]
+  final parameter sty_grey_light::Real[4] = [0.546875, 0.578125, 0.609375, 0.5]
+  final parameter sty_grey_medium::Real[4] = [0.328125, 0.3515625, 0.375, 1]
+  final parameter sty_grey_dark::Real[4] = [0.1953125, 0.21484375, 0.234375, 1]
+end

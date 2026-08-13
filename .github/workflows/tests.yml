@@ -2,6 +2,8 @@ name: Tests
 
 on:
   pull_request:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
@@ -10,7 +12,7 @@ jobs:
   test:
     name: Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -18,5 +20,25 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
+      - name: Decode JuliaHub token
+        env:
+          JULIAHUB_TOKEN_ENCODED: ${{ secrets.JULIAHUB_TOKEN_ENCODED }}
+        run: |
+           if [ -z "$JULIAHUB_TOKEN_ENCODED" ]; then
+             echo "Missing required secret JULIAHUB_TOKEN_ENCODED. Configure it in the repository secrets."
+             exit 1
+           fi
+           base64 -d <<< "$JULIAHUB_TOKEN_ENCODED" > "$RUNNER_TEMP/juliahub_auth.toml"
+
       - name: Run generated Julia tests
-        run: docker buildx build --progress=plain --output type=cacheonly .
+        uses: docker/build-push-action@v6
+        env:
+          BUILDX_PROGRESS: plain
+        with:
+          context: .
+          push: false
+          outputs: type=cacheonly
+          cache-from: type=gha,scope=julia-tests
+          cache-to: type=gha,scope=julia-tests,mode=max
+          secret-files: |
+            juliahub_auth=${{ runner.temp }}/juliahub_auth.toml
