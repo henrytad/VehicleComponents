@@ -7,13 +7,12 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   Linkage(; name, is_left, lca_front, lca_outer, lca_rear, uca_front, uca_outer, uca_rear, tierod_inner, tierod_outer, wheel_center, pushrod_outer, static_camber, static_toe, upright_mass, upright_I_11, upright_I_22, upright_I_33)
+   Linkage(; name, lca_front, lca_outer, lca_rear, uca_front, uca_outer, uca_rear, tierod_inner, tierod_outer, wheel_center, pushrod_outer, static_camber, static_toe, upright_mass, upright_I_11, upright_I_22, upright_I_33)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `is_left`         |                          | --  |    |
 | `lca_front`         |                          | m  |    |
 | `lca_outer`         |                          | m  |    |
 | `lca_rear`         |                          | m  |    |
@@ -49,7 +48,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `wc_height`         |                          | m  |
 | `wc_axis_delta`         |                          | m  |
 """
-@component function Linkage(; name = nothing, is_left=nothing, lca_front=nothing, lca_outer=nothing, lca_rear=nothing, uca_front=nothing, uca_outer=nothing, uca_rear=nothing, tierod_inner=nothing, tierod_outer=nothing, wheel_center=nothing, pushrod_outer=nothing, static_camber=nothing, static_toe=nothing, upright_mass=nothing, upright_I_11=nothing, upright_I_22=nothing, upright_I_33=nothing, kwargs...)
+@component function Linkage(; name = nothing, lca_front=nothing, lca_outer=nothing, lca_rear=nothing, uca_front=nothing, uca_outer=nothing, uca_rear=nothing, tierod_inner=nothing, tierod_outer=nothing, wheel_center=nothing, pushrod_outer=nothing, static_camber=nothing, static_toe=nothing, upright_mass=nothing, upright_I_11=nothing, upright_I_22=nothing, upright_I_33=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -225,13 +224,13 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named lca_rod_rear = MultibodyComponents.FixedTranslation(; r=lca_outer - lca_rear, radius=sty_rod_radius, color=sty_grey_medium, lca_rod_rear_overrides...))
   # Subcomponent uca_rod_front of type MultibodyComponents.JointUSR
   uca_rod_front_overrides = __pop_subcomponent_overrides!(__overrides, "uca_rod_front")
-  push!(__systems, @named uca_rod_front = MultibodyComponents.JointUSR(; n1_a=uca_n1_a, positive_branch=is_left, rRod1_ia=kingpin_vec, rRod2_ib=uca_outer - uca_front, n_b=uca_axis, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, uca_rod_front_overrides...))
+  push!(__systems, @named uca_rod_front = MultibodyComponents.JointUSR(; n1_a=uca_n1_a, rRod1_ia=kingpin_vec, rRod2_ib=uca_outer - uca_front, n_b=uca_axis, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, uca_rod_front_overrides...))
   # Subcomponent uca_rod_rear of type MultibodyComponents.FixedTranslation
   uca_rod_rear_overrides = __pop_subcomponent_overrides!(__overrides, "uca_rod_rear")
   push!(__systems, @named uca_rod_rear = MultibodyComponents.FixedTranslation(; r=uca_outer - uca_rear, radius=sty_rod_radius, color=sty_grey_medium, uca_rod_rear_overrides...))
   # Subcomponent tie_rod of type MultibodyComponents.JointUSR
   tie_rod_overrides = __pop_subcomponent_overrides!(__overrides, "tie_rod")
-  push!(__systems, @named tie_rod = MultibodyComponents.JointUSR(; n1_a=tie_n1_a, positive_branch=is_left, rRod1_ia=tierod_vec, rRod2_ib=tierod_outer - lca_outer, n_b=kingpin_axis, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, tie_rod_overrides...))
+  push!(__systems, @named tie_rod = MultibodyComponents.JointUSR(; n1_a=tie_n1_a, rRod1_ia=tierod_vec, rRod2_ib=tierod_outer - lca_outer, n_b=kingpin_axis, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, tie_rod_overrides...))
   # Subcomponent lca_to_wc of type MultibodyComponents.FixedTranslation
   lca_to_wc_overrides = __pop_subcomponent_overrides!(__overrides, "lca_to_wc")
   push!(__systems, @named lca_to_wc = MultibodyComponents.FixedTranslation(; r=wheel_center - lca_outer, radius=sty_rod_radius, color=sty_grey_light, lca_to_wc_overrides...))
@@ -249,6 +248,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
 
   ### Guesses
+  __guesses[lca_rev.phi] = (0.0)
   isnothing(__ovr_toe__guess) || (__guesses[toe] = __ovr_toe__guess)
   isnothing(__ovr_camber__guess) || (__guesses[camber] = __ovr_camber__guess)
   isnothing(__ovr_wc_height__guess) || (__guesses[wc_height] = __ovr_wc_height__guess)

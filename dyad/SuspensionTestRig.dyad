@@ -1,0 +1,322 @@
+test component SuspensionTestRig
+  """
+  Half car test rig.
+ 
+  Both wheels are jacked vertically from their wheel center.
+  """
+
+  world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
+
+  suspension = VehicleComponents.Suspension(
+    wheel_center_left = wheel_center_left,
+    wheel_center_right = wheel_center_right,
+    pushrod_outer_left = pushrod_outer_left,
+    pushrod_outer_right = pushrod_outer_right,
+    linkage_left(
+      lca_front = [0.100, 0.195, 0.125],
+      lca_rear = [-0.100, 0.205, 0.115],
+      lca_outer = [0.005, 0.560, 0.130],
+      uca_front = [0.080, 0.245, 0.305],
+      uca_rear = [-0.080, 0.255, 0.295],
+      uca_outer = [-0.010, 0.530, 0.330],
+      tierod_inner = [0.080, 0.220, 0.150],
+      tierod_outer = [0.075, 0.550, 0.160],
+      static_camber = 0.0,
+      static_toe = 0.0,
+      upright_mass = 5.0,
+      upright_I_11 = 0.05,
+      upright_I_22 = 0.05,
+      upright_I_33 = 0.05
+    ),
+    linkage_right(
+      lca_front = [0.100, -0.195, 0.125],
+      lca_rear = [-0.100, -0.205, 0.115],
+      lca_outer = [0.005, -0.560, 0.130],
+      uca_front = [0.080, -0.245, 0.305],
+      uca_rear = [-0.080, -0.255, 0.295],
+      uca_outer = [-0.010, -0.530, 0.330],
+      tierod_inner = [0.080, -0.220, 0.150],
+      tierod_outer = [0.075, -0.550, 0.160],
+      static_camber = 0.0,
+      static_toe = 0.0,
+      upright_mass = 5.0,
+      upright_I_11 = 0.05,
+      upright_I_22 = 0.05,
+      upright_I_33 = 0.05
+    ),
+    inboard(
+      pushrod_outer_left = pushrod_outer_left,
+      pushrod_outer_right = pushrod_outer_right,
+      rocker_pivot_left = [-0.030, 0.120, 0.540],
+      rocker_pivot_right = [-0.030, -0.120, 0.540],
+      pushrod_inner_left = [-0.030, 0.138, 0.570],
+      pushrod_inner_right = [-0.030, -0.138, 0.570],
+      heave_pickup_left = [-0.030, 0.114, 0.580],
+      heave_pickup_right = [-0.030, -0.114, 0.580],
+      roll_pickup_left = [-0.105, 0.108, 0.503],
+      roll_pickup_right = [-0.105, -0.108, 0.577],
+      heave_stiffness = 35000.0,
+      heave_damping = 1500.0,
+      roll_stiffness = 35000.0,
+      roll_damping = 1500.0,
+      heave_preload = 0.0,
+      roll_preload = 0.0,
+      pushrod_adjust_left = 0.0,
+      pushrod_adjust_right = 0.0
+    )
+  ) {^suspension}
+
+  # Left jack
+  fixed_left = MultibodyComponents.Fixed(r = base_left, render = false) {^fixed_left}
+  prismatic_left = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic_left}
+  actuation_rod_left = MultibodyComponents.SphericalSpherical(r_0 = [0, 0, jack_rod_length], radius = 0.02, render = false) {^actuation_rod_left}
+  wheel_position_left = TranslationalComponents.Sources.Position(v = initial 0.0) {^wheel_position_left}
+ 
+  # Right jack
+  fixed_right = MultibodyComponents.Fixed(r = base_right, render = false) {^fixed_right}
+  prismatic_right = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic_right}
+  actuation_rod_right = MultibodyComponents.SphericalSpherical(r_0 = [0, 0, jack_rod_length], radius = 0.02, render = false) {^actuation_rod_right}
+  wheel_position_right = TranslationalComponents.Sources.Position(v = initial 0.0) {^wheel_position_right}
+ 
+  # Shared references
+  parameter wheel_center_left::Position[3] = [0.000, 0.600, 0.230]
+  parameter wheel_center_right::Position[3] = [0.000, -0.600, 0.230]
+  parameter pushrod_outer_left::Position[3] = [0.000, 0.480, 0.340]
+  parameter pushrod_outer_right::Position[3] = [0.000, -0.480, 0.340]
+ 
+  # Rig
+  final parameter jack_rod_length::Length = 0.1
+  final parameter base_left::Position[3] = wheel_center_left - [0, 0, jack_rod_length]
+  final parameter base_right::Position[3] = wheel_center_right - [0, 0, jack_rod_length]
+ 
+  # Excitation
+  parameter heave_amplitude::Length = 0.0254
+  parameter roll_amplitude::Length = 0.0
+  parameter freq::Frequency = 0.5
+ 
+relations
+ 
+  wheel_position_left.s_ref = (heave_amplitude + roll_amplitude) * sin(2 * π * freq * time)
+  wheel_position_right.s_ref = (heave_amplitude - roll_amplitude) * sin(2 * π * freq * time)
+ 
+  # Left jack
+  connect(fixed_left.frame_b, prismatic_left.frame_a) {^id16}
+  connect(prismatic_left.frame_b, actuation_rod_left.frame_a) {^id17}
+  connect(prismatic_left.support, wheel_position_left.support) {^id20}
+  connect(wheel_position_left.flange, prismatic_left.axis) {^id19}
+ 
+  # Right jack
+  connect(fixed_right.frame_b, prismatic_right.frame_a) {^id13}
+  connect(prismatic_right.frame_b, actuation_rod_right.frame_a) {^id14}
+  connect(prismatic_right.support, wheel_position_right.support) {^id15}
+  connect(wheel_position_right.flange, prismatic_right.axis) {^id21}
+ 
+  # Axle
+  connect(world.frame_b, suspension.chassis) {^id11}
+  connect(actuation_rod_left.frame_b, suspension.wheel_left) {^id12}
+  connect(actuation_rod_right.frame_b, suspension.wheel_right) {^id18}
+
+metadata {
+  "Dyad": {
+    "experiments": {},
+    "tests": {
+      "heave": {
+        "stop": 2.0,
+        "params": {"heave_amplitude": 0.0254, "roll_amplitude": 0.0},
+        "atol": {
+          "suspension.wc_heave": 1e-5,
+          "suspension.wc_roll": 1e-5,
+          "suspension.linkage_left.wc_height": 1e-5,
+          "suspension.linkage_right.wc_height": 1e-5,
+          "suspension.linkage_left.camber": 1e-5,
+          "suspension.linkage_right.camber": 1e-5,
+          "suspension.linkage_left.toe": 1e-5,
+          "suspension.linkage_right.toe": 1e-5,
+          "suspension.inboard.heave_deflection": 1e-5,
+          "suspension.inboard.roll_deflection": 1e-5
+        },
+        "expect": {
+          "initial": {
+            "suspension.wc_heave": 0.0,
+            "suspension.wc_roll": 0.0,
+            "suspension.linkage_left.wc_height": 0.0,
+            "suspension.linkage_right.wc_height": 0.0,
+            "suspension.linkage_left.camber": 0.0,
+            "suspension.linkage_right.camber": 0.0,
+            "suspension.linkage_left.toe": 0.0,
+            "suspension.linkage_right.toe": 0.0,
+            "suspension.inboard.heave_deflection": 0.0,
+            "suspension.inboard.roll_deflection": 0.0
+          },
+          "signals": [
+            "suspension.wc_heave",
+            "suspension.wc_roll",
+            "suspension.inboard.heave_deflection",
+            "suspension.inboard.roll_deflection",
+            "suspension.linkage_left.camber",
+            "suspension.linkage_right.camber"
+          ]
+        }
+      },
+      "roll": {
+        "stop": 2.0,
+        "params": {"heave_amplitude": 0.0, "roll_amplitude": 0.0254},
+        "atol": {
+          "suspension.wc_heave": 1e-5,
+          "suspension.wc_roll": 1e-5,
+          "suspension.linkage_left.wc_height": 1e-5,
+          "suspension.linkage_right.wc_height": 1e-5,
+          "suspension.linkage_left.camber": 1e-5,
+          "suspension.linkage_right.camber": 1e-5,
+          "suspension.linkage_left.toe": 1e-5,
+          "suspension.linkage_right.toe": 1e-5,
+          "suspension.inboard.heave_deflection": 1e-5,
+          "suspension.inboard.roll_deflection": 1e-5
+        },
+        "expect": {
+          "initial": {
+            "suspension.wc_heave": 0.0,
+            "suspension.wc_roll": 0.0,
+            "suspension.linkage_left.wc_height": 0.0,
+            "suspension.linkage_right.wc_height": 0.0,
+            "suspension.linkage_left.camber": 0.0,
+            "suspension.linkage_right.camber": 0.0,
+            "suspension.linkage_left.toe": 0.0,
+            "suspension.linkage_right.toe": 0.0,
+            "suspension.inboard.heave_deflection": 0.0,
+            "suspension.inboard.roll_deflection": 0.0
+          },
+          "signals": [
+            "suspension.wc_heave",
+            "suspension.wc_roll",
+            "suspension.inboard.heave_deflection",
+            "suspension.inboard.roll_deflection",
+            "suspension.linkage_left.camber",
+            "suspension.linkage_right.camber"
+          ]
+        }
+      }
+    },
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "rot": 0,
+        "layer": "icon",
+        "attrs": {}
+      }
+    ],
+    "icons": {"default": "dyad://Dyad/Default.svg"},
+    "path": {},
+    "doc": {"behavior": true},
+    "deprecated": null
+  },
+  "_links": {
+    "world": {"Dyad": {"placement": {"diagram": {"x1": 20, "y1": 10, "x2": 120, "y2": 110}}}},
+    "suspension": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 450, "y1": 130, "x2": 550, "y2": 230, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "fixed_right": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 720, "y1": 640, "x2": 820, "y2": 740, "rot": 270}
+        },
+        "tags": []
+      }
+    },
+    "prismatic_right": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 720, "y1": 450, "x2": 820, "y2": 550, "rot": 270}
+        },
+        "tags": []
+      }
+    },
+    "actuation_rod_left": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 200, "y1": 260, "x2": 300, "y2": 360, "rot": 270}
+        },
+        "tags": []
+      }
+    },
+    "actuation_rod_right": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 720, "y1": 260, "x2": 820, "y2": 360, "rot": 270}
+        },
+        "tags": []
+      }
+    },
+    "fixed_left": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 200, "y1": 640, "x2": 300, "y2": 740, "rot": 270}
+        },
+        "tags": []
+      }
+    },
+    "prismatic_left": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 200, "y1": 450, "x2": 300, "y2": 550, "rot": 270}
+        },
+        "tags": []
+      }
+    },
+    "wheel_position_left": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 30, "y1": 450, "x2": 130, "y2": 550, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "wheel_position_right": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 550, "y1": 450, "x2": 650, "y2": 550, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "id11": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 499, "y": 60}], "E": 2}], "path": {}}},
+    "id12": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 250, "y": 180}], "E": 2}],
+        "renderStyle": "standard"
+      }
+    },
+    "id13": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id14": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id15": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 820, "y": 600}, {"x": 600, "y": 600}], "E": 2}],
+        "renderStyle": "standard"
+      }
+    },
+    "id16": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id17": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id18": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 770, "y": 180}], "E": 2}],
+        "renderStyle": "standard"
+      }
+    },
+    "id19": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id20": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 300, "y": 600}, {"x": 80, "y": 600}], "E": 2}],
+        "renderStyle": "standard"
+      }
+    },
+    "id21": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}}
+  }
+}
+end

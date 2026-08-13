@@ -266,10 +266,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named mount_rocker_right = MultibodyComponents.FixedTranslation(; r=rocker_pivot_right, render=false, mount_rocker_right_overrides...))
   # Subcomponent rocker_left of type MultibodyComponents.JointUSR
   rocker_left_overrides = __pop_subcomponent_overrides!(__overrides, "rocker_left")
-  push!(__systems, @named rocker_left = MultibodyComponents.JointUSR(; rRod1_ia=pushrod_rod_left, rRod2_ib=rocker_arm_left, n_b=rocker_axis_left, n1_a=pushrod_n1a_left, positive_branch=true, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, rocker_left_overrides...))
+  push!(__systems, @named rocker_left = MultibodyComponents.JointUSR(; rRod1_ia=pushrod_rod_left, rRod2_ib=rocker_arm_left, n_b=rocker_axis_left, n1_a=pushrod_n1a_left, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, rocker_left_overrides...))
   # Subcomponent rocker_right of type MultibodyComponents.JointUSR
   rocker_right_overrides = __pop_subcomponent_overrides!(__overrides, "rocker_right")
-  push!(__systems, @named rocker_right = MultibodyComponents.JointUSR(; rRod1_ia=pushrod_rod_right, rRod2_ib=rocker_arm_right, n_b=rocker_axis_right, n1_a=pushrod_n1a_right, positive_branch=true, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, rocker_right_overrides...))
+  push!(__systems, @named rocker_right = MultibodyComponents.JointUSR(; rRod1_ia=pushrod_rod_right, rRod2_ib=rocker_arm_right, n_b=rocker_axis_right, n1_a=pushrod_n1a_right, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, rocker_right_overrides...))
   # Subcomponent heave_arm_left of type MultibodyComponents.FixedTranslation
   heave_arm_left_overrides = __pop_subcomponent_overrides!(__overrides, "heave_arm_left")
   push!(__systems, @named heave_arm_left = MultibodyComponents.FixedTranslation(; r=heave_arm_vec_left, radius=sty_rod_radius, color=sty_grey_medium, heave_arm_left_overrides...))

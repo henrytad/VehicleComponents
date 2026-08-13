@@ -8,7 +8,7 @@ using VehicleComponents
 const DEG = 180 / π
 const MM = 1000
 
-@named model = VehicleComponents.LinkageTestRig(is_left=true)
+@named model = VehicleComponents.LinkageTestRig()
 ssys = multibody(model)
 
 data_path = joinpath(pwd(), "assets", "vehicles", "Test.json")

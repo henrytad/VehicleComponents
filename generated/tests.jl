@@ -22,4 +22,6 @@ include("InboardTestRig_test.jl")
 include("Inboard_test.jl")
 include("LinkageTestRig_test.jl")
 include("Linkage_test.jl")
+include("SuspensionTestRig_test.jl")
+include("Suspension_test.jl")
 end

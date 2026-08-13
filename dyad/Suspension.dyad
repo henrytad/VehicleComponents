@@ -1,0 +1,133 @@
+component Suspension
+  """
+  Half car suspension. 
+  
+  Two corner linkages driven into a shared heave/roll inboard.
+  """
+
+  # External frames
+  chassis = Dyad.Frame3D() {^chassis}
+  wheel_left = Dyad.Frame3D() {^wheel_left}
+  wheel_right = Dyad.Frame3D() {^wheel_right}
+
+  # Subsystems
+  inboard = VehicleComponents.Inboard(
+    pushrod_outer_left = pushrod_outer_left,
+    pushrod_outer_right = pushrod_outer_right
+  ) {^inboard}
+  linkage_left = VehicleComponents.Linkage(
+    wheel_center = wheel_center_left,
+    pushrod_outer = pushrod_outer_left
+  ) {^linkage_left}
+  linkage_right = VehicleComponents.Linkage(
+    wheel_center = wheel_center_right,
+    pushrod_outer = pushrod_outer_right
+  ) {^linkage_right}
+  
+  # Shared references
+  parameter wheel_center_left::Position[3]
+  parameter wheel_center_right::Position[3]
+  parameter pushrod_outer_left::Position[3]
+  parameter pushrod_outer_right::Position[3]
+
+  # Outputs
+  variable wc_heave::Dyad.Length
+  variable wc_roll::Dyad.Length
+
+relations
+
+  # Measurements
+  wc_heave = (linkage_left.wc_height + linkage_right.wc_height) / 2
+  wc_roll = (linkage_left.wc_height - linkage_right.wc_height) / 2
+
+  # Chassis
+  connect(linkage_left.chassis, chassis) {^id8}
+  connect(linkage_right.chassis, chassis) {^id9}
+  connect(inboard.chassis, chassis) {^id13}
+ 
+  # Linkages and inboard
+  connect(linkage_left.pushrod, inboard.linkage_left) {^id10}
+  connect(linkage_right.pushrod, inboard.linkage_right) {^id12}
+ 
+  # Wheels
+  connect(linkage_left.wheel, wheel_left) {^id11}
+  connect(linkage_right.wheel, wheel_right) {^id7}
+
+metadata {
+  "Dyad": {
+    "experiments": {},
+    "tests": {},
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "rot": 0,
+        "layer": "icon",
+        "attrs": {}
+      }
+    ],
+    "icons": {"default": "dyad://Dyad/Default.svg"},
+    "path": {},
+    "doc": {"behavior": true},
+    "deprecated": null
+  },
+  "_links": {
+    "chassis": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 450, "y1": -50, "x2": 550, "y2": 50, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "wheel_left": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": -50, "y1": 450, "x2": 50, "y2": 550, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "wheel_right": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 950, "y1": 450, "x2": 1050, "y2": 550, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "inboard": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 450, "y1": 370, "x2": 550, "y2": 270, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "linkage_left": {
+      "Dyad": {"placement": {"diagram": {"x1": 330, "y1": 450, "x2": 230, "y2": 550}}}
+    },
+    "linkage_right": {
+      "Dyad": {"placement": {"diagram": {"x1": 670, "y1": 450, "x2": 770, "y2": 550}}}
+    },
+    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id8": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 390, "y": 500}, {"x": 390, "y": 0}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id9": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 610, "y": 500}, {"x": 610, "y": 0}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id10": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 280, "y": 320}], "E": 2}], "path": {}}},
+    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id12": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 720, "y": 320}], "E": 2}], "path": {}}},
+    "id13": {"Dyad": {"renderStyle": "standard", "edges": [{"S": 1, "E": 2, "M": []}]}}
+  }
+}
+end
