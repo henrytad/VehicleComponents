@@ -1,0 +1,79 @@
+test component TireTestRig
+  """
+  Tire test rig.
+   
+  Mounts the wheel centre at the unloaded radius, then sweeps it vertically.
+  """
+
+  world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
+
+  tire = VehicleComponents.TireMF61(
+    unloaded_radius = unloaded_radius,
+    width = 0.195,
+    vertical_stiffness = 180000.0,
+    vertical_damping = 120.0
+  ) {^tire}
+  
+  # Mount
+  mount = MultibodyComponents.FixedTranslation(r = [0, 0, unloaded_radius], render = false) {^mount}
+  prismatic = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic}
+  wheel_position = TranslationalComponents.Sources.Position(v = initial 0.0) {^wheel_position}
+
+  # Shared reference
+  parameter unloaded_radius::Length = 0.230
+
+  # Excitation
+  parameter stroke::Length = 0.0254
+  parameter freq::Frequency = 0.5
+
+relations
+
+  wheel_position.s_ref = stroke * sin(2 * π * freq * time)
+
+  connect(world.frame_b, mount.frame_a) {^id6}
+  connect(mount.frame_b, prismatic.frame_a) {^id7}
+  connect(prismatic.support, wheel_position.support) {^id8}
+  connect(wheel_position.flange, prismatic.axis) {^id9}
+  connect(prismatic.frame_b, tire.wheel_center) {^id10}
+
+metadata {
+  "Dyad": {
+    "experiments": {},
+    "tests": {
+      "sweep": {
+        "stop": 1.5,
+        "atol": {"tire.rho": 0.000001, "tire.Fz": 0.01, "tire.loaded_radius": 0.000001},
+        "expect": {
+          "initial": {"tire.rho": 0, "tire.Fz": 0, "tire.loaded_radius": 0.23},
+          "signals": ["tire.rho", "tire.Fz", "tire.loaded_radius", "tire.z_w"]
+        }
+      }
+    }
+  },
+  "_links": {
+    "world": {"Dyad": {"placement": {"diagram": {"x1": 10, "x2": 110, "y1": 10, "y2": 110}}}},
+    "tire": {
+      "Dyad": {"placement": {"diagram": {"x1": 730, "x2": 830, "y1": 450, "y2": 550}}}
+    },
+    "mount": {
+      "Dyad": {"placement": {"diagram": {"x1": 170, "x2": 270, "y1": 450, "y2": 550}}}
+    },
+    "prismatic": {
+      "Dyad": {"placement": {"diagram": {"x1": 440, "x2": 540, "y1": 450, "y2": 550}}}
+    },
+    "wheel_position": {
+      "Dyad": {"placement": {"diagram": {"x1": 350, "x2": 450, "y1": 310, "y2": 410}}}
+    },
+    "id6": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 140, "y": 60}, {"x": 140, "y": 500}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id8": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 400, "y": 550}], "E": 2}], "path": {}}},
+    "id9": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 490, "y": 360}], "E": 2}], "path": {}}},
+    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+  }
+}
+end
