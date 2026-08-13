@@ -22,9 +22,16 @@ RUN juliaup add "$DYAD_CHANNEL" && juliaup default "$DYAD_CHANNEL"
 WORKDIR /workspace
 
 COPY Project.toml Manifest.toml ./
+
 RUN --mount=type=secret,id=juliahub_auth,required=true \
     install -Dm600 /run/secrets/juliahub_auth "$JULIA_AUTH" \
-    && xvfb-run -a julia --check-bounds=yes --project=. -e 'using Pkg; Pkg.instantiate()' \
+    && JULIA_PKG_PRECOMPILE_AUTO=0 julia --project=. -e 'using Pkg; Pkg.instantiate()' \
+    && rm "$JULIA_AUTH"
+
+RUN --mount=type=secret,id=juliahub_auth,required=true \
+    install -Dm600 /run/secrets/juliahub_auth "$JULIA_AUTH" \
+    && xvfb-run -a julia --check-bounds=yes --project=. \
+        -e 'using Pkg, TOML; Pkg.precompile(collect(keys(TOML.parsefile("Project.toml")["deps"])))' \
     && rm "$JULIA_AUTH"
 
 COPY . .
