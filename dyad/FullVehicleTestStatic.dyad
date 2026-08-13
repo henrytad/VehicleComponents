@@ -1,0 +1,235 @@
+test component FullVehicleTestStatic
+  """
+  Static settling test
+ 
+  The sprung mass is held on a heave/roll/pitch stack. No lateral, longitudinal
+  or yaw freedom. Released from the reference configuration. Gravity
+  compresses the springs and tyres until the car reaches equilibrium.
+  """
+  
+  world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
+  
+  # Ground-to-body freedoms
+  heave_joint = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^heave_joint}
+  roll_joint = MultibodyComponents.Revolute(n = [1, 0, 0], render = false) {^roll_joint}
+  pitch_joint = MultibodyComponents.Revolute(n = [0, 1, 0], render = false) {^pitch_joint}
+
+  vehicle = VehicleComponents.FullVehicle(
+    sprung_mass = 250.0,
+    cg_offset = [-0.7, 0, 0.2],
+    sprung_I_11 = 30.0,
+    sprung_I_22 = 80.0,
+    sprung_I_33 = 90.0,
+    tire_fl(width = 0.19, unloaded_radius = 0.2057, vertical_stiffness = 194000.0, vertical_damping = 112.452),
+    tire_fr(width = 0.19, unloaded_radius = 0.2057, vertical_stiffness = 194000.0, vertical_damping = 112.452),
+    tire_rl(width = 0.19, unloaded_radius = 0.2057, vertical_stiffness = 194000.0, vertical_damping = 112.452),
+    tire_rr(width = 0.19, unloaded_radius = 0.2057, vertical_stiffness = 194000.0, vertical_damping = 112.452),
+    front_suspension(
+      wheel_center_left = [0, 0.6, 0.23],
+      wheel_center_right = [0, -0.6, 0.23],
+      pushrod_outer_left = [0, 0.48, 0.34],
+      pushrod_outer_right = [0, -0.48, 0.34],
+      linkage_left(
+        lca_front = [0.1, 0.195, 0.125],
+        lca_rear = [-0.1, 0.205, 0.115],
+        lca_outer = [0.005, 0.56, 0.13],
+        uca_front = [0.08, 0.245, 0.305],
+        uca_rear = [-0.08, 0.255, 0.295],
+        uca_outer = [-0.01, 0.53, 0.33],
+        tierod_inner = [0.08, 0.22, 0.15],
+        tierod_outer = [0.075, 0.55, 0.16],
+        static_camber = 0.0,
+        static_toe = 0.0,
+        upright_mass = 5.0,
+        upright_I_11 = 0.05,
+        upright_I_22 = 0.05,
+        upright_I_33 = 0.05
+      ),
+      linkage_right(
+        lca_front = [0.1, -0.195, 0.125],
+        lca_rear = [-0.1, -0.205, 0.115],
+        lca_outer = [0.005, -0.56, 0.13],
+        uca_front = [0.08, -0.245, 0.305],
+        uca_rear = [-0.08, -0.255, 0.295],
+        uca_outer = [-0.01, -0.53, 0.33],
+        tierod_inner = [0.08, -0.22, 0.15],
+        tierod_outer = [0.075, -0.55, 0.16],
+        static_camber = 0.0,
+        static_toe = 0.0,
+        upright_mass = 5.0,
+        upright_I_11 = 0.05,
+        upright_I_22 = 0.05,
+        upright_I_33 = 0.05
+      ),
+      inboard(
+        rocker_pivot_left = [-0.03, 0.12, 0.54],
+        rocker_pivot_right = [-0.03, -0.12, 0.54],
+        pushrod_inner_left = [-0.03, 0.138, 0.57],
+        pushrod_inner_right = [-0.03, -0.138, 0.57],
+        heave_pickup_left = [-0.03, 0.114, 0.58],
+        heave_pickup_right = [-0.03, -0.114, 0.58],
+        roll_pickup_left = [-0.105, 0.108, 0.503],
+        roll_pickup_right = [-0.105, -0.108, 0.577],
+        heave_stiffness = 35000.0,
+        heave_damping = 1500.0,
+        heave_preload = 0.0,
+        roll_stiffness = 35000.0,
+        roll_damping = 1500.0,
+        roll_preload = 0.0,
+        pushrod_adjust_left = 0.0,
+        pushrod_adjust_right = 0.0
+      )
+    ),
+    rear_suspension(
+      wheel_center_left = [-1.6, 0.59, 0.23],
+      wheel_center_right = [-1.6, -0.59, 0.23],
+      pushrod_outer_left = [-1.59, 0.47, 0.33],
+      pushrod_outer_right = [-1.59, -0.47, 0.33],
+      linkage_left(
+        lca_front = [-1.51, 0.2, 0.12],
+        lca_rear = [-1.69, 0.21, 0.115],
+        lca_outer = [-1.605, 0.555, 0.125],
+        uca_front = [-1.53, 0.25, 0.295],
+        uca_rear = [-1.67, 0.26, 0.29],
+        uca_outer = [-1.615, 0.525, 0.32],
+        tierod_inner = [-1.53, 0.225, 0.145],
+        tierod_outer = [-1.535, 0.545, 0.155],
+        static_camber = 0.0,
+        static_toe = 0.0,
+        upright_mass = 5.0,
+        upright_I_11 = 0.05,
+        upright_I_22 = 0.05,
+        upright_I_33 = 0.05
+      ),
+      linkage_right(
+        lca_front = [-1.51, -0.2, 0.12],
+        lca_rear = [-1.69, -0.21, 0.115],
+        lca_outer = [-1.605, -0.555, 0.125],
+        uca_front = [-1.53, -0.25, 0.295],
+        uca_rear = [-1.67, -0.26, 0.29],
+        uca_outer = [-1.615, -0.525, 0.32],
+        tierod_inner = [-1.53, -0.225, 0.145],
+        tierod_outer = [-1.535, -0.545, 0.155],
+        static_camber = 0.0,
+        static_toe = 0.0,
+        upright_mass = 5.0,
+        upright_I_11 = 0.05,
+        upright_I_22 = 0.05,
+        upright_I_33 = 0.05
+      ),
+      inboard(
+        rocker_pivot_left = [-1.57, 0.118, 0.43],
+        rocker_pivot_right = [-1.57, -0.118, 0.43],
+        pushrod_inner_left = [-1.57, 0.134, 0.458],
+        pushrod_inner_right = [-1.57, -0.134, 0.458],
+        heave_pickup_left = [-1.57, 0.112, 0.468],
+        heave_pickup_right = [-1.57, -0.112, 0.468],
+        roll_pickup_left = [-1.64, 0.106, 0.394],
+        roll_pickup_right = [-1.64, -0.106, 0.466],
+        heave_stiffness = 40000.0,
+        heave_damping = 1600.0,
+        heave_preload = 0.0,
+        roll_stiffness = 40000.0,
+        roll_damping = 1600.0,
+        roll_preload = 0.0,
+        pushrod_adjust_left = 0.0,
+        pushrod_adjust_right = 0.0
+      )
+    )
+  ) {^vehicle}
+
+relations
+
+  initial heave_joint.s = 0.0
+  initial heave_joint.v = 0.0
+  initial roll_joint.phi = 0.0
+  initial roll_joint.w = 0.0
+  initial pitch_joint.phi = 0.0
+  initial pitch_joint.w = 0.0
+  initial vehicle.front_suspension.linkage_left.lca_rev.phi = 0.0
+  initial vehicle.front_suspension.linkage_left.lca_rev.w = 0.0
+  initial vehicle.front_suspension.linkage_right.lca_rev.phi = 0.0
+  initial vehicle.front_suspension.linkage_right.lca_rev.w = 0.0
+  initial vehicle.rear_suspension.linkage_left.lca_rev.phi = 0.0
+  initial vehicle.rear_suspension.linkage_left.lca_rev.w = 0.0
+  initial vehicle.rear_suspension.linkage_right.lca_rev.phi = 0.0
+  initial vehicle.rear_suspension.linkage_right.lca_rev.w = 0.0
+  
+  connect(world.frame_b, heave_joint.frame_a) {^id6}
+  connect(heave_joint.frame_b, roll_joint.frame_a) {^id7}
+  connect(roll_joint.frame_b, pitch_joint.frame_a) {^id8}
+  connect(pitch_joint.frame_b, vehicle.rig) {^id9}
+
+metadata {
+  "Dyad": {
+    "experiments": {},
+    "tests": {
+      "settle": {
+        "stop": 5.0,
+        "atol": {
+          "vehicle.tire_fl.Fz": 1e-5,
+          "vehicle.tire_fr.Fz": 1e-5,
+          "vehicle.tire_rl.Fz": 1e-5,
+          "vehicle.tire_rr.Fz": 1e-5,
+          "heave_joint.s": 1e-5,
+          "pitch_joint.phi": 1e-5,
+          "roll_joint.phi": 1e-5
+        },
+        "expect": {
+          "initial": {
+            "vehicle.tire_fl.Fz": 0.0,
+            "vehicle.tire_fr.Fz": 0.0,
+            "vehicle.tire_rl.Fz": 0.0,
+            "vehicle.tire_rr.Fz": 0.0,
+            "heave_joint.s": 0.0,
+            "roll_joint.phi": 0.0,
+            "pitch_joint.phi": 0.0
+          },
+          "signals": [
+            "vehicle.tire_fl.Fz",
+            "vehicle.tire_fr.Fz",
+            "vehicle.tire_rl.Fz",
+            "vehicle.tire_rr.Fz",
+            "heave_joint.s",
+            "roll_joint.phi",
+            "pitch_joint.phi"
+          ]
+        }
+      }
+    },
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "rot": 0,
+        "layer": "icon",
+        "attrs": {}
+      }
+    ],
+    "icons": {"default": "dyad://Dyad/Default.svg"},
+    "path": {},
+    "doc": {"behavior": true},
+    "deprecated": null
+  },
+  "_links": {
+    "world": {"Dyad": {"placement": {"diagram": {"x1": 0, "y1": 10, "x2": 100, "y2": 110}}}},
+    "heave_joint": {
+      "Dyad": {"placement": {"diagram": {"x1": 200, "x2": 300, "y1": 10, "y2": 110}}}
+    },
+    "roll_joint": {
+      "Dyad": {"placement": {"diagram": {"x1": 390, "x2": 490, "y1": 10, "y2": 110}}}
+    },
+    "pitch_joint": {
+      "Dyad": {"placement": {"diagram": {"x1": 580, "x2": 680, "y1": 10, "y2": 110}}}
+    },
+    "vehicle": {
+      "Dyad": {"placement": {"diagram": {"x1": 770, "x2": 870, "y1": 10, "y2": 110}}}
+    },
+    "id6": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id8": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+  }
+}
+end

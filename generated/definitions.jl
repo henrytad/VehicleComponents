@@ -203,6 +203,8 @@ component.
 end
 
 
+include("FullVehicleTestStatic_definition.jl")
+include("FullVehicle_definition.jl")
 include("InboardTestRig_definition.jl")
 include("Inboard_definition.jl")
 include("LinkageTestRig_definition.jl")

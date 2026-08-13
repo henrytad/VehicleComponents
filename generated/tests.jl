@@ -18,6 +18,8 @@ end
 include("test_internals.jl")
 
 @testset "`VehicleComponents`" begin
+include("FullVehicleTestStatic_test.jl")
+include("FullVehicle_test.jl")
 include("InboardTestRig_test.jl")
 include("Inboard_test.jl")
 include("LinkageTestRig_test.jl")
