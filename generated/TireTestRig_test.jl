@@ -11,7 +11,7 @@ __dyad_run_test_case!(
   component_stem="TireTestRig",
   module_path=String[],
   start=0e+0,
-  stop=1.5e+0,
+  stop=2e+0,
   abstol=1e-6,
   reltol=1e-6,
   solver=ODEAlg.Auto(),

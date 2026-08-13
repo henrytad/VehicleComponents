@@ -41,7 +41,7 @@ metadata {
     "experiments": {},
     "tests": {
       "sweep": {
-        "stop": 1.5,
+        "stop": 2.0,
         "atol": {"tire.rho": 0.000001, "tire.Fz": 0.01, "tire.loaded_radius": 0.000001},
         "expect": {
           "initial": {"tire.rho": 0, "tire.Fz": 0, "tire.loaded_radius": 0.23},
