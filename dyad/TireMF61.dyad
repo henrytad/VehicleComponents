@@ -1,0 +1,77 @@
+component TireMF61
+  """
+  Magic Formula 6.1 tire model
+ 
+  Currently only considers vertical load only.
+ 
+  Ground is flat at z = 0. Deflection is taken from the wheel centre height, 
+  which assumes the contact patch sits directly below it.
+  """
+
+  extends Styles
+
+  wheel_center = Dyad.Frame3D() {^wheel_center}
+
+  visual = MultibodyComponents.CylinderShape(
+    color = sty_black,
+    r = wheel_center.r_0,
+    r_shape = [0, -width / 2, 0],
+    length_direction = [0, 1, 0],
+    width_direction = [1, 0, 0],
+    length = width,
+    width = 2 * unloaded_radius,
+    height = 2 * unloaded_radius
+  )
+
+  # TIR data
+  parameter width::Length
+  parameter unloaded_radius::Length
+  parameter vertical_stiffness::TranslationalSpringConstant
+  parameter vertical_damping::TranslationalDampingConstant
+
+  "Height of the wheel centre above the ground plane"
+  variable z_w::Length
+
+  "Vertical velocity of the wheel centre"
+  variable v_z::Velocity
+
+  "Height of the lowest point of the undeflected tyre (in contact when < 0)"
+  variable z_bottom::Length
+
+  "Radial deflection (>= 0)"
+  variable rho::Length
+
+  "Loaded radius"
+  variable loaded_radius::Length
+
+  "Spring-damper force before the tension clamp"
+  variable Fz_raw::Force
+  
+  "Vertical contact force pushing the wheel up (>= 0)"
+  variable Fz::Force
+
+relations
+
+  # Kinematics
+  z_w = wheel_center.r_0[3]
+  v_z = der(z_w)
+  z_bottom = z_w - unloaded_radius
+  rho = ifelse(z_bottom < 0, -z_bottom, 0)
+  loaded_radius = unloaded_radius - rho
+ 
+  # Contact force
+  Fz_raw = vertical_stiffness * rho - vertical_damping * v_z
+  Fz = ifelse(rho > 0, ifelse(Fz_raw > 0, Fz_raw, 0), 0)
+ 
+  # Force
+  wheel_center.f = -wheel_center.R * [0, 0, Fz]
+  wheel_center.tau = [0, 0, 0]
+
+metadata {
+  "_links": {
+    "wheel_center": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 450, "y2": 550}}}
+    }
+  }
+}
+end
