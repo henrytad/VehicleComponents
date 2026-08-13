@@ -203,5 +203,7 @@ component.
 end
 
 
+include("InboardTestRig_definition.jl")
+include("Inboard_definition.jl")
 include("LinkageTestRig_definition.jl")
 include("Linkage_definition.jl")

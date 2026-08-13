@@ -1,0 +1,171 @@
+test component InboardTestRig
+  """
+  Inboard suspension test rig.
+   
+  Drives both pushrod outer pickups vertically and records heave and roll
+  spring deflection.
+   
+  The pushrod pickups are driven on a pure vertical prismatic rather than on
+  the arc a real control arm would sweep, so motion ratios measured here
+  exclude the outboard linkage geometry.
+  """
+
+  world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
+  inboard = VehicleComponents.Inboard(
+    pushrod_outer_left = pushrod_outer_left,
+    pushrod_outer_right = pushrod_outer_right,
+    rocker_pivot_left = [-0.030000, 0.120000, 0.540000],
+    rocker_pivot_right = [-0.030000, -0.120000, 0.540000],
+    pushrod_inner_left = [-0.030000, 0.138000, 0.570000],
+    pushrod_inner_right = [-0.030000, -0.138000, 0.570000],
+    heave_pickup_left = [-0.030000, 0.114000, 0.580000],
+    heave_pickup_right = [-0.030000, -0.114000, 0.580000],
+    roll_pickup_left = [-0.105000, 0.108000, 0.503000],
+    roll_pickup_right = [-0.105000, -0.108000, 0.577000],
+    heave_stiffness = 35000.0,
+    heave_damping = 1500.0,
+    roll_stiffness = 35000.0,
+    roll_damping = 1500.0,
+    heave_preload = 0.0,
+    roll_preload = 0.0,
+    pushrod_adjust_left = 0.0,
+    pushrod_adjust_right = 0.0
+  ) {^inboard}
+
+  # Left jack
+  fixed_left = MultibodyComponents.Fixed(r = pushrod_outer_left, render = false) {^fixed_left}
+  prismatic_left = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic_left}
+  pushrod_position_left = TranslationalComponents.Sources.Position(v = initial 0.0) {^pushrod_position_left}
+
+  # Right jack
+  fixed_right = MultibodyComponents.Fixed(r = pushrod_outer_right, render = false) {^fixed_right}
+  prismatic_right = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic_right}
+  pushrod_position_right = TranslationalComponents.Sources.Position(v = initial 0.0) {^pushrod_position_right}
+  
+  # Pushrod outer pickups
+  parameter pushrod_outer_left::Position[3] = [-0.030000, 0.470000, 0.300000]
+  parameter pushrod_outer_right::Position[3] = [-0.030000, -0.470000, 0.300000]
+  
+  # Excitation
+  parameter heave_amplitude::Length = 0.0254
+  parameter roll_amplitude::Length = 0.0254
+  parameter heave_freq::Frequency = 0.5
+  parameter roll_freq::Frequency = 1.25
+
+  variable heave_motion::Length
+  variable roll_motion::Length
+
+relations
+
+  heave_motion = heave_amplitude * sin(2 * π * heave_freq * time)
+  roll_motion = roll_amplitude * sin(2 * π * roll_freq * time)
+
+  pushrod_position_left.s_ref = heave_motion + roll_motion
+  pushrod_position_right.s_ref = heave_motion - roll_motion
+
+  # Left jack
+  connect(fixed_left.frame_b, prismatic_left.frame_a) {^id9}
+  connect(prismatic_left.support, pushrod_position_left.support) {^id10}
+  connect(pushrod_position_left.flange, prismatic_left.axis) {^id11}
+  
+  # Right jack
+  connect(fixed_right.frame_b, prismatic_right.frame_a) {^id12}
+  connect(prismatic_right.support, pushrod_position_right.support) {^id13}
+  connect(pushrod_position_right.flange, prismatic_right.axis) {^id14}
+  
+  # Inboard
+  connect(prismatic_left.frame_b, inboard.linkage_left) {^id15}
+  connect(prismatic_right.frame_b, inboard.linkage_right) {^id16}
+  connect(inboard.chassis, world.frame_b) {^id17}
+
+metadata {
+  "Dyad": {
+    "experiments": {},
+    "tests": {
+      "heave": {
+        "stop": 2,
+        "params": {"heave_amplitude": 0.0254, "roll_amplitude": 0},
+        "atol": {"inboard.heave_deflection": 0.00001, "inboard.roll_deflection": 0.00001},
+        "expect": {
+          "initial": {"inboard.heave_deflection": 0, "inboard.roll_deflection": 0},
+          "signals": ["inboard.heave_deflection", "inboard.roll_deflection"]
+        }
+      },
+      "roll": {
+        "stop": 2,
+        "params": {"heave_amplitude": 0, "roll_amplitude": 0.0254},
+        "atol": {"inboard.heave_deflection": 0.00001, "inboard.roll_deflection": 0.00001},
+        "expect": {
+          "initial": {"inboard.heave_deflection": 0, "inboard.roll_deflection": 0},
+          "signals": ["inboard.heave_deflection", "inboard.roll_deflection"]
+        }
+      }
+    },
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "rot": 0,
+        "layer": "icon",
+        "attrs": {}
+      }
+    ],
+    "icons": {"default": "dyad://Dyad/Default.svg"},
+    "path": {},
+    "doc": {"behavior": true},
+    "deprecated": null
+  },
+  "_links": {
+    "world": {"Dyad": {"placement": {"diagram": {"x1": 20, "y1": 10, "x2": 120, "y2": 110}}}},
+    "inboard": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "y1": 230, "x2": 550, "y2": 130}}}
+    },
+    "fixed_left": {
+      "Dyad": {
+        "placement": {"diagram": {"x1": 190, "x2": 290, "y1": 450, "y2": 550, "rot": 270}}
+      }
+    },
+    "prismatic_left": {
+      "Dyad": {
+        "placement": {"diagram": {"x1": 190, "x2": 290, "y1": 270, "y2": 370, "rot": 270}}
+      }
+    },
+    "pushrod_position_left": {
+      "Dyad": {"placement": {"diagram": {"x1": 40, "x2": 140, "y1": 270, "y2": 370}}}
+    },
+    "fixed_right": {
+      "Dyad": {
+        "placement": {"diagram": {"x1": 740, "x2": 840, "y1": 450, "y2": 550, "rot": 270}}
+      }
+    },
+    "prismatic_right": {
+      "Dyad": {
+        "placement": {"diagram": {"x1": 740, "x2": 840, "y1": 270, "y2": 370, "rot": 270}}
+      }
+    },
+    "pushrod_position_right": {
+      "Dyad": {"placement": {"diagram": {"x1": 590, "x2": 690, "y1": 270, "y2": 370}}}
+    },
+    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id10": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 290, "y": 430}, {"x": 90, "y": 430}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id12": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id13": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 840, "y": 430}, {"x": 640, "y": 430}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id14": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id15": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 240, "y": 180}], "E": 2}], "path": {}}},
+    "id16": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 790, "y": 180}], "E": 2}], "path": {}}},
+    "id17": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 60}], "E": 2}], "path": {}}}
+  }
+}
+end
