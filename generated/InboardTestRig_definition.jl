@@ -111,7 +111,7 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named prismatic_left = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, prismatic_left_overrides...))
   # Subcomponent pushrod_position_left of type TranslationalComponents.Sources.Position
   pushrod_position_left_overrides = __pop_subcomponent_overrides!(__overrides, "pushrod_position_left")
-  push!(__systems, @named pushrod_position_left = TranslationalComponents.Sources.Position(; v__initial=0.0, pushrod_position_left_overrides...))
+  push!(__systems, @named pushrod_position_left = TranslationalComponents.Sources.Position(; pushrod_position_left_overrides...))
   # Subcomponent fixed_right of type MultibodyComponents.Fixed
   fixed_right_overrides = __pop_subcomponent_overrides!(__overrides, "fixed_right")
   push!(__systems, @named fixed_right = MultibodyComponents.Fixed(; r=pushrod_outer_right, render=false, fixed_right_overrides...))
@@ -120,7 +120,7 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named prismatic_right = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, prismatic_right_overrides...))
   # Subcomponent pushrod_position_right of type TranslationalComponents.Sources.Position
   pushrod_position_right_overrides = __pop_subcomponent_overrides!(__overrides, "pushrod_position_right")
-  push!(__systems, @named pushrod_position_right = TranslationalComponents.Sources.Position(; v__initial=0.0, pushrod_position_right_overrides...))
+  push!(__systems, @named pushrod_position_right = TranslationalComponents.Sources.Position(; pushrod_position_right_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
@@ -130,6 +130,8 @@ import Moshi as __Ext__Moshi
   isnothing(__ovr_roll_motion__guess) || (__guesses[roll_motion] = __ovr_roll_motion__guess)
 
   ### Initialization Equations
+  push!(__initialization_eqs, pushrod_position_left.v ~ 0.0)
+  push!(__initialization_eqs, pushrod_position_right.v ~ 0.0)
 
   ### Assertions
   __assertions = []

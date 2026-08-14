@@ -10,7 +10,7 @@ test component LinkageTestRig
   fixed = MultibodyComponents.Fixed(r = base, render = false) {^fixed}
   prismatic = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic}
   actuation_rod = MultibodyComponents.SphericalSpherical(r_0 = [0, 0, actuation_rod_length], render = false) {^actuation_rod}
-  wheel_position = TranslationalComponents.Sources.Position(v = initial 0.0) {^wheel_position}
+  wheel_position = TranslationalComponents.Sources.Position() {^wheel_position}
   
   # Linkage
   linkage = VehicleComponents.Linkage(
@@ -44,7 +44,10 @@ test component LinkageTestRig
   parameter freq::Frequency = 0.5
 
 relations
-  
+
+  initial wheel_position.v = 0.0
+  guess linkage.lca_rev.phi = 0.0
+
   wheel_position.s_ref = stroke * sin(2 * π * freq * time)
 
   connect(fixed.frame_b, prismatic.frame_a) {^id7}

@@ -248,7 +248,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
 
   ### Guesses
-  __guesses[lca_rev.phi] = (0.0)
   isnothing(__ovr_toe__guess) || (__guesses[toe] = __ovr_toe__guess)
   isnothing(__ovr_camber__guess) || (__guesses[camber] = __ovr_camber__guess)
   isnothing(__ovr_wc_height__guess) || (__guesses[wc_height] = __ovr_wc_height__guess)

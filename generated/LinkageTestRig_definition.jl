@@ -88,7 +88,7 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named actuation_rod = MultibodyComponents.SphericalSpherical(; r_0=[Float64(0), Float64(0), actuation_rod_length], render=false, actuation_rod_overrides...))
   # Subcomponent wheel_position of type TranslationalComponents.Sources.Position
   wheel_position_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_position")
-  push!(__systems, @named wheel_position = TranslationalComponents.Sources.Position(; v__initial=0.0, wheel_position_overrides...))
+  push!(__systems, @named wheel_position = TranslationalComponents.Sources.Position(; wheel_position_overrides...))
   # Subcomponent linkage of type VehicleComponents.Linkage
   linkage_overrides = __pop_subcomponent_overrides!(__overrides, "linkage")
   push!(__systems, @named linkage = VehicleComponents.Linkage(; lca_front=[0.1, 0.195, 0.125], lca_outer=[0.005, 0.56, 0.13], lca_rear=[-0.1, 0.205, 0.115], uca_front=[0.08, 0.245, 0.305], uca_outer=[-0.01, 0.53, 0.33], uca_rear=[-0.08, 0.255, 0.295], tierod_inner=[0.08, 0.22, 0.15], tierod_outer=[0.075, 0.55, 0.16], pushrod_outer=[Float64(0.0), 0.48, 0.34], wheel_center=wheel_center, static_camber=Float64(0.0), static_toe=Float64(0.0), upright_mass=Float64(5.0), upright_I_11=0.05, upright_I_22=0.05, upright_I_33=0.05, linkage_overrides...))
@@ -97,8 +97,10 @@ import Moshi as __Ext__Moshi
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
 
   ### Guesses
+  __guesses[linkage.lca_rev.phi] = (0.0)
 
   ### Initialization Equations
+  push!(__initialization_eqs, wheel_position.v ~ 0.0)
 
   ### Assertions
   __assertions = []

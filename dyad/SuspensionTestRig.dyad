@@ -70,13 +70,13 @@ test component SuspensionTestRig
   fixed_left = MultibodyComponents.Fixed(r = base_left, render = false) {^fixed_left}
   prismatic_left = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic_left}
   actuation_rod_left = MultibodyComponents.SphericalSpherical(r_0 = [0, 0, jack_rod_length], radius = 0.02, render = false) {^actuation_rod_left}
-  wheel_position_left = TranslationalComponents.Sources.Position(v = initial 0.0) {^wheel_position_left}
+  wheel_position_left = TranslationalComponents.Sources.Position() {^wheel_position_left}
  
   # Right jack
   fixed_right = MultibodyComponents.Fixed(r = base_right, render = false) {^fixed_right}
   prismatic_right = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic_right}
   actuation_rod_right = MultibodyComponents.SphericalSpherical(r_0 = [0, 0, jack_rod_length], radius = 0.02, render = false) {^actuation_rod_right}
-  wheel_position_right = TranslationalComponents.Sources.Position(v = initial 0.0) {^wheel_position_right}
+  wheel_position_right = TranslationalComponents.Sources.Position() {^wheel_position_right}
  
   # Shared references
   parameter wheel_center_left::Position[3] = [0.000, 0.600, 0.230]
@@ -95,7 +95,12 @@ test component SuspensionTestRig
   parameter freq::Frequency = 0.5
  
 relations
- 
+
+  initial wheel_position_left.v = 0.0
+  initial wheel_position_right.v = 0.0
+  guess suspension.linkage_left.lca_rev.phi = 0.0
+  guess suspension.linkage_right.lca_rev.phi = 0.0
+
   wheel_position_left.s_ref = (heave_amplitude + roll_amplitude) * sin(2 * π * freq * time)
   wheel_position_right.s_ref = (heave_amplitude - roll_amplitude) * sin(2 * π * freq * time)
  

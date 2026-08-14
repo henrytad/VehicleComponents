@@ -109,7 +109,7 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named actuation_rod_left = MultibodyComponents.SphericalSpherical(; r_0=[Float64(0), Float64(0), jack_rod_length], radius=0.02, render=false, actuation_rod_left_overrides...))
   # Subcomponent wheel_position_left of type TranslationalComponents.Sources.Position
   wheel_position_left_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_position_left")
-  push!(__systems, @named wheel_position_left = TranslationalComponents.Sources.Position(; v__initial=0.0, wheel_position_left_overrides...))
+  push!(__systems, @named wheel_position_left = TranslationalComponents.Sources.Position(; wheel_position_left_overrides...))
   # Subcomponent fixed_right of type MultibodyComponents.Fixed
   fixed_right_overrides = __pop_subcomponent_overrides!(__overrides, "fixed_right")
   push!(__systems, @named fixed_right = MultibodyComponents.Fixed(; r=base_right, render=false, fixed_right_overrides...))
@@ -121,14 +121,18 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named actuation_rod_right = MultibodyComponents.SphericalSpherical(; r_0=[Float64(0), Float64(0), jack_rod_length], radius=0.02, render=false, actuation_rod_right_overrides...))
   # Subcomponent wheel_position_right of type TranslationalComponents.Sources.Position
   wheel_position_right_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_position_right")
-  push!(__systems, @named wheel_position_right = TranslationalComponents.Sources.Position(; v__initial=0.0, wheel_position_right_overrides...))
+  push!(__systems, @named wheel_position_right = TranslationalComponents.Sources.Position(; wheel_position_right_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
 
   ### Guesses
+  __guesses[suspension.linkage_left.lca_rev.phi] = (0.0)
+  __guesses[suspension.linkage_right.lca_rev.phi] = (0.0)
 
   ### Initialization Equations
+  push!(__initialization_eqs, wheel_position_left.v ~ 0.0)
+  push!(__initialization_eqs, wheel_position_right.v ~ 0.0)
 
   ### Assertions
   __assertions = []
