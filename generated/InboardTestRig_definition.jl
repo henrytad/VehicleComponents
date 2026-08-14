@@ -13,8 +13,8 @@ import Moshi as __Ext__Moshi
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `pushrod_outer_left`         |                          | m  |   [-0.030000,..., 0.300000] |
-| `pushrod_outer_right`         |                          | m  |   [-0.030000,..., 0.300000] |
+| `pushrod_outer_left`         |                          | m  |   [0.000000, ..., 0.340000] |
+| `pushrod_outer_right`         |                          | m  |   [0.000000, ..., 0.340000] |
 | `heave_amplitude`         |                          | m  |   0.0254 |
 | `roll_amplitude`         |                          | m  |   0.0254 |
 | `heave_freq`         |                          | Hz  |   0.5 |
@@ -27,7 +27,7 @@ import Moshi as __Ext__Moshi
 | `heave_motion`         |                          | m  |
 | `roll_motion`         |                          | m  |
 """
-@component function InboardTestRig(; name = nothing, pushrod_outer_left=[-0.03, 0.47, 0.3], pushrod_outer_right=[-0.03, -0.47, 0.3], heave_amplitude=0.0254, roll_amplitude=0.0254, heave_freq=0.5, roll_freq=1.25, kwargs...)
+@component function InboardTestRig(; name = nothing, pushrod_outer_left=[Float64(0.0), 0.48, 0.34], pushrod_outer_right=[Float64(0.0), -0.48, 0.34], heave_amplitude=0.0254, roll_amplitude=0.0254, heave_freq=0.5, roll_freq=1.25, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:

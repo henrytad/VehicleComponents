@@ -75,7 +75,7 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
   # Subcomponent tire of type VehicleComponents.TireMF61
   tire_overrides = __pop_subcomponent_overrides!(__overrides, "tire")
-  push!(__systems, @named tire = VehicleComponents.TireMF61(; unloaded_radius=unloaded_radius, width=0.195, vertical_stiffness=Float64(180000.0), vertical_damping=Float64(120.0), tire_overrides...))
+  push!(__systems, @named tire = VehicleComponents.TireMF61(; unloaded_radius=unloaded_radius, width=0.2, vertical_stiffness=Float64(180000.0), vertical_damping=Float64(120.0), tire_overrides...))
   # Subcomponent mount of type MultibodyComponents.FixedTranslation
   mount_overrides = __pop_subcomponent_overrides!(__overrides, "mount")
   push!(__systems, @named mount = MultibodyComponents.FixedTranslation(; r=[Float64(0), Float64(0), unloaded_radius], render=false, mount_overrides...))
