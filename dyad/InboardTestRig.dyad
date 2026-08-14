@@ -35,12 +35,12 @@ test component InboardTestRig
   # Left jack
   fixed_left = MultibodyComponents.Fixed(r = pushrod_outer_left, render = false) {^fixed_left}
   prismatic_left = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic_left}
-  pushrod_position_left = TranslationalComponents.Sources.Position(v = initial 0.0) {^pushrod_position_left}
+  pushrod_position_left = TranslationalComponents.Sources.Position() {^pushrod_position_left}
 
   # Right jack
   fixed_right = MultibodyComponents.Fixed(r = pushrod_outer_right, render = false) {^fixed_right}
   prismatic_right = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic_right}
-  pushrod_position_right = TranslationalComponents.Sources.Position(v = initial 0.0) {^pushrod_position_right}
+  pushrod_position_right = TranslationalComponents.Sources.Position() {^pushrod_position_right}
   
   # Pushrod outer pickups
   parameter pushrod_outer_left::Position[3] = [-0.030000, 0.470000, 0.300000]
@@ -56,6 +56,9 @@ test component InboardTestRig
   variable roll_motion::Length
 
 relations
+
+  initial pushrod_position_left.v = 0.0
+  initial pushrod_position_right.v = 0.0
 
   heave_motion = heave_amplitude * sin(2 * π * heave_freq * time)
   roll_motion = roll_amplitude * sin(2 * π * roll_freq * time)

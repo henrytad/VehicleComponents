@@ -17,7 +17,7 @@ test component TireTestRig
   # Mount
   mount = MultibodyComponents.FixedTranslation(r = [0, 0, unloaded_radius], render = false) {^mount}
   prismatic = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic}
-  wheel_position = TranslationalComponents.Sources.Position(v = initial 0.0) {^wheel_position}
+  wheel_position = TranslationalComponents.Sources.Position() {^wheel_position}
 
   # Shared reference
   parameter unloaded_radius::Length = 0.230
@@ -27,6 +27,8 @@ test component TireTestRig
   parameter freq::Frequency = 0.5
 
 relations
+
+  initial wheel_position.v = 0.0
 
   wheel_position.s_ref = stroke * sin(2 * π * freq * time)
 

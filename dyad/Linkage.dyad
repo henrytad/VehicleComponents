@@ -137,8 +137,6 @@ component Linkage
   variable wc_axis_delta::Dyad.Position[3]
 
 relations
-  
-  guess lca_rev.phi = 0.0
 
   # Measurements
   wc_axis_delta = wc_axis.frame_b.r_0 - wc_axis.frame_a.r_0

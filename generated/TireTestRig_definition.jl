@@ -84,7 +84,7 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named prismatic = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, prismatic_overrides...))
   # Subcomponent wheel_position of type TranslationalComponents.Sources.Position
   wheel_position_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_position")
-  push!(__systems, @named wheel_position = TranslationalComponents.Sources.Position(; v__initial=0.0, wheel_position_overrides...))
+  push!(__systems, @named wheel_position = TranslationalComponents.Sources.Position(; wheel_position_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
@@ -92,6 +92,7 @@ import Moshi as __Ext__Moshi
   ### Guesses
 
   ### Initialization Equations
+  push!(__initialization_eqs, wheel_position.v ~ 0.0)
 
   ### Assertions
   __assertions = []
