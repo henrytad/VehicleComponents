@@ -9,7 +9,7 @@ test component TireTestRig
 
   tire = VehicleComponents.TireMF61(
     unloaded_radius = unloaded_radius,
-    width = 0.195,
+    width = 0.20,
     vertical_stiffness = 180000.0,
     vertical_damping = 120.0
   ) {^tire}

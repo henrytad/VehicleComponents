@@ -43,8 +43,8 @@ test component InboardTestRig
   pushrod_position_right = TranslationalComponents.Sources.Position() {^pushrod_position_right}
   
   # Pushrod outer pickups
-  parameter pushrod_outer_left::Position[3] = [-0.030000, 0.470000, 0.300000]
-  parameter pushrod_outer_right::Position[3] = [-0.030000, -0.470000, 0.300000]
+  parameter pushrod_outer_left::Position[3] = [0.000000, 0.480000, 0.340000]
+  parameter pushrod_outer_right::Position[3] = [0.000000, -0.480000, 0.340000]
   
   # Excitation
   parameter heave_amplitude::Length = 0.0254
