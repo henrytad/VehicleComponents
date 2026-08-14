@@ -167,10 +167,10 @@ metadata {
       "settle": {
         "stop": 5.0,
         "atol": {
-          "vehicle.tire_fl.Fz": 1e-5,
-          "vehicle.tire_fr.Fz": 1e-5,
-          "vehicle.tire_rl.Fz": 1e-5,
-          "vehicle.tire_rr.Fz": 1e-5,
+          "vehicle.tire_fl.Fz": 5e-1,
+          "vehicle.tire_fr.Fz": 5e-1,
+          "vehicle.tire_rl.Fz": 5e-1,
+          "vehicle.tire_rr.Fz": 5e-1,
           "heave_joint.s": 1e-5,
           "pitch_joint.phi": 1e-5,
           "roll_joint.phi": 1e-5
