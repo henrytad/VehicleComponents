@@ -1,0 +1,116 @@
+component FullVehicle
+  """
+  Full vehicle
+ 
+  The `rig` frame is the sprung mass reference. Attach it to ground through
+  whatever DOF the study needs.
+  """
+
+  rig = Dyad.Frame3D() {^rig}
+  
+  # Sprung mass
+  body = MultibodyComponents.Body(
+    m = sprung_mass,
+    r_cm = cg_offset,
+    I_11 = sprung_I_11,
+    I_22 = sprung_I_22,
+    I_33 = sprung_I_33,
+    cylinder_radius = 0
+  ) {^body}
+
+  # Tires
+  tire_fr = VehicleComponents.TireMF61() {^tire_fr}
+  tire_fl = VehicleComponents.TireMF61() {^tire_fl}
+  tire_rl = VehicleComponents.TireMF61() {^tire_rl}
+  tire_rr = VehicleComponents.TireMF61() {^tire_rr}
+
+  # Axles
+  front_suspension = VehicleComponents.Suspension() {^front_suspension}
+  rear_suspension = VehicleComponents.Suspension() {^rear_suspension}
+
+  # Sprung mass properties
+  parameter sprung_mass::Mass
+  parameter sprung_I_11::Inertia
+  parameter sprung_I_22::Inertia
+  parameter sprung_I_33::Inertia
+  parameter cg_offset::Position[3]
+
+relations
+
+  # Sprung mass
+  connect(body.frame_a, rig) {^id15}
+  connect(front_suspension.chassis, body.frame_a) {^id13}
+  connect(rear_suspension.chassis, body.frame_a) {^id14}
+ 
+  # Front corners
+  connect(front_suspension.wheel_left, tire_fl.wheel_center) {^id9}
+  connect(front_suspension.wheel_right, tire_fr.wheel_center) {^id10}
+ 
+  # Rear corners
+  connect(rear_suspension.wheel_left, tire_rl.wheel_center) {^id11}
+  connect(rear_suspension.wheel_right, tire_rr.wheel_center) {^id12}
+
+metadata {
+  "Dyad": {
+    "experiments": {},
+    "tests": {},
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "rot": 0,
+        "layer": "icon",
+        "attrs": {}
+      }
+    ],
+    "icons": {"default": "dyad://Dyad/Default.svg"},
+    "path": {},
+    "doc": {"behavior": true},
+    "deprecated": null
+  },
+  "_links": {
+    "rig": {
+      "Dyad": {"placement": {"diagram": {"x1": -40, "x2": 40, "y1": 460, "y2": 540}}}
+    },
+    "tire_fr": {
+      "Dyad": {"placement": {"diagram": {"x1": 680, "x2": 780, "y1": 290, "y2": 390}}}
+    },
+    "tire_fl": {
+      "Dyad": {"placement": {"diagram": {"x1": 300, "x2": 200, "y1": 290, "y2": 390}}}
+    },
+    "tire_rl": {
+      "Dyad": {"placement": {"diagram": {"x1": 310, "x2": 210, "y1": 610, "y2": 710}}}
+    },
+    "tire_rr": {
+      "Dyad": {"placement": {"diagram": {"x1": 690, "x2": 790, "y1": 610, "y2": 710}}}
+    },
+    "front_suspension": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 450, "y1": 390, "x2": 550, "y2": 290, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "rear_suspension": {
+      "Dyad": {
+        "placement": {
+          "diagram": {"iconName": "default", "x1": 450, "y1": 610, "x2": 550, "y2": 710, "rot": 0}
+        },
+        "tags": []
+      }
+    },
+    "body": {
+      "Dyad": {"placement": {"diagram": {"x1": 590, "y1": 450, "x2": 690, "y2": 550}}}
+    },
+    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}]}},
+    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}]}},
+    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}]}},
+    "id12": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}]}},
+    "id13": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 500}], "E": 2}]}},
+    "id14": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 500}], "E": 2}]}},
+    "id15": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+  }
+}
+end
