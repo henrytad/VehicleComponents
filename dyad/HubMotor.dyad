@@ -20,7 +20,7 @@ relations
   tau_wheel = tau * gear_ratio
   spline.tau = -tau_wheel
   wheel_center.f = [0, 0, 0]
-  wheel_center.tau = -axis * tau_wheel
+  wheel_center.tau = axis * tau_wheel
 
 metadata {
   "_links": {

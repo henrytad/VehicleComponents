@@ -13,10 +13,10 @@ import Moshi as __Ext__Moshi
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `drive_torque`         |                          | N.m  |   21.5 |
+| `drive_torque`         |                          | N.m  |   5.0 |
 | `drive_start_time`         |                          | s  |   1.5 |
 """
-@component function FullVehicleTestStraightLine(; name = nothing, drive_torque=21.5, drive_start_time=1.5, kwargs...)
+@component function FullVehicleTestStraightLine(; name = nothing, drive_torque=Float64(5.0), drive_start_time=1.5, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:

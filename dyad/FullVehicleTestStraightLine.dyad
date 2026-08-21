@@ -335,10 +335,10 @@ test component FullVehicleTestStraightLine
     )
   ) {^vehicle}
 
-  parameter drive_torque::Torque = 21.5
+  parameter drive_torque::Torque = 5.0
   parameter drive_start_time::Time = 1.5
 
-relations
+  relations
 
   initial longitudinal_joint.s = 0.0
   initial longitudinal_joint.v = 0.0

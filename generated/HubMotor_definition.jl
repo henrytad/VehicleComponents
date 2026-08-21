@@ -106,7 +106,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, tau_wheel ~ tau * gear_ratio)
   push!(__eqs, spline.tau ~ -tau_wheel)
   push!(__eqs, wheel_center.f ~ [0, 0, 0])
-  push!(__eqs, wheel_center.tau ~ -axis * tau_wheel)
+  push!(__eqs, wheel_center.tau ~ axis * tau_wheel)
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
