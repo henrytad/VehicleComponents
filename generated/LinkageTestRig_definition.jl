@@ -13,11 +13,11 @@ import Moshi as __Ext__Moshi
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `wheel_center`         |                          | m  |   [0.000, 0.600, 0.230] |
+| `wheel_center`         |                          | m  |   [0.000, 0.600, 0.3135] |
 | `stroke`         |                          | m  |   0.0254 |
 | `freq`         |                          | Hz  |   0.5 |
 """
-@component function LinkageTestRig(; name = nothing, wheel_center=[Float64(0.0), 0.6, 0.23], stroke=0.0254, freq=0.5, kwargs...)
+@component function LinkageTestRig(; name = nothing, wheel_center=[Float64(0.0), 0.6, 0.3135], stroke=0.0254, freq=0.5, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -91,7 +91,7 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named wheel_position = TranslationalComponents.Sources.Position(; wheel_position_overrides...))
   # Subcomponent linkage of type VehicleComponents.Linkage
   linkage_overrides = __pop_subcomponent_overrides!(__overrides, "linkage")
-  push!(__systems, @named linkage = VehicleComponents.Linkage(; lca_front=[0.1, 0.195, 0.125], lca_outer=[0.005, 0.56, 0.13], lca_rear=[-0.1, 0.205, 0.115], uca_front=[0.08, 0.245, 0.305], uca_outer=[-0.01, 0.53, 0.33], uca_rear=[-0.08, 0.255, 0.295], tierod_inner=[0.08, 0.22, 0.15], tierod_outer=[0.075, 0.55, 0.16], pushrod_outer=[Float64(0.0), 0.48, 0.34], wheel_center=wheel_center, static_camber=Float64(0.0), static_toe=Float64(0.0), upright_mass=Float64(5.0), upright_I_11=0.05, upright_I_22=0.05, upright_I_33=0.05, linkage_overrides...))
+  push!(__systems, @named linkage = VehicleComponents.Linkage(; lca_front=[0.1, 0.195, 0.2085], lca_outer=[0.005, 0.56, 0.2135], lca_rear=[-0.1, 0.205, 0.1985], uca_front=[0.08, 0.245, 0.3885], uca_outer=[-0.01, 0.53, 0.4135], uca_rear=[-0.08, 0.255, 0.3785], tierod_inner=[0.08, 0.22, 0.2335], tierod_outer=[0.075, 0.55, 0.2435], pushrod_outer=[Float64(0.0), 0.48, 0.4235], wheel_center=wheel_center, static_camber=Float64(0.0), static_toe=Float64(0.0), linkage_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))

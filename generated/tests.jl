@@ -18,8 +18,11 @@ end
 include("test_internals.jl")
 
 @testset "`VehicleComponents`" begin
+include("CornerAssembly_test.jl")
 include("FullVehicleTestStatic_test.jl")
+include("FullVehicleTestStraightLine_test.jl")
 include("FullVehicle_test.jl")
+include("HubMotor_test.jl")
 include("InboardTestRig_test.jl")
 include("Inboard_test.jl")
 include("LinkageTestRig_test.jl")
@@ -28,4 +31,5 @@ include("SuspensionTestRig_test.jl")
 include("Suspension_test.jl")
 include("TireMF61_test.jl")
 include("TireTestRig_test.jl")
+include("WheelAssembly_test.jl")
 end

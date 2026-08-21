@@ -203,8 +203,11 @@ component.
 end
 
 
+include("CornerAssembly_definition.jl")
 include("FullVehicleTestStatic_definition.jl")
+include("FullVehicleTestStraightLine_definition.jl")
 include("FullVehicle_definition.jl")
+include("HubMotor_definition.jl")
 include("InboardTestRig_definition.jl")
 include("Inboard_definition.jl")
 include("LinkageTestRig_definition.jl")
@@ -213,3 +216,4 @@ include("SuspensionTestRig_definition.jl")
 include("Suspension_definition.jl")
 include("TireMF61_definition.jl")
 include("TireTestRig_definition.jl")
+include("WheelAssembly_definition.jl")

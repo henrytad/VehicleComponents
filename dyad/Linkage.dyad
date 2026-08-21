@@ -1,7 +1,7 @@
 component Linkage
   """
-  Double-wishbone suspension linkage model.
-  
+  A massless double-wishbone suspension linkage model.
+
   Defines chassis, wheel, and pushrod frames from configurable hardpoints,
   and reports wheel camber, toe, and ride height. Camber and toe are measured
   against the chassis.
@@ -70,18 +70,9 @@ component Linkage
   # Static alignment
   camber_rot = MultibodyComponents.FixedRotation(n = [1, 0, 0], angle = -side * static_camber, render = false) {^camber_rot}
   toe_rot = MultibodyComponents.FixedRotation(n = [0, 0, 1], angle = -side * static_toe, render = false) {^toe_rot}
- 
+
   # Camber and toe are the wheel's rotation relative to the body
   wheel_angles = MultibodyComponents.RelativeAngles(sequence = [1, 2, 3]) {^wheel_angles}
-  
-  upright_body = MultibodyComponents.Body(
-    m = upright_mass,
-    I_11 = upright_I_11,
-    I_22 = upright_I_22,
-    I_33 = upright_I_33,
-    radius = sty_body_radius,
-    color = sty_grey_dark
-  ) {^upright_body}
   
   # Push rod pickup
   pushrod_to_uca = MultibodyComponents.FixedTranslation(
@@ -105,12 +96,6 @@ component Linkage
   # Static alignment
   parameter static_camber::Angle
   parameter static_toe::Angle
-
-  # Upright
-  parameter upright_mass::Mass
-  parameter upright_I_11::Inertia
-  parameter upright_I_22::Inertia
-  parameter upright_I_33::Inertia
 
   # Control arm hinge axes
   final parameter lca_axis::Real[3] = (lca_front - lca_rear) / LinearAlgebra.norm(lca_front - lca_rear)
@@ -167,7 +152,6 @@ relations
   connect(lca_to_wc.frame_b, camber_rot.frame_a) {^id31}
   connect(camber_rot.frame_b, toe_rot.frame_a) {^id32}
   connect(toe_rot.frame_b, wheel) {^id33}
-  connect(upright_body.frame_a, lca_to_wc.frame_b) {^id34}
   connect(pushrod_to_uca.frame_b, uca_rod_front.frame_im) {^id35}
   connect(pushrod_to_uca.frame_a, pushrod) {^id36}
 
@@ -245,9 +229,6 @@ metadata {
     "wheel_angles": {
       "Dyad": {"placement": {"diagram": {"x1": 450, "y1": 880, "x2": 550, "y2": 980}}}
     },
-    "upright_body": {
-      "Dyad": {"placement": {"diagram": {"x1": 720, "y1": 350, "x2": 820, "y2": 450}}}
-    },
     "pushrod_to_uca": {
       "Dyad": {"placement": {"diagram": {"x1": 550, "y1": 100, "x2": 450, "y2": 200}}}
     },
@@ -303,12 +284,6 @@ metadata {
     "id31": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
     "id32": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
     "id33": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id34": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 690, "y": 400}, {"x": 690, "y": 500}], "E": 2}],
-        "path": {}
-      }
-    },
     "id35": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 430, "y": 150}], "E": 2}], "path": {}}},
     "id36": {
       "Dyad": {

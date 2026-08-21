@@ -1,0 +1,35 @@
+component HubMotor
+  """
+  Outboard motor: torque source with its reaction carried by the structure it
+  is bolted to.
+  """
+
+  wheel_center = Dyad.Frame3D() {^wheel_center}
+  spline = Dyad.Spline() {^spline}
+
+  parameter axis::Real[3] = [0, 1, 0]
+  parameter gear_ratio::Real = 1.0
+
+  "Motor shaft torque. Supplied by whoever instantiates the motor."
+  variable tau::Torque
+  "Torque delivered at the wheel"
+  variable tau_wheel::Torque
+
+relations
+
+  tau_wheel = tau * gear_ratio
+  spline.tau = -tau_wheel
+  wheel_center.f = [0, 0, 0]
+  wheel_center.tau = axis * tau_wheel
+
+metadata {
+  "_links": {
+    "spline": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
+    },
+    "wheel_center": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 440, "y2": 540}}}
+    }
+  }
+}
+end

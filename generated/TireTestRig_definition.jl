@@ -7,17 +7,22 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   TireTestRig(; name, unloaded_radius, stroke, freq)
+   TireTestRig(; name, unloaded_radius, stroke, freq, speed, static_deflection, kappa_start, kappa_end, slip_ramp_time)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `unloaded_radius`         |                          | m  |   0.230 |
+| `unloaded_radius`         |                          | m  |   0.3135 |
 | `stroke`         |                          | m  |   0.0254 |
 | `freq`         |                          | Hz  |   0.5 |
+| `speed`         |                          | m/s  |   0.0 |
+| `static_deflection`         |                          | m  |   0.0 |
+| `kappa_start`         |                          | --  |   0.0 |
+| `kappa_end`         |                          | --  |   0.0 |
+| `slip_ramp_time`         |                          | s  |   1.0 |
 """
-@component function TireTestRig(; name = nothing, unloaded_radius=0.23, stroke=0.0254, freq=0.5, kwargs...)
+@component function TireTestRig(; name = nothing, unloaded_radius=0.3135, stroke=0.0254, freq=0.5, speed=Float64(0.0), static_deflection=Float64(0.0), kappa_start=Float64(0.0), kappa_end=Float64(0.0), slip_ramp_time=Float64(1.0), kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -44,6 +49,8 @@ import Moshi as __Ext__Moshi
   ### Path Parameters (non-final)
 
   ### Final Parameters (declarations)
+  append!(__params, @parameters (spin_rate_start::Real), [misc = "final"])
+  append!(__params, @parameters (spin_accel::Real), [misc = "final"])
 
   ### Deferred assignment (default values that depend on final parameters)
 
@@ -57,8 +64,25 @@ import Moshi as __Ext__Moshi
   __local__freq = freq
   append!(__params, @parameters (freq::Real))
   __initial_conditions[freq] = __local__freq
+  __local__speed = speed
+  append!(__params, @parameters (speed::Real))
+  __initial_conditions[speed] = __local__speed
+  __local__static_deflection = static_deflection
+  append!(__params, @parameters (static_deflection::Real))
+  __initial_conditions[static_deflection] = __local__static_deflection
+  __local__kappa_start = kappa_start
+  append!(__params, @parameters (kappa_start::Real))
+  __initial_conditions[kappa_start] = __local__kappa_start
+  __local__kappa_end = kappa_end
+  append!(__params, @parameters (kappa_end::Real))
+  __initial_conditions[kappa_end] = __local__kappa_end
+  __local__slip_ramp_time = slip_ramp_time
+  append!(__params, @parameters (slip_ramp_time::Real))
+  __initial_conditions[slip_ramp_time] = __local__slip_ramp_time
 
   ### Final Parameters (assignments)
+  __bindings[spin_rate_start] = (1 + kappa_start) * speed / unloaded_radius
+  __bindings[spin_accel] = (kappa_end - kappa_start) * speed / (unloaded_radius * slip_ramp_time)
 
   ### Final Path Parameters
 
@@ -75,16 +99,28 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
   # Subcomponent tire of type VehicleComponents.TireMF61
   tire_overrides = __pop_subcomponent_overrides!(__overrides, "tire")
-  push!(__systems, @named tire = VehicleComponents.TireMF61(; unloaded_radius=unloaded_radius, width=0.2, vertical_stiffness=Float64(180000.0), vertical_damping=Float64(120.0), tire_overrides...))
+  push!(__systems, @named tire = VehicleComponents.TireMF61(; unloaded_radius=unloaded_radius, width=0.205, vertical_stiffness=Float64(209651.0), vertical_damping=Float64(50.0), longitudinal_stiffness=Float64(358066.0), FNOMIN=Float64(220.0), BREFF=8.386, DREFF=0.25826, FREFF=0.07394, INFLPRES=Float64(220000.0), NOMPRES=Float64(220000.0), LONGVL=16.7, PCX1=2.9761, PDX1=0.53798, PDX2=0.00359, PDX3=4.89327, PEX1=67.557, PEX2=-67.469, PEX3=17.058, PEX4=0.18492, PKX1=9.35368, PKX2=1.06116, PKX3=-0.05644, PHX1=-0.0054, PHX2=0.00068, PVX1=0.09747, PVX2=-0.00587, PPX1=-1.89606, PPX2=0.53013, PPX3=-6.06583, PPX4=-2.95759, LFZO=Float64(1.0), LCX=Float64(1.0), LMUX=Float64(1.0), LEX=Float64(1.0), LKX=Float64(1.0), LHX=Float64(1.0), LVX=Float64(1.0), LMUV=Float64(0.0), tire_overrides...))
   # Subcomponent mount of type MultibodyComponents.FixedTranslation
   mount_overrides = __pop_subcomponent_overrides!(__overrides, "mount")
-  push!(__systems, @named mount = MultibodyComponents.FixedTranslation(; r=[Float64(0), Float64(0), unloaded_radius], render=false, mount_overrides...))
+  push!(__systems, @named mount = MultibodyComponents.FixedTranslation(; r=[Float64(0), Float64(0), unloaded_radius - static_deflection], render=false, mount_overrides...))
+  # Subcomponent carriage of type MultibodyComponents.Prismatic
+  carriage_overrides = __pop_subcomponent_overrides!(__overrides, "carriage")
+  push!(__systems, @named carriage = MultibodyComponents.Prismatic(; n=[Float64(1), Float64(0), Float64(0)], render=false, carriage_overrides...))
+  # Subcomponent carriage_position of type TranslationalComponents.Sources.Position
+  carriage_position_overrides = __pop_subcomponent_overrides!(__overrides, "carriage_position")
+  push!(__systems, @named carriage_position = TranslationalComponents.Sources.Position(; carriage_position_overrides...))
   # Subcomponent prismatic of type MultibodyComponents.Prismatic
   prismatic_overrides = __pop_subcomponent_overrides!(__overrides, "prismatic")
   push!(__systems, @named prismatic = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, prismatic_overrides...))
   # Subcomponent wheel_position of type TranslationalComponents.Sources.Position
   wheel_position_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_position")
   push!(__systems, @named wheel_position = TranslationalComponents.Sources.Position(; wheel_position_overrides...))
+  # Subcomponent spin of type RotationalComponents.Sources.Position
+  spin_overrides = __pop_subcomponent_overrides!(__overrides, "spin")
+  push!(__systems, @named spin = RotationalComponents.Sources.Position(; spin_overrides...))
+  # Subcomponent spin_ground of type RotationalComponents.Components.Fixed
+  spin_ground_overrides = __pop_subcomponent_overrides!(__overrides, "spin_ground")
+  push!(__systems, @named spin_ground = RotationalComponents.Components.Fixed(; spin_ground_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
@@ -93,17 +129,26 @@ import Moshi as __Ext__Moshi
 
   ### Initialization Equations
   push!(__initialization_eqs, wheel_position.v ~ 0.0)
+  push!(__initialization_eqs, carriage_position.v ~ speed)
+  push!(__initialization_eqs, spin.w ~ spin_rate_start)
 
   ### Assertions
   __assertions = []
 
   ### Equations
   push!(__eqs, wheel_position.s_ref ~ stroke * sin(2 * π * freq * t))
+  push!(__eqs, carriage_position.s_ref ~ speed * t)
+  push!(__eqs, spin.phi_ref ~ spin_rate_start * t + 0.5 * spin_accel * t ^ 2)
   push!(__eqs, connect(world.frame_b, mount.frame_a))
-  push!(__eqs, connect(mount.frame_b, prismatic.frame_a))
+  push!(__eqs, connect(mount.frame_b, carriage.frame_a))
+  push!(__eqs, connect(carriage.support, carriage_position.support))
+  push!(__eqs, connect(carriage_position.flange, carriage.axis))
+  push!(__eqs, connect(carriage.frame_b, prismatic.frame_a))
   push!(__eqs, connect(prismatic.support, wheel_position.support))
   push!(__eqs, connect(wheel_position.flange, prismatic.axis))
   push!(__eqs, connect(prismatic.frame_b, tire.wheel_center))
+  push!(__eqs, connect(spin.spline, tire.spline))
+  push!(__eqs, connect(spin_ground.spline, spin.support))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

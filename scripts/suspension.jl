@@ -36,10 +36,6 @@ parameter_map = Dict([
     ssys.suspension.linkage_left.uca_outer => cl.uca_outer,
     ssys.suspension.linkage_left.tierod_inner => cl.tierod_inner,
     ssys.suspension.linkage_left.tierod_outer => cl.tierod_outer,
-    ssys.suspension.linkage_left.upright_mass => cl.upright.mass,
-    ssys.suspension.linkage_left.upright_I_11 => cl.upright.i_11,
-    ssys.suspension.linkage_left.upright_I_22 => cl.upright.i_22,
-    ssys.suspension.linkage_left.upright_I_33 => cl.upright.i_33,
     ssys.suspension.linkage_left.static_camber => al.static_camber,
     ssys.suspension.linkage_left.static_toe => al.static_toe,
 
@@ -52,10 +48,6 @@ parameter_map = Dict([
     ssys.suspension.linkage_right.uca_outer => cr.uca_outer,
     ssys.suspension.linkage_right.tierod_inner => cr.tierod_inner,
     ssys.suspension.linkage_right.tierod_outer => cr.tierod_outer,
-    ssys.suspension.linkage_right.upright_mass => cr.upright.mass,
-    ssys.suspension.linkage_right.upright_I_11 => cr.upright.i_11,
-    ssys.suspension.linkage_right.upright_I_22 => cr.upright.i_22,
-    ssys.suspension.linkage_right.upright_I_33 => cr.upright.i_33,
     ssys.suspension.linkage_right.static_camber => ar.static_camber,
     ssys.suspension.linkage_right.static_toe => ar.static_toe,
 

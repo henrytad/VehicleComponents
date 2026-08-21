@@ -13,8 +13,8 @@ import Moshi as __Ext__Moshi
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `pushrod_outer_left`         |                          | m  |   [0.000000, ..., 0.340000] |
-| `pushrod_outer_right`         |                          | m  |   [0.000000, ..., 0.340000] |
+| `pushrod_outer_left`         |                          | m  |   [0.000000, ..., 0.423500] |
+| `pushrod_outer_right`         |                          | m  |   [0.000000, ..., 0.423500] |
 | `heave_amplitude`         |                          | m  |   0.0254 |
 | `roll_amplitude`         |                          | m  |   0.0254 |
 | `heave_freq`         |                          | Hz  |   0.5 |
@@ -27,7 +27,7 @@ import Moshi as __Ext__Moshi
 | `heave_motion`         |                          | m  |
 | `roll_motion`         |                          | m  |
 """
-@component function InboardTestRig(; name = nothing, pushrod_outer_left=[Float64(0.0), 0.48, 0.34], pushrod_outer_right=[Float64(0.0), -0.48, 0.34], heave_amplitude=0.0254, roll_amplitude=0.0254, heave_freq=0.5, roll_freq=1.25, kwargs...)
+@component function InboardTestRig(; name = nothing, pushrod_outer_left=[Float64(0.0), 0.48, 0.4235], pushrod_outer_right=[Float64(0.0), -0.48, 0.4235], heave_amplitude=0.0254, roll_amplitude=0.0254, heave_freq=0.5, roll_freq=1.25, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -102,7 +102,7 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
   # Subcomponent inboard of type VehicleComponents.Inboard
   inboard_overrides = __pop_subcomponent_overrides!(__overrides, "inboard")
-  push!(__systems, @named inboard = VehicleComponents.Inboard(; pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, rocker_pivot_left=[-0.03, 0.12, 0.54], rocker_pivot_right=[-0.03, -0.12, 0.54], pushrod_inner_left=[-0.03, 0.138, 0.57], pushrod_inner_right=[-0.03, -0.138, 0.57], heave_pickup_left=[-0.03, 0.114, 0.58], heave_pickup_right=[-0.03, -0.114, 0.58], roll_pickup_left=[-0.105, 0.108, 0.503], roll_pickup_right=[-0.105, -0.108, 0.577], heave_stiffness=Float64(35000.0), heave_damping=Float64(1500.0), roll_stiffness=Float64(35000.0), roll_damping=Float64(1500.0), heave_preload=Float64(0.0), roll_preload=Float64(0.0), pushrod_adjust_left=Float64(0.0), pushrod_adjust_right=Float64(0.0), inboard_overrides...))
+  push!(__systems, @named inboard = VehicleComponents.Inboard(; pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, rocker_pivot_left=[-0.03, 0.12, 0.6235], rocker_pivot_right=[-0.03, -0.12, 0.6235], pushrod_inner_left=[-0.03, 0.138, 0.6535], pushrod_inner_right=[-0.03, -0.138, 0.6535], heave_pickup_left=[-0.03, 0.114, 0.6635], heave_pickup_right=[-0.03, -0.114, 0.6635], roll_pickup_left=[-0.105, 0.108, 0.5865], roll_pickup_right=[-0.105, -0.108, 0.6605], heave_stiffness=Float64(35000.0), heave_damping=Float64(1500.0), roll_stiffness=Float64(35000.0), roll_damping=Float64(1500.0), heave_preload=Float64(0.0), roll_preload=Float64(0.0), pushrod_adjust_left=Float64(0.0), pushrod_adjust_right=Float64(0.0), inboard_overrides...))
   # Subcomponent fixed_left of type MultibodyComponents.Fixed
   fixed_left_overrides = __pop_subcomponent_overrides!(__overrides, "fixed_left")
   push!(__systems, @named fixed_left = MultibodyComponents.Fixed(; r=pushrod_outer_left, render=false, fixed_left_overrides...))

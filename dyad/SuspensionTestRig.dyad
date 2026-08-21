@@ -13,48 +13,40 @@ test component SuspensionTestRig
     pushrod_outer_left = pushrod_outer_left,
     pushrod_outer_right = pushrod_outer_right,
     linkage_left(
-      lca_front = [0.100, 0.195, 0.125],
-      lca_rear = [-0.100, 0.205, 0.115],
-      lca_outer = [0.005, 0.560, 0.130],
-      uca_front = [0.080, 0.245, 0.305],
-      uca_rear = [-0.080, 0.255, 0.295],
-      uca_outer = [-0.010, 0.530, 0.330],
-      tierod_inner = [0.080, 0.220, 0.150],
-      tierod_outer = [0.075, 0.550, 0.160],
+      lca_front = [0.100, 0.195, 0.2085],
+      lca_rear = [-0.100, 0.205, 0.1985],
+      lca_outer = [0.005, 0.560, 0.2135],
+      uca_front = [0.080, 0.245, 0.3885],
+      uca_rear = [-0.080, 0.255, 0.3785],
+      uca_outer = [-0.010, 0.530, 0.4135],
+      tierod_inner = [0.080, 0.220, 0.2335],
+      tierod_outer = [0.075, 0.550, 0.2435],
       static_camber = 0.0,
-      static_toe = 0.0,
-      upright_mass = 5.0,
-      upright_I_11 = 0.05,
-      upright_I_22 = 0.05,
-      upright_I_33 = 0.05
+      static_toe = 0.0
     ),
     linkage_right(
-      lca_front = [0.100, -0.195, 0.125],
-      lca_rear = [-0.100, -0.205, 0.115],
-      lca_outer = [0.005, -0.560, 0.130],
-      uca_front = [0.080, -0.245, 0.305],
-      uca_rear = [-0.080, -0.255, 0.295],
-      uca_outer = [-0.010, -0.530, 0.330],
-      tierod_inner = [0.080, -0.220, 0.150],
-      tierod_outer = [0.075, -0.550, 0.160],
+      lca_front = [0.100, -0.195, 0.2085],
+      lca_rear = [-0.100, -0.205, 0.1985],
+      lca_outer = [0.005, -0.560, 0.2135],
+      uca_front = [0.080, -0.245, 0.3885],
+      uca_rear = [-0.080, -0.255, 0.3785],
+      uca_outer = [-0.010, -0.530, 0.4135],
+      tierod_inner = [0.080, -0.220, 0.2335],
+      tierod_outer = [0.075, -0.550, 0.2435],
       static_camber = 0.0,
-      static_toe = 0.0,
-      upright_mass = 5.0,
-      upright_I_11 = 0.05,
-      upright_I_22 = 0.05,
-      upright_I_33 = 0.05
+      static_toe = 0.0
     ),
     inboard(
       pushrod_outer_left = pushrod_outer_left,
       pushrod_outer_right = pushrod_outer_right,
-      rocker_pivot_left = [-0.030, 0.120, 0.540],
-      rocker_pivot_right = [-0.030, -0.120, 0.540],
-      pushrod_inner_left = [-0.030, 0.138, 0.570],
-      pushrod_inner_right = [-0.030, -0.138, 0.570],
-      heave_pickup_left = [-0.030, 0.114, 0.580],
-      heave_pickup_right = [-0.030, -0.114, 0.580],
-      roll_pickup_left = [-0.105, 0.108, 0.503],
-      roll_pickup_right = [-0.105, -0.108, 0.577],
+      rocker_pivot_left = [-0.030, 0.120, 0.6235],
+      rocker_pivot_right = [-0.030, -0.120, 0.6235],
+      pushrod_inner_left = [-0.030, 0.138, 0.6535],
+      pushrod_inner_right = [-0.030, -0.138, 0.6535],
+      heave_pickup_left = [-0.030, 0.114, 0.6635],
+      heave_pickup_right = [-0.030, -0.114, 0.6635],
+      roll_pickup_left = [-0.105, 0.108, 0.5865],
+      roll_pickup_right = [-0.105, -0.108, 0.6605],
       heave_stiffness = 35000.0,
       heave_damping = 1500.0,
       roll_stiffness = 35000.0,
@@ -79,10 +71,10 @@ test component SuspensionTestRig
   wheel_position_right = TranslationalComponents.Sources.Position() {^wheel_position_right}
  
   # Shared references
-  parameter wheel_center_left::Position[3] = [0.000, 0.600, 0.230]
-  parameter wheel_center_right::Position[3] = [0.000, -0.600, 0.230]
-  parameter pushrod_outer_left::Position[3] = [0.000, 0.480, 0.340]
-  parameter pushrod_outer_right::Position[3] = [0.000, -0.480, 0.340]
+  parameter wheel_center_left::Position[3] = [0.000, 0.600, 0.3135]
+  parameter wheel_center_right::Position[3] = [0.000, -0.600, 0.3135]
+  parameter pushrod_outer_left::Position[3] = [0.000, 0.480, 0.4235]
+  parameter pushrod_outer_right::Position[3] = [0.000, -0.480, 0.4235]
  
   # Rig
   final parameter jack_rod_length::Length = 0.1

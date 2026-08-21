@@ -5,9 +5,10 @@ using GLMakie, JSON3, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenb
 # If you restart the REPL and rerun the lines, you will not get the error.
 using VehicleComponents
 
+
 const DEG = 180 / π
 
-@named model = VehicleComponents.FullVehicleTestStatic()
+@named model = VehicleComponents.FullVehicleTestStraightLine()
 ssys = multibody(model)
 
 data_path = joinpath(pwd(), "assets", "vehicles", "Test.json")
@@ -203,42 +204,83 @@ parameter_map = Dict([
 prob = ODEProblem(ssys, parameter_map, (0.0, 2.0))
 sol = solve(prob)
 
-plot_tire_forces = Plots.plot(
-    sol;
-    idxs=[c.wheel_assembly.tire.Fz for c in corners],
-    labels=["FL" "FR" "RL" "RR"],
-    linestyle=[:dot :dot :dash :dash],
-    linewidth=2,
-    xlabel="t [s]",
-    ylabel="Vertical load [N]",
-    title="Tire normal loads",
-);
-plot_spring_forces = Plots.plot(
-    sol;
-    idxs=[car.front_suspension.inboard.heave_spring.f, car.front_suspension.inboard.roll_spring.f],
-    labels=["heave" "roll"],
-    linewidth=2,
-    xlabel="t [s]",
-    ylabel="Spring force [N]",
-    title="Front inboard spring forces",
-);
-plot_body_angles = Plots.plot(
-    sol;
-    idxs=[ssys.roll_joint.phi * DEG, ssys.pitch_joint.phi * DEG],
-    labels=["roll" "pitch"],
-    linewidth=2,
-    xlabel="t [s]",
-    ylabel="angle [deg]",
-    title="Body attitude",
-);
-Plots.plot(
-    plot_tire_forces,
-    plot_spring_forces,
-    plot_body_angles;
-    layout=(2, 2),
-    size=(1400, 800),
-    left_margin=5Plots.PlotMeasures.mm,
-    bottom_margin=5Plots.PlotMeasures.mm
-)
+render(model, sol; filename="output/full_vehicle_straight_line.gif", up=[0, 0, 1], x=1.5, y=0.4, z=0.7, lookat=[0, 0.05, 0.3])
 
-render(model, sol; filename="output/full_vehicle_static.gif", up=[0, 0, 1], x=1.5, y=0.4, z=0.7, lookat=[0, 0.05, 0.3])
+corner_labels = ["FL" "FR" "RL" "RR"]
+corner_styles = [:solid :dash :solid :dash]
+corner_colors = [1 1 2 2]
+
+t_drive = 1.5     # drive_start_time
+eps_sigma = 0.001   # relaxation-length floor [m]
+
+mark!(p) = Plots.vline!(p, [t_drive]; color=:black, linestyle=:dot, linewidth=1, label="")
+
+tpre = filter(t -> t < t_drive, sol.t)
+println("\n--- before drive torque (t < $t_drive s) ---")
+for (lbl, c) in zip(corner_labels, corners)
+    fx = sol(tpre, idxs=c.wheel_assembly.tire.Fx).u
+    sv = sol(tpre, idxs=c.wheel_assembly.tire.SVx).u
+    println("  $lbl  max|Fx| = ", round(maximum(abs, fx), sigdigits=4),
+        " N   max|SVx| = ", round(maximum(abs, sv), sigdigits=4), " N")
+end
+vpre = sol(tpre, idxs=ssys.longitudinal_joint.v).u
+println("  max|vehicle speed| = ", round(maximum(abs, vpre), sigdigits=4), " m/s")
+println("--- relaxation length over the whole run ---")
+for (lbl, c) in zip(corner_labels, corners)
+    sk = sol(sol.t, idxs=c.wheel_assembly.tire.sigma_kappa).u
+    println("  $lbl  sigma_kappa: ", round(1000*minimum(sk), sigdigits=3), " .. ",
+        round(1000*maximum(sk), sigdigits=3), " mm   (floor = ", 1000*eps_sigma, " mm)")
+end
+println("  final speed = ", round(sol(sol.t[end], idxs=ssys.longitudinal_joint.v), sigdigits=4), " m/s\n")
+
+p_fx = Plots.plot(sol; idxs=[c.wheel_assembly.tire.Fx for c in corners],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="Fx [N]", title="Fx — must be flat 0 left of dotted line");
+mark!(p_fx)
+
+p_v = Plots.plot(sol; idxs=[ssys.longitudinal_joint.v], label="vehicle", color=3, linewidth=2,
+    xlabel="t [s]", ylabel="v [m/s]", title="Speed — must be 0 before drive");
+mark!(p_v)
+
+p_slip = Plots.plot(sol;
+    idxs=[corners[1].wheel_assembly.tire.kappa, corners[3].wheel_assembly.tire.kappa],
+    labels=["FL kappa (4.E5)" "RL kappa (4.E5)"], color=[1 2], linewidth=2,
+    xlabel="t [s]", ylabel="slip [-]", title="Instantaneous vs transient slip")
+Plots.plot!(p_slip, sol;
+    idxs=[corners[1].wheel_assembly.tire.kappa_prime, corners[3].wheel_assembly.tire.kappa_prime],
+    labels=["FL kappa' (7.26)" "RL kappa' (7.26)"], color=[1 2], linestyle=:dash, linewidth=2)
+
+p_sig = Plots.plot(sol; idxs=[1000*c.wheel_assembly.tire.sigma_kappa for c in corners],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="sigma_kappa [mm]", title="Relaxation length (7.8)")
+Plots.hline!(p_sig, [1000*eps_sigma]; color=:red, linestyle=:dot, label="eps_sigma floor")
+
+p_lim = Plots.plot(sol;
+    idxs=[corners[3].wheel_assembly.tire.kappa_prime,
+        corners[3].wheel_assembly.tire.kappa_sl,
+        -corners[3].wheel_assembly.tire.kappa_sl],
+    labels=["RL kappa'" "+kappa_sl" "-kappa_sl"], color=[2 :red :red],
+    linestyle=[:solid :dot :dot], linewidth=2,
+    xlabel="t [s]", ylabel="slip [-]", title="(7.25) limiter arms if kappa' leaves the band")
+
+p_lam = Plots.plot(sol; idxs=[c.wheel_assembly.tire.lam_low for c in corners],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="lam_low [-]", title="Shift fade — 0 at rest, 1 once rolling")
+
+p_svx = Plots.plot(sol; idxs=[c.wheel_assembly.tire.SVx for c in corners],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="SVx [N]", title="SVx — the artefact, 0 at rest");
+mark!(p_svx)
+
+p_fz = Plots.plot(sol; idxs=[c.wheel_assembly.tire.Fz for c in corners],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="Fz [N]", title="Normal load");
+mark!(p_fz)
+
+p_tau = Plots.plot(sol; idxs=[c.motor.tau for c in corners],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="tau [N.m]", title="Motor torque")
+
+Plots.plot(p_fx, p_v, p_slip, p_sig, p_lim, p_lam, p_svx, p_fz, p_tau;
+    layout=(3, 3), size=(1800, 1100), legendfontsize=6,
+    left_margin=5Plots.PlotMeasures.mm, bottom_margin=5Plots.PlotMeasures.mm)
