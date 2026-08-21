@@ -29,6 +29,7 @@ parameter_map = Dict([
     ssys.tire.width => tires.WIDTH
     ssys.tire.vertical_stiffness => tires.VERTICAL_STIFFNESS
     ssys.tire.vertical_damping => tires.VERTICAL_DAMPING
+    ssys.tire.longitudinal_stiffness => tires.LONGITUDINAL_STIFFNESS
 
     # Hold the vertical load steady and sweep slip instead
     ssys.speed => speed
@@ -90,6 +91,7 @@ vertical_map = Dict([
     ssys.tire.width => tires.WIDTH
     ssys.tire.vertical_stiffness => tires.VERTICAL_STIFFNESS
     ssys.tire.vertical_damping => tires.VERTICAL_DAMPING
+    ssys.tire.longitudinal_stiffness => tires.LONGITUDINAL_STIFFNESS
 ])
 
 prob_vertical = ODEProblem(ssys, vertical_map, (0.0, 2.0))

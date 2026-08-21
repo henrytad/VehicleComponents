@@ -16,6 +16,7 @@ test component TireTestRig
     width = 0.205,
     vertical_stiffness = 209651.0,
     vertical_damping = 50.0,
+    longitudinal_stiffness = 358066.0,
     FNOMIN = 220.0,
     BREFF = 8.386,
     DREFF = 0.25826,

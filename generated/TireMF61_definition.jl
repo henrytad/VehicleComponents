@@ -7,7 +7,7 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   TireMF61(; name, width, unloaded_radius, vertical_stiffness, vertical_damping, FNOMIN, BREFF, DREFF, FREFF, INFLPRES, NOMPRES, LONGVL, PCX1, PDX1, PDX2, PDX3, PEX1, PEX2, PEX3, PEX4, PKX1, PKX2, PKX3, PHX1, PHX2, PVX1, PVX2, PPX1, PPX2, PPX3, PPX4, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LMUV, inclination_angle, Au, eps_x, eps_v)
+   TireMF61(; name, width, unloaded_radius, vertical_stiffness, vertical_damping, FNOMIN, BREFF, DREFF, FREFF, longitudinal_stiffness, INFLPRES, NOMPRES, LONGVL, PCX1, PDX1, PDX2, PDX3, PEX1, PEX2, PEX3, PEX4, PKX1, PKX2, PKX3, PHX1, PHX2, PVX1, PVX2, PPX1, PPX2, PPX3, PPX4, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LMUV, Au, eps_x, eps_v, eps_sigma, damp_vlow)
 
 ## Parameters:
 
@@ -21,6 +21,7 @@ import Moshi as __Ext__Moshi
 | `BREFF`         |                          | --  |    |
 | `DREFF`         |                          | --  |    |
 | `FREFF`         |                          | --  |    |
+| `longitudinal_stiffness`         | Tyre overall longitudinal stiffness. Sets the relaxation length.                         | N/m  |    |
 | `INFLPRES`         |                          | Pa  |    |
 | `NOMPRES`         |                          | Pa  |    |
 | `LONGVL`         |                          | m/s  |    |
@@ -51,10 +52,11 @@ import Moshi as __Ext__Moshi
 | `LHX`         |                          | --  |   1 |
 | `LVX`         |                          | --  |   1 |
 | `LMUV`         | Slip-speed friction decay. Leave at 0 unless modelling a wet surface.                         | --  |   0 |
-| `inclination_angle`         | Inclination (camber) angle. Fixed at 0 until the tire reads it from the frame.                         | rad  |   0 |
 | `Au`         | Digressive friction factor Au (4.E8), suggested 10                         | --  |   10 |
 | `eps_x`         | Singularity guard on Bx (4.E16). Only bites below Fz ~ eps_x / (PCX1 * PDX1).                         | N  |   0.1 |
-| `eps_v`         | Floor on the slip-ratio denominator. Set to the TIR VXLOW.                         | m/s  |   1.0 |
+| `eps_v`         | Low-speed threshold (TIR VXLOW). Floors the slip-ratio denominator.                         | m/s  |   1.0 |
+| `eps_sigma`         | Floor on the relaxation length, which falls with Fz.                         | m  |   0.001 |
+| `damp_vlow`         | Low-speed damping coefficient k_Vlow of (7.26) over the carcass stiffness (TIR DAMP_VLOW).                         | s  |   0.001 |
 
 ## Connectors
 
@@ -80,13 +82,22 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `omega`         | Wheel spin speed (positive = rolling forward)                         | rad/s  |
 | `V_sx`         | Longitudinal slip velocity Vsx = Vx - omega*Re                         | m/s  |
 | `V_s`         | Slip speed magnitude, used by the friction-decay term                         | m/s  |
-| `kappa`         | Longitudinal slip ratio                         | --  |
+| `kappa`         | Steady-state longitudinal slip ratio (4.E5). Reported only; the force is built from kappa_prime.                         | --  |
+| `u_x`         | Longitudinal carcass deflection u (7.9). The state.                         | m  |
+| `u_dot_free`         | Unlimited right-hand side of (7.9), before the (7.25) deflection limiter                         | m/s  |
+| `kappa_sl`         | Slip beyond which the (7.25) limiter arms. Longitudinal read of alpha_sl.                         | --  |
+| `kappa_prime`         | Transient longitudinal slip ratio (7.26). What the Magic Formula is fed.                         | --  |
+| `sigma_kappa`         | Longitudinal relaxation length (7.8)                         | m  |
+| `C_Fx`         | Longitudinal tyre stiffness at road level                         | N/m  |
 | `Fz0_prime`         |                          | N  |
 | `dfz`         |                          | --  |
 | `dpi`         |                          | --  |
+| `gamma_star`         |                          | --  |
 | `lam_mux_star`         |                          | --  |
 | `lam_mux_prime`         |                          | --  |
+| `lam_low`         |                          | --  |
 | `mu_x`         |                          | --  |
+| `Kxk_norm`         |                          | --  |
 | `Kxk`         |                          | --  |
 | `Cx`         |                          | --  |
 | `Dx`         |                          | N  |
@@ -98,7 +109,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `kappa_x`         |                          | --  |
 | `Fx`         |                          | N  |
 """
-@component function TireMF61(; name = nothing, width=nothing, unloaded_radius=nothing, vertical_stiffness=nothing, vertical_damping=nothing, FNOMIN=nothing, BREFF=nothing, DREFF=nothing, FREFF=nothing, INFLPRES=nothing, NOMPRES=nothing, LONGVL=nothing, PCX1=nothing, PDX1=nothing, PDX2=nothing, PDX3=nothing, PEX1=nothing, PEX2=nothing, PEX3=nothing, PEX4=nothing, PKX1=nothing, PKX2=nothing, PKX3=nothing, PHX1=nothing, PHX2=nothing, PVX1=nothing, PVX2=nothing, PPX1=nothing, PPX2=nothing, PPX3=nothing, PPX4=nothing, LFZO=Float64(1), LCX=Float64(1), LMUX=Float64(1), LEX=Float64(1), LKX=Float64(1), LHX=Float64(1), LVX=Float64(1), LMUV=Float64(0), inclination_angle=Float64(0), Au=Float64(10), eps_x=0.1, eps_v=Float64(1.0), kwargs...)
+@component function TireMF61(; name = nothing, width=nothing, unloaded_radius=nothing, vertical_stiffness=nothing, vertical_damping=nothing, FNOMIN=nothing, BREFF=nothing, DREFF=nothing, FREFF=nothing, longitudinal_stiffness=nothing, INFLPRES=nothing, NOMPRES=nothing, LONGVL=nothing, PCX1=nothing, PDX1=nothing, PDX2=nothing, PDX3=nothing, PEX1=nothing, PEX2=nothing, PEX3=nothing, PEX4=nothing, PKX1=nothing, PKX2=nothing, PKX3=nothing, PHX1=nothing, PHX2=nothing, PVX1=nothing, PVX2=nothing, PPX1=nothing, PPX2=nothing, PPX3=nothing, PPX4=nothing, LFZO=Float64(1), LCX=Float64(1), LMUX=Float64(1), LEX=Float64(1), LKX=Float64(1), LHX=Float64(1), LVX=Float64(1), LMUV=Float64(0), Au=Float64(10), eps_x=0.1, eps_v=Float64(1.0), eps_sigma=0.001, damp_vlow=0.001, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -164,6 +175,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__FREFF = FREFF
   append!(__params, @parameters (FREFF::Real))
   __initial_conditions[FREFF] = __local__FREFF
+  __local__longitudinal_stiffness = longitudinal_stiffness
+  append!(__params, @parameters (longitudinal_stiffness::Real), [description = "Tyre overall longitudinal stiffness. Sets the relaxation length."])
+  __initial_conditions[longitudinal_stiffness] = __local__longitudinal_stiffness
   __local__INFLPRES = INFLPRES
   append!(__params, @parameters (INFLPRES::Real))
   __initial_conditions[INFLPRES] = __local__INFLPRES
@@ -254,9 +268,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__LMUV = LMUV
   append!(__params, @parameters (LMUV::Real), [description = "Slip-speed friction decay. Leave at 0 unless modelling a wet surface."])
   __initial_conditions[LMUV] = __local__LMUV
-  __local__inclination_angle = inclination_angle
-  append!(__params, @parameters (inclination_angle::Real), [description = "Inclination (camber) angle. Fixed at 0 until the tire reads it from the frame."])
-  __initial_conditions[inclination_angle] = __local__inclination_angle
   __local__Au = Au
   append!(__params, @parameters (Au::Real), [description = "Digressive friction factor Au (4.E8), suggested 10"])
   __initial_conditions[Au] = __local__Au
@@ -264,8 +275,14 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__params, @parameters (eps_x::Real), [description = "Singularity guard on Bx (4.E16). Only bites below Fz ~ eps_x / (PCX1 * PDX1)."])
   __initial_conditions[eps_x] = __local__eps_x
   __local__eps_v = eps_v
-  append!(__params, @parameters (eps_v::Real), [description = "Floor on the slip-ratio denominator. Set to the TIR VXLOW."])
+  append!(__params, @parameters (eps_v::Real), [description = "Low-speed threshold (TIR VXLOW). Floors the slip-ratio denominator."])
   __initial_conditions[eps_v] = __local__eps_v
+  __local__eps_sigma = eps_sigma
+  append!(__params, @parameters (eps_sigma::Real), [description = "Floor on the relaxation length, which falls with Fz."])
+  __initial_conditions[eps_sigma] = __local__eps_sigma
+  __local__damp_vlow = damp_vlow
+  append!(__params, @parameters (damp_vlow::Real), [description = "Low-speed damping coefficient k_Vlow of (7.26) over the carcass stiffness (TIR DAMP_VLOW)."])
+  __initial_conditions[damp_vlow] = __local__damp_vlow
 
   ### Final Parameters (assignments)
   __bindings[sty_rod_radius] = 0.008
@@ -294,13 +311,22 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (omega(t)::Real), [description = "Wheel spin speed (positive = rolling forward)"])
   append!(__vars, @variables (V_sx(t)::Real), [description = "Longitudinal slip velocity Vsx = Vx - omega*Re"])
   append!(__vars, @variables (V_s(t)::Real), [description = "Slip speed magnitude, used by the friction-decay term"])
-  append!(__vars, @variables (kappa(t)::Real), [description = "Longitudinal slip ratio"])
+  append!(__vars, @variables (kappa(t)::Real), [description = "Steady-state longitudinal slip ratio (4.E5). Reported only; the force is built from kappa_prime."])
+  append!(__vars, @variables (u_x(t)::Real), [description = "Longitudinal carcass deflection u (7.9). The state."])
+  append!(__vars, @variables (u_dot_free(t)::Real), [description = "Unlimited right-hand side of (7.9), before the (7.25) deflection limiter"])
+  append!(__vars, @variables (kappa_sl(t)::Real), [description = "Slip beyond which the (7.25) limiter arms. Longitudinal read of alpha_sl."])
+  append!(__vars, @variables (kappa_prime(t)::Real), [description = "Transient longitudinal slip ratio (7.26). What the Magic Formula is fed."])
+  append!(__vars, @variables (sigma_kappa(t)::Real), [description = "Longitudinal relaxation length (7.8)"])
+  append!(__vars, @variables (C_Fx(t)::Real), [description = "Longitudinal tyre stiffness at road level"])
   append!(__vars, @variables (Fz0_prime(t)::Real))
   append!(__vars, @variables (dfz(t)::Real))
   append!(__vars, @variables (dpi(t)::Real))
+  append!(__vars, @variables (gamma_star(t)::Real))
   append!(__vars, @variables (lam_mux_star(t)::Real))
   append!(__vars, @variables (lam_mux_prime(t)::Real))
+  append!(__vars, @variables (lam_low(t)::Real))
   append!(__vars, @variables (mu_x(t)::Real))
+  append!(__vars, @variables (Kxk_norm(t)::Real))
   append!(__vars, @variables (Kxk(t)::Real))
   append!(__vars, @variables (Cx(t)::Real))
   append!(__vars, @variables (Dx(t)::Real))
@@ -358,6 +384,24 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_kappa = pop!(__overrides, "kappa", nothing); isnothing(__ovr_kappa) || push!(__eqs, kappa ~ __ovr_kappa)
   __ovr_kappa__initial = pop!(__overrides, "kappa__initial", nothing); isnothing(__ovr_kappa__initial) || (__initial_conditions[kappa] = __ovr_kappa__initial)
   __ovr_kappa__guess = pop!(__overrides, "kappa__guess", nothing)
+  __ovr_u_x = pop!(__overrides, "u_x", nothing); isnothing(__ovr_u_x) || push!(__eqs, u_x ~ __ovr_u_x)
+  __ovr_u_x__initial = pop!(__overrides, "u_x__initial", nothing); isnothing(__ovr_u_x__initial) || (__initial_conditions[u_x] = __ovr_u_x__initial)
+  __ovr_u_x__guess = pop!(__overrides, "u_x__guess", nothing)
+  __ovr_u_dot_free = pop!(__overrides, "u_dot_free", nothing); isnothing(__ovr_u_dot_free) || push!(__eqs, u_dot_free ~ __ovr_u_dot_free)
+  __ovr_u_dot_free__initial = pop!(__overrides, "u_dot_free__initial", nothing); isnothing(__ovr_u_dot_free__initial) || (__initial_conditions[u_dot_free] = __ovr_u_dot_free__initial)
+  __ovr_u_dot_free__guess = pop!(__overrides, "u_dot_free__guess", nothing)
+  __ovr_kappa_sl = pop!(__overrides, "kappa_sl", nothing); isnothing(__ovr_kappa_sl) || push!(__eqs, kappa_sl ~ __ovr_kappa_sl)
+  __ovr_kappa_sl__initial = pop!(__overrides, "kappa_sl__initial", nothing); isnothing(__ovr_kappa_sl__initial) || (__initial_conditions[kappa_sl] = __ovr_kappa_sl__initial)
+  __ovr_kappa_sl__guess = pop!(__overrides, "kappa_sl__guess", nothing)
+  __ovr_kappa_prime = pop!(__overrides, "kappa_prime", nothing); isnothing(__ovr_kappa_prime) || push!(__eqs, kappa_prime ~ __ovr_kappa_prime)
+  __ovr_kappa_prime__initial = pop!(__overrides, "kappa_prime__initial", nothing); isnothing(__ovr_kappa_prime__initial) || (__initial_conditions[kappa_prime] = __ovr_kappa_prime__initial)
+  __ovr_kappa_prime__guess = pop!(__overrides, "kappa_prime__guess", nothing)
+  __ovr_sigma_kappa = pop!(__overrides, "sigma_kappa", nothing); isnothing(__ovr_sigma_kappa) || push!(__eqs, sigma_kappa ~ __ovr_sigma_kappa)
+  __ovr_sigma_kappa__initial = pop!(__overrides, "sigma_kappa__initial", nothing); isnothing(__ovr_sigma_kappa__initial) || (__initial_conditions[sigma_kappa] = __ovr_sigma_kappa__initial)
+  __ovr_sigma_kappa__guess = pop!(__overrides, "sigma_kappa__guess", nothing)
+  __ovr_C_Fx = pop!(__overrides, "C_Fx", nothing); isnothing(__ovr_C_Fx) || push!(__eqs, C_Fx ~ __ovr_C_Fx)
+  __ovr_C_Fx__initial = pop!(__overrides, "C_Fx__initial", nothing); isnothing(__ovr_C_Fx__initial) || (__initial_conditions[C_Fx] = __ovr_C_Fx__initial)
+  __ovr_C_Fx__guess = pop!(__overrides, "C_Fx__guess", nothing)
   __ovr_Fz0_prime = pop!(__overrides, "Fz0_prime", nothing); isnothing(__ovr_Fz0_prime) || push!(__eqs, Fz0_prime ~ __ovr_Fz0_prime)
   __ovr_Fz0_prime__initial = pop!(__overrides, "Fz0_prime__initial", nothing); isnothing(__ovr_Fz0_prime__initial) || (__initial_conditions[Fz0_prime] = __ovr_Fz0_prime__initial)
   __ovr_Fz0_prime__guess = pop!(__overrides, "Fz0_prime__guess", nothing)
@@ -367,15 +411,24 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_dpi = pop!(__overrides, "dpi", nothing); isnothing(__ovr_dpi) || push!(__eqs, dpi ~ __ovr_dpi)
   __ovr_dpi__initial = pop!(__overrides, "dpi__initial", nothing); isnothing(__ovr_dpi__initial) || (__initial_conditions[dpi] = __ovr_dpi__initial)
   __ovr_dpi__guess = pop!(__overrides, "dpi__guess", nothing)
+  __ovr_gamma_star = pop!(__overrides, "gamma_star", nothing); isnothing(__ovr_gamma_star) || push!(__eqs, gamma_star ~ __ovr_gamma_star)
+  __ovr_gamma_star__initial = pop!(__overrides, "gamma_star__initial", nothing); isnothing(__ovr_gamma_star__initial) || (__initial_conditions[gamma_star] = __ovr_gamma_star__initial)
+  __ovr_gamma_star__guess = pop!(__overrides, "gamma_star__guess", nothing)
   __ovr_lam_mux_star = pop!(__overrides, "lam_mux_star", nothing); isnothing(__ovr_lam_mux_star) || push!(__eqs, lam_mux_star ~ __ovr_lam_mux_star)
   __ovr_lam_mux_star__initial = pop!(__overrides, "lam_mux_star__initial", nothing); isnothing(__ovr_lam_mux_star__initial) || (__initial_conditions[lam_mux_star] = __ovr_lam_mux_star__initial)
   __ovr_lam_mux_star__guess = pop!(__overrides, "lam_mux_star__guess", nothing)
   __ovr_lam_mux_prime = pop!(__overrides, "lam_mux_prime", nothing); isnothing(__ovr_lam_mux_prime) || push!(__eqs, lam_mux_prime ~ __ovr_lam_mux_prime)
   __ovr_lam_mux_prime__initial = pop!(__overrides, "lam_mux_prime__initial", nothing); isnothing(__ovr_lam_mux_prime__initial) || (__initial_conditions[lam_mux_prime] = __ovr_lam_mux_prime__initial)
   __ovr_lam_mux_prime__guess = pop!(__overrides, "lam_mux_prime__guess", nothing)
+  __ovr_lam_low = pop!(__overrides, "lam_low", nothing); isnothing(__ovr_lam_low) || push!(__eqs, lam_low ~ __ovr_lam_low)
+  __ovr_lam_low__initial = pop!(__overrides, "lam_low__initial", nothing); isnothing(__ovr_lam_low__initial) || (__initial_conditions[lam_low] = __ovr_lam_low__initial)
+  __ovr_lam_low__guess = pop!(__overrides, "lam_low__guess", nothing)
   __ovr_mu_x = pop!(__overrides, "mu_x", nothing); isnothing(__ovr_mu_x) || push!(__eqs, mu_x ~ __ovr_mu_x)
   __ovr_mu_x__initial = pop!(__overrides, "mu_x__initial", nothing); isnothing(__ovr_mu_x__initial) || (__initial_conditions[mu_x] = __ovr_mu_x__initial)
   __ovr_mu_x__guess = pop!(__overrides, "mu_x__guess", nothing)
+  __ovr_Kxk_norm = pop!(__overrides, "Kxk_norm", nothing); isnothing(__ovr_Kxk_norm) || push!(__eqs, Kxk_norm ~ __ovr_Kxk_norm)
+  __ovr_Kxk_norm__initial = pop!(__overrides, "Kxk_norm__initial", nothing); isnothing(__ovr_Kxk_norm__initial) || (__initial_conditions[Kxk_norm] = __ovr_Kxk_norm__initial)
+  __ovr_Kxk_norm__guess = pop!(__overrides, "Kxk_norm__guess", nothing)
   __ovr_Kxk = pop!(__overrides, "Kxk", nothing); isnothing(__ovr_Kxk) || push!(__eqs, Kxk ~ __ovr_Kxk)
   __ovr_Kxk__initial = pop!(__overrides, "Kxk__initial", nothing); isnothing(__ovr_Kxk__initial) || (__initial_conditions[Kxk] = __ovr_Kxk__initial)
   __ovr_Kxk__guess = pop!(__overrides, "Kxk__guess", nothing)
@@ -436,12 +489,21 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_V_sx__guess) || (__guesses[V_sx] = __ovr_V_sx__guess)
   isnothing(__ovr_V_s__guess) || (__guesses[V_s] = __ovr_V_s__guess)
   isnothing(__ovr_kappa__guess) || (__guesses[kappa] = __ovr_kappa__guess)
+  isnothing(__ovr_u_x__guess) || (__guesses[u_x] = __ovr_u_x__guess)
+  isnothing(__ovr_u_dot_free__guess) || (__guesses[u_dot_free] = __ovr_u_dot_free__guess)
+  isnothing(__ovr_kappa_sl__guess) || (__guesses[kappa_sl] = __ovr_kappa_sl__guess)
+  isnothing(__ovr_kappa_prime__guess) || (__guesses[kappa_prime] = __ovr_kappa_prime__guess)
+  isnothing(__ovr_sigma_kappa__guess) || (__guesses[sigma_kappa] = __ovr_sigma_kappa__guess)
+  isnothing(__ovr_C_Fx__guess) || (__guesses[C_Fx] = __ovr_C_Fx__guess)
   isnothing(__ovr_Fz0_prime__guess) || (__guesses[Fz0_prime] = __ovr_Fz0_prime__guess)
   isnothing(__ovr_dfz__guess) || (__guesses[dfz] = __ovr_dfz__guess)
   isnothing(__ovr_dpi__guess) || (__guesses[dpi] = __ovr_dpi__guess)
+  isnothing(__ovr_gamma_star__guess) || (__guesses[gamma_star] = __ovr_gamma_star__guess)
   isnothing(__ovr_lam_mux_star__guess) || (__guesses[lam_mux_star] = __ovr_lam_mux_star__guess)
   isnothing(__ovr_lam_mux_prime__guess) || (__guesses[lam_mux_prime] = __ovr_lam_mux_prime__guess)
+  isnothing(__ovr_lam_low__guess) || (__guesses[lam_low] = __ovr_lam_low__guess)
   isnothing(__ovr_mu_x__guess) || (__guesses[mu_x] = __ovr_mu_x__guess)
+  isnothing(__ovr_Kxk_norm__guess) || (__guesses[Kxk_norm] = __ovr_Kxk_norm__guess)
   isnothing(__ovr_Kxk__guess) || (__guesses[Kxk] = __ovr_Kxk__guess)
   isnothing(__ovr_Cx__guess) || (__guesses[Cx] = __ovr_Cx__guess)
   isnothing(__ovr_Dx__guess) || (__guesses[Dx] = __ovr_Dx__guess)
@@ -454,6 +516,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_Fx__guess) || (__guesses[Fx] = __ovr_Fx__guess)
 
   ### Initialization Equations
+  push!(__initialization_eqs, u_x ~ 0)
 
   ### Assertions
   __assertions = []
@@ -479,16 +542,24 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, dpi ~ (INFLPRES - NOMPRES) / NOMPRES)
   push!(__eqs, lam_mux_star ~ LMUX / (1 + LMUV * (V_s / LONGVL)))
   push!(__eqs, lam_mux_prime ~ Au * lam_mux_star / (1 + (Au - 1) * lam_mux_star))
-  push!(__eqs, mu_x ~ (PDX1 + PDX2 * dfz) * (1 + PPX3 * dpi + PPX4 * dpi ^ 2) * (1 - PDX3 * inclination_angle ^ 2) * lam_mux_star)
-  push!(__eqs, Kxk ~ Fz * (PKX1 + PKX2 * dfz) * exp(PKX3 * dfz) * (1 + PPX1 * dpi + PPX2 * dpi ^ 2) * LKX)
+  push!(__eqs, lam_low ~ 0.5 * (1 - cos(π * min(abs(V_x), eps_v) / eps_v)))
+  push!(__eqs, gamma_star ~ getindex(getproperty(wheel_center, :R), 2, 3))
+  push!(__eqs, mu_x ~ (PDX1 + PDX2 * dfz) * (1 + PPX3 * dpi + PPX4 * dpi ^ 2) * (1 - PDX3 * gamma_star ^ 2) * lam_mux_star)
+  push!(__eqs, Kxk_norm ~ (PKX1 + PKX2 * dfz) * exp(PKX3 * dfz) * (1 + PPX1 * dpi + PPX2 * dpi ^ 2) * LKX)
+  push!(__eqs, Kxk ~ Fz * Kxk_norm)
   push!(__eqs, Cx ~ PCX1 * LCX)
   push!(__eqs, Dx ~ mu_x * Fz)
   push!(__eqs, Bx ~ Kxk / (Cx * Dx + eps_x))
-  push!(__eqs, SHx ~ (PHX1 + PHX2 * dfz) * LHX)
-  push!(__eqs, kappa_x ~ kappa + SHx)
+  push!(__eqs, SHx ~ (PHX1 + PHX2 * dfz) * LHX * lam_low)
+  push!(__eqs, sigma_kappa ~ max(Kxk / longitudinal_stiffness, eps_sigma))
+  push!(__eqs, u_dot_free ~ -V_sx - abs(V_x) * u_x / sigma_kappa)
+  push!(__eqs, kappa_prime ~ (u_x - damp_vlow * (1 - lam_low) * V_sx) / sigma_kappa)
+  push!(__eqs, kappa_sl ~ 3 * mu_x / Kxk_norm)
+  push!(__eqs, ModelingToolkit.D_nounits(u_x) ~ ifelse(abs(kappa_prime) > kappa_sl, ifelse(abs(V_x) < eps_v, ifelse((V_sx + abs(V_x) * u_x / sigma_kappa) * u_x < 0, 0, u_dot_free), u_dot_free), u_dot_free))
+  push!(__eqs, kappa_x ~ kappa_prime + SHx)
   push!(__eqs, Ex_raw ~ (PEX1 + PEX2 * dfz + PEX3 * dfz ^ 2) * (1 - PEX4 * ifelse(kappa_x >= 0, 1, -1)) * LEX)
   push!(__eqs, Ex ~ ifelse(Ex_raw > 1, 1, Ex_raw))
-  push!(__eqs, SVx ~ Fz * (PVX1 + PVX2 * dfz) * LVX * lam_mux_prime)
+  push!(__eqs, SVx ~ Fz * (PVX1 + PVX2 * dfz) * LVX * lam_mux_prime * lam_low)
   push!(__eqs, Fx ~ Dx * sin(Cx * atan(Bx * kappa_x - Ex * (Bx * kappa_x - atan(Bx * kappa_x)))) + SVx)
   push!(__eqs, wheel_center.f ~ -wheel_center.R * [Fx, 0, Fz])
   push!(__eqs, wheel_center.tau ~ [0, 0, 0])

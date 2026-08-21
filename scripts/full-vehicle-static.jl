@@ -28,6 +28,7 @@ tire_parameters(tire) = [
     tire.unloaded_radius => tires.UNLOADED_RADIUS,
     tire.vertical_stiffness => tires.VERTICAL_STIFFNESS,
     tire.vertical_damping => tires.VERTICAL_DAMPING,
+    tire.longitudinal_stiffness => tires.LONGITUDINAL_STIFFNESS,
     tire.FNOMIN => tires.FNOMIN,
     tire.BREFF => tires.BREFF,
     tire.DREFF => tires.DREFF,
