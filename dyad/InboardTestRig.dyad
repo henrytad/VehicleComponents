@@ -14,14 +14,14 @@ test component InboardTestRig
   inboard = VehicleComponents.Inboard(
     pushrod_outer_left = pushrod_outer_left,
     pushrod_outer_right = pushrod_outer_right,
-    rocker_pivot_left = [-0.030000, 0.120000, 0.540000],
-    rocker_pivot_right = [-0.030000, -0.120000, 0.540000],
-    pushrod_inner_left = [-0.030000, 0.138000, 0.570000],
-    pushrod_inner_right = [-0.030000, -0.138000, 0.570000],
-    heave_pickup_left = [-0.030000, 0.114000, 0.580000],
-    heave_pickup_right = [-0.030000, -0.114000, 0.580000],
-    roll_pickup_left = [-0.105000, 0.108000, 0.503000],
-    roll_pickup_right = [-0.105000, -0.108000, 0.577000],
+    rocker_pivot_left = [-0.030000, 0.120000, 0.623500],
+    rocker_pivot_right = [-0.030000, -0.120000, 0.623500],
+    pushrod_inner_left = [-0.030000, 0.138000, 0.653500],
+    pushrod_inner_right = [-0.030000, -0.138000, 0.653500],
+    heave_pickup_left = [-0.030000, 0.114000, 0.663500],
+    heave_pickup_right = [-0.030000, -0.114000, 0.663500],
+    roll_pickup_left = [-0.105000, 0.108000, 0.586500],
+    roll_pickup_right = [-0.105000, -0.108000, 0.660500],
     heave_stiffness = 35000.0,
     heave_damping = 1500.0,
     roll_stiffness = 35000.0,
@@ -43,8 +43,8 @@ test component InboardTestRig
   pushrod_position_right = TranslationalComponents.Sources.Position() {^pushrod_position_right}
   
   # Pushrod outer pickups
-  parameter pushrod_outer_left::Position[3] = [0.000000, 0.480000, 0.340000]
-  parameter pushrod_outer_right::Position[3] = [0.000000, -0.480000, 0.340000]
+  parameter pushrod_outer_left::Position[3] = [0.000000, 0.480000, 0.423500]
+  parameter pushrod_outer_right::Position[3] = [0.000000, -0.480000, 0.423500]
   
   # Excitation
   parameter heave_amplitude::Length = 0.0254

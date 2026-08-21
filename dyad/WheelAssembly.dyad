@@ -1,0 +1,68 @@
+component WheelAssembly
+  """
+  Wheel assembly: tire and rim.
+
+  Owns the rotating group. `TireMF61` is a pure force element, so both the rim
+  and the tire inertias are collected here into a single `spin` inertia.
+  """
+
+  spline = Dyad.Spline() {^spline}
+  wheel_center = Dyad.Frame3D() {^wheel_center}
+
+  tire = VehicleComponents.TireMF61() {^tire}
+
+  spin = RotationalComponents.Components.Inertia(J = spin_inertia) {^spin}
+
+  wheel_body = MultibodyComponents.Body(
+    m = wheel_mass,
+    r_cm = [0, 0, 0],
+    I_11 = 0,
+    I_22 = 0,
+    I_33 = 0,
+    cylinder_radius = 0
+  ) {^wheel_body}
+
+  parameter rim_mass::Mass
+  parameter rim_inertia::Inertia
+  parameter tire_mass::Mass
+  parameter tire_inertia::Inertia
+
+  final parameter wheel_mass::Mass = rim_mass + tire_mass
+  final parameter spin_inertia::Inertia = rim_inertia + tire_inertia
+
+relations
+
+  connect(wheel_center, tire.wheel_center) {^id6}
+  connect(wheel_center, wheel_body.frame_a) {^id7}
+  connect(spline, spin.spline_a) {^id8}
+  connect(spin.spline_b, tire.spline) {^id9}
+
+metadata {
+  "_links": {
+    "wheel_center": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 450, "y2": 550}}}
+    },
+    "tire": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 450, "y2": 550}}}
+    },
+    "spin": {
+      "Dyad": {"placement": {"diagram": {"x1": 720, "x2": 820, "y1": 450, "y2": 550}}}
+    },
+    "wheel_body": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 310, "y2": 410}}}
+    },
+    "spline": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
+    },
+    "id6": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id7": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 210, "y": 500}, {"x": 210, "y": 360}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id8": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+  }
+}
+end

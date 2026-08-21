@@ -1,42 +1,106 @@
 test component TireTestRig
   """
   Tire test rig.
-   
+
   Mounts the wheel centre at the unloaded radius, then sweeps it vertically.
+
+  With `speed` non-zero the carriage also rolls the wheel forward while the
+  spin drive ramps wheel speed from `kappa_start` to `kappa_end`, which walks
+  the tire across its slip curve at a held vertical load.
   """
 
   world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
 
   tire = VehicleComponents.TireMF61(
     unloaded_radius = unloaded_radius,
-    width = 0.20,
-    vertical_stiffness = 180000.0,
-    vertical_damping = 120.0
+    width = 0.205,
+    vertical_stiffness = 209651.0,
+    vertical_damping = 50.0,
+    FNOMIN = 220.0,
+    BREFF = 8.386,
+    DREFF = 0.25826,
+    FREFF = 0.07394,
+    INFLPRES = 220000.0,
+    NOMPRES = 220000.0,
+    LONGVL = 16.7,
+    PCX1 = 2.9761,
+    PDX1 = 0.53798,
+    PDX2 = 0.00359,
+    PDX3 = 4.89327,
+    PEX1 = 67.557,
+    PEX2 = -67.469,
+    PEX3 = 17.058,
+    PEX4 = 0.18492,
+    PKX1 = 9.35368,
+    PKX2 = 1.06116,
+    PKX3 = -0.05644,
+    PHX1 = -0.0054,
+    PHX2 = 0.00068,
+    PVX1 = 0.09747,
+    PVX2 = -0.00587,
+    PPX1 = -1.89606,
+    PPX2 = 0.53013,
+    PPX3 = -6.06583,
+    PPX4 = -2.95759,
+    LFZO = 1.0,
+    LCX = 1.0,
+    LMUX = 1.0,
+    LEX = 1.0,
+    LKX = 1.0,
+    LHX = 1.0,
+    LVX = 1.0,
+    LMUV = 0.0
   ) {^tire}
   
-  # Mount
-  mount = MultibodyComponents.FixedTranslation(r = [0, 0, unloaded_radius], render = false) {^mount}
+  # Mount. Sitting the mount low by `static_deflection` preloads the tyre at
+  # t = 0 instead of stepping the position source, which would fight the
+  # initial condition.
+  mount = MultibodyComponents.FixedTranslation(r = [0, 0, unloaded_radius - static_deflection], render = false) {^mount}
+  carriage = MultibodyComponents.Prismatic(n = [1, 0, 0], render = false) {^carriage}
+  carriage_position = TranslationalComponents.Sources.Position() {^carriage_position}
   prismatic = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic}
   wheel_position = TranslationalComponents.Sources.Position() {^wheel_position}
 
+  # Spin drive
+  spin = RotationalComponents.Sources.Position() {^spin}
+  spin_ground = RotationalComponents.Components.Fixed() {^spin_ground}
+
   # Shared reference
-  parameter unloaded_radius::Length = 0.230
+  parameter unloaded_radius::Length = 0.3135
 
   # Excitation
   parameter stroke::Length = 0.0254
   parameter freq::Frequency = 0.5
 
+  parameter speed::Velocity = 0.0
+  parameter static_deflection::Length = 0.0
+  parameter kappa_start::Real = 0.0
+  parameter kappa_end::Real = 0.0
+  parameter slip_ramp_time::Time = 1.0
+
+  final parameter spin_rate_start::AngularVelocity = (1 + kappa_start) * speed / unloaded_radius
+  final parameter spin_accel::AngularAcceleration = (kappa_end - kappa_start) * speed / (unloaded_radius * slip_ramp_time)
+
 relations
 
   initial wheel_position.v = 0.0
+  initial carriage_position.v = speed
+  initial spin.w = spin_rate_start
 
   wheel_position.s_ref = stroke * sin(2 * π * freq * time)
+  carriage_position.s_ref = speed * time
+  spin.phi_ref = spin_rate_start * time + 0.5 * spin_accel * time ^ 2
 
   connect(world.frame_b, mount.frame_a) {^id6}
-  connect(mount.frame_b, prismatic.frame_a) {^id7}
+  connect(mount.frame_b, carriage.frame_a) {^id11}
+  connect(carriage.support, carriage_position.support) {^id12}
+  connect(carriage_position.flange, carriage.axis) {^id13}
+  connect(carriage.frame_b, prismatic.frame_a) {^id7}
   connect(prismatic.support, wheel_position.support) {^id8}
   connect(wheel_position.flange, prismatic.axis) {^id9}
   connect(prismatic.frame_b, tire.wheel_center) {^id10}
+  connect(spin.spline, tire.spline) {^id14}
+  connect(spin_ground.spline, spin.support) {^id15}
 
 metadata {
   "Dyad": {
@@ -46,8 +110,29 @@ metadata {
         "stop": 2.0,
         "atol": {"tire.rho": 0.000001, "tire.Fz": 0.01, "tire.loaded_radius": 0.000001},
         "expect": {
-          "initial": {"tire.rho": 0, "tire.Fz": 0, "tire.loaded_radius": 0.23},
+          "initial": {"tire.rho": 0, "tire.Fz": 0, "tire.loaded_radius": 0.3135},
           "signals": ["tire.rho", "tire.Fz", "tire.loaded_radius", "tire.z_w"]
+        }
+      },
+      "slip": {
+        "stop": 2.0,
+        "params": {
+          "speed": 10.0,
+          "static_deflection": 0.005,
+          "stroke": 0.0,
+          "kappa_start": -0.2,
+          "kappa_end": 0.2,
+          "slip_ramp_time": 2.0
+        },
+        "atol": {
+          "tire.kappa": 0.0001,
+          "tire.Fx": 0.1,
+          "tire.Fz": 0.1,
+          "tire.rho": 0.000001
+        },
+        "expect": {
+          "initial": {"tire.rho": 0.005, "tire.Fz": 1048.255},
+          "signals": ["tire.kappa", "tire.Fx", "tire.Fz", "tire.rho"]
         }
       }
     }
@@ -75,7 +160,24 @@ metadata {
     "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
     "id8": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 400, "y": 550}], "E": 2}], "path": {}}},
     "id9": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 490, "y": 360}], "E": 2}], "path": {}}},
-    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "carriage": {
+      "Dyad": {"placement": {"diagram": {"x1": 300, "x2": 400, "y1": 450, "y2": 550}}}
+    },
+    "carriage_position": {
+      "Dyad": {"placement": {"diagram": {"x1": 210, "x2": 310, "y1": 310, "y2": 410}}}
+    },
+    "spin": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
+    },
+    "spin_ground": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 620, "y2": 720}}}
+    },
+    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id12": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 260, "y": 550}], "E": 2}], "path": {}}},
+    "id13": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 350, "y": 360}], "E": 2}], "path": {}}},
+    "id14": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id15": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
   }
 }
 end

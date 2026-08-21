@@ -14,26 +14,22 @@ test component LinkageTestRig
   
   # Linkage
   linkage = VehicleComponents.Linkage(
-    lca_front = [0.100, 0.195, 0.125],
-    lca_outer = [0.005, 0.560, 0.130],
-    lca_rear = [-0.100, 0.205, 0.115],
-    uca_front = [0.080, 0.245, 0.305],
-    uca_outer = [-0.010, 0.530, 0.330],
-    uca_rear = [-0.080, 0.255, 0.295],
-    tierod_inner = [0.080, 0.220, 0.150],
-    tierod_outer = [0.075, 0.550, 0.160],
-    pushrod_outer = [0.000, 0.480, 0.340],
+    lca_front = [0.100, 0.195, 0.2085],
+    lca_outer = [0.005, 0.560, 0.2135],
+    lca_rear = [-0.100, 0.205, 0.1985],
+    uca_front = [0.080, 0.245, 0.3885],
+    uca_outer = [-0.010, 0.530, 0.4135],
+    uca_rear = [-0.080, 0.255, 0.3785],
+    tierod_inner = [0.080, 0.220, 0.2335],
+    tierod_outer = [0.075, 0.550, 0.2435],
+    pushrod_outer = [0.000, 0.480, 0.4235],
     wheel_center = wheel_center,
     static_camber = 0.0,
-    static_toe = 0.0,
-    upright_mass = 5.0,
-    upright_I_11 = 0.05,
-    upright_I_22 = 0.05,
-    upright_I_33 = 0.05
+    static_toe = 0.0
   ) {^linkage}
 
   # Wheel centre
-  parameter wheel_center::Position[3] = [0.000, 0.600, 0.230]
+  parameter wheel_center::Position[3] = [0.000, 0.600, 0.3135]
  
   # Rig hardware
   final parameter actuation_rod_length::Length = 0.1

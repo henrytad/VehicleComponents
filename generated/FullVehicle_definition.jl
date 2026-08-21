@@ -7,7 +7,7 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   FullVehicle(; name, sprung_mass, sprung_I_11, sprung_I_22, sprung_I_33, cg_offset)
+   FullVehicle(; name, sprung_mass, sprung_I_11, sprung_I_22, sprung_I_33, sprung_cg, drive_gear_ratio)
 
 ## Parameters:
 
@@ -17,14 +17,15 @@ import Moshi as __Ext__Moshi
 | `sprung_I_11`         |                          | kg.m2  |    |
 | `sprung_I_22`         |                          | kg.m2  |    |
 | `sprung_I_33`         |                          | kg.m2  |    |
-| `cg_offset`         |                          | m  |    |
+| `sprung_cg`         |                          | m  |    |
+| `drive_gear_ratio`         |                          | --  |   1.0 |
 
 ## Connectors
 
  * `rig` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function FullVehicle(; name = nothing, sprung_mass=nothing, sprung_I_11=nothing, sprung_I_22=nothing, sprung_I_33=nothing, cg_offset=nothing, kwargs...)
+@component function FullVehicle(; name = nothing, sprung_mass=nothing, sprung_I_11=nothing, sprung_I_22=nothing, sprung_I_33=nothing, sprung_cg=nothing, drive_gear_ratio=Float64(1.0), kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -67,9 +68,12 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__sprung_I_33 = sprung_I_33
   append!(__params, @parameters (sprung_I_33::Real))
   __initial_conditions[sprung_I_33] = __local__sprung_I_33
-  __local__cg_offset = cg_offset
-  append!(__params, @parameters (cg_offset[1:3]::Real))
-  __initial_conditions[cg_offset] = __local__cg_offset
+  __local__sprung_cg = sprung_cg
+  append!(__params, @parameters (sprung_cg[1:3]::Real))
+  __initial_conditions[sprung_cg] = __local__sprung_cg
+  __local__drive_gear_ratio = drive_gear_ratio
+  append!(__params, @parameters (drive_gear_ratio::Real))
+  __initial_conditions[drive_gear_ratio] = __local__drive_gear_ratio
 
   ### Final Parameters (assignments)
 
@@ -86,19 +90,19 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named rig = __Dyad__Frame3D())
   # Subcomponent body of type MultibodyComponents.Body
   body_overrides = __pop_subcomponent_overrides!(__overrides, "body")
-  push!(__systems, @named body = MultibodyComponents.Body(; m=sprung_mass, r_cm=cg_offset, I_11=sprung_I_11, I_22=sprung_I_22, I_33=sprung_I_33, cylinder_radius=Float64(0), body_overrides...))
-  # Subcomponent tire_fr of type VehicleComponents.TireMF61
-  tire_fr_overrides = __pop_subcomponent_overrides!(__overrides, "tire_fr")
-  push!(__systems, @named tire_fr = VehicleComponents.TireMF61(; tire_fr_overrides...))
-  # Subcomponent tire_fl of type VehicleComponents.TireMF61
-  tire_fl_overrides = __pop_subcomponent_overrides!(__overrides, "tire_fl")
-  push!(__systems, @named tire_fl = VehicleComponents.TireMF61(; tire_fl_overrides...))
-  # Subcomponent tire_rl of type VehicleComponents.TireMF61
-  tire_rl_overrides = __pop_subcomponent_overrides!(__overrides, "tire_rl")
-  push!(__systems, @named tire_rl = VehicleComponents.TireMF61(; tire_rl_overrides...))
-  # Subcomponent tire_rr of type VehicleComponents.TireMF61
-  tire_rr_overrides = __pop_subcomponent_overrides!(__overrides, "tire_rr")
-  push!(__systems, @named tire_rr = VehicleComponents.TireMF61(; tire_rr_overrides...))
+  push!(__systems, @named body = MultibodyComponents.Body(; m=sprung_mass, r_cm=sprung_cg, I_11=sprung_I_11, I_22=sprung_I_22, I_33=sprung_I_33, cylinder_radius=Float64(0), body_overrides...))
+  # Subcomponent corner_fl of type VehicleComponents.CornerAssembly
+  corner_fl_overrides = __pop_subcomponent_overrides!(__overrides, "corner_fl")
+  push!(__systems, @named corner_fl = VehicleComponents.CornerAssembly(; drive_gear_ratio=drive_gear_ratio, corner_fl_overrides...))
+  # Subcomponent corner_fr of type VehicleComponents.CornerAssembly
+  corner_fr_overrides = __pop_subcomponent_overrides!(__overrides, "corner_fr")
+  push!(__systems, @named corner_fr = VehicleComponents.CornerAssembly(; drive_gear_ratio=drive_gear_ratio, corner_fr_overrides...))
+  # Subcomponent corner_rl of type VehicleComponents.CornerAssembly
+  corner_rl_overrides = __pop_subcomponent_overrides!(__overrides, "corner_rl")
+  push!(__systems, @named corner_rl = VehicleComponents.CornerAssembly(; drive_gear_ratio=drive_gear_ratio, corner_rl_overrides...))
+  # Subcomponent corner_rr of type VehicleComponents.CornerAssembly
+  corner_rr_overrides = __pop_subcomponent_overrides!(__overrides, "corner_rr")
+  push!(__systems, @named corner_rr = VehicleComponents.CornerAssembly(; drive_gear_ratio=drive_gear_ratio, corner_rr_overrides...))
   # Subcomponent front_suspension of type VehicleComponents.Suspension
   front_suspension_overrides = __pop_subcomponent_overrides!(__overrides, "front_suspension")
   push!(__systems, @named front_suspension = VehicleComponents.Suspension(; front_suspension_overrides...))
@@ -120,10 +124,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(body.frame_a, rig))
   push!(__eqs, connect(front_suspension.chassis, body.frame_a))
   push!(__eqs, connect(rear_suspension.chassis, body.frame_a))
-  push!(__eqs, connect(front_suspension.wheel_left, tire_fl.wheel_center))
-  push!(__eqs, connect(front_suspension.wheel_right, tire_fr.wheel_center))
-  push!(__eqs, connect(rear_suspension.wheel_left, tire_rl.wheel_center))
-  push!(__eqs, connect(rear_suspension.wheel_right, tire_rr.wheel_center))
+  push!(__eqs, connect(front_suspension.wheel_left, corner_fl.wheel_center))
+  push!(__eqs, connect(front_suspension.wheel_right, corner_fr.wheel_center))
+  push!(__eqs, connect(rear_suspension.wheel_left, corner_rl.wheel_center))
+  push!(__eqs, connect(rear_suspension.wheel_right, corner_rr.wheel_center))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

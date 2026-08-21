@@ -1,15 +1,17 @@
 component TireMF61
   """
   Magic Formula 6.1 tire model
- 
-  Currently only considers vertical load only.
- 
-  Ground is flat at z = 0. Deflection is taken from the wheel centre height, 
+
+  Currently only considers vertical and longitudinal forces. It carries no 
+  mass and no inertia.
+
+  Ground is flat at z = 0. Deflection is taken from the wheel centre height,
   which assumes the contact patch sits directly below it.
   """
 
   extends Styles
 
+  spline = Dyad.Spline() {^spline}
   wheel_center = Dyad.Frame3D() {^wheel_center}
 
   visual = MultibodyComponents.CylinderShape(
@@ -22,55 +24,257 @@ component TireMF61
     width = 2 * unloaded_radius,
     height = 2 * unloaded_radius
   )
-
-  # TIR data
+  
+  # ---------------------------------------------------------------------------
+  # TIR data - [DIMENSION] / [VERTICAL]
+  # ---------------------------------------------------------------------------
   parameter width::Length
   parameter unloaded_radius::Length
   parameter vertical_stiffness::TranslationalSpringConstant
   parameter vertical_damping::TranslationalDampingConstant
+  parameter FNOMIN::Force
+  parameter BREFF::Real
+  parameter DREFF::Real
+  parameter FREFF::Real
 
+  # ---------------------------------------------------------------------------
+  # TIR data - [OPERATING_CONDITIONS]
+  # ---------------------------------------------------------------------------
+  parameter INFLPRES::Pressure
+  parameter NOMPRES::Pressure
+  parameter LONGVL::Velocity
+
+  # ---------------------------------------------------------------------------
+  # TIR data - [LONGITUDINAL_COEFFICIENTS]
+  # ---------------------------------------------------------------------------
+  "Shape factor Cfx"
+  parameter PCX1::Real
+  "Longitudinal friction Mux at Fznom"
+  parameter PDX1::Real
+  "Variation of friction Mux with load"
+  parameter PDX2::Real
+  "Variation of friction Mux with camber squared"
+  parameter PDX3::Real
+  "Longitudinal curvature Efx at Fznom"
+  parameter PEX1::Real
+  "Variation of curvature Efx with load"
+  parameter PEX2::Real
+  "Variation of curvature Efx with load squared"
+  parameter PEX3::Real
+  "Factor in curvature Efx while driving"
+  parameter PEX4::Real
+  "Longitudinal slip stiffness Kfx/Fz at Fznom"
+  parameter PKX1::Real
+  "Variation of slip stiffness Kfx/Fz with load"
+  parameter PKX2::Real
+  "Exponent in slip stiffness Kfx/Fz with load"
+  parameter PKX3::Real
+  "Horizontal shift Shx at Fznom"
+  parameter PHX1::Real
+  "Variation of shift Shx with load"
+  parameter PHX2::Real
+  "Vertical shift Svx/Fz at Fznom"
+  parameter PVX1::Real
+  "Variation of shift Svx/Fz with load"
+  parameter PVX2::Real
+  "Linear influence of inflation pressure on longitudinal slip stiffness"
+  parameter PPX1::Real
+  "Quadratic influence of inflation pressure on longitudinal slip stiffness"
+  parameter PPX2::Real
+  "Linear influence of inflation pressure on peak longitudinal friction"
+  parameter PPX3::Real
+  "Quadratic influence of inflation pressure on peak longitudinal friction"
+  parameter PPX4::Real
+
+  # ---------------------------------------------------------------------------
+  # TIR data - [SCALING_COEFFICIENTS]
+  # ---------------------------------------------------------------------------
+  parameter LFZO::Real = 1
+  parameter LCX::Real = 1
+  parameter LMUX::Real = 1
+  parameter LEX::Real = 1
+  parameter LKX::Real = 1
+  parameter LHX::Real = 1
+  parameter LVX::Real = 1
+  "Slip-speed friction decay. Leave at 0 unless modelling a wet surface."
+  parameter LMUV::Real = 0
+  
+  # ---------------------------------------------------------------------------
+  # Operating point / numerics
+  # ---------------------------------------------------------------------------
+  "Inclination (camber) angle. Fixed at 0 until the tire reads it from the frame."
+  parameter inclination_angle::Angle = 0
+  "Digressive friction factor Au (4.E8), suggested 10"
+  parameter Au::Real = 10
+  "Singularity guard on Bx (4.E16). Only bites below Fz ~ eps_x / (PCX1 * PDX1)."
+  parameter eps_x::Force = 0.1
+  "Floor on the slip-ratio denominator. Set to the TIR VXLOW."
+  parameter eps_v::Velocity = 1.0
+  
+  # ---------------------------------------------------------------------------
+  # Vertical / kinematics
+  # ---------------------------------------------------------------------------
   "Height of the wheel centre above the ground plane"
   variable z_w::Length
-
   "Vertical velocity of the wheel centre"
   variable v_z::Velocity
-
   "Height of the lowest point of the undeflected tyre (in contact when < 0)"
   variable z_bottom::Length
-
   "Radial deflection (>= 0)"
   variable rho::Length
-
   "Loaded radius"
   variable loaded_radius::Length
-
+  "Effective rolling radius"
+  variable Re::Length
+  "Tyre deflection at the nominal load"
+  variable rho_Fz0::Length
   "Spring-damper force before the tension clamp"
   variable Fz_raw::Force
-  
   "Vertical contact force pushing the wheel up (>= 0)"
   variable Fz::Force
+  
+  # ---------------------------------------------------------------------------
+  # Longitudinal kinematics
+  # ---------------------------------------------------------------------------
+  "Longitudinal position of the wheel centre"
+  variable x_w::Length
+  "Longitudinal velocity of the contact patch"
+  variable V_x::Velocity
+  "Wheel spin speed (positive = rolling forward)"
+  variable omega::AngularVelocity
+  "Longitudinal slip velocity Vsx = Vx - omega*Re"
+  variable V_sx::Velocity
+  "Slip speed magnitude, used by the friction-decay term"
+  variable V_s::Velocity
+  "Longitudinal slip ratio"
+  variable kappa::Real
+  
+  # ---------------------------------------------------------------------------
+  # Magic Formula intermediates
+  # ---------------------------------------------------------------------------
+  variable Fz0_prime::Force
+  variable dfz::Real
+  variable dpi::Real
+  variable lam_mux_star::Real
+  variable lam_mux_prime::Real
+  variable mu_x::Real
+  variable Kxk::Real
+  variable Cx::Real
+  variable Dx::Force
+  variable Bx::Real
+  variable Ex_raw::Real
+  variable Ex::Real
+  variable SHx::Real
+  variable SVx::Force
+  variable kappa_x::Real
+  variable Fx::Force
 
 relations
 
-  # Kinematics
+  # ===========================================================================
+  # Vertical
+  # ===========================================================================
   z_w = wheel_center.r_0[3]
   v_z = der(z_w)
   z_bottom = z_w - unloaded_radius
   rho = ifelse(z_bottom < 0, -z_bottom, 0)
   loaded_radius = unloaded_radius - rho
- 
+
   # Contact force
   Fz_raw = vertical_stiffness * rho - vertical_damping * v_z
   Fz = ifelse(rho > 0, ifelse(Fz_raw > 0, Fz_raw, 0), 0)
- 
-  # Force
-  wheel_center.f = -wheel_center.R * [0, 0, Fz]
+
+  # Effective rolling radius (Pacejka eq. 9.230)
+  rho_Fz0 = FNOMIN / vertical_stiffness
+  Re = unloaded_radius - rho_Fz0 * (DREFF * atan(BREFF * (rho / rho_Fz0)) + FREFF * (rho / rho_Fz0))
+
+  # ===========================================================================
+  # Slip ratio
+  # ===========================================================================
+  # Straight line only: world x == wheel x. Swap in the wheel-frame projection
+  # of der(wheel_center.r_0) once the wheel can steer or the car can yaw.
+  x_w = wheel_center.r_0[1]
+  V_x = der(x_w)
+  omega = der(spline.phi)
+  V_sx = V_x - omega * Re
+  V_s = abs(V_sx)
+
+  # (Pacejka 4.E5) with the denominator floored at eps_v so it stays finite at
+  # standstill. 
+  # TODO: Replace with the relaxation-length ODE.
+  kappa = -V_sx / ifelse(abs(V_x) > eps_v, abs(V_x), eps_v)
+
+  # ===========================================================================
+  # Base quantities
+  # ===========================================================================
+  # 4.E1
+  Fz0_prime = LFZO * FNOMIN
+
+  # 4.E2a
+  dfz = (Fz - Fz0_prime) / Fz0_prime
+
+  # 4.E2b
+  dpi = (INFLPRES - NOMPRES) / NOMPRES
+
+  # 4.E7
+  lam_mux_star = LMUX / (1 + LMUV * (V_s / LONGVL))
+
+  # 4.E8
+  lam_mux_prime = Au * lam_mux_star / (1 + (Au - 1) * lam_mux_star)
+
+  # ===========================================================================
+  # Longitudinal force - pure slip
+  # ===========================================================================
+  # 4.E13
+  mu_x = (PDX1 + PDX2 * dfz) * (1 + PPX3 * dpi + PPX4 * dpi ^ 2) * (1 - PDX3 * inclination_angle ^ 2) * lam_mux_star
+
+  # 4.E15
+  Kxk = Fz * (PKX1 + PKX2 * dfz) * exp(PKX3 * dfz) * (1 + PPX1 * dpi + PPX2 * dpi ^ 2) * LKX
+
+  # 4.E11
+  Cx = PCX1 * LCX
+
+  # 4.E12 (zeta1 = 1)
+  Dx = mu_x * Fz
+
+  # 4.E16
+  Bx = Kxk / (Cx * Dx + eps_x)
+
+  # 4.E17
+  SHx = (PHX1 + PHX2 * dfz) * LHX
+
+  # 4.E10
+  kappa_x = kappa + SHx
+
+  # 4.E14. Pacejka constrains Ex <= 1 and the formula is only single-humped
+  # while that holds: above it the sine argument sweeps through multiples of
+  # pi and Fx oscillates with slip instead of peaking once. A fit whose PEX
+  # terms are large, or one evaluated far from its FNOMIN, will breach it.
+  Ex_raw = (PEX1 + PEX2 * dfz + PEX3 * dfz ^ 2) * (1 - PEX4 * ifelse(kappa_x >= 0, 1, -1)) * LEX
+  Ex = ifelse(Ex_raw > 1, 1, Ex_raw)
+
+  # 4.E18 (zeta1 = 1)
+  SVx = Fz * (PVX1 + PVX2 * dfz) * LVX * lam_mux_prime
+
+  # 4.E9
+  Fx = Dx * sin(Cx * atan(Bx * kappa_x - Ex * (Bx * kappa_x - atan(Bx * kappa_x)))) + SVx
+
+  # ===========================================================================
+  # Force / torque
+  # ===========================================================================
+  wheel_center.f = -wheel_center.R * [Fx, 0, Fz]
   wheel_center.tau = [0, 0, 0]
+
+  # Torque the shaft has to exert to hold the contact force.
+  spline.tau = Fx * loaded_radius
 
 metadata {
   "_links": {
     "wheel_center": {
       "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 450, "y2": 550}}}
+    },
+    "spline": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
     }
   }
 }

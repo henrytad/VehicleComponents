@@ -5,9 +5,10 @@ using GLMakie, JSON3, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenb
 # If you restart the REPL and rerun the lines, you will not get the error.
 using VehicleComponents
 
+
 const DEG = 180 / π
 
-@named model = VehicleComponents.FullVehicleTestStatic()
+@named model = VehicleComponents.FullVehicleTestStraightLine()
 ssys = multibody(model)
 
 data_path = joinpath(pwd(), "assets", "vehicles", "Test.json")
@@ -202,42 +203,39 @@ parameter_map = Dict([
 prob = ODEProblem(ssys, parameter_map, (0.0, 2.0))
 sol = solve(prob)
 
-plot_tire_forces = Plots.plot(
+render(model, sol; filename="output/full_vehicle_straight_line.gif", up=[0, 0, 1], x=1.5, y=0.4, z=0.7, lookat=[0, 0.05, 0.3])
+
+corner_labels = ["FL" "FR" "RL" "RR"]
+corner_styles = [:solid :dash :solid :dash]
+corner_colors = [1 1 2 2]
+
+plot_kappa = Plots.plot(
+    sol;
+    idxs=[c.wheel_assembly.tire.kappa for c in corners],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="kappa [-]", title="Slip ratio",
+);
+plot_fz = Plots.plot(
     sol;
     idxs=[c.wheel_assembly.tire.Fz for c in corners],
-    labels=["FL" "FR" "RL" "RR"],
-    linestyle=[:dot :dot :dash :dash],
-    linewidth=2,
-    xlabel="t [s]",
-    ylabel="Vertical load [N]",
-    title="Tire normal loads",
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="Fz [N]", title="Tire normal load",
 );
-plot_spring_forces = Plots.plot(
+plot_fx = Plots.plot(
     sol;
-    idxs=[car.front_suspension.inboard.heave_spring.f, car.front_suspension.inboard.roll_spring.f],
-    labels=["heave" "roll"],
-    linewidth=2,
-    xlabel="t [s]",
-    ylabel="Spring force [N]",
-    title="Front inboard spring forces",
+    idxs=[c.wheel_assembly.tire.Fx for c in corners],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="Fx [N]", title="Longitudinal force",
 );
-plot_body_angles = Plots.plot(
+plot_torque = Plots.plot(
     sol;
-    idxs=[ssys.roll_joint.phi * DEG, ssys.pitch_joint.phi * DEG],
-    labels=["roll" "pitch"],
-    linewidth=2,
-    xlabel="t [s]",
-    ylabel="angle [deg]",
-    title="Body attitude",
+    idxs=[c.motor.tau for c in corners],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="tau [N.m]", title="Motor torque",
 );
 Plots.plot(
-    plot_tire_forces,
-    plot_spring_forces,
-    plot_body_angles;
-    layout=(2, 2),
-    size=(1400, 800),
+    plot_kappa, plot_fz, plot_fx, plot_torque;
+    layout=(2, 2), size=(1400, 800),
     left_margin=5Plots.PlotMeasures.mm,
-    bottom_margin=5Plots.PlotMeasures.mm
+    bottom_margin=5Plots.PlotMeasures.mm,
 )
-
-render(model, sol; filename="output/full_vehicle_static.gif", up=[0, 0, 1], x=1.5, y=0.4, z=0.7, lookat=[0, 0.05, 0.3])

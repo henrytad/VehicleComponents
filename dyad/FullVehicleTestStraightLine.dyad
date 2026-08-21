@@ -1,18 +1,22 @@
-test component FullVehicleTestStatic
+test component FullVehicleTestStraightLine
   """
-  Static settling test
+  Straight line acceleration test
 
-  The sprung mass is held on a heave/roll/pitch stack. No lateral, longitudinal
-  or yaw freedom. Released from the reference configuration. Gravity
-  compresses the springs and tyres until the car reaches equilibrium.
+  The sprung mass is connected to the world by a 6 DOF stack.
+
+  Released from the reference configuration. Gravity settles the springs and
+  tires, then drive torque steps in at `drive_start_time`.
   """
 
   world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
 
   # Ground-to-body freedoms
+  longitudinal_joint = MultibodyComponents.Prismatic(n = [1, 0, 0], render = false) {^longitudinal_joint}
+  lateral_joint = MultibodyComponents.Prismatic(n = [0, 1, 0], render = false) {^lateral_joint}
   heave_joint = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^heave_joint}
   roll_joint = MultibodyComponents.Revolute(n = [1, 0, 0], render = false) {^roll_joint}
   pitch_joint = MultibodyComponents.Revolute(n = [0, 1, 0], render = false) {^pitch_joint}
+  yaw_joint = MultibodyComponents.Revolute(n = [0, 0, 1], render = false) {^yaw_joint}
 
   vehicle = VehicleComponents.FullVehicle(
     sprung_mass = 250.0,
@@ -20,6 +24,7 @@ test component FullVehicleTestStatic
     sprung_I_11 = 30.0,
     sprung_I_22 = 80.0,
     sprung_I_33 = 90.0,
+    drive_gear_ratio = 14.0,
     corner_fl(
       upright_mass = 5.0,
       upright_I_11 = 0.05,
@@ -326,14 +331,23 @@ test component FullVehicleTestStatic
     )
   ) {^vehicle}
 
+  parameter drive_torque::Torque = 21.5
+  parameter drive_start_time::Time = 1.5
+
 relations
 
+  initial longitudinal_joint.s = 0.0
+  initial longitudinal_joint.v = 0.0
+  initial lateral_joint.s = 0.0
+  initial lateral_joint.v = 0.0
   initial heave_joint.s = 0.0
   initial heave_joint.v = 0.0
   initial roll_joint.phi = 0.0
   initial roll_joint.w = 0.0
   initial pitch_joint.phi = 0.0
   initial pitch_joint.w = 0.0
+  initial yaw_joint.phi = 0.0
+  initial yaw_joint.w = 0.0
   initial vehicle.front_suspension.linkage_left.lca_rev.phi = 0.0
   initial vehicle.front_suspension.linkage_left.lca_rev.w = 0.0
   initial vehicle.front_suspension.linkage_right.lca_rev.phi = 0.0
@@ -351,53 +365,23 @@ relations
   initial vehicle.corner_rl.wheel_assembly.spin.w = 0.0
   initial vehicle.corner_rr.wheel_assembly.spin.w = 0.0
 
-  vehicle.corner_fl.motor.tau = 0.0
-  vehicle.corner_fr.motor.tau = 0.0
-  vehicle.corner_rl.motor.tau = 0.0
-  vehicle.corner_rr.motor.tau = 0.0
+  vehicle.corner_fl.motor.tau = ifelse(time < drive_start_time, 0, drive_torque)
+  vehicle.corner_fr.motor.tau = ifelse(time < drive_start_time, 0, drive_torque)
+  vehicle.corner_rl.motor.tau = ifelse(time < drive_start_time, 0, drive_torque)
+  vehicle.corner_rr.motor.tau = ifelse(time < drive_start_time, 0, drive_torque)
 
-  connect(world.frame_b, heave_joint.frame_a) {^id6}
-  connect(heave_joint.frame_b, roll_joint.frame_a) {^id7}
-  connect(roll_joint.frame_b, pitch_joint.frame_a) {^id8}
-  connect(pitch_joint.frame_b, vehicle.rig) {^id9}
+  connect(world.frame_b, lateral_joint.frame_a) {^id11}
+  connect(lateral_joint.frame_b, longitudinal_joint.frame_a) {^id12}
+  connect(longitudinal_joint.frame_b, heave_joint.frame_a) {^id13}
+  connect(heave_joint.frame_b, roll_joint.frame_a) {^id9}
+  connect(roll_joint.frame_b, pitch_joint.frame_a) {^id10}
+  connect(pitch_joint.frame_b, yaw_joint.frame_a) {^id14}
+  connect(yaw_joint.frame_b, vehicle.rig) {^id15}
 
 metadata {
   "Dyad": {
     "experiments": {},
-    "tests": {
-      "settle": {
-        "stop": 5.0,
-        "atol": {
-          "vehicle.corner_fl.wheel_assembly.tire.Fz": 5e-1,
-          "vehicle.corner_fr.wheel_assembly.tire.Fz": 5e-1,
-          "vehicle.corner_rl.wheel_assembly.tire.Fz": 5e-1,
-          "vehicle.corner_rr.wheel_assembly.tire.Fz": 5e-1,
-          "heave_joint.s": 1e-5,
-          "pitch_joint.phi": 1e-5,
-          "roll_joint.phi": 1e-5
-        },
-        "expect": {
-          "initial": {
-            "vehicle.corner_fl.wheel_assembly.tire.Fz": 0.0,
-            "vehicle.corner_fr.wheel_assembly.tire.Fz": 0.0,
-            "vehicle.corner_rl.wheel_assembly.tire.Fz": 0.0,
-            "vehicle.corner_rr.wheel_assembly.tire.Fz": 0.0,
-            "heave_joint.s": 0.0,
-            "roll_joint.phi": 0.0,
-            "pitch_joint.phi": 0.0
-          },
-          "signals": [
-            "vehicle.corner_fl.wheel_assembly.tire.Fz",
-            "vehicle.corner_fr.wheel_assembly.tire.Fz",
-            "vehicle.corner_rl.wheel_assembly.tire.Fz",
-            "vehicle.corner_rr.wheel_assembly.tire.Fz",
-            "heave_joint.s",
-            "roll_joint.phi",
-            "pitch_joint.phi"
-          ]
-        }
-      }
-    },
+    "tests": {},
     "labels": [
       {
         "label": "$(instance)",
@@ -414,23 +398,39 @@ metadata {
     "deprecated": null
   },
   "_links": {
-    "world": {"Dyad": {"placement": {"diagram": {"x1": 0, "y1": 10, "x2": 100, "y2": 110}}}},
-    "heave_joint": {
-      "Dyad": {"placement": {"diagram": {"x1": 200, "x2": 300, "y1": 10, "y2": 110}}}
-    },
-    "roll_joint": {
-      "Dyad": {"placement": {"diagram": {"x1": 390, "x2": 490, "y1": 10, "y2": 110}}}
-    },
-    "pitch_joint": {
-      "Dyad": {"placement": {"diagram": {"x1": 580, "x2": 680, "y1": 10, "y2": 110}}}
-    },
+    "world": {"Dyad": {"placement": {"diagram": {"x1": 0, "y1": 0, "x2": 100, "y2": 100}}}},
+    "longitudinal_joint": {"Dyad": {"placement": {"diagram": {"x1": 260, "x2": 360, "y1": 0, "y2": 100}}}},
+    "lateral_joint": {"Dyad": {"placement": {"diagram": {"x1": 130, "x2": 230, "y1": 0, "y2": 100}}}},
+    "heave_joint": {"Dyad": {"placement": {"diagram": {"x1": 390, "x2": 490, "y1": 0, "y2": 100}}}},
+    "roll_joint": {"Dyad": {"placement": {"diagram": {"x1": 520, "x2": 620, "y1": 0, "y2": 100}}}},
+    "pitch_joint": {"Dyad": {"placement": {"diagram": {"x1": 650, "x2": 750, "y1": 0, "y2": 100}}}},
+    "yaw_joint": {"Dyad": {"placement": {"diagram": {"x1": 780, "x2": 880, "y1": 0, "y2": 100}}}},
     "vehicle": {
-      "Dyad": {"placement": {"diagram": {"x1": 770, "x2": 870, "y1": 10, "y2": 110}}}
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 450, "y2": 550}}}
     },
-    "id6": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id8": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id12": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id13": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id14": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id15": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {"x": 890, "y": 50},
+              {"x": 890, "y": 190},
+              {"x": 410, "y": 190},
+              {"x": 410, "y": 500}
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    }
   }
 }
 end

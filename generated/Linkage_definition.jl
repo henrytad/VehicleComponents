@@ -7,7 +7,7 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   Linkage(; name, lca_front, lca_outer, lca_rear, uca_front, uca_outer, uca_rear, tierod_inner, tierod_outer, wheel_center, pushrod_outer, static_camber, static_toe, upright_mass, upright_I_11, upright_I_22, upright_I_33)
+   Linkage(; name, lca_front, lca_outer, lca_rear, uca_front, uca_outer, uca_rear, tierod_inner, tierod_outer, wheel_center, pushrod_outer, static_camber, static_toe)
 
 ## Parameters:
 
@@ -25,10 +25,6 @@ import Moshi as __Ext__Moshi
 | `pushrod_outer`         |                          | m  |    |
 | `static_camber`         |                          | rad  |    |
 | `static_toe`         |                          | rad  |    |
-| `upright_mass`         |                          | kg  |    |
-| `upright_I_11`         |                          | kg.m2  |    |
-| `upright_I_22`         |                          | kg.m2  |    |
-| `upright_I_33`         |                          | kg.m2  |    |
 
 ## Connectors
 
@@ -47,7 +43,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `camber`         |                          | rad  |
 | `wc_height`         |                          | m  |
 """
-@component function Linkage(; name = nothing, lca_front=nothing, lca_outer=nothing, lca_rear=nothing, uca_front=nothing, uca_outer=nothing, uca_rear=nothing, tierod_inner=nothing, tierod_outer=nothing, wheel_center=nothing, pushrod_outer=nothing, static_camber=nothing, static_toe=nothing, upright_mass=nothing, upright_I_11=nothing, upright_I_22=nothing, upright_I_33=nothing, kwargs...)
+@component function Linkage(; name = nothing, lca_front=nothing, lca_outer=nothing, lca_rear=nothing, uca_front=nothing, uca_outer=nothing, uca_rear=nothing, tierod_inner=nothing, tierod_outer=nothing, wheel_center=nothing, pushrod_outer=nothing, static_camber=nothing, static_toe=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -136,18 +132,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__static_toe = static_toe
   append!(__params, @parameters (static_toe::Real))
   __initial_conditions[static_toe] = __local__static_toe
-  __local__upright_mass = upright_mass
-  append!(__params, @parameters (upright_mass::Real), [bounds = (0, Inf)])
-  __initial_conditions[upright_mass] = __local__upright_mass
-  __local__upright_I_11 = upright_I_11
-  append!(__params, @parameters (upright_I_11::Real))
-  __initial_conditions[upright_I_11] = __local__upright_I_11
-  __local__upright_I_22 = upright_I_22
-  append!(__params, @parameters (upright_I_22::Real))
-  __initial_conditions[upright_I_22] = __local__upright_I_22
-  __local__upright_I_33 = upright_I_33
-  append!(__params, @parameters (upright_I_33::Real))
-  __initial_conditions[upright_I_33] = __local__upright_I_33
 
   ### Final Parameters (assignments)
   __bindings[sty_rod_radius] = 0.008
@@ -234,9 +218,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   # Subcomponent wheel_angles of type MultibodyComponents.RelativeAngles
   wheel_angles_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_angles")
   push!(__systems, @named wheel_angles = MultibodyComponents.RelativeAngles(; sequence=[1, 2, 3], wheel_angles_overrides...))
-  # Subcomponent upright_body of type MultibodyComponents.Body
-  upright_body_overrides = __pop_subcomponent_overrides!(__overrides, "upright_body")
-  push!(__systems, @named upright_body = MultibodyComponents.Body(; m=upright_mass, I_11=upright_I_11, I_22=upright_I_22, I_33=upright_I_33, radius=sty_body_radius, color=sty_grey_dark, upright_body_overrides...))
   # Subcomponent pushrod_to_uca of type MultibodyComponents.FixedTranslation
   pushrod_to_uca_overrides = __pop_subcomponent_overrides!(__overrides, "pushrod_to_uca")
   push!(__systems, @named pushrod_to_uca = MultibodyComponents.FixedTranslation(; r=uca_outer - pushrod_outer, radius=sty_rod_radius, color=sty_grey_light, pushrod_to_uca_overrides...))
@@ -273,7 +254,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(lca_to_wc.frame_b, camber_rot.frame_a))
   push!(__eqs, connect(camber_rot.frame_b, toe_rot.frame_a))
   push!(__eqs, connect(toe_rot.frame_b, wheel))
-  push!(__eqs, connect(upright_body.frame_a, lca_to_wc.frame_b))
   push!(__eqs, connect(pushrod_to_uca.frame_b, uca_rod_front.frame_im))
   push!(__eqs, connect(pushrod_to_uca.frame_a, pushrod))
   push!(__eqs, connect(chassis, wheel_angles.frame_a))

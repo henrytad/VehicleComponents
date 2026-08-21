@@ -33,12 +33,6 @@ parameter_map = Dict([
     ssys.linkage.tierod_outer => linkage.tierod_outer,
     ssys.linkage.pushrod_outer => linkage.pushrod_outer,
 
-    # Upright
-    ssys.linkage.upright_mass => linkage.upright.mass,
-    ssys.linkage.upright_I_11 => linkage.upright.i_11,
-    ssys.linkage.upright_I_22 => linkage.upright.i_22,
-    ssys.linkage.upright_I_33 => linkage.upright.i_33,
-
     # Alignment
     ssys.linkage.static_camber => align.static_camber,
     ssys.linkage.static_toe => align.static_toe,
