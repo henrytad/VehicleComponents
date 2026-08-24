@@ -1,0 +1,47 @@
+partial component TorqueControl
+  """Interface for a vehicle torque controller."""
+
+  throttle = RealInput() {^throttle}
+  slip_fl = RealInput() {^slip_fl}
+  slip_fr = RealInput() {^slip_fr}
+  slip_rl = RealInput() {^slip_rl}
+  slip_rr = RealInput() {^slip_rr}
+
+  tau_fl = RealOutput(units = "N.m") {^tau_fl}
+  tau_fr = RealOutput(units = "N.m") {^tau_fr}
+  tau_rl = RealOutput(units = "N.m") {^tau_rl}
+  tau_rr = RealOutput(units = "N.m") {^tau_rr}
+
+relations
+
+metadata {
+  "Dyad": {"labels": [{"label": "$(instance)", "x": 500, "y": 1100, "rot": 0}]},
+  "_links": {
+    "throttle": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
+    "slip_fl": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 230, "y2": 330}}}
+    },
+    "slip_fr": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 380, "y2": 480}}}
+    },
+    "slip_rl": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 520, "y2": 620}}}
+    },
+    "slip_rr": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 660, "y2": 760}}}
+    },
+    "tau_fl": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 230, "y2": 330}}}
+    },
+    "tau_fr": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 380, "y2": 480}}}
+    },
+    "tau_rl": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 520, "y2": 620}}}
+    },
+    "tau_rr": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 660, "y2": 760}}}
+    }
+  }
+}
+end

@@ -18,6 +18,7 @@ body = data.body
 tires = data.tires
 wheels = data.wheels
 drivetrain = data.drivetrain
+ctrl = data.control
 front, rear = data.suspension.front, data.suspension.rear
 
 corners = [car.corner_fl, car.corner_fr, car.corner_rl, car.corner_rr]
@@ -80,10 +81,19 @@ corner_parameters(corner, upright) = [
     corner.wheel_assembly.rim_inertia => wheels.rim_inertia,
     corner.wheel_assembly.tire_mass => tires.MASS,
     corner.wheel_assembly.tire_inertia => tires.IYY,
-    corner.drive_gear_ratio => drivetrain.gear_ratio,
+    corner.motor.gear_ratio => drivetrain.gear_ratio,
 ]
 
 parameter_map = Dict([
+    # torque control
+    car.control.slip_target_front => ctrl.slip_target_front,
+    car.control.slip_target_rear => ctrl.slip_target_rear,
+    car.control.launch_torque => ctrl.launch_torque,
+    car.control.motor_torque_max => ctrl.motor_torque_max,
+    car.control.k => ctrl.slip_loop_gain,
+    car.control.Ti => ctrl.slip_loop_Ti,
+    car.control.Ni => ctrl.slip_loop_Ni,
+
     # body
     car.sprung_mass => body.mass,
     car.sprung_cg => body.cg,

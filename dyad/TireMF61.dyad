@@ -11,6 +11,8 @@ component TireMF61
 
   extends Styles
 
+  slip = RealOutput() {^slip}
+
   spline = Dyad.Spline() {^spline}
   wheel_center = Dyad.Frame3D() {^wheel_center}
 
@@ -24,7 +26,7 @@ component TireMF61
     width = 2 * unloaded_radius,
     height = 2 * unloaded_radius
   )
-  
+
   # ---------------------------------------------------------------------------
   # TIR data - [DIMENSION] / [VERTICAL]
   # ---------------------------------------------------------------------------
@@ -312,14 +314,19 @@ relations
 
   # Torque the shaft has to exert to hold the contact force.
   spline.tau = Fx * loaded_radius
+  
+  slip = kappa
 
 metadata {
   "_links": {
+    "spline": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
+    },
     "wheel_center": {
       "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 450, "y2": 550}}}
     },
-    "spline": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
+    "slip": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 20, "y2": 120}}}
     }
   }
 }

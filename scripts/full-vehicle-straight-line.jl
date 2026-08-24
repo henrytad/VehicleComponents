@@ -1,10 +1,9 @@
-using GLMakie, JSON3, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
-
 # Run `using VehicleComponents` if not already in env. If you try importing it again you'll
 # get an "importing VehicleComponents into Main conflicts with an existing global" error.
 # If you restart the REPL and rerun the lines, you will not get the error.
 using VehicleComponents
 
+using GLMakie, JSON3, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
 
 const DEG = 180 / π
 
@@ -19,6 +18,7 @@ body = data.body
 tires = data.tires
 wheels = data.wheels
 drivetrain = data.drivetrain
+ctrl = data.control
 front, rear = data.suspension.front, data.suspension.rear
 
 corners = [car.corner_fl, car.corner_fr, car.corner_rl, car.corner_rr]
@@ -81,10 +81,19 @@ corner_parameters(corner, upright) = [
     corner.wheel_assembly.rim_inertia => wheels.rim_inertia,
     corner.wheel_assembly.tire_mass => tires.MASS,
     corner.wheel_assembly.tire_inertia => tires.IYY,
-    corner.drive_gear_ratio => drivetrain.gear_ratio,
+    corner.motor.gear_ratio => drivetrain.gear_ratio,
 ]
 
 parameter_map = Dict([
+    # torque control
+    car.control.slip_target_front => ctrl.slip_target_front,
+    car.control.slip_target_rear => ctrl.slip_target_rear,
+    car.control.launch_torque => ctrl.launch_torque,
+    car.control.motor_torque_max => ctrl.motor_torque_max,
+    car.control.k => ctrl.slip_loop_gain,
+    car.control.Ti => ctrl.slip_loop_Ti,
+    car.control.Ni => ctrl.slip_loop_Ni,
+
     # body
     car.sprung_mass => body.mass,
     car.sprung_cg => body.cg,
@@ -201,17 +210,34 @@ parameter_map = Dict([
     car.rear_suspension.inboard.pushrod_adjust_right => rear.setup.pushrod_adjust.right,
 ])
 
-prob = ODEProblem(ssys, parameter_map, (0.0, 2.0))
-sol = solve(prob)
+t_drive = 1.5     # drive_start_time
 
-render(model, sol; filename="output/full_vehicle_straight_line.gif", up=[0, 0, 1], x=1.5, y=0.4, z=0.7, lookat=[0, 0.05, 0.3])
+prob = ODEProblem(ssys, parameter_map, (0.0, 6.0))
+sol = solve(prob; tstops=[t_drive])
+
+# Chase camera
+cam_offset = GLMakie.Vec3f(2.5, 0.35, 0.4)
+framerate = 25
+timevec = range(sol.t[1], sol.t[end], step=1 / framerate)
+
+cg = [car.body.frame_a.r_0[i] + body.cg[i] for i in 1:3]
+
+fig, tobs, scene = render(model, sol, sol.t[1];
+    x=cam_offset[1], y=cam_offset[2], z=cam_offset[3],
+    up=[0, 0, 1], slider=false, size=(800, 600))
+
+GLMakie.record(fig, "output/full_vehicle_straight_line.gif", timevec; framerate) do time
+    tobs[] = time
+    target = GLMakie.Vec3f(sol(time, idxs=cg)...)
+    GLMakie.update_cam!(scene.scene, GLMakie.cameracontrols(scene.scene),
+        target + cam_offset, target, GLMakie.Vec3f(0, 0, 1))
+end
 
 corner_labels = ["FL" "FR" "RL" "RR"]
 corner_styles = [:solid :dash :solid :dash]
 corner_colors = [1 1 2 2]
 
-t_drive = 1.5     # drive_start_time
-eps_sigma = 0.001   # relaxation-length floor [m]
+eps_sigma = 0.001
 
 mark!(p) = Plots.vline!(p, [t_drive]; color=:black, linestyle=:dot, linewidth=1, label="")
 
@@ -281,6 +307,55 @@ p_tau = Plots.plot(sol; idxs=[c.motor.tau for c in corners],
     labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
     xlabel="t [s]", ylabel="tau [N.m]", title="Motor torque")
 
-Plots.plot(p_fx, p_v, p_slip, p_sig, p_lim, p_lam, p_svx, p_fz, p_tau;
-    layout=(3, 3), size=(1800, 1100), legendfontsize=6,
+linkages = [car.front_suspension.linkage_left, car.front_suspension.linkage_right,
+    car.rear_suspension.linkage_left, car.rear_suspension.linkage_right]
+
+p_toe = Plots.plot(sol; idxs=[l.toe * DEG for l in linkages],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="toe [deg]", title="Toe — positive is toe-in");
+mark!(p_toe)
+
+p_camber = Plots.plot(sol; idxs=[l.camber * DEG for l in linkages],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="camber [deg]", title="Camber — positive leans outboard");
+mark!(p_camber)
+
+p_attitude = Plots.plot(sol;
+    idxs=[ssys.roll_joint.phi * DEG, ssys.pitch_joint.phi * DEG],
+    labels=["roll" "pitch"], linewidth=2,
+    xlabel="t [s]", ylabel="angle [deg]", title="Body attitude — roll and pitch");
+mark!(p_attitude)
+
+Plots.plot(p_fx, p_v, p_slip, p_sig, p_lim, p_lam, p_svx, p_fz, p_tau,
+    p_toe, p_camber, p_attitude;
+    layout=(4, 3), size=(1800, 1450), legendfontsize=6,
     left_margin=5Plots.PlotMeasures.mm, bottom_margin=5Plots.PlotMeasures.mm)
+
+travel(t) = sol(t, idxs=ssys.longitudinal_joint.s)
+s_launch = travel(t_drive)
+
+function time_to(distance)
+    f(t) = travel(t) - s_launch - distance
+    f(sol.t[end]) < 0 && return NaN
+    lo, hi = t_drive, sol.t[end]
+    for _ in 1:200
+        mid = (lo + hi) / 2
+        f(mid) < 0 ? (lo = mid) : (hi = mid)
+    end
+    (lo + hi) / 2
+end
+
+println("\n--- split times from launch ---")
+for d in (25.0, 50.0, 75.0)
+    t = time_to(d)
+    if isnan(t)
+        println("  ", lpad(Int(d), 2), " m: not reached in ",
+            round(sol.t[end] - t_drive, digits=2), " s")
+    else
+        v = sol(t, idxs=ssys.longitudinal_joint.v)
+        println("  ", lpad(Int(d), 2), " m: ", round(t - t_drive, digits=3), " s   passing at ",
+            round(v, digits=2), " m/s (", round(v * 3.6, digits=1), " km/h)")
+    end
+end
+println("  total travel = ", round(travel(sol.t[end]) - s_launch, digits=1), " m in ",
+    round(sol.t[end] - t_drive, digits=2), " s")

@@ -1631,9 +1631,9 @@ version = "0.2.6"
 
 [[deps.MultibodyComponents]]
 deps = ["BlockComponents", "CoordinateTransformations", "DelimitedFiles", "DyadCompilerPasses", "DyadData", "DyadInterface", "ElectricalComponents", "FileIO", "ForwardDiff", "HydraulicComponents", "LinearAlgebra", "Markdown", "MeshIO", "ModelingToolkit", "ModelingToolkitBase", "ModelingToolkitTearing", "Moshi", "OrdinaryDiffEqDefault", "OrdinaryDiffEqNonlinearSolve", "OrdinaryDiffEqRosenbrock", "OrdinaryDiffEqTsit5", "PrecompileTools", "RotationalComponents", "Rotations", "RuntimeGeneratedFunctions", "Setfield", "SimpleNonlinearSolve", "SparseArrays", "StateSelection", "StaticArrays", "Symbolics", "ThermalComponents", "TrajectoryLimiters", "TranslationalComponents"]
-git-tree-sha1 = "0ec27064b8ae6cbdde4382e5a02caff4d7620d38"
+git-tree-sha1 = "519c84ff35a852b98a71f1a3cc1d6a34042ab5eb"
 uuid = "01883e52-22cd-4538-b14d-b44f958a131d"
-version = "0.2.3"
+version = "0.2.4"
 
     [deps.MultibodyComponents.extensions]
     Render = ["Makie"]

@@ -9,7 +9,8 @@ test component FullVehicleTestStatic
 
   world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
 
-  # Ground-to-body freedoms
+  throttle = BlockComponents.Sources.Constant(k = 0.0) {^throttle}
+
   heave_joint = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^heave_joint}
   roll_joint = MultibodyComponents.Revolute(n = [1, 0, 0], render = false) {^roll_joint}
   pitch_joint = MultibodyComponents.Revolute(n = [0, 1, 0], render = false) {^pitch_joint}
@@ -20,6 +21,15 @@ test component FullVehicleTestStatic
     sprung_I_11 = 30.0,
     sprung_I_22 = 80.0,
     sprung_I_33 = 90.0,
+    control(
+      slip_target_front = 0.10,
+      slip_target_rear = 0.10,
+      launch_torque = 5.0,
+      motor_torque_max = 21.0,
+      k = 40.0,
+      Ti = 0.02,
+      Ni = 0.9
+    ),
     corner_fl(
       upright_mass = 5.0,
       upright_I_11 = 0.05,
@@ -69,9 +79,9 @@ test component FullVehicleTestStatic
           LKX = 1.0,
           LHX = 1.0,
           LVX = 1.0,
-          LMUV = 0.0
-        )
-      )
+          LMUV = 0.0 
+        ) 
+      ) 
     ),
     corner_fr(
       upright_mass = 5.0,
@@ -122,9 +132,9 @@ test component FullVehicleTestStatic
           LKX = 1.0,
           LHX = 1.0,
           LVX = 1.0,
-          LMUV = 0.0
-        )
-      )
+          LMUV = 0.0 
+        ) 
+      ) 
     ),
     corner_rl(
       upright_mass = 5.0,
@@ -175,9 +185,9 @@ test component FullVehicleTestStatic
           LKX = 1.0,
           LHX = 1.0,
           LVX = 1.0,
-          LMUV = 0.0
-        )
-      )
+          LMUV = 0.0 
+        ) 
+      ) 
     ),
     corner_rr(
       upright_mass = 5.0,
@@ -228,9 +238,9 @@ test component FullVehicleTestStatic
           LKX = 1.0,
           LHX = 1.0,
           LVX = 1.0,
-          LMUV = 0.0
-        )
-      )
+          LMUV = 0.0 
+        ) 
+      ) 
     ),
     front_suspension(
       wheel_center_left = [0, 0.6, 0.3135],
@@ -247,7 +257,7 @@ test component FullVehicleTestStatic
         tierod_inner = [0.08, 0.22, 0.2335],
         tierod_outer = [0.075, 0.55, 0.2435],
         static_camber = 0.0,
-        static_toe = 0.0
+        static_toe = 0.0 
       ),
       linkage_right(
         lca_front = [0.1, -0.195, 0.2085],
@@ -259,7 +269,7 @@ test component FullVehicleTestStatic
         tierod_inner = [0.08, -0.22, 0.2335],
         tierod_outer = [0.075, -0.55, 0.2435],
         static_camber = 0.0,
-        static_toe = 0.0
+        static_toe = 0.0 
       ),
       inboard(
         rocker_pivot_left = [-0.03, 0.12, 0.6235],
@@ -277,8 +287,8 @@ test component FullVehicleTestStatic
         roll_damping = 1500.0,
         roll_preload = 0.0,
         pushrod_adjust_left = 0.0,
-        pushrod_adjust_right = 0.0
-      )
+        pushrod_adjust_right = 0.0 
+      ) 
     ),
     rear_suspension(
       wheel_center_left = [-1.6, 0.59, 0.3135],
@@ -295,7 +305,7 @@ test component FullVehicleTestStatic
         tierod_inner = [-1.53, 0.225, 0.2285],
         tierod_outer = [-1.535, 0.545, 0.2385],
         static_camber = 0.0,
-        static_toe = 0.0
+        static_toe = 0.0 
       ),
       linkage_right(
         lca_front = [-1.51, -0.2, 0.2035],
@@ -307,7 +317,7 @@ test component FullVehicleTestStatic
         tierod_inner = [-1.53, -0.225, 0.2285],
         tierod_outer = [-1.535, -0.545, 0.2385],
         static_camber = 0.0,
-        static_toe = 0.0
+        static_toe = 0.0 
       ),
       inboard(
         rocker_pivot_left = [-1.57, 0.118, 0.5135],
@@ -325,9 +335,9 @@ test component FullVehicleTestStatic
         roll_damping = 1600.0,
         roll_preload = 0.0,
         pushrod_adjust_left = 0.0,
-        pushrod_adjust_right = 0.0
-      )
-    )
+        pushrod_adjust_right = 0.0 
+      ) 
+    ) 
   ) {^vehicle}
 
 relations
@@ -355,40 +365,36 @@ relations
   initial vehicle.corner_rl.wheel_assembly.spin.w = 0.0
   initial vehicle.corner_rr.wheel_assembly.spin.w = 0.0
 
-  vehicle.corner_fl.motor.tau = 0.0
-  vehicle.corner_fr.motor.tau = 0.0
-  vehicle.corner_rl.motor.tau = 0.0
-  vehicle.corner_rr.motor.tau = 0.0
-
-  connect(world.frame_b, heave_joint.frame_a) {^id6}
-  connect(heave_joint.frame_b, roll_joint.frame_a) {^id7}
-  connect(roll_joint.frame_b, pitch_joint.frame_a) {^id8}
-  connect(pitch_joint.frame_b, vehicle.rig) {^id9}
+  connect(throttle.y, vehicle.throttle) {^id7}
+  connect(world.frame_b, heave_joint.frame_a) {^id8}
+  connect(heave_joint.frame_b, roll_joint.frame_a) {^id9}
+  connect(roll_joint.frame_b, pitch_joint.frame_a) {^id10}
+  connect(pitch_joint.frame_b, vehicle.rig) {^id11}
 
 metadata {
   "Dyad": {
     "experiments": {},
     "tests": {
       "settle": {
-        "stop": 5.0,
+        "stop": 5,
         "atol": {
-          "vehicle.corner_fl.wheel_assembly.tire.Fz": 5e-1,
-          "vehicle.corner_fr.wheel_assembly.tire.Fz": 5e-1,
-          "vehicle.corner_rl.wheel_assembly.tire.Fz": 5e-1,
-          "vehicle.corner_rr.wheel_assembly.tire.Fz": 5e-1,
-          "heave_joint.s": 1e-5,
-          "pitch_joint.phi": 1e-5,
-          "roll_joint.phi": 1e-5
+          "vehicle.corner_fl.wheel_assembly.tire.Fz": 0.5,
+          "vehicle.corner_fr.wheel_assembly.tire.Fz": 0.5,
+          "vehicle.corner_rl.wheel_assembly.tire.Fz": 0.5,
+          "vehicle.corner_rr.wheel_assembly.tire.Fz": 0.5,
+          "heave_joint.s": 0.00001,
+          "pitch_joint.phi": 0.00001,
+          "roll_joint.phi": 0.00001
         },
         "expect": {
           "initial": {
-            "vehicle.corner_fl.wheel_assembly.tire.Fz": 0.0,
-            "vehicle.corner_fr.wheel_assembly.tire.Fz": 0.0,
-            "vehicle.corner_rl.wheel_assembly.tire.Fz": 0.0,
-            "vehicle.corner_rr.wheel_assembly.tire.Fz": 0.0,
-            "heave_joint.s": 0.0,
-            "roll_joint.phi": 0.0,
-            "pitch_joint.phi": 0.0
+            "vehicle.corner_fl.wheel_assembly.tire.Fz": 0,
+            "vehicle.corner_fr.wheel_assembly.tire.Fz": 0,
+            "vehicle.corner_rl.wheel_assembly.tire.Fz": 0,
+            "vehicle.corner_rr.wheel_assembly.tire.Fz": 0,
+            "heave_joint.s": 0,
+            "roll_joint.phi": 0,
+            "pitch_joint.phi": 0
           },
           "signals": [
             "vehicle.corner_fl.wheel_assembly.tire.Fz",
@@ -419,6 +425,9 @@ metadata {
   },
   "_links": {
     "world": {"Dyad": {"placement": {"diagram": {"x1": 0, "y1": 10, "x2": 100, "y2": 110}}}},
+    "throttle": {
+      "Dyad": {"placement": {"diagram": {"x1": 30, "x2": 130, "y1": 380, "y2": 480}}}
+    },
     "heave_joint": {
       "Dyad": {"placement": {"diagram": {"x1": 200, "x2": 300, "y1": 10, "y2": 110}}}
     },
@@ -429,12 +438,34 @@ metadata {
       "Dyad": {"placement": {"diagram": {"x1": 580, "x2": 680, "y1": 10, "y2": 110}}}
     },
     "vehicle": {
-      "Dyad": {"placement": {"diagram": {"x1": 770, "x2": 870, "y1": 10, "y2": 110}}}
+      "Dyad": {"placement": {"diagram": {"x1": 440, "x2": 540, "y1": 450, "y2": 550}}}
     },
-    "id6": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id7": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 360, "y": 430}, {"x": 360, "y": 457}], "E": 2}],
+        "path": {}
+      }
+    },
     "id8": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id11": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {"x": 730, "y": 60},
+              {"x": 730, "y": 270},
+              {"x": 280, "y": 270},
+              {"x": 280, "y": 500}
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    }
   }
 }
 end

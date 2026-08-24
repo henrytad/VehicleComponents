@@ -7,17 +7,17 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   HubMotor(; name, axis, gear_ratio)
+   HubMotor(; name, gear_ratio)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `axis`         |                          | --  |   [0, 1, 0] |
 | `gear_ratio`         |                          | --  |   1.0 |
 
 ## Connectors
 
+ * `tau` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
  * `spline` - This connector represents a rotational spline with angle and torque as the potential and flow variables, respectively. ([`Spline`](@ref))
@@ -26,10 +26,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
 | Name         | Description                         | Units  | 
 | ------------ | ----------------------------------- | ------ |
-| `tau`         | Motor shaft torque. Supplied by whoever instantiates the motor.                         | N.m  |
-| `tau_wheel`         | Torque delivered at the wheel                         | N.m  |
+| `tau_wheel`         |                          | N.m  |
 """
-@component function HubMotor(; name = nothing, axis=[Float64(0), Float64(1), Float64(0)], gear_ratio=Float64(1.0), kwargs...)
+@component function HubMotor(; name = nothing, gear_ratio=Float64(1.0), kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -60,9 +59,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Deferred assignment (default values that depend on final parameters)
 
   ### Symbolic Parameters
-  __local__axis = axis
-  append!(__params, @parameters (axis[1:3]::Real))
-  __initial_conditions[axis] = __local__axis
   __local__gear_ratio = gear_ratio
   append!(__params, @parameters (gear_ratio::Real))
   __initial_conditions[gear_ratio] = __local__gear_ratio
@@ -70,15 +66,12 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Final Parameters (assignments)
 
   ### Final Path Parameters
+  append!(__vars, @variables (tau(t)::Real), [input = true])
 
   ### Variables (declarations)
-  append!(__vars, @variables (tau(t)::Real), [description = "Motor shaft torque. Supplied by whoever instantiates the motor."])
-  append!(__vars, @variables (tau_wheel(t)::Real), [description = "Torque delivered at the wheel"])
+  append!(__vars, @variables (tau_wheel(t)::Real))
 
   ### Variables (assignments)
-  __ovr_tau = pop!(__overrides, "tau", nothing); isnothing(__ovr_tau) || push!(__eqs, tau ~ __ovr_tau)
-  __ovr_tau__initial = pop!(__overrides, "tau__initial", nothing); isnothing(__ovr_tau__initial) || (__initial_conditions[tau] = __ovr_tau__initial)
-  __ovr_tau__guess = pop!(__overrides, "tau__guess", nothing)
   __ovr_tau_wheel = pop!(__overrides, "tau_wheel", nothing); isnothing(__ovr_tau_wheel) || push!(__eqs, tau_wheel ~ __ovr_tau_wheel)
   __ovr_tau_wheel__initial = pop!(__overrides, "tau_wheel__initial", nothing); isnothing(__ovr_tau_wheel__initial) || (__initial_conditions[tau_wheel] = __ovr_tau_wheel__initial)
   __ovr_tau_wheel__guess = pop!(__overrides, "tau_wheel__guess", nothing)
@@ -94,7 +87,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
 
   ### Guesses
-  isnothing(__ovr_tau__guess) || (__guesses[tau] = __ovr_tau__guess)
   isnothing(__ovr_tau_wheel__guess) || (__guesses[tau_wheel] = __ovr_tau_wheel__guess)
 
   ### Initialization Equations
@@ -106,7 +98,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, tau_wheel ~ tau * gear_ratio)
   push!(__eqs, spline.tau ~ -tau_wheel)
   push!(__eqs, wheel_center.f ~ [0, 0, 0])
-  push!(__eqs, wheel_center.tau ~ axis * tau_wheel)
+  push!(__eqs, wheel_center.tau ~ [0, 1, 0] * tau_wheel)
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

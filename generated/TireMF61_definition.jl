@@ -60,6 +60,7 @@ import Moshi as __Ext__Moshi
 
 ## Connectors
 
+ * `slip` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
  * `spline` - This connector represents a rotational spline with angle and torque as the potential and flow variables, respectively. ([`Spline`](@ref))
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
@@ -295,6 +296,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings[sty_grey_dark] = [0.1953125, 0.21484375, 0.234375, 1]
 
   ### Final Path Parameters
+  append!(__vars, @variables (slip(t)::Real), [output = true])
 
   ### Variables (declarations)
   append!(__vars, @variables (z_w(t)::Real), [description = "Height of the wheel centre above the ground plane"])
@@ -564,6 +566,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, wheel_center.f ~ -wheel_center.R * [Fx, 0, Fz])
   push!(__eqs, wheel_center.tau ~ [0, 0, 0])
   push!(__eqs, spline.tau ~ Fx * loaded_radius)
+  push!(__eqs, slip ~ kappa)
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

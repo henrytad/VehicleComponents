@@ -1,0 +1,110 @@
+component TorqueControlLaunch
+  """Launch torque control: independent per-corner slip regulation."""
+
+  extends TorqueControl
+
+  control_fl = VehicleComponents.TorqueControlTC(
+    final slip_target = slip_target_front,
+    final launch_torque = launch_torque,
+    final motor_torque_max = motor_torque_max,
+    final k = k,
+    final Ti = Ti,
+    final Ni = Ni
+  ) {^control_fl}
+  control_fr = VehicleComponents.TorqueControlTC(
+    final slip_target = slip_target_front,
+    final launch_torque = launch_torque,
+    final motor_torque_max = motor_torque_max,
+    final k = k,
+    final Ti = Ti,
+    final Ni = Ni
+  ) {^control_fr}
+  control_rl = VehicleComponents.TorqueControlTC(
+    final slip_target = slip_target_rear,
+    final launch_torque = launch_torque,
+    final motor_torque_max = motor_torque_max,
+    final k = k,
+    final Ti = Ti,
+    final Ni = Ni
+  ) {^control_rl}
+  control_rr = VehicleComponents.TorqueControlTC(
+    final slip_target = slip_target_rear,
+    final launch_torque = launch_torque,
+    final motor_torque_max = motor_torque_max,
+    final k = k,
+    final Ti = Ti,
+    final Ni = Ni
+  ) {^control_rr}
+
+  parameter slip_target_front::Real
+  parameter slip_target_rear::Real
+  parameter launch_torque::Real
+  parameter motor_torque_max::Real
+  parameter k::Real
+  parameter Ti::Time
+  parameter Ni::Real
+
+relations
+
+  connect(throttle, control_fl.throttle, control_fr.throttle, control_rl.throttle, control_rr.throttle) {^id5}
+  connect(slip_fl, control_fl.slip) {^id6}
+  connect(slip_fr, control_fr.slip) {^id7}
+  connect(slip_rl, control_rl.slip) {^id8}
+  connect(slip_rr, control_rr.slip) {^id9}
+  connect(control_fl.tau, tau_fl) {^id10}
+  connect(control_fr.tau, tau_fr) {^id11}
+  connect(control_rl.tau, tau_rl) {^id12}
+  connect(control_rr.tau, tau_rr) {^id13}
+
+metadata {
+  "Dyad": {
+    "labels": [
+      {"label": "$(instance)", "x": 500, "y": 1100, "rot": 0},
+      {
+        "label": "F $(slip_target_front) / R $(slip_target_rear)",
+        "x": 500,
+        "y": 800,
+        "rot": 0
+      }
+    ]
+  },
+  "_links": {
+    "control_fl": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 230, "y2": 330}}}
+    },
+    "control_fr": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 380, "y2": 480}}}
+    },
+    "control_rl": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 520, "y2": 620}}}
+    },
+    "control_rr": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 660, "y2": 760}}}
+    },
+    "id5": {
+      "Dyad": {
+        "edges": [
+          {"S": 1, "M": [{"x": 250, "y": 70}, {"x": 250, "y": 256}], "E": 2},
+          {"S": 1, "M": [{"x": 250, "y": 70}, {"x": 250, "y": 406}], "E": 3},
+          {"S": 1, "M": [{"x": 250, "y": 70}, {"x": 250, "y": 546}], "E": 4},
+          {"S": 1, "M": [{"x": 250, "y": 70}, {"x": 250, "y": 686}], "E": 5}
+        ],
+        "path": {}
+      }
+    },
+    "id6": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id8": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id10": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 960, "y": 280}, {"x": 960, "y": 290}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id12": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id13": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+  }
+}
+end
