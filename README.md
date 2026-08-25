@@ -154,3 +154,11 @@ Runs the test suite in the same Linux environment CI uses. The image build insta
 The build uses your JuliaHub credentials to download Dyad packages; the secret is available only while dependencies are installed and is not retained in the image. The command exits non-zero if dependency installation or a test fails. It does not compile `.dyad` sources, so regenerate `generated/` in Dyad Studio and commit it whenever a model changes.
 
 GitHub Actions passes the base64-encoded `JULIAHUB_TOKEN_ENCODED` repository secret directly to the Docker build.
+
+### Refreshing the CI JuliaHub token
+
+JuliaHub credentials expire, and CI fails at the dependency-install step when they do. The fix is to re-encode your local `auth.toml` and update the repository secret.
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("$HOME\.julia\servers\juliahub.com\auth.toml")) | Set-Clipboard
+```

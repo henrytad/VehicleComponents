@@ -1,0 +1,90 @@
+component TorqueControlTC
+  """Per-corner slip control"""
+
+  slip = RealInput() {^slip}
+  throttle = RealInput() {^throttle}
+
+  tau = RealOutput(units = "N.m") {^tau}
+
+  slip_ref = BlockComponents.Math.Gain(final k = slip_target) {^slip_ref}
+  torque_ff = BlockComponents.Math.Gain(final k = launch_torque) {^torque_ff}
+  pid = BlockComponents.Continuous.LimPID(
+    final with_D = false,
+    final k = k,
+    final Ti = Ti,
+    final Ni = Ni,
+    final wp = wp,
+    final y_max = motor_torque_max,
+    final y_min = 0,
+    final k_ff = 1
+  ) {^pid}
+
+  parameter slip_target::Real
+  parameter launch_torque::Real
+  parameter motor_torque_max::Real
+  parameter k::Real
+  parameter Ti::Time
+  parameter Ni::Real
+
+  final parameter wp::Real = 0
+
+relations
+
+  connect(throttle, slip_ref.u, torque_ff.u) {^id7}
+  connect(slip_ref.y, pid.u_s) {^id8}
+  connect(torque_ff.y, pid.u_ff) {^id9}
+  connect(slip, pid.u_m) {^id10}
+  connect(pid.y, tau) {^id11}
+
+metadata {
+  "Dyad": {
+    "labels": [
+      {"label": "$(instance)", "x": 500, "y": 1100, "rot": 0},
+      {"label": "slip = $(slip_target)", "x": 500, "y": 800, "rot": 0}
+    ]
+  },
+  "_links": {
+    "slip": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 450, "y2": 550}}}
+    },
+    "throttle": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 210, "y2": 310}}}
+    },
+    "tau": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
+    },
+    "pid": {
+      "Dyad": {"placement": {"diagram": {"x1": 620, "x2": 720, "y1": 450, "y2": 550}}}
+    },
+    "slip_ref": {
+      "Dyad": {"placement": {"diagram": {"x1": 290, "x2": 390, "y1": 320, "y2": 420}}}
+    },
+    "torque_ff": {
+      "Dyad": {"placement": {"diagram": {"x1": 290, "x2": 390, "y1": 120, "y2": 220}}}
+    },
+    "id7": {
+      "Dyad": {
+        "edges": [
+          {"S": 1, "M": [{"x": 180, "y": 260}, {"x": 180, "y": 370}], "E": 2},
+          {"S": 1, "M": [{"x": 180, "y": 260}, {"x": 180, "y": 170}], "E": 3}
+        ],
+        "path": {}
+      }
+    },
+    "id8": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 500, "y": 370}, {"x": 500, "y": 477}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id9": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 670, "y": 170}], "E": 2}], "path": {}}},
+    "id10": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 390, "y": 500}, {"x": 390, "y": 523}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+  }
+}
+end

@@ -2,21 +2,27 @@ test component FullVehicleTestStraightLine
   """
   Straight line acceleration test
 
-  The sprung mass is connected to the world by a 6 DOF stack.
-
-  Released from the reference configuration. Gravity settles the springs and
-  tires, then drive torque steps in at `drive_start_time`.
+  The sprung mass is connected to the world by a 6 joint stack, with yaw locked
+  at zero so the car can only travel straight.
   """
+
+  extends Styles
 
   world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
 
-  # Ground-to-body freedoms
+  throttle = BlockComponents.Sources.Step(
+    height = 1.0,
+    offset = 0.0,
+    start_time = drive_start_time
+  ) {^throttle}
+
   longitudinal_joint = MultibodyComponents.Prismatic(n = [1, 0, 0], render = false) {^longitudinal_joint}
   lateral_joint = MultibodyComponents.Prismatic(n = [0, 1, 0], render = false) {^lateral_joint}
   heave_joint = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^heave_joint}
   roll_joint = MultibodyComponents.Revolute(n = [1, 0, 0], render = false) {^roll_joint}
   pitch_joint = MultibodyComponents.Revolute(n = [0, 1, 0], render = false) {^pitch_joint}
   yaw_joint = MultibodyComponents.Revolute(n = [0, 0, 1], render = false) {^yaw_joint}
+  yaw_lock = RotationalComponents.Components.Fixed(phi0 = 0.0) {^yaw_lock}
 
   vehicle = VehicleComponents.FullVehicle(
     sprung_mass = 250.0,
@@ -24,8 +30,19 @@ test component FullVehicleTestStraightLine
     sprung_I_11 = 30.0,
     sprung_I_22 = 80.0,
     sprung_I_33 = 90.0,
-    drive_gear_ratio = 14.0,
+    control(
+      slip_target_front = 0.10,
+      slip_target_rear = 0.10,
+      launch_torque = 5.0,
+      motor_torque_max = 21.0,
+      k = 40.0,
+      Ti = 0.02,
+      Ni = 0.9
+    ),
     corner_fl(
+      motor(
+        gear_ratio = 14.0 
+      ),
       upright_mass = 5.0,
       upright_I_11 = 0.05,
       upright_I_22 = 0.05,
@@ -74,11 +91,14 @@ test component FullVehicleTestStraightLine
           LKX = 1.0,
           LHX = 1.0,
           LVX = 1.0,
-          LMUV = 0.0
-        )
-      )
+          LMUV = 0.0 
+        ) 
+      ) 
     ),
     corner_fr(
+      motor(
+        gear_ratio = 14.0 
+      ),
       upright_mass = 5.0,
       upright_I_11 = 0.05,
       upright_I_22 = 0.05,
@@ -127,11 +147,14 @@ test component FullVehicleTestStraightLine
           LKX = 1.0,
           LHX = 1.0,
           LVX = 1.0,
-          LMUV = 0.0
-        )
-      )
+          LMUV = 0.0 
+        ) 
+      ) 
     ),
     corner_rl(
+      motor(
+        gear_ratio = 14.0 
+      ),
       upright_mass = 5.0,
       upright_I_11 = 0.05,
       upright_I_22 = 0.05,
@@ -180,11 +203,14 @@ test component FullVehicleTestStraightLine
           LKX = 1.0,
           LHX = 1.0,
           LVX = 1.0,
-          LMUV = 0.0
-        )
-      )
+          LMUV = 0.0 
+        ) 
+      ) 
     ),
     corner_rr(
+      motor(
+        gear_ratio = 14.0 
+      ),
       upright_mass = 5.0,
       upright_I_11 = 0.05,
       upright_I_22 = 0.05,
@@ -233,9 +259,9 @@ test component FullVehicleTestStraightLine
           LKX = 1.0,
           LHX = 1.0,
           LVX = 1.0,
-          LMUV = 0.0
-        )
-      )
+          LMUV = 0.0 
+        ) 
+      ) 
     ),
     front_suspension(
       wheel_center_left = [0, 0.6, 0.3135],
@@ -252,7 +278,7 @@ test component FullVehicleTestStraightLine
         tierod_inner = [0.08, 0.22, 0.2335],
         tierod_outer = [0.075, 0.55, 0.2435],
         static_camber = 0.0,
-        static_toe = 0.0
+        static_toe = 0.0 
       ),
       linkage_right(
         lca_front = [0.1, -0.195, 0.2085],
@@ -264,7 +290,7 @@ test component FullVehicleTestStraightLine
         tierod_inner = [0.08, -0.22, 0.2335],
         tierod_outer = [0.075, -0.55, 0.2435],
         static_camber = 0.0,
-        static_toe = 0.0
+        static_toe = 0.0 
       ),
       inboard(
         rocker_pivot_left = [-0.03, 0.12, 0.6235],
@@ -282,8 +308,8 @@ test component FullVehicleTestStraightLine
         roll_damping = 1500.0,
         roll_preload = 0.0,
         pushrod_adjust_left = 0.0,
-        pushrod_adjust_right = 0.0
-      )
+        pushrod_adjust_right = 0.0 
+      ) 
     ),
     rear_suspension(
       wheel_center_left = [-1.6, 0.59, 0.3135],
@@ -300,7 +326,7 @@ test component FullVehicleTestStraightLine
         tierod_inner = [-1.53, 0.225, 0.2285],
         tierod_outer = [-1.535, 0.545, 0.2385],
         static_camber = 0.0,
-        static_toe = 0.0
+        static_toe = 0.0 
       ),
       linkage_right(
         lca_front = [-1.51, -0.2, 0.2035],
@@ -312,7 +338,7 @@ test component FullVehicleTestStraightLine
         tierod_inner = [-1.53, -0.225, 0.2285],
         tierod_outer = [-1.535, -0.545, 0.2385],
         static_camber = 0.0,
-        static_toe = 0.0
+        static_toe = 0.0 
       ),
       inboard(
         rocker_pivot_left = [-1.57, 0.118, 0.5135],
@@ -330,15 +356,56 @@ test component FullVehicleTestStraightLine
         roll_damping = 1600.0,
         roll_preload = 0.0,
         pushrod_adjust_left = 0.0,
-        pushrod_adjust_right = 0.0
-      )
-    )
+        pushrod_adjust_right = 0.0 
+      ) 
+    ) 
   ) {^vehicle}
 
-  parameter drive_torque::Torque = 5.0
-  parameter drive_start_time::Time = 1.5
+  # Animations
+  post_1 = MultibodyComponents.CylinderShape(
+    color = sty_orange,
+    r = [0, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_1}
+  post_2 = MultibodyComponents.CylinderShape(
+    color = sty_orange,
+    r = [marker_spacing, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_2}
+  post_3 = MultibodyComponents.CylinderShape(
+    color = sty_orange,
+    r = [2 * marker_spacing, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_3}
+  post_4 = MultibodyComponents.CylinderShape(
+    color = sty_orange,
+    r = [3 * marker_spacing, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_4}
 
-  relations
+  parameter drive_start_time::Time = 1.5
+  parameter marker_spacing::Length = 25.0
+  parameter marker_offset::Length = 1.5
+  parameter marker_height::Length = 1.0
+  parameter marker_diameter::Length = 0.1
+
+relations
 
   initial longitudinal_joint.s = 0.0
   initial longitudinal_joint.v = 0.0
@@ -350,8 +417,6 @@ test component FullVehicleTestStraightLine
   initial roll_joint.w = 0.0
   initial pitch_joint.phi = 0.0
   initial pitch_joint.w = 0.0
-  initial yaw_joint.phi = 0.0
-  initial yaw_joint.w = 0.0
   initial vehicle.front_suspension.linkage_left.lca_rev.phi = 0.0
   initial vehicle.front_suspension.linkage_left.lca_rev.w = 0.0
   initial vehicle.front_suspension.linkage_right.lca_rev.phi = 0.0
@@ -369,18 +434,15 @@ test component FullVehicleTestStraightLine
   initial vehicle.corner_rl.wheel_assembly.spin.w = 0.0
   initial vehicle.corner_rr.wheel_assembly.spin.w = 0.0
 
-  vehicle.corner_fl.motor.tau = ifelse(time < drive_start_time, 0, drive_torque)
-  vehicle.corner_fr.motor.tau = ifelse(time < drive_start_time, 0, drive_torque)
-  vehicle.corner_rl.motor.tau = ifelse(time < drive_start_time, 0, drive_torque)
-  vehicle.corner_rr.motor.tau = ifelse(time < drive_start_time, 0, drive_torque)
-
-  connect(world.frame_b, lateral_joint.frame_a) {^id11}
-  connect(lateral_joint.frame_b, longitudinal_joint.frame_a) {^id12}
-  connect(longitudinal_joint.frame_b, heave_joint.frame_a) {^id13}
-  connect(heave_joint.frame_b, roll_joint.frame_a) {^id9}
-  connect(roll_joint.frame_b, pitch_joint.frame_a) {^id10}
-  connect(pitch_joint.frame_b, yaw_joint.frame_a) {^id14}
-  connect(yaw_joint.frame_b, vehicle.rig) {^id15}
+  connect(throttle.y, vehicle.throttle) {^id15}
+  connect(world.frame_b, lateral_joint.frame_a) {^id16}
+  connect(lateral_joint.frame_b, longitudinal_joint.frame_a) {^id17}
+  connect(longitudinal_joint.frame_b, heave_joint.frame_a) {^id18}
+  connect(heave_joint.frame_b, roll_joint.frame_a) {^id19}
+  connect(roll_joint.frame_b, pitch_joint.frame_a) {^id20}
+  connect(pitch_joint.frame_b, yaw_joint.frame_a) {^id21}
+  connect(yaw_joint.axis, yaw_lock.spline) {^id22}
+  connect(yaw_joint.frame_b, vehicle.rig) {^id23}
 
 metadata {
   "Dyad": {
@@ -403,31 +465,56 @@ metadata {
   },
   "_links": {
     "world": {"Dyad": {"placement": {"diagram": {"x1": 0, "y1": 0, "x2": 100, "y2": 100}}}},
+    "throttle": {
+      "Dyad": {"placement": {"diagram": {"x1": 40, "x2": 140, "y1": 380, "y2": 480}}}
+    },
+    "post_1": {
+      "Dyad": {"placement": {"diagram": {"x1": 0, "x2": 100, "y1": 900, "y2": 1000}}}
+    },
+    "post_2": {
+      "Dyad": {"placement": {"diagram": {"x1": 170, "x2": 270, "y1": 900, "y2": 1000}}}
+    },
+    "post_3": {
+      "Dyad": {"placement": {"diagram": {"x1": 340, "x2": 440, "y1": 900, "y2": 1000}}}
+    },
+    "post_4": {
+      "Dyad": {"placement": {"diagram": {"x1": 510, "x2": 610, "y1": 900, "y2": 1000}}}
+    },
     "longitudinal_joint": {"Dyad": {"placement": {"diagram": {"x1": 260, "x2": 360, "y1": 0, "y2": 100}}}},
     "lateral_joint": {"Dyad": {"placement": {"diagram": {"x1": 130, "x2": 230, "y1": 0, "y2": 100}}}},
     "heave_joint": {"Dyad": {"placement": {"diagram": {"x1": 390, "x2": 490, "y1": 0, "y2": 100}}}},
     "roll_joint": {"Dyad": {"placement": {"diagram": {"x1": 520, "x2": 620, "y1": 0, "y2": 100}}}},
     "pitch_joint": {"Dyad": {"placement": {"diagram": {"x1": 650, "x2": 750, "y1": 0, "y2": 100}}}},
     "yaw_joint": {"Dyad": {"placement": {"diagram": {"x1": 780, "x2": 880, "y1": 0, "y2": 100}}}},
+    "yaw_lock": {
+      "Dyad": {"placement": {"diagram": {"x1": 780, "x2": 880, "y1": 200, "y2": 300}}}
+    },
     "vehicle": {
       "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 450, "y2": 550}}}
     },
-    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id12": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id13": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id14": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
     "id15": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 370, "y": 430}, {"x": 370, "y": 457}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id16": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id17": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id18": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id19": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id20": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id21": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id22": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id23": {
       "Dyad": {
         "edges": [
           {
             "S": 1,
             "M": [
-              {"x": 890, "y": 50},
-              {"x": 890, "y": 190},
-              {"x": 410, "y": 190},
-              {"x": 410, "y": 500}
+              {"x": 940, "y": 50},
+              {"x": 940, "y": 150},
+              {"x": 300, "y": 150},
+              {"x": 300, "y": 500}
             ],
             "E": 2
           }

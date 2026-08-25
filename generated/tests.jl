@@ -31,5 +31,7 @@ include("SuspensionTestRig_test.jl")
 include("Suspension_test.jl")
 include("TireMF61_test.jl")
 include("TireTestRig_test.jl")
+include("TorqueControlLaunch_test.jl")
+include("TorqueControlTC_test.jl")
 include("WheelAssembly_test.jl")
 end

@@ -7,14 +7,12 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   CornerAssembly(; name, spin_axis, drive_gear_ratio, upright_mass, upright_I_11, upright_I_22, upright_I_33)
+   CornerAssembly(; name, upright_mass, upright_I_11, upright_I_22, upright_I_33)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `spin_axis`         |                          | --  |   [0, 1, 0] |
-| `drive_gear_ratio`         |                          | --  |   1.0 |
 | `upright_mass`         |                          | kg  |    |
 | `upright_I_11`         |                          | kg.m2  |    |
 | `upright_I_22`         |                          | kg.m2  |    |
@@ -22,10 +20,12 @@ import Moshi as __Ext__Moshi
 
 ## Connectors
 
+ * `tau_cmd` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `slip` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function CornerAssembly(; name = nothing, spin_axis=[Float64(0), Float64(1), Float64(0)], drive_gear_ratio=Float64(1.0), upright_mass=nothing, upright_I_11=nothing, upright_I_22=nothing, upright_I_33=nothing, kwargs...)
+@component function CornerAssembly(; name = nothing, upright_mass=nothing, upright_I_11=nothing, upright_I_22=nothing, upright_I_33=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -56,12 +56,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Deferred assignment (default values that depend on final parameters)
 
   ### Symbolic Parameters
-  __local__spin_axis = spin_axis
-  append!(__params, @parameters (spin_axis[1:3]::Real))
-  __initial_conditions[spin_axis] = __local__spin_axis
-  __local__drive_gear_ratio = drive_gear_ratio
-  append!(__params, @parameters (drive_gear_ratio::Real))
-  __initial_conditions[drive_gear_ratio] = __local__drive_gear_ratio
   __local__upright_mass = upright_mass
   append!(__params, @parameters (upright_mass::Real), [bounds = (0, Inf)])
   __initial_conditions[upright_mass] = __local__upright_mass
@@ -78,6 +72,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Final Parameters (assignments)
 
   ### Final Path Parameters
+  append!(__vars, @variables (tau_cmd(t)::Real), [input = true])
+  append!(__vars, @variables (slip(t)::Real), [output = true])
 
   ### Variables (declarations)
 
@@ -93,7 +89,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named wheel_assembly = VehicleComponents.WheelAssembly(; wheel_assembly_overrides...))
   # Subcomponent motor of type VehicleComponents.HubMotor
   motor_overrides = __pop_subcomponent_overrides!(__overrides, "motor")
-  push!(__systems, @named motor = VehicleComponents.HubMotor(; axis=spin_axis, gear_ratio=drive_gear_ratio, motor_overrides...))
+  push!(__systems, @named motor = VehicleComponents.HubMotor(; motor_overrides...))
   # Subcomponent upright of type MultibodyComponents.Body
   upright_overrides = __pop_subcomponent_overrides!(__overrides, "upright")
   push!(__systems, @named upright = MultibodyComponents.Body(; m=upright_mass, r_cm=[Float64(0), Float64(0), Float64(0)], I_11=upright_I_11, I_22=upright_I_22, I_33=upright_I_33, cylinder_radius=Float64(0), upright_overrides...))
@@ -113,6 +109,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(wheel_center, upright.frame_a))
   push!(__eqs, connect(motor.wheel_center, wheel_center))
   push!(__eqs, connect(wheel_assembly.spline, motor.spline))
+  push!(__eqs, connect(tau_cmd, motor.tau))
+  push!(__eqs, connect(wheel_assembly.slip, slip))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

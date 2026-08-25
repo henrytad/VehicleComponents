@@ -4,11 +4,14 @@ component FullVehicle
 
   The `rig` frame is the sprung mass reference. Attach it to ground through
   whatever DOF the study needs.
+
+  The vehicle takes a single `throttle` request and `control` decides what each 
+  hub motor gets.
   """
 
+  throttle = RealInput() {^throttle}
+
   rig = Dyad.Frame3D() {^rig}
-  
-  # Sprung mass
   body = MultibodyComponents.Body(
     m = sprung_mass,
     r_cm = sprung_cg,
@@ -17,24 +20,13 @@ component FullVehicle
     I_33 = sprung_I_33,
     cylinder_radius = 0
   ) {^body}
-
-  # Corners
-  corner_fl = VehicleComponents.CornerAssembly(
-    drive_gear_ratio = drive_gear_ratio
-  ) {^corner_fl}
-  corner_fr = VehicleComponents.CornerAssembly(
-    drive_gear_ratio = drive_gear_ratio
-  ) {^corner_fr}
-  corner_rl = VehicleComponents.CornerAssembly(
-    drive_gear_ratio = drive_gear_ratio
-  ) {^corner_rl}
-  corner_rr = VehicleComponents.CornerAssembly(
-    drive_gear_ratio = drive_gear_ratio
-  ) {^corner_rr}
-
-  # Axles
+  corner_fl = VehicleComponents.CornerAssembly() {^corner_fl}
+  corner_fr = VehicleComponents.CornerAssembly() {^corner_fr}
+  corner_rl = VehicleComponents.CornerAssembly() {^corner_rl}
+  corner_rr = VehicleComponents.CornerAssembly() {^corner_rr}
   front_suspension = VehicleComponents.Suspension() {^front_suspension}
   rear_suspension = VehicleComponents.Suspension() {^rear_suspension}
+  control = VehicleComponents.TorqueControlLaunch() {^control}
 
   # Sprung mass properties
   parameter sprung_mass::Mass
@@ -43,35 +35,44 @@ component FullVehicle
   parameter sprung_I_33::Inertia
   parameter sprung_cg::Position[3]
 
-  # Drive
-  parameter drive_gear_ratio::Real = 1.0
-
 relations
 
   # Sprung mass
-  connect(body.frame_a, rig) {^id15}
-  connect(front_suspension.chassis, body.frame_a) {^id13}
-  connect(rear_suspension.chassis, body.frame_a) {^id14}
+  connect(body.frame_a, rig) {^id11}
+  connect(front_suspension.chassis, body.frame_a) {^id12}
+  connect(rear_suspension.chassis, body.frame_a) {^id13}
 
   # Corners to suspension
-  connect(front_suspension.wheel_left, corner_fl.wheel_center) {^id9}
-  connect(front_suspension.wheel_right, corner_fr.wheel_center) {^id10}
-  connect(rear_suspension.wheel_left, corner_rl.wheel_center) {^id11}
-  connect(rear_suspension.wheel_right, corner_rr.wheel_center) {^id12}
+  connect(front_suspension.wheel_left, corner_fl.wheel_center) {^id14}
+  connect(front_suspension.wheel_right, corner_fr.wheel_center) {^id15}
+  connect(rear_suspension.wheel_left, corner_rl.wheel_center) {^id16}
+  connect(rear_suspension.wheel_right, corner_rr.wheel_center) {^id17}
+
+  # Torque control
+  connect(corner_fl.slip, control.slip_fl) {^id18}
+  connect(corner_fr.slip, control.slip_fr) {^id19}
+  connect(corner_rl.slip, control.slip_rl) {^id20}
+  connect(corner_rr.slip, control.slip_rr) {^id21}
+  connect(control.tau_fl, corner_fl.tau_cmd) {^id22}
+  connect(control.tau_fr, corner_fr.tau_cmd) {^id23}
+  connect(control.tau_rl, corner_rl.tau_cmd) {^id24}
+  connect(control.tau_rr, corner_rr.tau_cmd) {^id25}
+  connect(throttle, control.throttle) {^id26}
 
 metadata {
   "_links": {
     "rig": {
       "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 450, "y2": 550}}}
     },
+    "throttle": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
     "body": {
       "Dyad": {"placement": {"diagram": {"x1": 650, "x2": 750, "y1": 450, "y2": 550}}}
     },
     "corner_fl": {
-      "Dyad": {"placement": {"diagram": {"x1": 360, "x2": 260, "y1": 400, "y2": 300}}}
+      "Dyad": {"placement": {"diagram": {"x1": 360, "x2": 260, "y1": 380, "y2": 280}}}
     },
     "corner_fr": {
-      "Dyad": {"placement": {"diagram": {"x1": 640, "x2": 740, "y1": 400, "y2": 300}}}
+      "Dyad": {"placement": {"diagram": {"x1": 640, "x2": 740, "y1": 380, "y2": 280}}}
     },
     "corner_rl": {
       "Dyad": {"placement": {"diagram": {"x1": 360, "x2": 260, "y1": 610, "y2": 710}}}
@@ -80,14 +81,141 @@ metadata {
       "Dyad": {"placement": {"diagram": {"x1": 640, "x2": 740, "y1": 610, "y2": 710}}}
     },
     "front_suspension": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 400, "y2": 300}}}
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 380, "y2": 280}}}
     },
     "rear_suspension": {
       "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 610, "y2": 710}}}
     },
+    "control": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 60, "y2": 160}}}
+    },
+    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id12": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 500}], "E": 2}], "path": {}}},
     "id13": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 500}], "E": 2}], "path": {}}},
-    "id14": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 500}], "E": 2}], "path": {}}},
-    "id15": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+    "id14": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id15": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id16": {},
+    "id17": {},
+    "id18": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 210, "y": 373}, {"x": 210, "y": 88}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id19": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {"x": 820, "y": 373},
+              {"x": 820, "y": 770},
+              {"x": 190, "y": 770},
+              {"x": 190, "y": 103}
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id20": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 170, "y": 617}, {"x": 170, "y": 117}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id21": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {"x": 860, "y": 617},
+              {"x": 860, "y": 810},
+              {"x": 150, "y": 810},
+              {"x": 150, "y": 131}
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id22": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {"x": 880, "y": 88},
+              {"x": 880, "y": 440},
+              {"x": 400, "y": 440},
+              {"x": 400, "y": 373}
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id23": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {"x": 860, "y": 103},
+              {"x": 860, "y": 410},
+              {"x": 620, "y": 410},
+              {"x": 620, "y": 373}
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id24": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {"x": 900, "y": 117},
+              {"x": 900, "y": 570},
+              {"x": 410, "y": 570},
+              {"x": 410, "y": 617}
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id25": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {"x": 920, "y": 131},
+              {"x": 920, "y": 590},
+              {"x": 590, "y": 590},
+              {"x": 590, "y": 617}
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id26": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 40, "y": 70}, {"x": 40, "y": 67}], "E": 2}],
+        "path": {}
+      }
+    }
   }
 }
 end
