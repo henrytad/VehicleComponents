@@ -470,7 +470,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named wheel_center = __Dyad__Frame3D())
   # Subcomponent visual of type MultibodyComponents.CylinderShape
   visual_overrides = __pop_subcomponent_overrides!(__overrides, "visual")
-  push!(__systems, @named visual = MultibodyComponents.CylinderShape(; color=sty_black, r=wheel_center.r_0, r_shape=[0, -width / 2, 0], length_direction=[0, 1, 0], width_direction=[1, 0, 0], length=width, width=2 * unloaded_radius, height=2 * unloaded_radius, visual_overrides...))
+  push!(__systems, @named visual = MultibodyComponents.CylinderShape(; color=sty_black, r=wheel_center.r_0, R=transpose(wheel_center.R), r_shape=[0, -width / 2, 0], length_direction=[0, 1, 0], width_direction=[1, 0, 0], length=width, width=2 * unloaded_radius, height=2 * unloaded_radius, visual_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))

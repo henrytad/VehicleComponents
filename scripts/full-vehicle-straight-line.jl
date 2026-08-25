@@ -21,6 +21,8 @@ drivetrain = data.drivetrain
 ctrl = data.control
 front, rear = data.suspension.front, data.suspension.rear
 
+t_drive = 1.5
+
 corners = [car.corner_fl, car.corner_fr, car.corner_rl, car.corner_rr]
 
 tire_parameters(tire) = [
@@ -208,9 +210,9 @@ parameter_map = Dict([
     car.rear_suspension.inboard.roll_preload => rear.setup.roll.preload,
     car.rear_suspension.inboard.pushrod_adjust_left => rear.setup.pushrod_adjust.left,
     car.rear_suspension.inboard.pushrod_adjust_right => rear.setup.pushrod_adjust.right,
-])
 
-t_drive = 1.5     # drive_start_time
+    ssys.drive_start_time => t_drive,
+])
 
 prob = ODEProblem(ssys, parameter_map, (0.0, 6.0))
 sol = solve(prob; tstops=[t_drive])

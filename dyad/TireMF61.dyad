@@ -19,6 +19,7 @@ component TireMF61
   visual = MultibodyComponents.CylinderShape(
     color = sty_black,
     r = wheel_center.r_0,
+    R = transpose(wheel_center.R),
     r_shape = [0, -width / 2, 0],
     length_direction = [0, 1, 0],
     width_direction = [1, 0, 0],
