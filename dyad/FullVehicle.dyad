@@ -20,10 +20,10 @@ component FullVehicle
     I_33 = sprung_I_33,
     cylinder_radius = 0
   ) {^body}
-  corner_fl = VehicleComponents.CornerAssembly() {^corner_fl}
-  corner_fr = VehicleComponents.CornerAssembly() {^corner_fr}
-  corner_rl = VehicleComponents.CornerAssembly() {^corner_rl}
-  corner_rr = VehicleComponents.CornerAssembly() {^corner_rr}
+  corner_fl = VehicleComponents.CornerAssembly(is_left = true) {^corner_fl}
+  corner_fr = VehicleComponents.CornerAssembly(is_left = false) {^corner_fr}
+  corner_rl = VehicleComponents.CornerAssembly(is_left = true) {^corner_rl}
+  corner_rr = VehicleComponents.CornerAssembly(is_left = false) {^corner_rr}
   front_suspension = VehicleComponents.Suspension() {^front_suspension}
   rear_suspension = VehicleComponents.Suspension() {^rear_suspension}
   control = VehicleComponents.TorqueControlLaunch() {^control}

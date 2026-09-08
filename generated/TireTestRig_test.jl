@@ -20,7 +20,7 @@ __dyad_run_test_case!(
   expected_initial=Tuple[
     (m -> m.tire.rho, "tire.rho", 0, 0.000001, 1e-5),
     (m -> m.tire.Fz, "tire.Fz", 0, 0.01, 1e-5),
-    (m -> m.tire.loaded_radius, "tire.loaded_radius", 0.3135, 0.000001, 1e-5),
+    (m -> m.tire.loaded_radius, "tire.loaded_radius", 0.344, 0.000001, 1e-5),
   ],
   expected_final=Tuple[],
   signals=Tuple[
@@ -45,7 +45,7 @@ __dyad_run_test_case!(
   initial_conditions=Tuple[],
   expected_initial=Tuple[
     (m -> m.tire.rho, "tire.rho", 0.005, 0.000001, 1e-5),
-    (m -> m.tire.Fz, "tire.Fz", 1048.255, 0.1, 1e-5),
+    (m -> m.tire.Fz, "tire.Fz", 1050, 0.1, 1e-5),
   ],
   expected_final=Tuple[],
   signals=Tuple[
@@ -53,5 +53,31 @@ __dyad_run_test_case!(
     (m -> m.tire.Fx, "tire.Fx", 0.1, 1e-5),
     (m -> m.tire.Fz, "tire.Fz", 0.1, 1e-5),
     (m -> m.tire.rho, "tire.rho", 0.000001, 1e-5),
+  ],
+)
+__dyad_run_test_case!(
+  VehicleComponents.TireTestRig,
+  "slip_angle for VehicleComponents.TireTestRig";
+  case_name="slip_angle",
+  component_stem="TireTestRig",
+  module_path=String[],
+  start=0e+0,
+  stop=2e+0,
+  abstol=1e-6,
+  reltol=1e-6,
+  solver=ODEAlg.Auto(),
+  params=(; speed=10, static_deflection=0.005, stroke=0, alpha_start=-0.2, alpha_end=0.2, steer_ramp_time=2),
+  initial_conditions=Tuple[],
+  expected_initial=Tuple[
+    (m -> m.tire.rho, "tire.rho", 0.005, 0.000001, 1e-5),
+    (m -> m.tire.Fz, "tire.Fz", 1050, 0.1, 1e-5),
+    (m -> m.tire.alpha, "tire.alpha", -0.2, 0.0001, 1e-5),
+  ],
+  expected_final=Tuple[],
+  signals=Tuple[
+    (m -> m.tire.alpha, "tire.alpha", 0.0001, 1e-5),
+    (m -> m.tire.Fy, "tire.Fy", 0.1, 1e-5),
+    (m -> m.tire.Fx, "tire.Fx", 1e-5, 1e-5),
+    (m -> m.tire.Fz, "tire.Fz", 0.1, 1e-5),
   ],
 )

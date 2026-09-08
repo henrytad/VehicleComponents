@@ -10,7 +10,7 @@ const DEG = 180 / π
 @named model = VehicleComponents.FullVehicleTestStraightLine()
 ssys = multibody(model)
 
-data_path = joinpath(pwd(), "assets", "vehicles", "Test.json")
+data_path = joinpath(pwd(), "assets", "vehicles", "MR25.json")
 data = JSON3.read(read(data_path, String))
 
 car = ssys.vehicle
@@ -25,6 +25,11 @@ t_drive = 1.5
 
 corners = [car.corner_fl, car.corner_fr, car.corner_rl, car.corner_rr]
 
+# TireMF61 takes the data as describing a LEFT-side tyre and mirrors the right.
+# Which side each corner is on is structural and set in FullVehicle, so it
+# cannot be overridden here.
+@assert uppercase(String(tires.TYRESIDE)) == "LEFT" "tires.TYRESIDE is $(tires.TYRESIDE), but TireMF61 assumes a LEFT-side fit; mirror the data first"
+
 tire_parameters(tire) = [
     # [DIMENSION] / [VERTICAL]
     tire.width => tires.WIDTH,
@@ -32,6 +37,7 @@ tire_parameters(tire) = [
     tire.vertical_stiffness => tires.VERTICAL_STIFFNESS,
     tire.vertical_damping => tires.VERTICAL_DAMPING,
     tire.longitudinal_stiffness => tires.LONGITUDINAL_STIFFNESS,
+    tire.lateral_stiffness => tires.LATERAL_STIFFNESS,
     tire.FNOMIN => tires.FNOMIN,
     tire.BREFF => tires.BREFF,
     tire.DREFF => tires.DREFF,
@@ -62,6 +68,93 @@ tire_parameters(tire) = [
     tire.PPX2 => tires.PPX2,
     tire.PPX3 => tires.PPX3,
     tire.PPX4 => tires.PPX4,
+    tire.RBX1 => tires.RBX1,
+    tire.RBX2 => tires.RBX2,
+    tire.RBX3 => tires.RBX3,
+    tire.RCX1 => tires.RCX1,
+    tire.REX1 => tires.REX1,
+    tire.REX2 => tires.REX2,
+    tire.RHX1 => tires.RHX1,
+
+    # [LATERAL_COEFFICIENTS]
+    tire.PCY1 => tires.PCY1,
+    tire.PDY1 => tires.PDY1,
+    tire.PDY2 => tires.PDY2,
+    tire.PDY3 => tires.PDY3,
+    tire.PEY1 => tires.PEY1,
+    tire.PEY2 => tires.PEY2,
+    tire.PEY3 => tires.PEY3,
+    tire.PEY4 => tires.PEY4,
+    tire.PEY5 => tires.PEY5,
+    tire.PKY1 => tires.PKY1,
+    tire.PKY2 => tires.PKY2,
+    tire.PKY3 => tires.PKY3,
+    tire.PKY4 => tires.PKY4,
+    tire.PKY5 => tires.PKY5,
+    tire.PKY6 => tires.PKY6,
+    tire.PKY7 => tires.PKY7,
+    tire.PHY1 => tires.PHY1,
+    tire.PHY2 => tires.PHY2,
+    tire.PVY1 => tires.PVY1,
+    tire.PVY2 => tires.PVY2,
+    tire.PVY3 => tires.PVY3,
+    tire.PVY4 => tires.PVY4,
+    tire.PPY1 => tires.PPY1,
+    tire.PPY2 => tires.PPY2,
+    tire.PPY3 => tires.PPY3,
+    tire.PPY4 => tires.PPY4,
+    tire.PPY5 => tires.PPY5,
+    tire.RBY1 => tires.RBY1,
+    tire.RBY2 => tires.RBY2,
+    tire.RBY3 => tires.RBY3,
+    tire.RBY4 => tires.RBY4,
+    tire.RCY1 => tires.RCY1,
+    tire.REY1 => tires.REY1,
+    tire.REY2 => tires.REY2,
+    tire.RHY1 => tires.RHY1,
+    tire.RHY2 => tires.RHY2,
+    tire.RVY1 => tires.RVY1,
+    tire.RVY2 => tires.RVY2,
+    tire.RVY3 => tires.RVY3,
+    tire.RVY4 => tires.RVY4,
+    tire.RVY5 => tires.RVY5,
+    tire.RVY6 => tires.RVY6,
+
+    # [ALIGNING_COEFFICIENTS]
+    tire.QBZ1 => tires.QBZ1,
+    tire.QBZ2 => tires.QBZ2,
+    tire.QBZ3 => tires.QBZ3,
+    tire.QBZ4 => tires.QBZ4,
+    tire.QBZ5 => tires.QBZ5,
+    tire.QBZ6 => tires.QBZ6,
+    tire.QBZ9 => tires.QBZ9,
+    tire.QBZ10 => tires.QBZ10,
+    tire.QCZ1 => tires.QCZ1,
+    tire.QDZ1 => tires.QDZ1,
+    tire.QDZ2 => tires.QDZ2,
+    tire.QDZ3 => tires.QDZ3,
+    tire.QDZ4 => tires.QDZ4,
+    tire.QDZ6 => tires.QDZ6,
+    tire.QDZ7 => tires.QDZ7,
+    tire.QDZ8 => tires.QDZ8,
+    tire.QDZ9 => tires.QDZ9,
+    tire.QDZ10 => tires.QDZ10,
+    tire.QDZ11 => tires.QDZ11,
+    tire.QEZ1 => tires.QEZ1,
+    tire.QEZ2 => tires.QEZ2,
+    tire.QEZ3 => tires.QEZ3,
+    tire.QEZ4 => tires.QEZ4,
+    tire.QEZ5 => tires.QEZ5,
+    tire.QHZ1 => tires.QHZ1,
+    tire.QHZ2 => tires.QHZ2,
+    tire.QHZ3 => tires.QHZ3,
+    tire.QHZ4 => tires.QHZ4,
+    tire.PPZ1 => tires.PPZ1,
+    tire.PPZ2 => tires.PPZ2,
+    tire.SSZ1 => tires.SSZ1,
+    tire.SSZ2 => tires.SSZ2,
+    tire.SSZ3 => tires.SSZ3,
+    tire.SSZ4 => tires.SSZ4,
 
     # [SCALING_COEFFICIENTS]
     tire.LFZO => tires.LFZO,
@@ -71,6 +164,20 @@ tire_parameters(tire) = [
     tire.LKX => tires.LKX,
     tire.LHX => tires.LHX,
     tire.LVX => tires.LVX,
+    tire.LCY => tires.LCY,
+    tire.LMUY => tires.LMUY,
+    tire.LEY => tires.LEY,
+    tire.LKY => tires.LKY,
+    tire.LHY => tires.LHY,
+    tire.LVY => tires.LVY,
+    tire.LKYC => tires.LKYC,
+    tire.LXAL => tires.LXAL,
+    tire.LYKA => tires.LYKA,
+    tire.LVYKA => tires.LVYKA,
+    tire.LTR => tires.LTR,
+    tire.LRES => tires.LRES,
+    tire.LKZC => tires.LKZC,
+    tire.LS => tires.LS,
     tire.LMUV => tires.LMUV,
 ]
 
@@ -211,6 +318,7 @@ parameter_map = Dict([
     car.rear_suspension.inboard.pushrod_adjust_left => rear.setup.pushrod_adjust.left,
     car.rear_suspension.inboard.pushrod_adjust_right => rear.setup.pushrod_adjust.right,
 
+    # Setup
     ssys.drive_start_time => t_drive,
 ])
 
@@ -218,7 +326,7 @@ prob = ODEProblem(ssys, parameter_map, (0.0, 6.0))
 sol = solve(prob; tstops=[t_drive])
 
 # Chase camera
-cam_offset = GLMakie.Vec3f(2.5, 0.35, 0.4)
+cam_offset = GLMakie.Vec3f(-2.5, -0.35, 0.4)
 framerate = 25
 timevec = range(sol.t[1], sol.t[end], step=1 / framerate)
 
@@ -283,13 +391,20 @@ p_sig = Plots.plot(sol; idxs=[1000*c.wheel_assembly.tire.sigma_kappa for c in co
     xlabel="t [s]", ylabel="sigma_kappa [mm]", title="Relaxation length (7.8)")
 Plots.hline!(p_sig, [1000*eps_sigma]; color=:red, linestyle=:dot, label="eps_sigma floor")
 
+# (7.25) gates both carcass deflections on one condition: the equivalent slip
+# angle of (4.E78) leaving +/- alpha_sl = 3*Dy/CFalpha, AND |Vx| below Vlow.
+# Leaving the band is necessary but not sufficient, so the speed gate is drawn
+# alongside: the limiter can only bite where both hold.
 p_lim = Plots.plot(sol;
-    idxs=[corners[3].wheel_assembly.tire.kappa_prime,
-        corners[3].wheel_assembly.tire.kappa_sl,
-        -corners[3].wheel_assembly.tire.kappa_sl],
-    labels=["RL kappa'" "+kappa_sl" "-kappa_sl"], color=[2 :red :red],
+    idxs=[corners[3].wheel_assembly.tire.alpha_r_eq,
+        corners[3].wheel_assembly.tire.alpha_sl,
+        -corners[3].wheel_assembly.tire.alpha_sl],
+    labels=["RL alpha_r,eq" "+alpha_sl" "-alpha_sl"], color=[2 :red :red],
     linestyle=[:solid :dot :dot], linewidth=2,
-    xlabel="t [s]", ylabel="slip [-]", title="(7.25) limiter arms if kappa' leaves the band")
+    xlabel="t [s]", ylabel="equivalent slip angle [rad]",
+    title="(7.25) limiter: arms only outside the band AND below Vlow")
+Plots.hline!(p_lim, [0.0]; color=:black, linewidth=0.5, label="")
+mark!(p_lim)
 
 p_lam = Plots.plot(sol; idxs=[c.wheel_assembly.tire.lam_low for c in corners],
     labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
@@ -331,6 +446,69 @@ mark!(p_attitude)
 Plots.plot(p_fx, p_v, p_slip, p_sig, p_lim, p_lam, p_svx, p_fz, p_tau,
     p_toe, p_camber, p_attitude;
     layout=(4, 3), size=(1800, 1450), legendfontsize=6,
+    left_margin=5Plots.PlotMeasures.mm, bottom_margin=5Plots.PlotMeasures.mm)
+
+# ---------------------------------------------------------------------------
+# Lateral balance. All four tyres carry one unmirrored coefficient set, so ply
+# steer, conicity and camber thrust push the same way on both sides rather than
+# cancelling. Two independent measurements of that:
+#   lateral_joint is free, so any net side force integrates into visible drift;
+#   yaw is locked, so the net yaw moment appears as the torque the lock holds.
+# If the sides genuinely cancelled, net Fy, the drift and the lock torque would
+# all sit at zero.
+# ---------------------------------------------------------------------------
+# Fy_c and Mz_c, not Fy and Mz: the latter are in each tyre fit's own convention,
+# which now reads mirrored between left and right. Only the contact-frame values
+# are in a common frame and can meaningfully be summed.
+fy = [sol(sol.t, idxs=c.wheel_assembly.tire.Fy_c).u for c in corners]
+mz = [sol(sol.t, idxs=c.wheel_assembly.tire.Mz_c).u for c in corners]
+fy_net = sum(fy)
+mz_net = sum(mz)
+y_drift = sol(sol.t, idxs=ssys.lateral_joint.s).u
+yaw_hold = sol(sol.t, idxs=ssys.yaw_joint.tau).u
+
+println("\n--- lateral balance (one unmirrored coefficient set on all four corners) ---")
+for (lbl, f) in zip(corner_labels, fy)
+    println("  $lbl  Fy final = ", lpad(round(f[end], digits=2), 9), " N")
+end
+println("  net Fy final       = ", round(fy_net[end], digits=2), " N  ",
+    abs(fy_net[end]) < 1 ? "(cancels)" : "(DOES NOT CANCEL)")
+println("  net Mz final       = ", round(mz_net[end], digits=3), " N.m")
+println("  yaw lock reaction  = ", round(yaw_hold[end], digits=3), " N.m")
+println("  lateral drift      = ", round(1000 * y_drift[end], digits=1), " mm  (peak ",
+    round(1000 * maximum(abs, y_drift), digits=1), " mm)")
+vehicle_mass = body.mass +
+               front.geometry.linkages.left.upright.mass + front.geometry.linkages.right.upright.mass +
+               rear.geometry.linkages.left.upright.mass + rear.geometry.linkages.right.upright.mass +
+               4 * (wheels.rim_mass + tires.MASS)
+println("  vehicle mass       = ", round(vehicle_mass, digits=1), " kg")
+println("  lateral accel      = ", round(fy_net[end] / vehicle_mass, digits=3), " m/s^2")
+
+p_fy = Plots.plot(sol; idxs=[c.wheel_assembly.tire.Fy_c for c in corners],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="Fy [N]", title="Fy per corner, contact frame — should be +/- paired L vs R");
+mark!(p_fy)
+
+p_net = Plots.plot(sol.t, fy_net; label="sum Fy", color=:red, linewidth=2,
+    xlabel="t [s]", ylabel="net Fy [N]", title="Net side force (0 if the sides cancel)");
+Plots.hline!(p_net, [0.0]; color=:black, linewidth=0.5, label="");
+mark!(p_net)
+
+p_drift = Plots.plot(sol.t, 1000 * y_drift; label="lateral drift", color=:black, linewidth=2,
+    xlabel="t [s]", ylabel="lateral drift [mm]",
+    title="Drift — free y joint, so this is the net side force integrated");
+mark!(p_drift)
+
+p_mz = Plots.plot(sol; idxs=[c.wheel_assembly.tire.Mz_c for c in corners],
+    labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
+    xlabel="t [s]", ylabel="Mz [N.m]", title="Aligning moment per corner");
+mark!(p_mz)
+
+p_yaw = Plots.plot(sol.t, yaw_hold; label="yaw lock reaction", color=:purple, linewidth=2,
+    xlabel="t [s]", ylabel="tau [N.m]", title="Torque the yaw lock absorbs (0 if balanced)");
+mark!(p_yaw)
+
+Plots.plot(p_fy, p_net, p_drift, p_mz, p_yaw; layout=(2, 3), size=(1800, 900), legendfontsize=7,
     left_margin=5Plots.PlotMeasures.mm, bottom_margin=5Plots.PlotMeasures.mm)
 
 travel(t) = sol(t, idxs=ssys.longitudinal_joint.s)

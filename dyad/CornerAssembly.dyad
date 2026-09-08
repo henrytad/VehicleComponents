@@ -16,7 +16,7 @@ component CornerAssembly
   slip = RealOutput() {^slip}
 
   wheel_center = Dyad.Frame3D() {^wheel_center}
-  wheel_assembly = VehicleComponents.WheelAssembly() {^wheel_assembly}
+  wheel_assembly = VehicleComponents.WheelAssembly(is_left = is_left) {^wheel_assembly}
   motor = VehicleComponents.HubMotor() {^motor}
   upright = MultibodyComponents.Body(
     m = upright_mass,
@@ -26,6 +26,8 @@ component CornerAssembly
     I_33 = upright_I_33,
     cylinder_radius = 0
   ) {^upright}
+
+  structural parameter is_left::Boolean
 
   parameter upright_mass::Mass
   parameter upright_I_11::Inertia
