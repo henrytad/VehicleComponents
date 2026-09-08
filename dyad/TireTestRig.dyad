@@ -17,6 +17,7 @@ test component TireTestRig
   world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
 
   tire = VehicleComponents.TireMF61(
+    is_left = true,
     unloaded_radius = unloaded_radius,
     width = 0.235,
     vertical_stiffness = 210000.0,

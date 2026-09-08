@@ -135,6 +135,12 @@ appearance parameters are visually distinct from physical ones.
 1. From the same `pkg>` prompt, type `test`. This will test to make sure the models are working as expected. It may also take some time but you should eventually see a result that indicates X of Y tests passed.
 1. Use the `Backspace`/`Delete` key to return to the normal Julia REPL, it should look like this: `julia>`.
 
+### Update Test Reference Results
+
+1. In Julia REPL, set `ENV["DYAD_UPDATE_REFS"] = "1"`
+1. Follow the typical flow. This will overwrite exsisting test references
+1. Exit the pacakge mamanger and in the Julia REPL run `delete!(ENV, "DYAD_UPDATE_REFS")`
+
 ### Testing in Docker
 
 Runs the test suite in the same Linux environment CI uses. The image build instantiates the project and runs its tests against the committed Julia files in `generated/`.
