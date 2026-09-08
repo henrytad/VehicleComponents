@@ -2,11 +2,14 @@ component TireMF61
   """
   Magic Formula 6.1 tire model
 
-  Currently only considers vertical and longitudinal forces. It carries no 
-  mass and no inertia.
+  Currently models vertical, longitudinal, lateral forces and the aligning 
+  moment Mz. It carries no mass and no inertia.
 
   Ground is flat at z = 0. Deflection is taken from the wheel centre height,
   which assumes the contact patch sits directly below it.
+
+  The overturning moment Mx (the QSX coefficients) and turn slip are not
+  modelled; every turn-slip factor zeta is held at 1.
   """
 
   extends Styles
@@ -45,6 +48,8 @@ component TireMF61
   # ---------------------------------------------------------------------------
   "Tyre overall longitudinal stiffness. Sets the relaxation length."
   parameter longitudinal_stiffness::TranslationalSpringConstant
+  "Tyre overall lateral stiffness. Sets the lateral relaxation length."
+  parameter lateral_stiffness::TranslationalSpringConstant
 
   # ---------------------------------------------------------------------------
   # TIR data - [OPERATING_CONDITIONS]
@@ -94,6 +99,180 @@ component TireMF61
   parameter PPX3::Real
   "Quadratic influence of inflation pressure on peak longitudinal friction"
   parameter PPX4::Real
+  "Slope factor for combined slip Fx reduction"
+  parameter RBX1::Real
+  "Variation of slope Fx reduction with kappa"
+  parameter RBX2::Real
+  "Influence of camber on stiffness for Fx combined"
+  parameter RBX3::Real
+  "Shape factor for combined slip Fx reduction"
+  parameter RCX1::Real
+  "Curvature factor of combined Fx"
+  parameter REX1::Real
+  "Curvature factor of combined Fx with load"
+  parameter REX2::Real
+  "Shift factor for combined slip Fx reduction"
+  parameter RHX1::Real
+
+  # ---------------------------------------------------------------------------
+  # TIR data - [LATERAL_COEFFICIENTS]
+  # ---------------------------------------------------------------------------
+  "Shape factor Cfy"
+  parameter PCY1::Real
+  "Lateral friction Muy at Fznom"
+  parameter PDY1::Real
+  "Variation of friction Muy with load"
+  parameter PDY2::Real
+  "Variation of friction Muy with camber squared"
+  parameter PDY3::Real
+  "Lateral curvature Efy at Fznom"
+  parameter PEY1::Real
+  "Variation of curvature Efy with load"
+  parameter PEY2::Real
+  "Zero order camber dependency of curvature Efy"
+  parameter PEY3::Real
+  "Variation of curvature Efy with camber"
+  parameter PEY4::Real
+  "Variation of curvature Efy with camber squared"
+  parameter PEY5::Real
+  "Maximum value of stiffness Kfy/Fznom"
+  parameter PKY1::Real
+  "Load at which Kfy reaches maximum value, over Fznom"
+  parameter PKY2::Real
+  "Variation of Kfy/Fznom with camber"
+  parameter PKY3::Real
+  "Peak stiffness variation with camber squared"
+  parameter PKY4::Real
+  "Fz at which Kfy is maximum, variation with camber squared"
+  parameter PKY5::Real
+  "Camber stiffness factor"
+  parameter PKY6::Real
+  "Camber stiffness variation with load"
+  parameter PKY7::Real
+  "Horizontal shift Shy at Fznom"
+  parameter PHY1::Real
+  "Variation of shift Shy with load"
+  parameter PHY2::Real
+  "Vertical shift in Svy/Fz at Fznom"
+  parameter PVY1::Real
+  "Variation of shift Svy/Fz with load"
+  parameter PVY2::Real
+  "Variation of shift Svy/Fz with camber"
+  parameter PVY3::Real
+  "Variation of shift Svy/Fz with camber and load"
+  parameter PVY4::Real
+  "Linear influence of inflation pressure on cornering stiffness"
+  parameter PPY1::Real
+  "Quadratic influence of inflation pressure on cornering stiffness"
+  parameter PPY2::Real
+  "Linear influence of inflation pressure on peak lateral friction"
+  parameter PPY3::Real
+  "Quadratic influence of inflation pressure on peak lateral friction"
+  parameter PPY4::Real
+  "Influence of inflation pressure on camber stiffness"
+  parameter PPY5::Real
+  "Slope factor for combined Fy reduction"
+  parameter RBY1::Real
+  "Variation of slope Fy reduction with alpha"
+  parameter RBY2::Real
+  "Shift term for alpha in slope Fy reduction"
+  parameter RBY3::Real
+  "Influence of camber on stiffness of Fy combined"
+  parameter RBY4::Real
+  "Shape factor for combined Fy reduction"
+  parameter RCY1::Real
+  "Curvature factor of combined Fy"
+  parameter REY1::Real
+  "Curvature factor of combined Fy with load"
+  parameter REY2::Real
+  "Shift factor for combined Fy reduction"
+  parameter RHY1::Real
+  "Shift factor for combined Fy reduction with load"
+  parameter RHY2::Real
+  "Kappa induced side force Svyk/Muy*Fz at Fznom"
+  parameter RVY1::Real
+  "Variation of Svyk/Muy*Fz with load"
+  parameter RVY2::Real
+  "Variation of Svyk/Muy*Fz with camber"
+  parameter RVY3::Real
+  "Variation of Svyk/Muy*Fz with alpha"
+  parameter RVY4::Real
+  "Variation of Svyk/Muy*Fz with kappa"
+  parameter RVY5::Real
+  "Variation of Svyk/Muy*Fz with atan(kappa)"
+  parameter RVY6::Real
+
+  # ---------------------------------------------------------------------------
+  # TIR data - [ALIGNING_COEFFICIENTS]
+  # ---------------------------------------------------------------------------
+  "Trail slope factor for trail Bpt at Fznom"
+  parameter QBZ1::Real
+  "Variation of slope Bpt with load"
+  parameter QBZ2::Real
+  "Variation of slope Bpt with load squared"
+  parameter QBZ3::Real
+  "Variation of slope Bpt with camber. PAC2002 only; 4.E40 has no term for it."
+  parameter QBZ4::Real
+  "Variation of slope Bpt with absolute camber"
+  parameter QBZ5::Real
+  "Variation of slope Bpt with camber squared"
+  parameter QBZ6::Real
+  "Slope factor Br of residual torque Mzr"
+  parameter QBZ9::Real
+  "Slope factor Br of residual torque Mzr"
+  parameter QBZ10::Real
+  "Shape factor Cpt for pneumatic trail"
+  parameter QCZ1::Real
+  "Peak trail Dpt = Dpt*(Fz/Fznom*R0)"
+  parameter QDZ1::Real
+  "Variation of peak Dpt with load"
+  parameter QDZ2::Real
+  "Variation of peak Dpt with camber"
+  parameter QDZ3::Real
+  "Variation of peak Dpt with camber squared"
+  parameter QDZ4::Real
+  "Peak residual torque Dmr = Dmr/(Fz*R0)"
+  parameter QDZ6::Real
+  "Variation of peak factor Dmr with load"
+  parameter QDZ7::Real
+  "Variation of peak factor Dmr with camber"
+  parameter QDZ8::Real
+  "Variation of peak factor Dmr with camber and load"
+  parameter QDZ9::Real
+  "Variation of peak factor Dmr with camber squared"
+  parameter QDZ10::Real
+  "Variation of peak factor Dmr with camber squared and load"
+  parameter QDZ11::Real
+  "Trail curvature Ept at Fznom"
+  parameter QEZ1::Real
+  "Variation of curvature Ept with load"
+  parameter QEZ2::Real
+  "Variation of curvature Ept with load squared"
+  parameter QEZ3::Real
+  "Variation of curvature Ept with sign of alpha-t"
+  parameter QEZ4::Real
+  "Variation of Ept with camber and sign of alpha-t"
+  parameter QEZ5::Real
+  "Trail horizontal shift Sht at Fznom"
+  parameter QHZ1::Real
+  "Variation of shift Sht with load"
+  parameter QHZ2::Real
+  "Variation of shift Sht with camber"
+  parameter QHZ3::Real
+  "Variation of shift Sht with camber and load"
+  parameter QHZ4::Real
+  "Linear influence of inflation pressure on pneumatic trail"
+  parameter PPZ1::Real
+  "Influence of inflation pressure on residual aligning torque"
+  parameter PPZ2::Real
+  "Nominal value of s/R0: effect of Fx on Mz"
+  parameter SSZ1::Real
+  "Variation of distance s/R0 with Fy/Fznom"
+  parameter SSZ2::Real
+  "Variation of distance s/R0 with camber"
+  parameter SSZ3::Real
+  "Variation of distance s/R0 with load and camber"
+  parameter SSZ4::Real
 
   # ---------------------------------------------------------------------------
   # TIR data - [SCALING_COEFFICIENTS]
@@ -105,9 +284,30 @@ component TireMF61
   parameter LKX::Real = 1
   parameter LHX::Real = 1
   parameter LVX::Real = 1
+  parameter LCY::Real = 1
+  parameter LMUY::Real = 1
+  parameter LEY::Real = 1
+  parameter LKY::Real = 1
+  parameter LHY::Real = 1
+  parameter LVY::Real = 1
+  parameter LKYC::Real = 1
+  parameter LXAL::Real = 1
+  parameter LYKA::Real = 1
+  parameter LVYKA::Real = 1
+  parameter LTR::Real = 1
+  parameter LRES::Real = 1
+  parameter LKZC::Real = 1
+  parameter LS::Real = 1
   "Slip-speed friction decay. Leave at 0 unless modelling a wet surface."
   parameter LMUV::Real = 0
-  
+
+  # ---------------------------------------------------------------------------
+  # Mounted side
+  # ---------------------------------------------------------------------------
+  structural parameter is_left::Boolean
+
+  final parameter side::Real = ifelse(is_left, 1.0, -1.0)
+
   # ---------------------------------------------------------------------------
   # Operating point / numerics
   # ---------------------------------------------------------------------------
@@ -115,13 +315,21 @@ component TireMF61
   parameter Au::Real = 10
   "Singularity guard on Bx (4.E16). Only bites below Fz ~ eps_x / (PCX1 * PDX1)."
   parameter eps_x::Force = 0.1
-  "Low-speed threshold (TIR VXLOW). Floors the slip-ratio denominator."
+  "Singularity guard on By (4.E26)."
+  parameter eps_y::Force = 0.1
+  "Singularity guard on Kya (4.E39)."
+  parameter eps_k::Force = 0.1
+  "Floor on cos(camber), so the contact frame stays defined at extreme camber."
+  parameter eps_gamma::Real = 0.01
+  "Low-speed threshold (TIR VXLOW). Floors the slip denominators."
   parameter eps_v::Velocity = 1.0
+  "Guard on Vc' in (4.E6a)."
+  parameter eps_vc::Velocity = 0.1
   "Floor on the relaxation length, which falls with Fz."
   parameter eps_sigma::Length = 0.001
   "Low-speed damping coefficient k_Vlow of (7.26) over the carcass stiffness (TIR DAMP_VLOW)."
   parameter damp_vlow::Time = 0.001
-  
+
   # ---------------------------------------------------------------------------
   # Vertical / kinematics
   # ---------------------------------------------------------------------------
@@ -143,12 +351,24 @@ component TireMF61
   variable Fz_raw::Force
   "Vertical contact force pushing the wheel up (>= 0)"
   variable Fz::Force
-  
+
   # ---------------------------------------------------------------------------
-  # Longitudinal kinematics
+  # Contact frame
   # ---------------------------------------------------------------------------
   "Longitudinal position of the wheel centre"
   variable x_w::Length
+  "Lateral position of the wheel centre"
+  variable y_w::Length
+  "World-x velocity of the wheel centre"
+  variable v_wx::Velocity
+  "World-y velocity of the wheel centre"
+  variable v_wy::Velocity
+  "Cosine of the inclination angle, i.e. the length of the spin axis' ground projection"
+  variable cos_gamma::Real
+
+  # ---------------------------------------------------------------------------
+  # Longitudinal kinematics
+  # ---------------------------------------------------------------------------
   "Longitudinal velocity of the contact patch"
   variable V_x::Velocity
   "Wheel spin speed (positive = rolling forward)"
@@ -163,17 +383,39 @@ component TireMF61
   variable u_x::Length
   "Unlimited right-hand side of (7.9), before the (7.25) deflection limiter"
   variable u_dot_free::Velocity
-  "Slip beyond which the (7.25) limiter arms. Longitudinal read of alpha_sl."
-  variable kappa_sl::Real
   "Transient longitudinal slip ratio (7.26). What the Magic Formula is fed."
   variable kappa_prime::Real
   "Longitudinal relaxation length (7.8)"
   variable sigma_kappa::Length
-  "Longitudinal tyre stiffness at road level"
-  variable C_Fx::TranslationalSpringConstant
-  
+
   # ---------------------------------------------------------------------------
-  # Magic Formula intermediates
+  # Lateral kinematics
+  # ---------------------------------------------------------------------------
+  "Lateral velocity of the contact patch. Also the lateral slip speed Vsy."
+  variable V_y::Velocity
+  "Lateral slip speed as the fit sees it, i.e. V_y with the mounted-side flip"
+  variable V_y_mf::Velocity
+  "Steady-state slip angle. Reported only; the force is built from alpha_prime."
+  variable alpha::Angle
+  "Magnitude of the contact-centre velocity Vc (4.E6a)"
+  variable V_c::Velocity
+  "Vcx/Vc' of the aligning-moment equations (4.E6). Signed, so it flips in reverse."
+  variable cos_alpha::Real
+  "Sign of Vcx, carried by the pneumatic trail and the residual torque"
+  variable sgn_Vx::Real
+  "Lateral carcass deflection v (7.11). The state."
+  variable v_y::Length
+  "Unlimited right-hand side of (7.11), before the (7.25) deflection limiter"
+  variable v_dot_free::Velocity
+  "Equivalent slip angle at which the (7.25) limiter arms, 3*Dy/CFalpha"
+  variable alpha_sl::Real
+  "Transient lateral slip tan(alpha') (7.26). What the Magic Formula is fed."
+  variable alpha_prime::Real
+  "Lateral relaxation length (7.12)"
+  variable sigma_alpha::Length
+
+  # ---------------------------------------------------------------------------
+  # Magic Formula intermediates - base
   # ---------------------------------------------------------------------------
   variable Fz0_prime::Force
   variable dfz::Real
@@ -181,7 +423,13 @@ component TireMF61
   variable gamma_star::Real
   variable lam_mux_star::Real
   variable lam_mux_prime::Real
+  variable lam_muy_star::Real
+  variable lam_muy_prime::Real
   variable lam_low::Real
+
+  # ---------------------------------------------------------------------------
+  # Magic Formula intermediates - longitudinal
+  # ---------------------------------------------------------------------------
   variable mu_x::Real
   variable Kxk_norm::Real
   variable Kxk::Real
@@ -193,12 +441,97 @@ component TireMF61
   variable SHx::Real
   variable SVx::Force
   variable kappa_x::Real
+  "Pure-slip longitudinal force (4.E9)"
+  variable Fx0::Force
+  variable SHxa::Real
+  variable Cxa::Real
+  variable Bxa::Real
+  variable Exa_raw::Real
+  variable Exa::Real
+  variable alpha_s::Real
+  variable Gxa0::Real
+  variable Gxa::Real
+  "Combined-slip longitudinal force (4.E50)"
   variable Fx::Force
+
+  # ---------------------------------------------------------------------------
+  # Magic Formula intermediates - lateral
+  # ---------------------------------------------------------------------------
+  variable mu_y::Real
+  variable Cy::Real
+  variable Dy::Force
+  variable Kya::Force
+  variable Kya_prime::Force
+  variable Kyg0::Force
+  variable SVyg::Force
+  variable By::Real
+  variable Ey_raw::Real
+  variable Ey::Real
+  variable SHy::Real
+  variable SVy::Force
+  variable alpha_y::Real
+  "Pure-slip lateral force (4.E19)"
+  variable Fy0::Force
+  variable SHyk::Real
+  variable Cyk::Real
+  variable Byk::Real
+  variable Eyk_raw::Real
+  variable Eyk::Real
+  variable kappa_s::Real
+  variable Gyk0::Real
+  variable Gyk::Real
+  variable Dvyk::Force
+  variable SVyk::Force
+  "Combined-slip lateral force (4.E58)"
+  variable Fy::Force
+  "Lateral force without the kappa-induced shift (4.E74), what the trail acts on"
+  variable Fy_prime::Force
+
+  # ---------------------------------------------------------------------------
+  # Magic Formula intermediates - aligning moment
+  # ---------------------------------------------------------------------------
+  variable SHt::Real
+  variable alpha_t::Real
+  variable Bt::Real
+  variable Ct::Real
+  variable Dt0::Length
+  variable Dt::Length
+  variable Et_raw::Real
+  variable Et::Real
+  variable SHf::Real
+  variable alpha_r::Real
+  variable Br::Real
+  variable Cr::Real
+  variable Dr::Torque
+  variable alpha_t_eq::Real
+  variable alpha_r_eq::Real
+  "Pneumatic trail (4.E73)"
+  variable t_pneu::Length
+  "Moment arm of Fx (4.E76)"
+  variable s_arm::Length
+  variable Mz_prime::Torque
+  variable Mzr::Torque
+  "Aligning moment in the tyre fit's own convention (4.E71)"
+  variable Mz::Torque
+  "Lateral force in the contact frame, i.e. Fy with the mounted-side flip undone"
+  variable Fy_c::Force
+  "Aligning moment in the contact frame, i.e. Mz with the mounted-side flip undone"
+  variable Mz_c::Torque
+
+  # ---------------------------------------------------------------------------
+  # Contact force in world
+  # ---------------------------------------------------------------------------
+  variable f_wx::Force
+  variable f_wy::Force
+  variable tau_wx::Torque
+  variable tau_wy::Torque
+  variable tau_wz::Torque
 
 relations
 
   # The tire starts undeflected
   initial u_x = 0
+  initial v_y = 0
 
   # ===========================================================================
   # Vertical
@@ -218,18 +551,59 @@ relations
   Re = unloaded_radius - rho_Fz0 * (DREFF * atan(BREFF * (rho / rho_Fz0)) + FREFF * (rho / rho_Fz0))
 
   # ===========================================================================
-  # Slip ratio
+  # Contact frame
   # ===========================================================================
-  # Straight line only: world x == wheel x. Swap in the wheel-frame projection
-  # of der(wheel_center.r_0) once the wheel can steer or the car can yaw.
+  # Row 2 of R is the wheel spin axis resolved in world. On a flat road its
+  # ground projection fixes the contact-patch axes:
+  #   x_c = (spin_axis x z) / |spin_axis x z| = [ R[2,2], -R[2,1], 0] / cos_gamma
+  #   y_c = z x x_c                           = [ R[2,1],  R[2,2], 0] / cos_gamma
+  # For an upright, unsteered wheel these reduce to world x and y.
+
+  # 4.E4, carrying the mounted-side flip. It enters the longitudinal equations
+  # only squared, so mirroring leaves Fx untouched.
+  gamma_star = side * wheel_center.R[2, 3]
+  cos_gamma = sqrt(max(1 - gamma_star ^ 2, eps_gamma ^ 2))
+
   x_w = wheel_center.r_0[1]
-  V_x = der(x_w)
+  y_w = wheel_center.r_0[2]
+  v_wx = der(x_w)
+  v_wy = der(y_w)
+
+  V_x = (v_wx * wheel_center.R[2, 2] - v_wy * wheel_center.R[2, 1]) / cos_gamma
+  V_y = (v_wx * wheel_center.R[2, 1] + v_wy * wheel_center.R[2, 2]) / cos_gamma
+
+  # ===========================================================================
+  # Slip ratio and slip angle
+  # ===========================================================================
   omega = der(spline.phi)
   V_sx = V_x - omega * Re
   V_s = abs(V_sx)
 
   # 4.E5
   kappa = -V_sx / ifelse(abs(V_x) > eps_v, abs(V_x), eps_v)
+
+  # DELIBERATE SIGN DEVIATION FROM (4.E3), which reads a* = tan(a)*sgn(Vcx) =
+  # -Vcy/|Vcx|. The minus is dropped here, so alpha is the negative of the
+  # book's a*. The book's convention goes with a positive cornering stiffness
+  # (4.E25 notes Kya = CFa, and 4.56 has it "attain its maximum p1"), i.e.
+  # pKy1 > 0. Both TIR files supplied here give pKy1 < 0, so they are fitted in
+  # the opposite convention; feeding them the book's a* would make Fy reinforce
+  # the slide instead of opposing it and the car would diverge on the first
+  # step. Fy is odd in its argument, so flipping alpha and Kya together leaves
+  # the pure-slip force identical. Restore the minus here only if you also
+  # switch to a data set with pKy1 > 0.
+  # V_y_mf is the lateral slip speed as the fit sees it, so alpha, v_y and
+  # alpha_prime are all in the tyre's own convention. Fy and Mz are flipped back
+  # to the contact frame at the bottom.
+  V_y_mf = side * V_y
+  alpha = atan(V_y_mf / ifelse(abs(V_x) > eps_v, abs(V_x), eps_v))
+
+  # 4.E6 and 4.E6a. Signed, so it handles backwards running as the book intends.
+  # It also takes Mz to zero at a standstill on its own, which is why nothing
+  # here needs the lam_low fade the pure-slip shift terms use.
+  V_c = sqrt(V_x ^ 2 + V_y ^ 2)
+  cos_alpha = V_x / (V_c + eps_vc)
+  sgn_Vx = ifelse(V_x >= 0, 1, -1)
 
   # ===========================================================================
   # Base quantities
@@ -245,9 +619,11 @@ relations
 
   # 4.E7
   lam_mux_star = LMUX / (1 + LMUV * (V_s / LONGVL))
+  lam_muy_star = LMUY / (1 + LMUV * (V_s / LONGVL))
 
   # 4.E8
   lam_mux_prime = Au * lam_mux_star / (1 + (Au - 1) * lam_mux_star)
+  lam_muy_prime = Au * lam_muy_star / (1 + (Au - 1) * lam_muy_star)
 
   # NOT FROM THE BOOK. Helps avoid shift term forces when car is at standstill.
   lam_low = 0.5 * (1 - cos(π * min(abs(V_x), eps_v) / eps_v))
@@ -255,9 +631,6 @@ relations
   # ===========================================================================
   # Longitudinal force - pure slip
   # ===========================================================================
-  # 4.E4
-  gamma_star = wheel_center.R[2, 3]
-
   # 4.E13
   mu_x = (PDX1 + PDX2 * dfz) * (1 + PPX3 * dpi + PPX4 * dpi ^ 2) * (1 - PDX3 * gamma_star ^ 2) * lam_mux_star
 
@@ -277,18 +650,22 @@ relations
   # 4.E17, faded out at low speed
   SHx = (PHX1 + PHX2 * dfz) * LHX * lam_low
 
-  # 7.E8
+  # 7.8, sigma_kappa = CFkappa / CFx
   sigma_kappa = max(Kxk / longitudinal_stiffness, eps_sigma)
 
-  # 7.E9
+  # 7.9, du/dt + |Vx|u/sigma_kappa = -Vsx
   u_dot_free = -V_sx - abs(V_x) * u_x / sigma_kappa
 
-  # 7.E26 Besselink low-speed damping (replacing 7.E15)
+  # 7.26, Besselink low-speed damping (replacing 7.15)
   kappa_prime = (u_x - damp_vlow * (1 - lam_low) * V_sx) / sigma_kappa
 
-  # 7.E25 deflection limiter
-  kappa_sl = 3 * mu_x / Kxk_norm
-  der(u_x) = ifelse(abs(kappa_prime) > kappa_sl,
+  # 7.25. One condition gates both deflections: the equivalent slip angle of
+  # (4.E78) against alpha_sl = 3*Dy/CFalpha, and only below Vlow. The book
+  # writes "alpha_r',eq > alpha_sl"; taken as a magnitude here, since alpha_r_eq
+  # carries sgn(alpha_r) and a limiter that arms on only one side of zero cannot
+  # be what is meant.
+  alpha_sl = 3 * abs(Dy) / max(abs(Kya), eps_k)
+  der(u_x) = ifelse(abs(alpha_r_eq) > alpha_sl,
                ifelse(abs(V_x) < eps_v,
                  ifelse((V_sx + abs(V_x) * u_x / sigma_kappa) * u_x < 0, 0, u_dot_free),
                  u_dot_free),
@@ -305,17 +682,230 @@ relations
   SVx = Fz * (PVX1 + PVX2 * dfz) * LVX * lam_mux_prime * lam_low
 
   # 4.E9
-  Fx = Dx * sin(Cx * atan(Bx * kappa_x - Ex * (Bx * kappa_x - atan(Bx * kappa_x)))) + SVx
+  Fx0 = Dx * sin(Cx * atan(Bx * kappa_x - Ex * (Bx * kappa_x - atan(Bx * kappa_x)))) + SVx
+
+  # ===========================================================================
+  # Lateral force - pure slip
+  # ===========================================================================
+  # 4.E23
+  mu_y = (PDY1 + PDY2 * dfz) * (1 + PPY3 * dpi + PPY4 * dpi ^ 2) * (1 - PDY3 * gamma_star ^ 2) * lam_muy_star
+
+  # 4.E21
+  Cy = PCY1 * LCY
+
+  # 4.E22 (zeta2 = 1)
+  Dy = mu_y * Fz
+
+  # 4.E25 (zeta3 = 1)
+  Kya = PKY1 * Fz0_prime * (1 + PPY1 * dpi) * (1 - PKY3 * abs(gamma_star)) * sin(PKY4 * atan((Fz / Fz0_prime) / ((PKY2 + PKY5 * gamma_star ^ 2) * (1 + PPY2 * dpi)))) * LKY
+
+  # 4.E39. Signed so it moves away from zero rather than through it, since both
+  # fitted data sets give Kya < 0.
+  Kya_prime = Kya + ifelse(Kya >= 0, eps_k, -eps_k)
+
+  # 4.E30 and 4.E28 (zeta0 = zeta2 = 1), faded out at low speed
+  Kyg0 = Fz * (PKY6 + PKY7 * dfz) * (1 + PPY5 * dpi) * LKYC * lam_low
+  SVyg = Fz * (PVY3 + PVY4 * dfz) * gamma_star * LKYC * lam_muy_prime * lam_low
+
+  # 4.E27 (zeta0 = zeta4 = 1)
+  SHy = (PHY1 + PHY2 * dfz) * LHY * lam_low + (Kyg0 * gamma_star - SVyg) / Kya_prime
+
+  # 4.E26. The guard carries the sign of Dy, which PAC2002 fits make negative.
+  By = Kya / (Cy * Dy + ifelse(Dy >= 0, eps_y, -eps_y))
+
+  # 7.6, sigma_alpha = CFalpha / CFy. abs() because Kya < 0 in this data set,
+  # which is the same sign convention issue flagged at alpha above.
+  sigma_alpha = max(abs(Kya) / lateral_stiffness, eps_sigma)
+
+  # 7.7, dv/dt + |Vx|v/sigma_alpha = -Vsy. The sign of the forcing term is
+  # flipped from the book to match the flipped alpha, so the steady state is
+  # v_y = sigma_alpha * tan(alpha) in this model's convention.
+  v_dot_free = V_y_mf - abs(V_x) * v_y / sigma_alpha
+
+  # 7.26, which the book says may equally be used for the lateral
+  alpha_prime = (v_y + damp_vlow * (1 - lam_low) * V_y_mf) / sigma_alpha
+
+  # 7.25, same gate as the longitudinal deflection above. The book uses Vx here
+  # rather than the |Vx| it uses in the longitudinal branch; kept as written.
+  der(v_y) = ifelse(abs(alpha_r_eq) > alpha_sl,
+               ifelse(abs(V_x) < eps_v,
+                 ifelse((-V_y_mf + V_x * v_y / sigma_alpha) * v_y < 0, 0, v_dot_free),
+                 v_dot_free),
+               v_dot_free)
+
+  # 4.E20, on the transient slip per (7.21)
+  alpha_y = alpha_prime + SHy
+
+  # 4.E24
+  Ey_raw = (PEY1 + PEY2 * dfz) * (1 + PEY5 * gamma_star ^ 2 - (PEY3 + PEY4 * gamma_star) * ifelse(alpha_y >= 0, 1, -1)) * LEY
+  Ey = ifelse(Ey_raw > 1, 1, Ey_raw)
+
+  # 4.E29 (zeta2 = 1), faded out at low speed
+  SVy = Fz * (PVY1 + PVY2 * dfz) * LVY * lam_muy_prime * lam_low + SVyg
+
+  # 4.E19
+  Fy0 = Dy * sin(Cy * atan(By * alpha_y - Ey * (By * alpha_y - atan(By * alpha_y)))) + SVy
+
+  # ===========================================================================
+  # Longitudinal force - combined slip
+  # ===========================================================================
+  # Per (7.21) the transient slips kappa_prime and alpha_prime replace the
+  # steady-state ones throughout, so they are what the weighting functions see.
+
+  # 4.E57
+  SHxa = RHX1
+
+  # 4.E55
+  Cxa = RCX1
+
+  # 4.E54
+  Bxa = (RBX1 + RBX3 * gamma_star ^ 2) * cos(atan(RBX2 * kappa_prime)) * LXAL
+
+  # 4.E56, with the book's (<= 1) constraint
+  Exa_raw = REX1 + REX2 * dfz
+  Exa = ifelse(Exa_raw > 1, 1, Exa_raw)
+
+  # 4.E53
+  alpha_s = alpha_prime + SHxa
+
+  # 4.E52
+  Gxa0 = cos(Cxa * atan(Bxa * SHxa - Exa * (Bxa * SHxa - atan(Bxa * SHxa))))
+
+  # 4.E51
+  Gxa = cos(Cxa * atan(Bxa * alpha_s - Exa * (Bxa * alpha_s - atan(Bxa * alpha_s)))) / Gxa0
+
+  # 4.E50
+  Fx = Gxa * Fx0
+
+  # ===========================================================================
+  # Lateral force - combined slip
+  # ===========================================================================
+  # 4.E65
+  SHyk = RHY1 + RHY2 * dfz
+
+  # 4.E63
+  Cyk = RCY1
+
+  # 4.E62
+  Byk = (RBY1 + RBY4 * gamma_star ^ 2) * cos(atan(RBY2 * (alpha_prime - RBY3))) * LYKA
+
+  # 4.E64, with the book's (<= 1) constraint
+  Eyk_raw = REY1 + REY2 * dfz
+  Eyk = ifelse(Eyk_raw > 1, 1, Eyk_raw)
+
+  # 4.E61
+  kappa_s = kappa_prime + SHyk
+
+  # 4.E60
+  Gyk0 = cos(Cyk * atan(Byk * SHyk - Eyk * (Byk * SHyk - atan(Byk * SHyk))))
+
+  # 4.E59
+  Gyk = cos(Cyk * atan(Byk * kappa_s - Eyk * (Byk * kappa_s - atan(Byk * kappa_s)))) / Gyk0
+
+  # 4.E67 (zeta2 = 1)
+  Dvyk = mu_y * Fz * (RVY1 + RVY2 * dfz + RVY3 * gamma_star) * cos(atan(RVY4 * alpha_prime))
+
+  # 4.E66. Not faded at low speed, unlike SHx/SVx/SHy/SVy: those are offsets
+  # that stand at zero slip, whereas this one is odd in kappa and dies with it.
+  # Fading it would wrongly delete the side force of a wheel spun up at a
+  # standstill launch, which is exactly the case this model is used for.
+  SVyk = Dvyk * sin(RVY5 * atan(RVY6 * kappa_prime)) * LVYKA
+
+  # 4.E58
+  Fy = Gyk * Fy0 + SVyk
+
+  # 4.E74
+  Fy_prime = Gyk * Fy0
+
+  # ===========================================================================
+  # Aligning moment
+  # ===========================================================================
+  # 4.E35
+  SHt = QHZ1 + QHZ2 * dfz + (QHZ3 + QHZ4 * dfz) * gamma_star
+
+  # 4.E34, on the transient slip per (7.21)
+  alpha_t = alpha_prime + SHt
+
+  # 4.E40. The camber terms are QBZ5 on |gamma*| and QBZ6 on gamma*^2. PAC2002
+  # instead pairs QBZ4 on gamma with QBZ5 on |gamma*|, so QBZ4 has no place here
+  # and is left unused; QBZ5 keeps the same role in both.
+  Bt = (QBZ1 + QBZ2 * dfz + QBZ3 * dfz ^ 2) * (1 + QBZ5 * abs(gamma_star) + QBZ6 * gamma_star ^ 2) * (LKY / lam_muy_star)
+
+  # 4.E41
+  Ct = QCZ1
+
+  # 4.E42
+  Dt0 = Fz * (unloaded_radius / Fz0_prime) * (QDZ1 + QDZ2 * dfz) * (1 - PPZ1 * dpi) * LTR * sgn_Vx
+
+  # 4.E43 (zeta5 = 1)
+  Dt = Dt0 * (1 + QDZ3 * abs(gamma_star) + QDZ4 * gamma_star ^ 2)
+
+  # 4.E44, with the book's (<= 1) constraint
+  Et_raw = (QEZ1 + QEZ2 * dfz + QEZ3 * dfz ^ 2) * (1 + (QEZ4 + QEZ5 * gamma_star) * (2 / π) * atan(Bt * Ct * alpha_t))
+  Et = ifelse(Et_raw > 1, 1, Et_raw)
+
+  # 4.E38
+  SHf = SHy + SVy / Kya_prime
+
+  # 4.E37, on the transient slip per (7.21)
+  alpha_r = alpha_prime + SHf
+
+  # 4.E45 (zeta6 = 1)
+  Br = QBZ9 * LKY / lam_muy_star + QBZ10 * By * Cy
+
+  # 4.E46 (zeta7 = 1)
+  Cr = 1
+
+  # 4.E47 (zeta0 = zeta2 = 1, and the trailing zeta8 - 1 vanishes)
+  Dr = Fz * unloaded_radius * ((QDZ6 + QDZ7 * dfz) * LRES + ((QDZ8 + QDZ9 * dfz) * (1 + PPZ2 * dpi) + (QDZ10 + QDZ11 * dfz) * abs(gamma_star)) * gamma_star * LKZC) * lam_muy_star * sgn_Vx * cos_alpha
+
+  # 4.E77
+  alpha_t_eq = sqrt(alpha_t ^ 2 + (Kxk / Kya_prime) ^ 2 * kappa_prime ^ 2) * ifelse(alpha_t >= 0, 1, -1)
+
+  # 4.E78
+  alpha_r_eq = sqrt(alpha_r ^ 2 + (Kxk / Kya_prime) ^ 2 * kappa_prime ^ 2) * ifelse(alpha_r >= 0, 1, -1)
+
+  # 4.E73
+  t_pneu = Dt * cos(Ct * atan(Bt * alpha_t_eq - Et * (Bt * alpha_t_eq - atan(Bt * alpha_t_eq)))) * cos_alpha
+
+  # 4.E72
+  Mz_prime = -t_pneu * Fy_prime
+
+  # 4.E75
+  Mzr = Dr * cos(Cr * atan(Br * alpha_r_eq)) * cos_alpha
+
+  # 4.E76
+  s_arm = unloaded_radius * (SSZ1 + SSZ2 * (Fy / Fz0_prime) + (SSZ3 + SSZ4 * dfz) * gamma_star) * LS
+
+  # 4.E71
+  Mz = Mz_prime + Mzr + s_arm * Fx
 
   # ===========================================================================
   # Force / torque
   # ===========================================================================
-  wheel_center.f = -wheel_center.R * [Fx, 0, Fz]
-  wheel_center.tau = [0, 0, 0]
+  # Undo the mounted-side flip, so Fy_c and Mz_c are in the contact frame the
+  # vehicle sees. Fx is unaffected: it depends on gamma only through gamma^2.
+  Fy_c = side * Fy
+  Mz_c = side * Mz
+
+  # Contact force resolved back into world through the contact-patch axes.
+  f_wx = (Fx * wheel_center.R[2, 2] + Fy_c * wheel_center.R[2, 1]) / cos_gamma
+  f_wy = (Fy_c * wheel_center.R[2, 2] - Fx * wheel_center.R[2, 1]) / cos_gamma
+
+  # Carrying Fy from the contact patch up to the wheel centre leaves an
+  # overturning moment loaded_radius * Fy about x_c. The matching Fx moment
+  # about y_c goes to spline.tau instead, since that is the wheel's own spin
+  # degree of freedom. Mz acts about the road normal, which is world z.
+  tau_wx = loaded_radius * Fy_c * wheel_center.R[2, 2] / cos_gamma
+  tau_wy = -loaded_radius * Fy_c * wheel_center.R[2, 1] / cos_gamma
+  tau_wz = Mz_c
+
+  wheel_center.f = -wheel_center.R * [f_wx, f_wy, Fz]
+  wheel_center.tau = -wheel_center.R * [tau_wx, tau_wy, tau_wz]
 
   # Torque the shaft has to exert to hold the contact force.
   spline.tau = Fx * loaded_radius
-  
+
   slip = kappa
 
 metadata {

@@ -91,16 +91,16 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named body = MultibodyComponents.Body(; m=sprung_mass, r_cm=sprung_cg, I_11=sprung_I_11, I_22=sprung_I_22, I_33=sprung_I_33, cylinder_radius=Float64(0), body_overrides...))
   # Subcomponent corner_fl of type VehicleComponents.CornerAssembly
   corner_fl_overrides = __pop_subcomponent_overrides!(__overrides, "corner_fl")
-  push!(__systems, @named corner_fl = VehicleComponents.CornerAssembly(; corner_fl_overrides...))
+  push!(__systems, @named corner_fl = VehicleComponents.CornerAssembly(; is_left=true, corner_fl_overrides...))
   # Subcomponent corner_fr of type VehicleComponents.CornerAssembly
   corner_fr_overrides = __pop_subcomponent_overrides!(__overrides, "corner_fr")
-  push!(__systems, @named corner_fr = VehicleComponents.CornerAssembly(; corner_fr_overrides...))
+  push!(__systems, @named corner_fr = VehicleComponents.CornerAssembly(; is_left=false, corner_fr_overrides...))
   # Subcomponent corner_rl of type VehicleComponents.CornerAssembly
   corner_rl_overrides = __pop_subcomponent_overrides!(__overrides, "corner_rl")
-  push!(__systems, @named corner_rl = VehicleComponents.CornerAssembly(; corner_rl_overrides...))
+  push!(__systems, @named corner_rl = VehicleComponents.CornerAssembly(; is_left=true, corner_rl_overrides...))
   # Subcomponent corner_rr of type VehicleComponents.CornerAssembly
   corner_rr_overrides = __pop_subcomponent_overrides!(__overrides, "corner_rr")
-  push!(__systems, @named corner_rr = VehicleComponents.CornerAssembly(; corner_rr_overrides...))
+  push!(__systems, @named corner_rr = VehicleComponents.CornerAssembly(; is_left=false, corner_rr_overrides...))
   # Subcomponent front_suspension of type VehicleComponents.Suspension
   front_suspension_overrides = __pop_subcomponent_overrides!(__overrides, "front_suspension")
   push!(__systems, @named front_suspension = VehicleComponents.Suspension(; front_suspension_overrides...))

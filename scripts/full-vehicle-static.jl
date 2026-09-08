@@ -10,7 +10,7 @@ const DEG = 180 / π
 @named model = VehicleComponents.FullVehicleTestStatic()
 ssys = multibody(model)
 
-data_path = joinpath(pwd(), "assets", "vehicles", "Test.json")
+data_path = joinpath(pwd(), "assets", "vehicles", "MR25.json")
 data = JSON3.read(read(data_path, String))
 
 car = ssys.vehicle
@@ -23,6 +23,11 @@ front, rear = data.suspension.front, data.suspension.rear
 
 corners = [car.corner_fl, car.corner_fr, car.corner_rl, car.corner_rr]
 
+# TireMF61 takes the data as describing a LEFT-side tyre and mirrors the right.
+# Which side each corner is on is structural and set in FullVehicle, so it
+# cannot be overridden here.
+@assert uppercase(String(tires.TYRESIDE)) == "LEFT" "tires.TYRESIDE is $(tires.TYRESIDE), but TireMF61 assumes a LEFT-side fit; mirror the data first"
+
 tire_parameters(tire) = [
     # [DIMENSION] / [VERTICAL]
     tire.width => tires.WIDTH,
@@ -30,6 +35,7 @@ tire_parameters(tire) = [
     tire.vertical_stiffness => tires.VERTICAL_STIFFNESS,
     tire.vertical_damping => tires.VERTICAL_DAMPING,
     tire.longitudinal_stiffness => tires.LONGITUDINAL_STIFFNESS,
+    tire.lateral_stiffness => tires.LATERAL_STIFFNESS,
     tire.FNOMIN => tires.FNOMIN,
     tire.BREFF => tires.BREFF,
     tire.DREFF => tires.DREFF,
@@ -60,6 +66,93 @@ tire_parameters(tire) = [
     tire.PPX2 => tires.PPX2,
     tire.PPX3 => tires.PPX3,
     tire.PPX4 => tires.PPX4,
+    tire.RBX1 => tires.RBX1,
+    tire.RBX2 => tires.RBX2,
+    tire.RBX3 => tires.RBX3,
+    tire.RCX1 => tires.RCX1,
+    tire.REX1 => tires.REX1,
+    tire.REX2 => tires.REX2,
+    tire.RHX1 => tires.RHX1,
+
+    # [LATERAL_COEFFICIENTS]
+    tire.PCY1 => tires.PCY1,
+    tire.PDY1 => tires.PDY1,
+    tire.PDY2 => tires.PDY2,
+    tire.PDY3 => tires.PDY3,
+    tire.PEY1 => tires.PEY1,
+    tire.PEY2 => tires.PEY2,
+    tire.PEY3 => tires.PEY3,
+    tire.PEY4 => tires.PEY4,
+    tire.PEY5 => tires.PEY5,
+    tire.PKY1 => tires.PKY1,
+    tire.PKY2 => tires.PKY2,
+    tire.PKY3 => tires.PKY3,
+    tire.PKY4 => tires.PKY4,
+    tire.PKY5 => tires.PKY5,
+    tire.PKY6 => tires.PKY6,
+    tire.PKY7 => tires.PKY7,
+    tire.PHY1 => tires.PHY1,
+    tire.PHY2 => tires.PHY2,
+    tire.PVY1 => tires.PVY1,
+    tire.PVY2 => tires.PVY2,
+    tire.PVY3 => tires.PVY3,
+    tire.PVY4 => tires.PVY4,
+    tire.PPY1 => tires.PPY1,
+    tire.PPY2 => tires.PPY2,
+    tire.PPY3 => tires.PPY3,
+    tire.PPY4 => tires.PPY4,
+    tire.PPY5 => tires.PPY5,
+    tire.RBY1 => tires.RBY1,
+    tire.RBY2 => tires.RBY2,
+    tire.RBY3 => tires.RBY3,
+    tire.RBY4 => tires.RBY4,
+    tire.RCY1 => tires.RCY1,
+    tire.REY1 => tires.REY1,
+    tire.REY2 => tires.REY2,
+    tire.RHY1 => tires.RHY1,
+    tire.RHY2 => tires.RHY2,
+    tire.RVY1 => tires.RVY1,
+    tire.RVY2 => tires.RVY2,
+    tire.RVY3 => tires.RVY3,
+    tire.RVY4 => tires.RVY4,
+    tire.RVY5 => tires.RVY5,
+    tire.RVY6 => tires.RVY6,
+
+    # [ALIGNING_COEFFICIENTS]
+    tire.QBZ1 => tires.QBZ1,
+    tire.QBZ2 => tires.QBZ2,
+    tire.QBZ3 => tires.QBZ3,
+    tire.QBZ4 => tires.QBZ4,
+    tire.QBZ5 => tires.QBZ5,
+    tire.QBZ6 => tires.QBZ6,
+    tire.QBZ9 => tires.QBZ9,
+    tire.QBZ10 => tires.QBZ10,
+    tire.QCZ1 => tires.QCZ1,
+    tire.QDZ1 => tires.QDZ1,
+    tire.QDZ2 => tires.QDZ2,
+    tire.QDZ3 => tires.QDZ3,
+    tire.QDZ4 => tires.QDZ4,
+    tire.QDZ6 => tires.QDZ6,
+    tire.QDZ7 => tires.QDZ7,
+    tire.QDZ8 => tires.QDZ8,
+    tire.QDZ9 => tires.QDZ9,
+    tire.QDZ10 => tires.QDZ10,
+    tire.QDZ11 => tires.QDZ11,
+    tire.QEZ1 => tires.QEZ1,
+    tire.QEZ2 => tires.QEZ2,
+    tire.QEZ3 => tires.QEZ3,
+    tire.QEZ4 => tires.QEZ4,
+    tire.QEZ5 => tires.QEZ5,
+    tire.QHZ1 => tires.QHZ1,
+    tire.QHZ2 => tires.QHZ2,
+    tire.QHZ3 => tires.QHZ3,
+    tire.QHZ4 => tires.QHZ4,
+    tire.PPZ1 => tires.PPZ1,
+    tire.PPZ2 => tires.PPZ2,
+    tire.SSZ1 => tires.SSZ1,
+    tire.SSZ2 => tires.SSZ2,
+    tire.SSZ3 => tires.SSZ3,
+    tire.SSZ4 => tires.SSZ4,
 
     # [SCALING_COEFFICIENTS]
     tire.LFZO => tires.LFZO,
@@ -69,6 +162,20 @@ tire_parameters(tire) = [
     tire.LKX => tires.LKX,
     tire.LHX => tires.LHX,
     tire.LVX => tires.LVX,
+    tire.LCY => tires.LCY,
+    tire.LMUY => tires.LMUY,
+    tire.LEY => tires.LEY,
+    tire.LKY => tires.LKY,
+    tire.LHY => tires.LHY,
+    tire.LVY => tires.LVY,
+    tire.LKYC => tires.LKYC,
+    tire.LXAL => tires.LXAL,
+    tire.LYKA => tires.LYKA,
+    tire.LVYKA => tires.LVYKA,
+    tire.LTR => tires.LTR,
+    tire.LRES => tires.LRES,
+    tire.LKZC => tires.LKZC,
+    tire.LS => tires.LS,
     tire.LMUV => tires.LMUV,
 ]
 

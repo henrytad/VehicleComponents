@@ -7,13 +7,13 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   TireTestRig(; name, unloaded_radius, stroke, freq, speed, static_deflection, kappa_start, kappa_end, slip_ramp_time)
+   TireTestRig(; name, unloaded_radius, stroke, freq, speed, static_deflection, kappa_start, kappa_end, slip_ramp_time, alpha_start, alpha_end, steer_ramp_time)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `unloaded_radius`         |                          | m  |   0.3135 |
+| `unloaded_radius`         |                          | m  |   0.344 |
 | `stroke`         |                          | m  |   0.0254 |
 | `freq`         |                          | Hz  |   0.5 |
 | `speed`         |                          | m/s  |   0.0 |
@@ -21,8 +21,11 @@ import Moshi as __Ext__Moshi
 | `kappa_start`         |                          | --  |   0.0 |
 | `kappa_end`         |                          | --  |   0.0 |
 | `slip_ramp_time`         |                          | s  |   1.0 |
+| `alpha_start`         |                          | rad  |   0.0 |
+| `alpha_end`         |                          | rad  |   0.0 |
+| `steer_ramp_time`         |                          | s  |   1.0 |
 """
-@component function TireTestRig(; name = nothing, unloaded_radius=0.3135, stroke=0.0254, freq=0.5, speed=Float64(0.0), static_deflection=Float64(0.0), kappa_start=Float64(0.0), kappa_end=Float64(0.0), slip_ramp_time=Float64(1.0), kwargs...)
+@component function TireTestRig(; name = nothing, unloaded_radius=0.344, stroke=0.0254, freq=0.5, speed=Float64(0.0), static_deflection=Float64(0.0), kappa_start=Float64(0.0), kappa_end=Float64(0.0), slip_ramp_time=Float64(1.0), alpha_start=Float64(0.0), alpha_end=Float64(0.0), steer_ramp_time=Float64(1.0), kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -51,6 +54,7 @@ import Moshi as __Ext__Moshi
   ### Final Parameters (declarations)
   append!(__params, @parameters (spin_rate_start::Real), [misc = "final"])
   append!(__params, @parameters (spin_accel::Real), [misc = "final"])
+  append!(__params, @parameters (alpha_rate::Real), [misc = "final"])
 
   ### Deferred assignment (default values that depend on final parameters)
 
@@ -79,10 +83,20 @@ import Moshi as __Ext__Moshi
   __local__slip_ramp_time = slip_ramp_time
   append!(__params, @parameters (slip_ramp_time::Real))
   __initial_conditions[slip_ramp_time] = __local__slip_ramp_time
+  __local__alpha_start = alpha_start
+  append!(__params, @parameters (alpha_start::Real))
+  __initial_conditions[alpha_start] = __local__alpha_start
+  __local__alpha_end = alpha_end
+  append!(__params, @parameters (alpha_end::Real))
+  __initial_conditions[alpha_end] = __local__alpha_end
+  __local__steer_ramp_time = steer_ramp_time
+  append!(__params, @parameters (steer_ramp_time::Real))
+  __initial_conditions[steer_ramp_time] = __local__steer_ramp_time
 
   ### Final Parameters (assignments)
   __bindings[spin_rate_start] = (1 + kappa_start) * speed / unloaded_radius
   __bindings[spin_accel] = (kappa_end - kappa_start) * speed / (unloaded_radius * slip_ramp_time)
+  __bindings[alpha_rate] = (alpha_end - alpha_start) / steer_ramp_time
 
   ### Final Path Parameters
 
@@ -99,7 +113,7 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
   # Subcomponent tire of type VehicleComponents.TireMF61
   tire_overrides = __pop_subcomponent_overrides!(__overrides, "tire")
-  push!(__systems, @named tire = VehicleComponents.TireMF61(; unloaded_radius=unloaded_radius, width=0.205, vertical_stiffness=Float64(209651.0), vertical_damping=Float64(50.0), longitudinal_stiffness=Float64(358066.0), FNOMIN=Float64(220.0), BREFF=8.386, DREFF=0.25826, FREFF=0.07394, INFLPRES=Float64(220000.0), NOMPRES=Float64(220000.0), LONGVL=16.7, PCX1=2.9761, PDX1=0.53798, PDX2=0.00359, PDX3=4.89327, PEX1=67.557, PEX2=-67.469, PEX3=17.058, PEX4=0.18492, PKX1=9.35368, PKX2=1.06116, PKX3=-0.05644, PHX1=-0.0054, PHX2=0.00068, PVX1=0.09747, PVX2=-0.00587, PPX1=-1.89606, PPX2=0.53013, PPX3=-6.06583, PPX4=-2.95759, LFZO=Float64(1.0), LCX=Float64(1.0), LMUX=Float64(1.0), LEX=Float64(1.0), LKX=Float64(1.0), LHX=Float64(1.0), LVX=Float64(1.0), LMUV=Float64(0.0), tire_overrides...))
+  push!(__systems, @named tire = VehicleComponents.TireMF61(; is_left=true, unloaded_radius=unloaded_radius, width=0.235, vertical_stiffness=Float64(210000.0), vertical_damping=Float64(50.0), longitudinal_stiffness=Float64(358700.0), lateral_stiffness=Float64(144152.0), FNOMIN=Float64(4850.0), BREFF=8.4, DREFF=0.27, FREFF=0.07, INFLPRES=Float64(200000.0), NOMPRES=Float64(200000.0), LONGVL=16.6, PCX1=1.6411, PDX1=1.1739, PDX2=-0.16395, PDX3=Float64(0.0), PEX1=0.46403, PEX2=0.25022, PEX3=0.067842, PEX4=-0.000037604, PKX1=22.303, PKX2=0.48896, PKX3=0.21253, PHX1=0.0012297, PHX2=0.0004318, PVX1=-0.0000088098, PVX2=0.00001862, PPX1=-0.25, PPX2=-0.35, PPX3=0.35, PPX4=-0.75, RBX1=13.276, RBX2=-13.778, RBX3=Float64(0.0), RCX1=1.2568, REX1=0.65225, REX2=-0.24948, RHX1=0.0050722, PCY1=1.3507, PDY1=1.0489, PDY2=-0.18033, PDY3=-2.8821, PEY1=-0.0074722, PEY2=-0.0063208, PEY3=-9.9935, PEY4=-760.14, PEY5=Float64(0.0), PKY1=-21.92, PKY2=2.0012, PKY3=-0.024778, PKY4=Float64(2.0), PKY5=Float64(0.0), PKY6=-0.88, PKY7=-0.4891, PHY1=0.0026747, PHY2=0.000089094, PVY1=0.037318, PVY2=-0.010049, PVY3=-0.32931, PVY4=-0.69553, PPY1=0.2, PPY2=0.5, PPY3=0.1225, PPY4=-0.2625, PPY5=Float64(0.0), RBY1=7.1433, RBY2=9.1916, RBY3=-0.027856, RBY4=Float64(0.0), RCY1=1.0719, REY1=-0.27572, REY2=0.32802, RHY1=0.0000057448, RHY2=-0.000031368, RVY1=-0.027825, RVY2=0.053604, RVY3=-0.27568, RVY4=12.12, RVY5=1.9, RVY6=-10.704, QBZ1=10.904, QBZ2=-1.8412, QBZ3=-0.52041, QBZ4=0.039211, QBZ5=0.41511, QBZ6=Float64(0.0), QBZ9=8.9846, QBZ10=Float64(0.0), QCZ1=1.2136, QDZ1=0.093509, QDZ2=-0.0092183, QDZ3=-0.057061, QDZ4=0.73954, QDZ6=-0.0067783, QDZ7=0.0052254, QDZ8=-0.18175, QDZ9=0.029952, QDZ10=Float64(0.0), QDZ11=Float64(0.0), QEZ1=-1.5697, QEZ2=0.33394, QEZ3=Float64(0.0), QEZ4=0.26711, QEZ5=-3.594, QHZ1=0.0047326, QHZ2=0.0026687, QHZ3=0.11998, QHZ4=0.059083, PPZ1=Float64(0.0), PPZ2=Float64(0.0), SSZ1=0.033372, SSZ2=0.0043624, SSZ3=0.56742, SSZ4=-0.24116, LFZO=Float64(1.0), LCX=Float64(1.0), LMUX=Float64(1.0), LEX=Float64(1.0), LKX=Float64(1.0), LHX=Float64(1.0), LVX=Float64(1.0), LCY=Float64(1.0), LMUY=Float64(1.0), LEY=Float64(1.0), LKY=Float64(1.0), LHY=Float64(1.0), LVY=Float64(1.0), LKYC=Float64(1.0), LXAL=Float64(1.0), LYKA=Float64(1.0), LVYKA=Float64(1.0), LTR=Float64(1.0), LRES=Float64(1.0), LKZC=Float64(1.0), LS=Float64(1.0), LMUV=Float64(0.0), tire_overrides...))
   # Subcomponent mount of type MultibodyComponents.FixedTranslation
   mount_overrides = __pop_subcomponent_overrides!(__overrides, "mount")
   push!(__systems, @named mount = MultibodyComponents.FixedTranslation(; r=[Float64(0), Float64(0), unloaded_radius - static_deflection], render=false, mount_overrides...))
@@ -115,6 +129,12 @@ import Moshi as __Ext__Moshi
   # Subcomponent wheel_position of type TranslationalComponents.Sources.Position
   wheel_position_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_position")
   push!(__systems, @named wheel_position = TranslationalComponents.Sources.Position(; wheel_position_overrides...))
+  # Subcomponent steer of type MultibodyComponents.Revolute
+  steer_overrides = __pop_subcomponent_overrides!(__overrides, "steer")
+  push!(__systems, @named steer = MultibodyComponents.Revolute(; n=[Float64(0), Float64(0), Float64(1)], render=false, steer_overrides...))
+  # Subcomponent steer_position of type RotationalComponents.Sources.Position
+  steer_position_overrides = __pop_subcomponent_overrides!(__overrides, "steer_position")
+  push!(__systems, @named steer_position = RotationalComponents.Sources.Position(; steer_position_overrides...))
   # Subcomponent spin of type RotationalComponents.Sources.Position
   spin_overrides = __pop_subcomponent_overrides!(__overrides, "spin")
   push!(__systems, @named spin = RotationalComponents.Sources.Position(; spin_overrides...))
@@ -131,6 +151,7 @@ import Moshi as __Ext__Moshi
   push!(__initialization_eqs, wheel_position.v ~ 0.0)
   push!(__initialization_eqs, carriage_position.v ~ speed)
   push!(__initialization_eqs, spin.w ~ spin_rate_start)
+  push!(__initialization_eqs, steer_position.w ~ -alpha_rate)
 
   ### Assertions
   __assertions = []
@@ -139,6 +160,7 @@ import Moshi as __Ext__Moshi
   push!(__eqs, wheel_position.s_ref ~ stroke * sin(2 * π * freq * t))
   push!(__eqs, carriage_position.s_ref ~ speed * t)
   push!(__eqs, spin.phi_ref ~ spin_rate_start * t + 0.5 * spin_accel * t ^ 2)
+  push!(__eqs, steer_position.phi_ref ~ -(alpha_start + alpha_rate * t))
   push!(__eqs, connect(world.frame_b, mount.frame_a))
   push!(__eqs, connect(mount.frame_b, carriage.frame_a))
   push!(__eqs, connect(carriage.support, carriage_position.support))
@@ -146,7 +168,10 @@ import Moshi as __Ext__Moshi
   push!(__eqs, connect(carriage.frame_b, prismatic.frame_a))
   push!(__eqs, connect(prismatic.support, wheel_position.support))
   push!(__eqs, connect(wheel_position.flange, prismatic.axis))
-  push!(__eqs, connect(prismatic.frame_b, tire.wheel_center))
+  push!(__eqs, connect(prismatic.frame_b, steer.frame_a))
+  push!(__eqs, connect(steer.support, steer_position.support))
+  push!(__eqs, connect(steer_position.spline, steer.axis))
+  push!(__eqs, connect(steer.frame_b, tire.wheel_center))
   push!(__eqs, connect(spin.spline, tire.spline))
   push!(__eqs, connect(spin_ground.spline, spin.support))
 

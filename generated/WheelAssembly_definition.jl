@@ -7,12 +7,13 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   WheelAssembly(; name, rim_mass, rim_inertia, tire_mass, tire_inertia)
+   WheelAssembly(; name, is_left, rim_mass, rim_inertia, tire_mass, tire_inertia)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
+| `is_left`         |                          | --  |    |
 | `rim_mass`         |                          | kg  |    |
 | `rim_inertia`         |                          | kg.m2  |    |
 | `tire_mass`         |                          | kg  |    |
@@ -25,7 +26,7 @@ import Moshi as __Ext__Moshi
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function WheelAssembly(; name = nothing, rim_mass=nothing, rim_inertia=nothing, tire_mass=nothing, tire_inertia=nothing, kwargs...)
+@component function WheelAssembly(; name = nothing, is_left=nothing, rim_mass=nothing, rim_inertia=nothing, tire_mass=nothing, tire_inertia=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -90,7 +91,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named wheel_center = __Dyad__Frame3D())
   # Subcomponent tire of type VehicleComponents.TireMF61
   tire_overrides = __pop_subcomponent_overrides!(__overrides, "tire")
-  push!(__systems, @named tire = VehicleComponents.TireMF61(; tire_overrides...))
+  push!(__systems, @named tire = VehicleComponents.TireMF61(; is_left=is_left, tire_overrides...))
   # Subcomponent spin of type RotationalComponents.Components.Inertia
   spin_overrides = __pop_subcomponent_overrides!(__overrides, "spin")
   push!(__systems, @named spin = RotationalComponents.Components.Inertia(; J=spin_inertia, spin_overrides...))

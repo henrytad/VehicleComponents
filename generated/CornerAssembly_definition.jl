@@ -7,12 +7,13 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   CornerAssembly(; name, upright_mass, upright_I_11, upright_I_22, upright_I_33)
+   CornerAssembly(; name, is_left, upright_mass, upright_I_11, upright_I_22, upright_I_33)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
+| `is_left`         |                          | --  |    |
 | `upright_mass`         |                          | kg  |    |
 | `upright_I_11`         |                          | kg.m2  |    |
 | `upright_I_22`         |                          | kg.m2  |    |
@@ -25,7 +26,7 @@ import Moshi as __Ext__Moshi
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function CornerAssembly(; name = nothing, upright_mass=nothing, upright_I_11=nothing, upright_I_22=nothing, upright_I_33=nothing, kwargs...)
+@component function CornerAssembly(; name = nothing, is_left=nothing, upright_mass=nothing, upright_I_11=nothing, upright_I_22=nothing, upright_I_33=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -86,7 +87,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named wheel_center = __Dyad__Frame3D())
   # Subcomponent wheel_assembly of type VehicleComponents.WheelAssembly
   wheel_assembly_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_assembly")
-  push!(__systems, @named wheel_assembly = VehicleComponents.WheelAssembly(; wheel_assembly_overrides...))
+  push!(__systems, @named wheel_assembly = VehicleComponents.WheelAssembly(; is_left=is_left, wheel_assembly_overrides...))
   # Subcomponent motor of type VehicleComponents.HubMotor
   motor_overrides = __pop_subcomponent_overrides!(__overrides, "motor")
   push!(__systems, @named motor = VehicleComponents.HubMotor(; motor_overrides...))

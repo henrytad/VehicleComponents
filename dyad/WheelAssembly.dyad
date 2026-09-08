@@ -10,7 +10,7 @@ component WheelAssembly
 
   spline = Dyad.Spline() {^spline}
   wheel_center = Dyad.Frame3D() {^wheel_center}
-  tire = VehicleComponents.TireMF61() {^tire}
+  tire = VehicleComponents.TireMF61(is_left = is_left) {^tire}
   spin = RotationalComponents.Components.Inertia(J = spin_inertia) {^spin}
   wheel_body = MultibodyComponents.Body(
     m = wheel_mass,
@@ -20,6 +20,8 @@ component WheelAssembly
     I_33 = 0,
     cylinder_radius = 0
   ) {^wheel_body}
+
+  structural parameter is_left::Boolean
 
   parameter rim_mass::Mass
   parameter rim_inertia::Inertia

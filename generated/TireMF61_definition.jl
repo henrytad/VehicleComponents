@@ -7,12 +7,13 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   TireMF61(; name, width, unloaded_radius, vertical_stiffness, vertical_damping, FNOMIN, BREFF, DREFF, FREFF, longitudinal_stiffness, INFLPRES, NOMPRES, LONGVL, PCX1, PDX1, PDX2, PDX3, PEX1, PEX2, PEX3, PEX4, PKX1, PKX2, PKX3, PHX1, PHX2, PVX1, PVX2, PPX1, PPX2, PPX3, PPX4, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LMUV, Au, eps_x, eps_v, eps_sigma, damp_vlow)
+   TireMF61(; name, is_left, width, unloaded_radius, vertical_stiffness, vertical_damping, FNOMIN, BREFF, DREFF, FREFF, longitudinal_stiffness, lateral_stiffness, INFLPRES, NOMPRES, LONGVL, PCX1, PDX1, PDX2, PDX3, PEX1, PEX2, PEX3, PEX4, PKX1, PKX2, PKX3, PHX1, PHX2, PVX1, PVX2, PPX1, PPX2, PPX3, PPX4, RBX1, RBX2, RBX3, RCX1, REX1, REX2, RHX1, PCY1, PDY1, PDY2, PDY3, PEY1, PEY2, PEY3, PEY4, PEY5, PKY1, PKY2, PKY3, PKY4, PKY5, PKY6, PKY7, PHY1, PHY2, PVY1, PVY2, PVY3, PVY4, PPY1, PPY2, PPY3, PPY4, PPY5, RBY1, RBY2, RBY3, RBY4, RCY1, REY1, REY2, RHY1, RHY2, RVY1, RVY2, RVY3, RVY4, RVY5, RVY6, QBZ1, QBZ2, QBZ3, QBZ4, QBZ5, QBZ6, QBZ9, QBZ10, QCZ1, QDZ1, QDZ2, QDZ3, QDZ4, QDZ6, QDZ7, QDZ8, QDZ9, QDZ10, QDZ11, QEZ1, QEZ2, QEZ3, QEZ4, QEZ5, QHZ1, QHZ2, QHZ3, QHZ4, PPZ1, PPZ2, SSZ1, SSZ2, SSZ3, SSZ4, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LCY, LMUY, LEY, LKY, LHY, LVY, LKYC, LXAL, LYKA, LVYKA, LTR, LRES, LKZC, LS, LMUV, Au, eps_x, eps_y, eps_k, eps_gamma, eps_v, eps_vc, eps_sigma, damp_vlow)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
+| `is_left`         |                          | --  |    |
 | `width`         |                          | m  |    |
 | `unloaded_radius`         |                          | m  |    |
 | `vertical_stiffness`         |                          | N/m  |    |
@@ -22,6 +23,7 @@ import Moshi as __Ext__Moshi
 | `DREFF`         |                          | --  |    |
 | `FREFF`         |                          | --  |    |
 | `longitudinal_stiffness`         | Tyre overall longitudinal stiffness. Sets the relaxation length.                         | N/m  |    |
+| `lateral_stiffness`         | Tyre overall lateral stiffness. Sets the lateral relaxation length.                         | N/m  |    |
 | `INFLPRES`         |                          | Pa  |    |
 | `NOMPRES`         |                          | Pa  |    |
 | `LONGVL`         |                          | m/s  |    |
@@ -44,6 +46,89 @@ import Moshi as __Ext__Moshi
 | `PPX2`         | Quadratic influence of inflation pressure on longitudinal slip stiffness                         | --  |    |
 | `PPX3`         | Linear influence of inflation pressure on peak longitudinal friction                         | --  |    |
 | `PPX4`         | Quadratic influence of inflation pressure on peak longitudinal friction                         | --  |    |
+| `RBX1`         | Slope factor for combined slip Fx reduction                         | --  |    |
+| `RBX2`         | Variation of slope Fx reduction with kappa                         | --  |    |
+| `RBX3`         | Influence of camber on stiffness for Fx combined                         | --  |    |
+| `RCX1`         | Shape factor for combined slip Fx reduction                         | --  |    |
+| `REX1`         | Curvature factor of combined Fx                         | --  |    |
+| `REX2`         | Curvature factor of combined Fx with load                         | --  |    |
+| `RHX1`         | Shift factor for combined slip Fx reduction                         | --  |    |
+| `PCY1`         | Shape factor Cfy                         | --  |    |
+| `PDY1`         | Lateral friction Muy at Fznom                         | --  |    |
+| `PDY2`         | Variation of friction Muy with load                         | --  |    |
+| `PDY3`         | Variation of friction Muy with camber squared                         | --  |    |
+| `PEY1`         | Lateral curvature Efy at Fznom                         | --  |    |
+| `PEY2`         | Variation of curvature Efy with load                         | --  |    |
+| `PEY3`         | Zero order camber dependency of curvature Efy                         | --  |    |
+| `PEY4`         | Variation of curvature Efy with camber                         | --  |    |
+| `PEY5`         | Variation of curvature Efy with camber squared                         | --  |    |
+| `PKY1`         | Maximum value of stiffness Kfy/Fznom                         | --  |    |
+| `PKY2`         | Load at which Kfy reaches maximum value, over Fznom                         | --  |    |
+| `PKY3`         | Variation of Kfy/Fznom with camber                         | --  |    |
+| `PKY4`         | Peak stiffness variation with camber squared                         | --  |    |
+| `PKY5`         | Fz at which Kfy is maximum, variation with camber squared                         | --  |    |
+| `PKY6`         | Camber stiffness factor                         | --  |    |
+| `PKY7`         | Camber stiffness variation with load                         | --  |    |
+| `PHY1`         | Horizontal shift Shy at Fznom                         | --  |    |
+| `PHY2`         | Variation of shift Shy with load                         | --  |    |
+| `PVY1`         | Vertical shift in Svy/Fz at Fznom                         | --  |    |
+| `PVY2`         | Variation of shift Svy/Fz with load                         | --  |    |
+| `PVY3`         | Variation of shift Svy/Fz with camber                         | --  |    |
+| `PVY4`         | Variation of shift Svy/Fz with camber and load                         | --  |    |
+| `PPY1`         | Linear influence of inflation pressure on cornering stiffness                         | --  |    |
+| `PPY2`         | Quadratic influence of inflation pressure on cornering stiffness                         | --  |    |
+| `PPY3`         | Linear influence of inflation pressure on peak lateral friction                         | --  |    |
+| `PPY4`         | Quadratic influence of inflation pressure on peak lateral friction                         | --  |    |
+| `PPY5`         | Influence of inflation pressure on camber stiffness                         | --  |    |
+| `RBY1`         | Slope factor for combined Fy reduction                         | --  |    |
+| `RBY2`         | Variation of slope Fy reduction with alpha                         | --  |    |
+| `RBY3`         | Shift term for alpha in slope Fy reduction                         | --  |    |
+| `RBY4`         | Influence of camber on stiffness of Fy combined                         | --  |    |
+| `RCY1`         | Shape factor for combined Fy reduction                         | --  |    |
+| `REY1`         | Curvature factor of combined Fy                         | --  |    |
+| `REY2`         | Curvature factor of combined Fy with load                         | --  |    |
+| `RHY1`         | Shift factor for combined Fy reduction                         | --  |    |
+| `RHY2`         | Shift factor for combined Fy reduction with load                         | --  |    |
+| `RVY1`         | Kappa induced side force Svyk/Muy*Fz at Fznom                         | --  |    |
+| `RVY2`         | Variation of Svyk/Muy*Fz with load                         | --  |    |
+| `RVY3`         | Variation of Svyk/Muy*Fz with camber                         | --  |    |
+| `RVY4`         | Variation of Svyk/Muy*Fz with alpha                         | --  |    |
+| `RVY5`         | Variation of Svyk/Muy*Fz with kappa                         | --  |    |
+| `RVY6`         | Variation of Svyk/Muy*Fz with atan(kappa)                         | --  |    |
+| `QBZ1`         | Trail slope factor for trail Bpt at Fznom                         | --  |    |
+| `QBZ2`         | Variation of slope Bpt with load                         | --  |    |
+| `QBZ3`         | Variation of slope Bpt with load squared                         | --  |    |
+| `QBZ4`         | Variation of slope Bpt with camber. PAC2002 only; 4.E40 has no term for it.                         | --  |    |
+| `QBZ5`         | Variation of slope Bpt with absolute camber                         | --  |    |
+| `QBZ6`         | Variation of slope Bpt with camber squared                         | --  |    |
+| `QBZ9`         | Slope factor Br of residual torque Mzr                         | --  |    |
+| `QBZ10`         | Slope factor Br of residual torque Mzr                         | --  |    |
+| `QCZ1`         | Shape factor Cpt for pneumatic trail                         | --  |    |
+| `QDZ1`         | Peak trail Dpt = Dpt*(Fz/Fznom*R0)                         | --  |    |
+| `QDZ2`         | Variation of peak Dpt with load                         | --  |    |
+| `QDZ3`         | Variation of peak Dpt with camber                         | --  |    |
+| `QDZ4`         | Variation of peak Dpt with camber squared                         | --  |    |
+| `QDZ6`         | Peak residual torque Dmr = Dmr/(Fz*R0)                         | --  |    |
+| `QDZ7`         | Variation of peak factor Dmr with load                         | --  |    |
+| `QDZ8`         | Variation of peak factor Dmr with camber                         | --  |    |
+| `QDZ9`         | Variation of peak factor Dmr with camber and load                         | --  |    |
+| `QDZ10`         | Variation of peak factor Dmr with camber squared                         | --  |    |
+| `QDZ11`         | Variation of peak factor Dmr with camber squared and load                         | --  |    |
+| `QEZ1`         | Trail curvature Ept at Fznom                         | --  |    |
+| `QEZ2`         | Variation of curvature Ept with load                         | --  |    |
+| `QEZ3`         | Variation of curvature Ept with load squared                         | --  |    |
+| `QEZ4`         | Variation of curvature Ept with sign of alpha-t                         | --  |    |
+| `QEZ5`         | Variation of Ept with camber and sign of alpha-t                         | --  |    |
+| `QHZ1`         | Trail horizontal shift Sht at Fznom                         | --  |    |
+| `QHZ2`         | Variation of shift Sht with load                         | --  |    |
+| `QHZ3`         | Variation of shift Sht with camber                         | --  |    |
+| `QHZ4`         | Variation of shift Sht with camber and load                         | --  |    |
+| `PPZ1`         | Linear influence of inflation pressure on pneumatic trail                         | --  |    |
+| `PPZ2`         | Influence of inflation pressure on residual aligning torque                         | --  |    |
+| `SSZ1`         | Nominal value of s/R0: effect of Fx on Mz                         | --  |    |
+| `SSZ2`         | Variation of distance s/R0 with Fy/Fznom                         | --  |    |
+| `SSZ3`         | Variation of distance s/R0 with camber                         | --  |    |
+| `SSZ4`         | Variation of distance s/R0 with load and camber                         | --  |    |
 | `LFZO`         |                          | --  |   1 |
 | `LCX`         |                          | --  |   1 |
 | `LMUX`         |                          | --  |   1 |
@@ -51,10 +136,28 @@ import Moshi as __Ext__Moshi
 | `LKX`         |                          | --  |   1 |
 | `LHX`         |                          | --  |   1 |
 | `LVX`         |                          | --  |   1 |
+| `LCY`         |                          | --  |   1 |
+| `LMUY`         |                          | --  |   1 |
+| `LEY`         |                          | --  |   1 |
+| `LKY`         |                          | --  |   1 |
+| `LHY`         |                          | --  |   1 |
+| `LVY`         |                          | --  |   1 |
+| `LKYC`         |                          | --  |   1 |
+| `LXAL`         |                          | --  |   1 |
+| `LYKA`         |                          | --  |   1 |
+| `LVYKA`         |                          | --  |   1 |
+| `LTR`         |                          | --  |   1 |
+| `LRES`         |                          | --  |   1 |
+| `LKZC`         |                          | --  |   1 |
+| `LS`         |                          | --  |   1 |
 | `LMUV`         | Slip-speed friction decay. Leave at 0 unless modelling a wet surface.                         | --  |   0 |
 | `Au`         | Digressive friction factor Au (4.E8), suggested 10                         | --  |   10 |
 | `eps_x`         | Singularity guard on Bx (4.E16). Only bites below Fz ~ eps_x / (PCX1 * PDX1).                         | N  |   0.1 |
-| `eps_v`         | Low-speed threshold (TIR VXLOW). Floors the slip-ratio denominator.                         | m/s  |   1.0 |
+| `eps_y`         | Singularity guard on By (4.E26).                         | N  |   0.1 |
+| `eps_k`         | Singularity guard on Kya (4.E39).                         | N  |   0.1 |
+| `eps_gamma`         | Floor on cos(camber), so the contact frame stays defined at extreme camber.                         | --  |   0.01 |
+| `eps_v`         | Low-speed threshold (TIR VXLOW). Floors the slip denominators.                         | m/s  |   1.0 |
+| `eps_vc`         | Guard on Vc' in (4.E6a).                         | m/s  |   0.1 |
 | `eps_sigma`         | Floor on the relaxation length, which falls with Fz.                         | m  |   0.001 |
 | `damp_vlow`         | Low-speed damping coefficient k_Vlow of (7.26) over the carcass stiffness (TIR DAMP_VLOW).                         | s  |   0.001 |
 
@@ -79,6 +182,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `Fz_raw`         | Spring-damper force before the tension clamp                         | N  |
 | `Fz`         | Vertical contact force pushing the wheel up (>= 0)                         | N  |
 | `x_w`         | Longitudinal position of the wheel centre                         | m  |
+| `y_w`         | Lateral position of the wheel centre                         | m  |
+| `v_wx`         | World-x velocity of the wheel centre                         | m/s  |
+| `v_wy`         | World-y velocity of the wheel centre                         | m/s  |
+| `cos_gamma`         | Cosine of the inclination angle, i.e. the length of the spin axis' ground projection                         | --  |
 | `V_x`         | Longitudinal velocity of the contact patch                         | m/s  |
 | `omega`         | Wheel spin speed (positive = rolling forward)                         | rad/s  |
 | `V_sx`         | Longitudinal slip velocity Vsx = Vx - omega*Re                         | m/s  |
@@ -86,16 +193,27 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `kappa`         | Steady-state longitudinal slip ratio (4.E5). Reported only; the force is built from kappa_prime.                         | --  |
 | `u_x`         | Longitudinal carcass deflection u (7.9). The state.                         | m  |
 | `u_dot_free`         | Unlimited right-hand side of (7.9), before the (7.25) deflection limiter                         | m/s  |
-| `kappa_sl`         | Slip beyond which the (7.25) limiter arms. Longitudinal read of alpha_sl.                         | --  |
 | `kappa_prime`         | Transient longitudinal slip ratio (7.26). What the Magic Formula is fed.                         | --  |
 | `sigma_kappa`         | Longitudinal relaxation length (7.8)                         | m  |
-| `C_Fx`         | Longitudinal tyre stiffness at road level                         | N/m  |
+| `V_y`         | Lateral velocity of the contact patch. Also the lateral slip speed Vsy.                         | m/s  |
+| `V_y_mf`         | Lateral slip speed as the fit sees it, i.e. V_y with the mounted-side flip                         | m/s  |
+| `alpha`         | Steady-state slip angle. Reported only; the force is built from alpha_prime.                         | rad  |
+| `V_c`         | Magnitude of the contact-centre velocity Vc (4.E6a)                         | m/s  |
+| `cos_alpha`         | Vcx/Vc' of the aligning-moment equations (4.E6). Signed, so it flips in reverse.                         | --  |
+| `sgn_Vx`         | Sign of Vcx, carried by the pneumatic trail and the residual torque                         | --  |
+| `v_y`         | Lateral carcass deflection v (7.11). The state.                         | m  |
+| `v_dot_free`         | Unlimited right-hand side of (7.11), before the (7.25) deflection limiter                         | m/s  |
+| `alpha_sl`         | Equivalent slip angle at which the (7.25) limiter arms, 3*Dy/CFalpha                         | --  |
+| `alpha_prime`         | Transient lateral slip tan(alpha') (7.26). What the Magic Formula is fed.                         | --  |
+| `sigma_alpha`         | Lateral relaxation length (7.12)                         | m  |
 | `Fz0_prime`         |                          | N  |
 | `dfz`         |                          | --  |
 | `dpi`         |                          | --  |
 | `gamma_star`         |                          | --  |
 | `lam_mux_star`         |                          | --  |
 | `lam_mux_prime`         |                          | --  |
+| `lam_muy_star`         |                          | --  |
+| `lam_muy_prime`         |                          | --  |
 | `lam_low`         |                          | --  |
 | `mu_x`         |                          | --  |
 | `Kxk_norm`         |                          | --  |
@@ -108,9 +226,71 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `SHx`         |                          | --  |
 | `SVx`         |                          | N  |
 | `kappa_x`         |                          | --  |
-| `Fx`         |                          | N  |
+| `Fx0`         | Pure-slip longitudinal force (4.E9)                         | N  |
+| `SHxa`         |                          | --  |
+| `Cxa`         |                          | --  |
+| `Bxa`         |                          | --  |
+| `Exa_raw`         |                          | --  |
+| `Exa`         |                          | --  |
+| `alpha_s`         |                          | --  |
+| `Gxa0`         |                          | --  |
+| `Gxa`         |                          | --  |
+| `Fx`         | Combined-slip longitudinal force (4.E50)                         | N  |
+| `mu_y`         |                          | --  |
+| `Cy`         |                          | --  |
+| `Dy`         |                          | N  |
+| `Kya`         |                          | N  |
+| `Kya_prime`         |                          | N  |
+| `Kyg0`         |                          | N  |
+| `SVyg`         |                          | N  |
+| `By`         |                          | --  |
+| `Ey_raw`         |                          | --  |
+| `Ey`         |                          | --  |
+| `SHy`         |                          | --  |
+| `SVy`         |                          | N  |
+| `alpha_y`         |                          | --  |
+| `Fy0`         | Pure-slip lateral force (4.E19)                         | N  |
+| `SHyk`         |                          | --  |
+| `Cyk`         |                          | --  |
+| `Byk`         |                          | --  |
+| `Eyk_raw`         |                          | --  |
+| `Eyk`         |                          | --  |
+| `kappa_s`         |                          | --  |
+| `Gyk0`         |                          | --  |
+| `Gyk`         |                          | --  |
+| `Dvyk`         |                          | N  |
+| `SVyk`         |                          | N  |
+| `Fy`         | Combined-slip lateral force (4.E58)                         | N  |
+| `Fy_prime`         | Lateral force without the kappa-induced shift (4.E74), what the trail acts on                         | N  |
+| `SHt`         |                          | --  |
+| `alpha_t`         |                          | --  |
+| `Bt`         |                          | --  |
+| `Ct`         |                          | --  |
+| `Dt0`         |                          | m  |
+| `Dt`         |                          | m  |
+| `Et_raw`         |                          | --  |
+| `Et`         |                          | --  |
+| `SHf`         |                          | --  |
+| `alpha_r`         |                          | --  |
+| `Br`         |                          | --  |
+| `Cr`         |                          | --  |
+| `Dr`         |                          | N.m  |
+| `alpha_t_eq`         |                          | --  |
+| `alpha_r_eq`         |                          | --  |
+| `t_pneu`         | Pneumatic trail (4.E73)                         | m  |
+| `s_arm`         | Moment arm of Fx (4.E76)                         | m  |
+| `Mz_prime`         |                          | N.m  |
+| `Mzr`         |                          | N.m  |
+| `Mz`         | Aligning moment in the tyre fit's own convention (4.E71)                         | N.m  |
+| `Fy_c`         | Lateral force in the contact frame, i.e. Fy with the mounted-side flip undone                         | N  |
+| `Mz_c`         | Aligning moment in the contact frame, i.e. Mz with the mounted-side flip undone                         | N.m  |
+| `f_wx`         |                          | N  |
+| `f_wy`         |                          | N  |
+| `tau_wx`         |                          | N.m  |
+| `tau_wy`         |                          | N.m  |
+| `tau_wz`         |                          | N.m  |
 """
-@component function TireMF61(; name = nothing, width=nothing, unloaded_radius=nothing, vertical_stiffness=nothing, vertical_damping=nothing, FNOMIN=nothing, BREFF=nothing, DREFF=nothing, FREFF=nothing, longitudinal_stiffness=nothing, INFLPRES=nothing, NOMPRES=nothing, LONGVL=nothing, PCX1=nothing, PDX1=nothing, PDX2=nothing, PDX3=nothing, PEX1=nothing, PEX2=nothing, PEX3=nothing, PEX4=nothing, PKX1=nothing, PKX2=nothing, PKX3=nothing, PHX1=nothing, PHX2=nothing, PVX1=nothing, PVX2=nothing, PPX1=nothing, PPX2=nothing, PPX3=nothing, PPX4=nothing, LFZO=Float64(1), LCX=Float64(1), LMUX=Float64(1), LEX=Float64(1), LKX=Float64(1), LHX=Float64(1), LVX=Float64(1), LMUV=Float64(0), Au=Float64(10), eps_x=0.1, eps_v=Float64(1.0), eps_sigma=0.001, damp_vlow=0.001, kwargs...)
+@component function TireMF61(; name = nothing, is_left=nothing, width=nothing, unloaded_radius=nothing, vertical_stiffness=nothing, vertical_damping=nothing, FNOMIN=nothing, BREFF=nothing, DREFF=nothing, FREFF=nothing, longitudinal_stiffness=nothing, lateral_stiffness=nothing, INFLPRES=nothing, NOMPRES=nothing, LONGVL=nothing, PCX1=nothing, PDX1=nothing, PDX2=nothing, PDX3=nothing, PEX1=nothing, PEX2=nothing, PEX3=nothing, PEX4=nothing, PKX1=nothing, PKX2=nothing, PKX3=nothing, PHX1=nothing, PHX2=nothing, PVX1=nothing, PVX2=nothing, PPX1=nothing, PPX2=nothing, PPX3=nothing, PPX4=nothing, RBX1=nothing, RBX2=nothing, RBX3=nothing, RCX1=nothing, REX1=nothing, REX2=nothing, RHX1=nothing, PCY1=nothing, PDY1=nothing, PDY2=nothing, PDY3=nothing, PEY1=nothing, PEY2=nothing, PEY3=nothing, PEY4=nothing, PEY5=nothing, PKY1=nothing, PKY2=nothing, PKY3=nothing, PKY4=nothing, PKY5=nothing, PKY6=nothing, PKY7=nothing, PHY1=nothing, PHY2=nothing, PVY1=nothing, PVY2=nothing, PVY3=nothing, PVY4=nothing, PPY1=nothing, PPY2=nothing, PPY3=nothing, PPY4=nothing, PPY5=nothing, RBY1=nothing, RBY2=nothing, RBY3=nothing, RBY4=nothing, RCY1=nothing, REY1=nothing, REY2=nothing, RHY1=nothing, RHY2=nothing, RVY1=nothing, RVY2=nothing, RVY3=nothing, RVY4=nothing, RVY5=nothing, RVY6=nothing, QBZ1=nothing, QBZ2=nothing, QBZ3=nothing, QBZ4=nothing, QBZ5=nothing, QBZ6=nothing, QBZ9=nothing, QBZ10=nothing, QCZ1=nothing, QDZ1=nothing, QDZ2=nothing, QDZ3=nothing, QDZ4=nothing, QDZ6=nothing, QDZ7=nothing, QDZ8=nothing, QDZ9=nothing, QDZ10=nothing, QDZ11=nothing, QEZ1=nothing, QEZ2=nothing, QEZ3=nothing, QEZ4=nothing, QEZ5=nothing, QHZ1=nothing, QHZ2=nothing, QHZ3=nothing, QHZ4=nothing, PPZ1=nothing, PPZ2=nothing, SSZ1=nothing, SSZ2=nothing, SSZ3=nothing, SSZ4=nothing, LFZO=Float64(1), LCX=Float64(1), LMUX=Float64(1), LEX=Float64(1), LKX=Float64(1), LHX=Float64(1), LVX=Float64(1), LCY=Float64(1), LMUY=Float64(1), LEY=Float64(1), LKY=Float64(1), LHY=Float64(1), LVY=Float64(1), LKYC=Float64(1), LXAL=Float64(1), LYKA=Float64(1), LVYKA=Float64(1), LTR=Float64(1), LRES=Float64(1), LKZC=Float64(1), LS=Float64(1), LMUV=Float64(0), Au=Float64(10), eps_x=0.1, eps_y=0.1, eps_k=0.1, eps_gamma=0.01, eps_v=Float64(1.0), eps_vc=0.1, eps_sigma=0.001, damp_vlow=0.001, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -148,6 +328,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__params, @parameters (sty_grey_light[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_grey_medium[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_grey_dark[1:4]::Real), [misc = "final"])
+  append!(__params, @parameters (side::Real), [misc = "final"])
 
   ### Deferred assignment (default values that depend on final parameters)
 
@@ -179,6 +360,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__longitudinal_stiffness = longitudinal_stiffness
   append!(__params, @parameters (longitudinal_stiffness::Real), [description = "Tyre overall longitudinal stiffness. Sets the relaxation length."])
   __initial_conditions[longitudinal_stiffness] = __local__longitudinal_stiffness
+  __local__lateral_stiffness = lateral_stiffness
+  append!(__params, @parameters (lateral_stiffness::Real), [description = "Tyre overall lateral stiffness. Sets the lateral relaxation length."])
+  __initial_conditions[lateral_stiffness] = __local__lateral_stiffness
   __local__INFLPRES = INFLPRES
   append!(__params, @parameters (INFLPRES::Real))
   __initial_conditions[INFLPRES] = __local__INFLPRES
@@ -245,6 +429,255 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__PPX4 = PPX4
   append!(__params, @parameters (PPX4::Real), [description = "Quadratic influence of inflation pressure on peak longitudinal friction"])
   __initial_conditions[PPX4] = __local__PPX4
+  __local__RBX1 = RBX1
+  append!(__params, @parameters (RBX1::Real), [description = "Slope factor for combined slip Fx reduction"])
+  __initial_conditions[RBX1] = __local__RBX1
+  __local__RBX2 = RBX2
+  append!(__params, @parameters (RBX2::Real), [description = "Variation of slope Fx reduction with kappa"])
+  __initial_conditions[RBX2] = __local__RBX2
+  __local__RBX3 = RBX3
+  append!(__params, @parameters (RBX3::Real), [description = "Influence of camber on stiffness for Fx combined"])
+  __initial_conditions[RBX3] = __local__RBX3
+  __local__RCX1 = RCX1
+  append!(__params, @parameters (RCX1::Real), [description = "Shape factor for combined slip Fx reduction"])
+  __initial_conditions[RCX1] = __local__RCX1
+  __local__REX1 = REX1
+  append!(__params, @parameters (REX1::Real), [description = "Curvature factor of combined Fx"])
+  __initial_conditions[REX1] = __local__REX1
+  __local__REX2 = REX2
+  append!(__params, @parameters (REX2::Real), [description = "Curvature factor of combined Fx with load"])
+  __initial_conditions[REX2] = __local__REX2
+  __local__RHX1 = RHX1
+  append!(__params, @parameters (RHX1::Real), [description = "Shift factor for combined slip Fx reduction"])
+  __initial_conditions[RHX1] = __local__RHX1
+  __local__PCY1 = PCY1
+  append!(__params, @parameters (PCY1::Real), [description = "Shape factor Cfy"])
+  __initial_conditions[PCY1] = __local__PCY1
+  __local__PDY1 = PDY1
+  append!(__params, @parameters (PDY1::Real), [description = "Lateral friction Muy at Fznom"])
+  __initial_conditions[PDY1] = __local__PDY1
+  __local__PDY2 = PDY2
+  append!(__params, @parameters (PDY2::Real), [description = "Variation of friction Muy with load"])
+  __initial_conditions[PDY2] = __local__PDY2
+  __local__PDY3 = PDY3
+  append!(__params, @parameters (PDY3::Real), [description = "Variation of friction Muy with camber squared"])
+  __initial_conditions[PDY3] = __local__PDY3
+  __local__PEY1 = PEY1
+  append!(__params, @parameters (PEY1::Real), [description = "Lateral curvature Efy at Fznom"])
+  __initial_conditions[PEY1] = __local__PEY1
+  __local__PEY2 = PEY2
+  append!(__params, @parameters (PEY2::Real), [description = "Variation of curvature Efy with load"])
+  __initial_conditions[PEY2] = __local__PEY2
+  __local__PEY3 = PEY3
+  append!(__params, @parameters (PEY3::Real), [description = "Zero order camber dependency of curvature Efy"])
+  __initial_conditions[PEY3] = __local__PEY3
+  __local__PEY4 = PEY4
+  append!(__params, @parameters (PEY4::Real), [description = "Variation of curvature Efy with camber"])
+  __initial_conditions[PEY4] = __local__PEY4
+  __local__PEY5 = PEY5
+  append!(__params, @parameters (PEY5::Real), [description = "Variation of curvature Efy with camber squared"])
+  __initial_conditions[PEY5] = __local__PEY5
+  __local__PKY1 = PKY1
+  append!(__params, @parameters (PKY1::Real), [description = "Maximum value of stiffness Kfy/Fznom"])
+  __initial_conditions[PKY1] = __local__PKY1
+  __local__PKY2 = PKY2
+  append!(__params, @parameters (PKY2::Real), [description = "Load at which Kfy reaches maximum value, over Fznom"])
+  __initial_conditions[PKY2] = __local__PKY2
+  __local__PKY3 = PKY3
+  append!(__params, @parameters (PKY3::Real), [description = "Variation of Kfy/Fznom with camber"])
+  __initial_conditions[PKY3] = __local__PKY3
+  __local__PKY4 = PKY4
+  append!(__params, @parameters (PKY4::Real), [description = "Peak stiffness variation with camber squared"])
+  __initial_conditions[PKY4] = __local__PKY4
+  __local__PKY5 = PKY5
+  append!(__params, @parameters (PKY5::Real), [description = "Fz at which Kfy is maximum, variation with camber squared"])
+  __initial_conditions[PKY5] = __local__PKY5
+  __local__PKY6 = PKY6
+  append!(__params, @parameters (PKY6::Real), [description = "Camber stiffness factor"])
+  __initial_conditions[PKY6] = __local__PKY6
+  __local__PKY7 = PKY7
+  append!(__params, @parameters (PKY7::Real), [description = "Camber stiffness variation with load"])
+  __initial_conditions[PKY7] = __local__PKY7
+  __local__PHY1 = PHY1
+  append!(__params, @parameters (PHY1::Real), [description = "Horizontal shift Shy at Fznom"])
+  __initial_conditions[PHY1] = __local__PHY1
+  __local__PHY2 = PHY2
+  append!(__params, @parameters (PHY2::Real), [description = "Variation of shift Shy with load"])
+  __initial_conditions[PHY2] = __local__PHY2
+  __local__PVY1 = PVY1
+  append!(__params, @parameters (PVY1::Real), [description = "Vertical shift in Svy/Fz at Fznom"])
+  __initial_conditions[PVY1] = __local__PVY1
+  __local__PVY2 = PVY2
+  append!(__params, @parameters (PVY2::Real), [description = "Variation of shift Svy/Fz with load"])
+  __initial_conditions[PVY2] = __local__PVY2
+  __local__PVY3 = PVY3
+  append!(__params, @parameters (PVY3::Real), [description = "Variation of shift Svy/Fz with camber"])
+  __initial_conditions[PVY3] = __local__PVY3
+  __local__PVY4 = PVY4
+  append!(__params, @parameters (PVY4::Real), [description = "Variation of shift Svy/Fz with camber and load"])
+  __initial_conditions[PVY4] = __local__PVY4
+  __local__PPY1 = PPY1
+  append!(__params, @parameters (PPY1::Real), [description = "Linear influence of inflation pressure on cornering stiffness"])
+  __initial_conditions[PPY1] = __local__PPY1
+  __local__PPY2 = PPY2
+  append!(__params, @parameters (PPY2::Real), [description = "Quadratic influence of inflation pressure on cornering stiffness"])
+  __initial_conditions[PPY2] = __local__PPY2
+  __local__PPY3 = PPY3
+  append!(__params, @parameters (PPY3::Real), [description = "Linear influence of inflation pressure on peak lateral friction"])
+  __initial_conditions[PPY3] = __local__PPY3
+  __local__PPY4 = PPY4
+  append!(__params, @parameters (PPY4::Real), [description = "Quadratic influence of inflation pressure on peak lateral friction"])
+  __initial_conditions[PPY4] = __local__PPY4
+  __local__PPY5 = PPY5
+  append!(__params, @parameters (PPY5::Real), [description = "Influence of inflation pressure on camber stiffness"])
+  __initial_conditions[PPY5] = __local__PPY5
+  __local__RBY1 = RBY1
+  append!(__params, @parameters (RBY1::Real), [description = "Slope factor for combined Fy reduction"])
+  __initial_conditions[RBY1] = __local__RBY1
+  __local__RBY2 = RBY2
+  append!(__params, @parameters (RBY2::Real), [description = "Variation of slope Fy reduction with alpha"])
+  __initial_conditions[RBY2] = __local__RBY2
+  __local__RBY3 = RBY3
+  append!(__params, @parameters (RBY3::Real), [description = "Shift term for alpha in slope Fy reduction"])
+  __initial_conditions[RBY3] = __local__RBY3
+  __local__RBY4 = RBY4
+  append!(__params, @parameters (RBY4::Real), [description = "Influence of camber on stiffness of Fy combined"])
+  __initial_conditions[RBY4] = __local__RBY4
+  __local__RCY1 = RCY1
+  append!(__params, @parameters (RCY1::Real), [description = "Shape factor for combined Fy reduction"])
+  __initial_conditions[RCY1] = __local__RCY1
+  __local__REY1 = REY1
+  append!(__params, @parameters (REY1::Real), [description = "Curvature factor of combined Fy"])
+  __initial_conditions[REY1] = __local__REY1
+  __local__REY2 = REY2
+  append!(__params, @parameters (REY2::Real), [description = "Curvature factor of combined Fy with load"])
+  __initial_conditions[REY2] = __local__REY2
+  __local__RHY1 = RHY1
+  append!(__params, @parameters (RHY1::Real), [description = "Shift factor for combined Fy reduction"])
+  __initial_conditions[RHY1] = __local__RHY1
+  __local__RHY2 = RHY2
+  append!(__params, @parameters (RHY2::Real), [description = "Shift factor for combined Fy reduction with load"])
+  __initial_conditions[RHY2] = __local__RHY2
+  __local__RVY1 = RVY1
+  append!(__params, @parameters (RVY1::Real), [description = "Kappa induced side force Svyk/Muy*Fz at Fznom"])
+  __initial_conditions[RVY1] = __local__RVY1
+  __local__RVY2 = RVY2
+  append!(__params, @parameters (RVY2::Real), [description = "Variation of Svyk/Muy*Fz with load"])
+  __initial_conditions[RVY2] = __local__RVY2
+  __local__RVY3 = RVY3
+  append!(__params, @parameters (RVY3::Real), [description = "Variation of Svyk/Muy*Fz with camber"])
+  __initial_conditions[RVY3] = __local__RVY3
+  __local__RVY4 = RVY4
+  append!(__params, @parameters (RVY4::Real), [description = "Variation of Svyk/Muy*Fz with alpha"])
+  __initial_conditions[RVY4] = __local__RVY4
+  __local__RVY5 = RVY5
+  append!(__params, @parameters (RVY5::Real), [description = "Variation of Svyk/Muy*Fz with kappa"])
+  __initial_conditions[RVY5] = __local__RVY5
+  __local__RVY6 = RVY6
+  append!(__params, @parameters (RVY6::Real), [description = "Variation of Svyk/Muy*Fz with atan(kappa)"])
+  __initial_conditions[RVY6] = __local__RVY6
+  __local__QBZ1 = QBZ1
+  append!(__params, @parameters (QBZ1::Real), [description = "Trail slope factor for trail Bpt at Fznom"])
+  __initial_conditions[QBZ1] = __local__QBZ1
+  __local__QBZ2 = QBZ2
+  append!(__params, @parameters (QBZ2::Real), [description = "Variation of slope Bpt with load"])
+  __initial_conditions[QBZ2] = __local__QBZ2
+  __local__QBZ3 = QBZ3
+  append!(__params, @parameters (QBZ3::Real), [description = "Variation of slope Bpt with load squared"])
+  __initial_conditions[QBZ3] = __local__QBZ3
+  __local__QBZ4 = QBZ4
+  append!(__params, @parameters (QBZ4::Real), [description = "Variation of slope Bpt with camber. PAC2002 only; 4.E40 has no term for it."])
+  __initial_conditions[QBZ4] = __local__QBZ4
+  __local__QBZ5 = QBZ5
+  append!(__params, @parameters (QBZ5::Real), [description = "Variation of slope Bpt with absolute camber"])
+  __initial_conditions[QBZ5] = __local__QBZ5
+  __local__QBZ6 = QBZ6
+  append!(__params, @parameters (QBZ6::Real), [description = "Variation of slope Bpt with camber squared"])
+  __initial_conditions[QBZ6] = __local__QBZ6
+  __local__QBZ9 = QBZ9
+  append!(__params, @parameters (QBZ9::Real), [description = "Slope factor Br of residual torque Mzr"])
+  __initial_conditions[QBZ9] = __local__QBZ9
+  __local__QBZ10 = QBZ10
+  append!(__params, @parameters (QBZ10::Real), [description = "Slope factor Br of residual torque Mzr"])
+  __initial_conditions[QBZ10] = __local__QBZ10
+  __local__QCZ1 = QCZ1
+  append!(__params, @parameters (QCZ1::Real), [description = "Shape factor Cpt for pneumatic trail"])
+  __initial_conditions[QCZ1] = __local__QCZ1
+  __local__QDZ1 = QDZ1
+  append!(__params, @parameters (QDZ1::Real), [description = "Peak trail Dpt = Dpt*(Fz/Fznom*R0)"])
+  __initial_conditions[QDZ1] = __local__QDZ1
+  __local__QDZ2 = QDZ2
+  append!(__params, @parameters (QDZ2::Real), [description = "Variation of peak Dpt with load"])
+  __initial_conditions[QDZ2] = __local__QDZ2
+  __local__QDZ3 = QDZ3
+  append!(__params, @parameters (QDZ3::Real), [description = "Variation of peak Dpt with camber"])
+  __initial_conditions[QDZ3] = __local__QDZ3
+  __local__QDZ4 = QDZ4
+  append!(__params, @parameters (QDZ4::Real), [description = "Variation of peak Dpt with camber squared"])
+  __initial_conditions[QDZ4] = __local__QDZ4
+  __local__QDZ6 = QDZ6
+  append!(__params, @parameters (QDZ6::Real), [description = "Peak residual torque Dmr = Dmr/(Fz*R0)"])
+  __initial_conditions[QDZ6] = __local__QDZ6
+  __local__QDZ7 = QDZ7
+  append!(__params, @parameters (QDZ7::Real), [description = "Variation of peak factor Dmr with load"])
+  __initial_conditions[QDZ7] = __local__QDZ7
+  __local__QDZ8 = QDZ8
+  append!(__params, @parameters (QDZ8::Real), [description = "Variation of peak factor Dmr with camber"])
+  __initial_conditions[QDZ8] = __local__QDZ8
+  __local__QDZ9 = QDZ9
+  append!(__params, @parameters (QDZ9::Real), [description = "Variation of peak factor Dmr with camber and load"])
+  __initial_conditions[QDZ9] = __local__QDZ9
+  __local__QDZ10 = QDZ10
+  append!(__params, @parameters (QDZ10::Real), [description = "Variation of peak factor Dmr with camber squared"])
+  __initial_conditions[QDZ10] = __local__QDZ10
+  __local__QDZ11 = QDZ11
+  append!(__params, @parameters (QDZ11::Real), [description = "Variation of peak factor Dmr with camber squared and load"])
+  __initial_conditions[QDZ11] = __local__QDZ11
+  __local__QEZ1 = QEZ1
+  append!(__params, @parameters (QEZ1::Real), [description = "Trail curvature Ept at Fznom"])
+  __initial_conditions[QEZ1] = __local__QEZ1
+  __local__QEZ2 = QEZ2
+  append!(__params, @parameters (QEZ2::Real), [description = "Variation of curvature Ept with load"])
+  __initial_conditions[QEZ2] = __local__QEZ2
+  __local__QEZ3 = QEZ3
+  append!(__params, @parameters (QEZ3::Real), [description = "Variation of curvature Ept with load squared"])
+  __initial_conditions[QEZ3] = __local__QEZ3
+  __local__QEZ4 = QEZ4
+  append!(__params, @parameters (QEZ4::Real), [description = "Variation of curvature Ept with sign of alpha-t"])
+  __initial_conditions[QEZ4] = __local__QEZ4
+  __local__QEZ5 = QEZ5
+  append!(__params, @parameters (QEZ5::Real), [description = "Variation of Ept with camber and sign of alpha-t"])
+  __initial_conditions[QEZ5] = __local__QEZ5
+  __local__QHZ1 = QHZ1
+  append!(__params, @parameters (QHZ1::Real), [description = "Trail horizontal shift Sht at Fznom"])
+  __initial_conditions[QHZ1] = __local__QHZ1
+  __local__QHZ2 = QHZ2
+  append!(__params, @parameters (QHZ2::Real), [description = "Variation of shift Sht with load"])
+  __initial_conditions[QHZ2] = __local__QHZ2
+  __local__QHZ3 = QHZ3
+  append!(__params, @parameters (QHZ3::Real), [description = "Variation of shift Sht with camber"])
+  __initial_conditions[QHZ3] = __local__QHZ3
+  __local__QHZ4 = QHZ4
+  append!(__params, @parameters (QHZ4::Real), [description = "Variation of shift Sht with camber and load"])
+  __initial_conditions[QHZ4] = __local__QHZ4
+  __local__PPZ1 = PPZ1
+  append!(__params, @parameters (PPZ1::Real), [description = "Linear influence of inflation pressure on pneumatic trail"])
+  __initial_conditions[PPZ1] = __local__PPZ1
+  __local__PPZ2 = PPZ2
+  append!(__params, @parameters (PPZ2::Real), [description = "Influence of inflation pressure on residual aligning torque"])
+  __initial_conditions[PPZ2] = __local__PPZ2
+  __local__SSZ1 = SSZ1
+  append!(__params, @parameters (SSZ1::Real), [description = "Nominal value of s/R0: effect of Fx on Mz"])
+  __initial_conditions[SSZ1] = __local__SSZ1
+  __local__SSZ2 = SSZ2
+  append!(__params, @parameters (SSZ2::Real), [description = "Variation of distance s/R0 with Fy/Fznom"])
+  __initial_conditions[SSZ2] = __local__SSZ2
+  __local__SSZ3 = SSZ3
+  append!(__params, @parameters (SSZ3::Real), [description = "Variation of distance s/R0 with camber"])
+  __initial_conditions[SSZ3] = __local__SSZ3
+  __local__SSZ4 = SSZ4
+  append!(__params, @parameters (SSZ4::Real), [description = "Variation of distance s/R0 with load and camber"])
+  __initial_conditions[SSZ4] = __local__SSZ4
   __local__LFZO = LFZO
   append!(__params, @parameters (LFZO::Real))
   __initial_conditions[LFZO] = __local__LFZO
@@ -266,6 +699,48 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__LVX = LVX
   append!(__params, @parameters (LVX::Real))
   __initial_conditions[LVX] = __local__LVX
+  __local__LCY = LCY
+  append!(__params, @parameters (LCY::Real))
+  __initial_conditions[LCY] = __local__LCY
+  __local__LMUY = LMUY
+  append!(__params, @parameters (LMUY::Real))
+  __initial_conditions[LMUY] = __local__LMUY
+  __local__LEY = LEY
+  append!(__params, @parameters (LEY::Real))
+  __initial_conditions[LEY] = __local__LEY
+  __local__LKY = LKY
+  append!(__params, @parameters (LKY::Real))
+  __initial_conditions[LKY] = __local__LKY
+  __local__LHY = LHY
+  append!(__params, @parameters (LHY::Real))
+  __initial_conditions[LHY] = __local__LHY
+  __local__LVY = LVY
+  append!(__params, @parameters (LVY::Real))
+  __initial_conditions[LVY] = __local__LVY
+  __local__LKYC = LKYC
+  append!(__params, @parameters (LKYC::Real))
+  __initial_conditions[LKYC] = __local__LKYC
+  __local__LXAL = LXAL
+  append!(__params, @parameters (LXAL::Real))
+  __initial_conditions[LXAL] = __local__LXAL
+  __local__LYKA = LYKA
+  append!(__params, @parameters (LYKA::Real))
+  __initial_conditions[LYKA] = __local__LYKA
+  __local__LVYKA = LVYKA
+  append!(__params, @parameters (LVYKA::Real))
+  __initial_conditions[LVYKA] = __local__LVYKA
+  __local__LTR = LTR
+  append!(__params, @parameters (LTR::Real))
+  __initial_conditions[LTR] = __local__LTR
+  __local__LRES = LRES
+  append!(__params, @parameters (LRES::Real))
+  __initial_conditions[LRES] = __local__LRES
+  __local__LKZC = LKZC
+  append!(__params, @parameters (LKZC::Real))
+  __initial_conditions[LKZC] = __local__LKZC
+  __local__LS = LS
+  append!(__params, @parameters (LS::Real))
+  __initial_conditions[LS] = __local__LS
   __local__LMUV = LMUV
   append!(__params, @parameters (LMUV::Real), [description = "Slip-speed friction decay. Leave at 0 unless modelling a wet surface."])
   __initial_conditions[LMUV] = __local__LMUV
@@ -275,9 +750,21 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__eps_x = eps_x
   append!(__params, @parameters (eps_x::Real), [description = "Singularity guard on Bx (4.E16). Only bites below Fz ~ eps_x / (PCX1 * PDX1)."])
   __initial_conditions[eps_x] = __local__eps_x
+  __local__eps_y = eps_y
+  append!(__params, @parameters (eps_y::Real), [description = "Singularity guard on By (4.E26)."])
+  __initial_conditions[eps_y] = __local__eps_y
+  __local__eps_k = eps_k
+  append!(__params, @parameters (eps_k::Real), [description = "Singularity guard on Kya (4.E39)."])
+  __initial_conditions[eps_k] = __local__eps_k
+  __local__eps_gamma = eps_gamma
+  append!(__params, @parameters (eps_gamma::Real), [description = "Floor on cos(camber), so the contact frame stays defined at extreme camber."])
+  __initial_conditions[eps_gamma] = __local__eps_gamma
   __local__eps_v = eps_v
-  append!(__params, @parameters (eps_v::Real), [description = "Low-speed threshold (TIR VXLOW). Floors the slip-ratio denominator."])
+  append!(__params, @parameters (eps_v::Real), [description = "Low-speed threshold (TIR VXLOW). Floors the slip denominators."])
   __initial_conditions[eps_v] = __local__eps_v
+  __local__eps_vc = eps_vc
+  append!(__params, @parameters (eps_vc::Real), [description = "Guard on Vc' in (4.E6a)."])
+  __initial_conditions[eps_vc] = __local__eps_vc
   __local__eps_sigma = eps_sigma
   append!(__params, @parameters (eps_sigma::Real), [description = "Floor on the relaxation length, which falls with Fz."])
   __initial_conditions[eps_sigma] = __local__eps_sigma
@@ -294,6 +781,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings[sty_grey_light] = [0.546875, 0.578125, 0.609375, 0.5]
   __bindings[sty_grey_medium] = [0.328125, 0.3515625, 0.375, 1]
   __bindings[sty_grey_dark] = [0.1953125, 0.21484375, 0.234375, 1]
+  __bindings[side] = ifelse(is_left, 1.0, -1.0)
 
   ### Final Path Parameters
   append!(__vars, @variables (slip(t)::Real), [output = true])
@@ -309,6 +797,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (Fz_raw(t)::Real), [description = "Spring-damper force before the tension clamp"])
   append!(__vars, @variables (Fz(t)::Real), [description = "Vertical contact force pushing the wheel up (>= 0)"])
   append!(__vars, @variables (x_w(t)::Real), [description = "Longitudinal position of the wheel centre"])
+  append!(__vars, @variables (y_w(t)::Real), [description = "Lateral position of the wheel centre"])
+  append!(__vars, @variables (v_wx(t)::Real), [description = "World-x velocity of the wheel centre"])
+  append!(__vars, @variables (v_wy(t)::Real), [description = "World-y velocity of the wheel centre"])
+  append!(__vars, @variables (cos_gamma(t)::Real), [description = "Cosine of the inclination angle, i.e. the length of the spin axis' ground projection"])
   append!(__vars, @variables (V_x(t)::Real), [description = "Longitudinal velocity of the contact patch"])
   append!(__vars, @variables (omega(t)::Real), [description = "Wheel spin speed (positive = rolling forward)"])
   append!(__vars, @variables (V_sx(t)::Real), [description = "Longitudinal slip velocity Vsx = Vx - omega*Re"])
@@ -316,16 +808,27 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (kappa(t)::Real), [description = "Steady-state longitudinal slip ratio (4.E5). Reported only; the force is built from kappa_prime."])
   append!(__vars, @variables (u_x(t)::Real), [description = "Longitudinal carcass deflection u (7.9). The state."])
   append!(__vars, @variables (u_dot_free(t)::Real), [description = "Unlimited right-hand side of (7.9), before the (7.25) deflection limiter"])
-  append!(__vars, @variables (kappa_sl(t)::Real), [description = "Slip beyond which the (7.25) limiter arms. Longitudinal read of alpha_sl."])
   append!(__vars, @variables (kappa_prime(t)::Real), [description = "Transient longitudinal slip ratio (7.26). What the Magic Formula is fed."])
   append!(__vars, @variables (sigma_kappa(t)::Real), [description = "Longitudinal relaxation length (7.8)"])
-  append!(__vars, @variables (C_Fx(t)::Real), [description = "Longitudinal tyre stiffness at road level"])
+  append!(__vars, @variables (V_y(t)::Real), [description = "Lateral velocity of the contact patch. Also the lateral slip speed Vsy."])
+  append!(__vars, @variables (V_y_mf(t)::Real), [description = "Lateral slip speed as the fit sees it, i.e. V_y with the mounted-side flip"])
+  append!(__vars, @variables (alpha(t)::Real), [description = "Steady-state slip angle. Reported only; the force is built from alpha_prime."])
+  append!(__vars, @variables (V_c(t)::Real), [description = "Magnitude of the contact-centre velocity Vc (4.E6a)"])
+  append!(__vars, @variables (cos_alpha(t)::Real), [description = "Vcx/Vc' of the aligning-moment equations (4.E6). Signed, so it flips in reverse."])
+  append!(__vars, @variables (sgn_Vx(t)::Real), [description = "Sign of Vcx, carried by the pneumatic trail and the residual torque"])
+  append!(__vars, @variables (v_y(t)::Real), [description = "Lateral carcass deflection v (7.11). The state."])
+  append!(__vars, @variables (v_dot_free(t)::Real), [description = "Unlimited right-hand side of (7.11), before the (7.25) deflection limiter"])
+  append!(__vars, @variables (alpha_sl(t)::Real), [description = "Equivalent slip angle at which the (7.25) limiter arms, 3*Dy/CFalpha"])
+  append!(__vars, @variables (alpha_prime(t)::Real), [description = "Transient lateral slip tan(alpha') (7.26). What the Magic Formula is fed."])
+  append!(__vars, @variables (sigma_alpha(t)::Real), [description = "Lateral relaxation length (7.12)"])
   append!(__vars, @variables (Fz0_prime(t)::Real))
   append!(__vars, @variables (dfz(t)::Real))
   append!(__vars, @variables (dpi(t)::Real))
   append!(__vars, @variables (gamma_star(t)::Real))
   append!(__vars, @variables (lam_mux_star(t)::Real))
   append!(__vars, @variables (lam_mux_prime(t)::Real))
+  append!(__vars, @variables (lam_muy_star(t)::Real))
+  append!(__vars, @variables (lam_muy_prime(t)::Real))
   append!(__vars, @variables (lam_low(t)::Real))
   append!(__vars, @variables (mu_x(t)::Real))
   append!(__vars, @variables (Kxk_norm(t)::Real))
@@ -338,7 +841,69 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (SHx(t)::Real))
   append!(__vars, @variables (SVx(t)::Real))
   append!(__vars, @variables (kappa_x(t)::Real))
-  append!(__vars, @variables (Fx(t)::Real))
+  append!(__vars, @variables (Fx0(t)::Real), [description = "Pure-slip longitudinal force (4.E9)"])
+  append!(__vars, @variables (SHxa(t)::Real))
+  append!(__vars, @variables (Cxa(t)::Real))
+  append!(__vars, @variables (Bxa(t)::Real))
+  append!(__vars, @variables (Exa_raw(t)::Real))
+  append!(__vars, @variables (Exa(t)::Real))
+  append!(__vars, @variables (alpha_s(t)::Real))
+  append!(__vars, @variables (Gxa0(t)::Real))
+  append!(__vars, @variables (Gxa(t)::Real))
+  append!(__vars, @variables (Fx(t)::Real), [description = "Combined-slip longitudinal force (4.E50)"])
+  append!(__vars, @variables (mu_y(t)::Real))
+  append!(__vars, @variables (Cy(t)::Real))
+  append!(__vars, @variables (Dy(t)::Real))
+  append!(__vars, @variables (Kya(t)::Real))
+  append!(__vars, @variables (Kya_prime(t)::Real))
+  append!(__vars, @variables (Kyg0(t)::Real))
+  append!(__vars, @variables (SVyg(t)::Real))
+  append!(__vars, @variables (By(t)::Real))
+  append!(__vars, @variables (Ey_raw(t)::Real))
+  append!(__vars, @variables (Ey(t)::Real))
+  append!(__vars, @variables (SHy(t)::Real))
+  append!(__vars, @variables (SVy(t)::Real))
+  append!(__vars, @variables (alpha_y(t)::Real))
+  append!(__vars, @variables (Fy0(t)::Real), [description = "Pure-slip lateral force (4.E19)"])
+  append!(__vars, @variables (SHyk(t)::Real))
+  append!(__vars, @variables (Cyk(t)::Real))
+  append!(__vars, @variables (Byk(t)::Real))
+  append!(__vars, @variables (Eyk_raw(t)::Real))
+  append!(__vars, @variables (Eyk(t)::Real))
+  append!(__vars, @variables (kappa_s(t)::Real))
+  append!(__vars, @variables (Gyk0(t)::Real))
+  append!(__vars, @variables (Gyk(t)::Real))
+  append!(__vars, @variables (Dvyk(t)::Real))
+  append!(__vars, @variables (SVyk(t)::Real))
+  append!(__vars, @variables (Fy(t)::Real), [description = "Combined-slip lateral force (4.E58)"])
+  append!(__vars, @variables (Fy_prime(t)::Real), [description = "Lateral force without the kappa-induced shift (4.E74), what the trail acts on"])
+  append!(__vars, @variables (SHt(t)::Real))
+  append!(__vars, @variables (alpha_t(t)::Real))
+  append!(__vars, @variables (Bt(t)::Real))
+  append!(__vars, @variables (Ct(t)::Real))
+  append!(__vars, @variables (Dt0(t)::Real))
+  append!(__vars, @variables (Dt(t)::Real))
+  append!(__vars, @variables (Et_raw(t)::Real))
+  append!(__vars, @variables (Et(t)::Real))
+  append!(__vars, @variables (SHf(t)::Real))
+  append!(__vars, @variables (alpha_r(t)::Real))
+  append!(__vars, @variables (Br(t)::Real))
+  append!(__vars, @variables (Cr(t)::Real))
+  append!(__vars, @variables (Dr(t)::Real))
+  append!(__vars, @variables (alpha_t_eq(t)::Real))
+  append!(__vars, @variables (alpha_r_eq(t)::Real))
+  append!(__vars, @variables (t_pneu(t)::Real), [description = "Pneumatic trail (4.E73)"])
+  append!(__vars, @variables (s_arm(t)::Real), [description = "Moment arm of Fx (4.E76)"])
+  append!(__vars, @variables (Mz_prime(t)::Real))
+  append!(__vars, @variables (Mzr(t)::Real))
+  append!(__vars, @variables (Mz(t)::Real), [description = "Aligning moment in the tyre fit's own convention (4.E71)"])
+  append!(__vars, @variables (Fy_c(t)::Real), [description = "Lateral force in the contact frame, i.e. Fy with the mounted-side flip undone"])
+  append!(__vars, @variables (Mz_c(t)::Real), [description = "Aligning moment in the contact frame, i.e. Mz with the mounted-side flip undone"])
+  append!(__vars, @variables (f_wx(t)::Real))
+  append!(__vars, @variables (f_wy(t)::Real))
+  append!(__vars, @variables (tau_wx(t)::Real))
+  append!(__vars, @variables (tau_wy(t)::Real))
+  append!(__vars, @variables (tau_wz(t)::Real))
 
   ### Variables (assignments)
   __ovr_z_w = pop!(__overrides, "z_w", nothing); isnothing(__ovr_z_w) || push!(__eqs, z_w ~ __ovr_z_w)
@@ -371,6 +936,18 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_x_w = pop!(__overrides, "x_w", nothing); isnothing(__ovr_x_w) || push!(__eqs, x_w ~ __ovr_x_w)
   __ovr_x_w__initial = pop!(__overrides, "x_w__initial", nothing); isnothing(__ovr_x_w__initial) || (__initial_conditions[x_w] = __ovr_x_w__initial)
   __ovr_x_w__guess = pop!(__overrides, "x_w__guess", nothing)
+  __ovr_y_w = pop!(__overrides, "y_w", nothing); isnothing(__ovr_y_w) || push!(__eqs, y_w ~ __ovr_y_w)
+  __ovr_y_w__initial = pop!(__overrides, "y_w__initial", nothing); isnothing(__ovr_y_w__initial) || (__initial_conditions[y_w] = __ovr_y_w__initial)
+  __ovr_y_w__guess = pop!(__overrides, "y_w__guess", nothing)
+  __ovr_v_wx = pop!(__overrides, "v_wx", nothing); isnothing(__ovr_v_wx) || push!(__eqs, v_wx ~ __ovr_v_wx)
+  __ovr_v_wx__initial = pop!(__overrides, "v_wx__initial", nothing); isnothing(__ovr_v_wx__initial) || (__initial_conditions[v_wx] = __ovr_v_wx__initial)
+  __ovr_v_wx__guess = pop!(__overrides, "v_wx__guess", nothing)
+  __ovr_v_wy = pop!(__overrides, "v_wy", nothing); isnothing(__ovr_v_wy) || push!(__eqs, v_wy ~ __ovr_v_wy)
+  __ovr_v_wy__initial = pop!(__overrides, "v_wy__initial", nothing); isnothing(__ovr_v_wy__initial) || (__initial_conditions[v_wy] = __ovr_v_wy__initial)
+  __ovr_v_wy__guess = pop!(__overrides, "v_wy__guess", nothing)
+  __ovr_cos_gamma = pop!(__overrides, "cos_gamma", nothing); isnothing(__ovr_cos_gamma) || push!(__eqs, cos_gamma ~ __ovr_cos_gamma)
+  __ovr_cos_gamma__initial = pop!(__overrides, "cos_gamma__initial", nothing); isnothing(__ovr_cos_gamma__initial) || (__initial_conditions[cos_gamma] = __ovr_cos_gamma__initial)
+  __ovr_cos_gamma__guess = pop!(__overrides, "cos_gamma__guess", nothing)
   __ovr_V_x = pop!(__overrides, "V_x", nothing); isnothing(__ovr_V_x) || push!(__eqs, V_x ~ __ovr_V_x)
   __ovr_V_x__initial = pop!(__overrides, "V_x__initial", nothing); isnothing(__ovr_V_x__initial) || (__initial_conditions[V_x] = __ovr_V_x__initial)
   __ovr_V_x__guess = pop!(__overrides, "V_x__guess", nothing)
@@ -392,18 +969,45 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_u_dot_free = pop!(__overrides, "u_dot_free", nothing); isnothing(__ovr_u_dot_free) || push!(__eqs, u_dot_free ~ __ovr_u_dot_free)
   __ovr_u_dot_free__initial = pop!(__overrides, "u_dot_free__initial", nothing); isnothing(__ovr_u_dot_free__initial) || (__initial_conditions[u_dot_free] = __ovr_u_dot_free__initial)
   __ovr_u_dot_free__guess = pop!(__overrides, "u_dot_free__guess", nothing)
-  __ovr_kappa_sl = pop!(__overrides, "kappa_sl", nothing); isnothing(__ovr_kappa_sl) || push!(__eqs, kappa_sl ~ __ovr_kappa_sl)
-  __ovr_kappa_sl__initial = pop!(__overrides, "kappa_sl__initial", nothing); isnothing(__ovr_kappa_sl__initial) || (__initial_conditions[kappa_sl] = __ovr_kappa_sl__initial)
-  __ovr_kappa_sl__guess = pop!(__overrides, "kappa_sl__guess", nothing)
   __ovr_kappa_prime = pop!(__overrides, "kappa_prime", nothing); isnothing(__ovr_kappa_prime) || push!(__eqs, kappa_prime ~ __ovr_kappa_prime)
   __ovr_kappa_prime__initial = pop!(__overrides, "kappa_prime__initial", nothing); isnothing(__ovr_kappa_prime__initial) || (__initial_conditions[kappa_prime] = __ovr_kappa_prime__initial)
   __ovr_kappa_prime__guess = pop!(__overrides, "kappa_prime__guess", nothing)
   __ovr_sigma_kappa = pop!(__overrides, "sigma_kappa", nothing); isnothing(__ovr_sigma_kappa) || push!(__eqs, sigma_kappa ~ __ovr_sigma_kappa)
   __ovr_sigma_kappa__initial = pop!(__overrides, "sigma_kappa__initial", nothing); isnothing(__ovr_sigma_kappa__initial) || (__initial_conditions[sigma_kappa] = __ovr_sigma_kappa__initial)
   __ovr_sigma_kappa__guess = pop!(__overrides, "sigma_kappa__guess", nothing)
-  __ovr_C_Fx = pop!(__overrides, "C_Fx", nothing); isnothing(__ovr_C_Fx) || push!(__eqs, C_Fx ~ __ovr_C_Fx)
-  __ovr_C_Fx__initial = pop!(__overrides, "C_Fx__initial", nothing); isnothing(__ovr_C_Fx__initial) || (__initial_conditions[C_Fx] = __ovr_C_Fx__initial)
-  __ovr_C_Fx__guess = pop!(__overrides, "C_Fx__guess", nothing)
+  __ovr_V_y = pop!(__overrides, "V_y", nothing); isnothing(__ovr_V_y) || push!(__eqs, V_y ~ __ovr_V_y)
+  __ovr_V_y__initial = pop!(__overrides, "V_y__initial", nothing); isnothing(__ovr_V_y__initial) || (__initial_conditions[V_y] = __ovr_V_y__initial)
+  __ovr_V_y__guess = pop!(__overrides, "V_y__guess", nothing)
+  __ovr_V_y_mf = pop!(__overrides, "V_y_mf", nothing); isnothing(__ovr_V_y_mf) || push!(__eqs, V_y_mf ~ __ovr_V_y_mf)
+  __ovr_V_y_mf__initial = pop!(__overrides, "V_y_mf__initial", nothing); isnothing(__ovr_V_y_mf__initial) || (__initial_conditions[V_y_mf] = __ovr_V_y_mf__initial)
+  __ovr_V_y_mf__guess = pop!(__overrides, "V_y_mf__guess", nothing)
+  __ovr_alpha = pop!(__overrides, "alpha", nothing); isnothing(__ovr_alpha) || push!(__eqs, alpha ~ __ovr_alpha)
+  __ovr_alpha__initial = pop!(__overrides, "alpha__initial", nothing); isnothing(__ovr_alpha__initial) || (__initial_conditions[alpha] = __ovr_alpha__initial)
+  __ovr_alpha__guess = pop!(__overrides, "alpha__guess", nothing)
+  __ovr_V_c = pop!(__overrides, "V_c", nothing); isnothing(__ovr_V_c) || push!(__eqs, V_c ~ __ovr_V_c)
+  __ovr_V_c__initial = pop!(__overrides, "V_c__initial", nothing); isnothing(__ovr_V_c__initial) || (__initial_conditions[V_c] = __ovr_V_c__initial)
+  __ovr_V_c__guess = pop!(__overrides, "V_c__guess", nothing)
+  __ovr_cos_alpha = pop!(__overrides, "cos_alpha", nothing); isnothing(__ovr_cos_alpha) || push!(__eqs, cos_alpha ~ __ovr_cos_alpha)
+  __ovr_cos_alpha__initial = pop!(__overrides, "cos_alpha__initial", nothing); isnothing(__ovr_cos_alpha__initial) || (__initial_conditions[cos_alpha] = __ovr_cos_alpha__initial)
+  __ovr_cos_alpha__guess = pop!(__overrides, "cos_alpha__guess", nothing)
+  __ovr_sgn_Vx = pop!(__overrides, "sgn_Vx", nothing); isnothing(__ovr_sgn_Vx) || push!(__eqs, sgn_Vx ~ __ovr_sgn_Vx)
+  __ovr_sgn_Vx__initial = pop!(__overrides, "sgn_Vx__initial", nothing); isnothing(__ovr_sgn_Vx__initial) || (__initial_conditions[sgn_Vx] = __ovr_sgn_Vx__initial)
+  __ovr_sgn_Vx__guess = pop!(__overrides, "sgn_Vx__guess", nothing)
+  __ovr_v_y = pop!(__overrides, "v_y", nothing); isnothing(__ovr_v_y) || push!(__eqs, v_y ~ __ovr_v_y)
+  __ovr_v_y__initial = pop!(__overrides, "v_y__initial", nothing); isnothing(__ovr_v_y__initial) || (__initial_conditions[v_y] = __ovr_v_y__initial)
+  __ovr_v_y__guess = pop!(__overrides, "v_y__guess", nothing)
+  __ovr_v_dot_free = pop!(__overrides, "v_dot_free", nothing); isnothing(__ovr_v_dot_free) || push!(__eqs, v_dot_free ~ __ovr_v_dot_free)
+  __ovr_v_dot_free__initial = pop!(__overrides, "v_dot_free__initial", nothing); isnothing(__ovr_v_dot_free__initial) || (__initial_conditions[v_dot_free] = __ovr_v_dot_free__initial)
+  __ovr_v_dot_free__guess = pop!(__overrides, "v_dot_free__guess", nothing)
+  __ovr_alpha_sl = pop!(__overrides, "alpha_sl", nothing); isnothing(__ovr_alpha_sl) || push!(__eqs, alpha_sl ~ __ovr_alpha_sl)
+  __ovr_alpha_sl__initial = pop!(__overrides, "alpha_sl__initial", nothing); isnothing(__ovr_alpha_sl__initial) || (__initial_conditions[alpha_sl] = __ovr_alpha_sl__initial)
+  __ovr_alpha_sl__guess = pop!(__overrides, "alpha_sl__guess", nothing)
+  __ovr_alpha_prime = pop!(__overrides, "alpha_prime", nothing); isnothing(__ovr_alpha_prime) || push!(__eqs, alpha_prime ~ __ovr_alpha_prime)
+  __ovr_alpha_prime__initial = pop!(__overrides, "alpha_prime__initial", nothing); isnothing(__ovr_alpha_prime__initial) || (__initial_conditions[alpha_prime] = __ovr_alpha_prime__initial)
+  __ovr_alpha_prime__guess = pop!(__overrides, "alpha_prime__guess", nothing)
+  __ovr_sigma_alpha = pop!(__overrides, "sigma_alpha", nothing); isnothing(__ovr_sigma_alpha) || push!(__eqs, sigma_alpha ~ __ovr_sigma_alpha)
+  __ovr_sigma_alpha__initial = pop!(__overrides, "sigma_alpha__initial", nothing); isnothing(__ovr_sigma_alpha__initial) || (__initial_conditions[sigma_alpha] = __ovr_sigma_alpha__initial)
+  __ovr_sigma_alpha__guess = pop!(__overrides, "sigma_alpha__guess", nothing)
   __ovr_Fz0_prime = pop!(__overrides, "Fz0_prime", nothing); isnothing(__ovr_Fz0_prime) || push!(__eqs, Fz0_prime ~ __ovr_Fz0_prime)
   __ovr_Fz0_prime__initial = pop!(__overrides, "Fz0_prime__initial", nothing); isnothing(__ovr_Fz0_prime__initial) || (__initial_conditions[Fz0_prime] = __ovr_Fz0_prime__initial)
   __ovr_Fz0_prime__guess = pop!(__overrides, "Fz0_prime__guess", nothing)
@@ -422,6 +1026,12 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_lam_mux_prime = pop!(__overrides, "lam_mux_prime", nothing); isnothing(__ovr_lam_mux_prime) || push!(__eqs, lam_mux_prime ~ __ovr_lam_mux_prime)
   __ovr_lam_mux_prime__initial = pop!(__overrides, "lam_mux_prime__initial", nothing); isnothing(__ovr_lam_mux_prime__initial) || (__initial_conditions[lam_mux_prime] = __ovr_lam_mux_prime__initial)
   __ovr_lam_mux_prime__guess = pop!(__overrides, "lam_mux_prime__guess", nothing)
+  __ovr_lam_muy_star = pop!(__overrides, "lam_muy_star", nothing); isnothing(__ovr_lam_muy_star) || push!(__eqs, lam_muy_star ~ __ovr_lam_muy_star)
+  __ovr_lam_muy_star__initial = pop!(__overrides, "lam_muy_star__initial", nothing); isnothing(__ovr_lam_muy_star__initial) || (__initial_conditions[lam_muy_star] = __ovr_lam_muy_star__initial)
+  __ovr_lam_muy_star__guess = pop!(__overrides, "lam_muy_star__guess", nothing)
+  __ovr_lam_muy_prime = pop!(__overrides, "lam_muy_prime", nothing); isnothing(__ovr_lam_muy_prime) || push!(__eqs, lam_muy_prime ~ __ovr_lam_muy_prime)
+  __ovr_lam_muy_prime__initial = pop!(__overrides, "lam_muy_prime__initial", nothing); isnothing(__ovr_lam_muy_prime__initial) || (__initial_conditions[lam_muy_prime] = __ovr_lam_muy_prime__initial)
+  __ovr_lam_muy_prime__guess = pop!(__overrides, "lam_muy_prime__guess", nothing)
   __ovr_lam_low = pop!(__overrides, "lam_low", nothing); isnothing(__ovr_lam_low) || push!(__eqs, lam_low ~ __ovr_lam_low)
   __ovr_lam_low__initial = pop!(__overrides, "lam_low__initial", nothing); isnothing(__ovr_lam_low__initial) || (__initial_conditions[lam_low] = __ovr_lam_low__initial)
   __ovr_lam_low__guess = pop!(__overrides, "lam_low__guess", nothing)
@@ -458,9 +1068,195 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_kappa_x = pop!(__overrides, "kappa_x", nothing); isnothing(__ovr_kappa_x) || push!(__eqs, kappa_x ~ __ovr_kappa_x)
   __ovr_kappa_x__initial = pop!(__overrides, "kappa_x__initial", nothing); isnothing(__ovr_kappa_x__initial) || (__initial_conditions[kappa_x] = __ovr_kappa_x__initial)
   __ovr_kappa_x__guess = pop!(__overrides, "kappa_x__guess", nothing)
+  __ovr_Fx0 = pop!(__overrides, "Fx0", nothing); isnothing(__ovr_Fx0) || push!(__eqs, Fx0 ~ __ovr_Fx0)
+  __ovr_Fx0__initial = pop!(__overrides, "Fx0__initial", nothing); isnothing(__ovr_Fx0__initial) || (__initial_conditions[Fx0] = __ovr_Fx0__initial)
+  __ovr_Fx0__guess = pop!(__overrides, "Fx0__guess", nothing)
+  __ovr_SHxa = pop!(__overrides, "SHxa", nothing); isnothing(__ovr_SHxa) || push!(__eqs, SHxa ~ __ovr_SHxa)
+  __ovr_SHxa__initial = pop!(__overrides, "SHxa__initial", nothing); isnothing(__ovr_SHxa__initial) || (__initial_conditions[SHxa] = __ovr_SHxa__initial)
+  __ovr_SHxa__guess = pop!(__overrides, "SHxa__guess", nothing)
+  __ovr_Cxa = pop!(__overrides, "Cxa", nothing); isnothing(__ovr_Cxa) || push!(__eqs, Cxa ~ __ovr_Cxa)
+  __ovr_Cxa__initial = pop!(__overrides, "Cxa__initial", nothing); isnothing(__ovr_Cxa__initial) || (__initial_conditions[Cxa] = __ovr_Cxa__initial)
+  __ovr_Cxa__guess = pop!(__overrides, "Cxa__guess", nothing)
+  __ovr_Bxa = pop!(__overrides, "Bxa", nothing); isnothing(__ovr_Bxa) || push!(__eqs, Bxa ~ __ovr_Bxa)
+  __ovr_Bxa__initial = pop!(__overrides, "Bxa__initial", nothing); isnothing(__ovr_Bxa__initial) || (__initial_conditions[Bxa] = __ovr_Bxa__initial)
+  __ovr_Bxa__guess = pop!(__overrides, "Bxa__guess", nothing)
+  __ovr_Exa_raw = pop!(__overrides, "Exa_raw", nothing); isnothing(__ovr_Exa_raw) || push!(__eqs, Exa_raw ~ __ovr_Exa_raw)
+  __ovr_Exa_raw__initial = pop!(__overrides, "Exa_raw__initial", nothing); isnothing(__ovr_Exa_raw__initial) || (__initial_conditions[Exa_raw] = __ovr_Exa_raw__initial)
+  __ovr_Exa_raw__guess = pop!(__overrides, "Exa_raw__guess", nothing)
+  __ovr_Exa = pop!(__overrides, "Exa", nothing); isnothing(__ovr_Exa) || push!(__eqs, Exa ~ __ovr_Exa)
+  __ovr_Exa__initial = pop!(__overrides, "Exa__initial", nothing); isnothing(__ovr_Exa__initial) || (__initial_conditions[Exa] = __ovr_Exa__initial)
+  __ovr_Exa__guess = pop!(__overrides, "Exa__guess", nothing)
+  __ovr_alpha_s = pop!(__overrides, "alpha_s", nothing); isnothing(__ovr_alpha_s) || push!(__eqs, alpha_s ~ __ovr_alpha_s)
+  __ovr_alpha_s__initial = pop!(__overrides, "alpha_s__initial", nothing); isnothing(__ovr_alpha_s__initial) || (__initial_conditions[alpha_s] = __ovr_alpha_s__initial)
+  __ovr_alpha_s__guess = pop!(__overrides, "alpha_s__guess", nothing)
+  __ovr_Gxa0 = pop!(__overrides, "Gxa0", nothing); isnothing(__ovr_Gxa0) || push!(__eqs, Gxa0 ~ __ovr_Gxa0)
+  __ovr_Gxa0__initial = pop!(__overrides, "Gxa0__initial", nothing); isnothing(__ovr_Gxa0__initial) || (__initial_conditions[Gxa0] = __ovr_Gxa0__initial)
+  __ovr_Gxa0__guess = pop!(__overrides, "Gxa0__guess", nothing)
+  __ovr_Gxa = pop!(__overrides, "Gxa", nothing); isnothing(__ovr_Gxa) || push!(__eqs, Gxa ~ __ovr_Gxa)
+  __ovr_Gxa__initial = pop!(__overrides, "Gxa__initial", nothing); isnothing(__ovr_Gxa__initial) || (__initial_conditions[Gxa] = __ovr_Gxa__initial)
+  __ovr_Gxa__guess = pop!(__overrides, "Gxa__guess", nothing)
   __ovr_Fx = pop!(__overrides, "Fx", nothing); isnothing(__ovr_Fx) || push!(__eqs, Fx ~ __ovr_Fx)
   __ovr_Fx__initial = pop!(__overrides, "Fx__initial", nothing); isnothing(__ovr_Fx__initial) || (__initial_conditions[Fx] = __ovr_Fx__initial)
   __ovr_Fx__guess = pop!(__overrides, "Fx__guess", nothing)
+  __ovr_mu_y = pop!(__overrides, "mu_y", nothing); isnothing(__ovr_mu_y) || push!(__eqs, mu_y ~ __ovr_mu_y)
+  __ovr_mu_y__initial = pop!(__overrides, "mu_y__initial", nothing); isnothing(__ovr_mu_y__initial) || (__initial_conditions[mu_y] = __ovr_mu_y__initial)
+  __ovr_mu_y__guess = pop!(__overrides, "mu_y__guess", nothing)
+  __ovr_Cy = pop!(__overrides, "Cy", nothing); isnothing(__ovr_Cy) || push!(__eqs, Cy ~ __ovr_Cy)
+  __ovr_Cy__initial = pop!(__overrides, "Cy__initial", nothing); isnothing(__ovr_Cy__initial) || (__initial_conditions[Cy] = __ovr_Cy__initial)
+  __ovr_Cy__guess = pop!(__overrides, "Cy__guess", nothing)
+  __ovr_Dy = pop!(__overrides, "Dy", nothing); isnothing(__ovr_Dy) || push!(__eqs, Dy ~ __ovr_Dy)
+  __ovr_Dy__initial = pop!(__overrides, "Dy__initial", nothing); isnothing(__ovr_Dy__initial) || (__initial_conditions[Dy] = __ovr_Dy__initial)
+  __ovr_Dy__guess = pop!(__overrides, "Dy__guess", nothing)
+  __ovr_Kya = pop!(__overrides, "Kya", nothing); isnothing(__ovr_Kya) || push!(__eqs, Kya ~ __ovr_Kya)
+  __ovr_Kya__initial = pop!(__overrides, "Kya__initial", nothing); isnothing(__ovr_Kya__initial) || (__initial_conditions[Kya] = __ovr_Kya__initial)
+  __ovr_Kya__guess = pop!(__overrides, "Kya__guess", nothing)
+  __ovr_Kya_prime = pop!(__overrides, "Kya_prime", nothing); isnothing(__ovr_Kya_prime) || push!(__eqs, Kya_prime ~ __ovr_Kya_prime)
+  __ovr_Kya_prime__initial = pop!(__overrides, "Kya_prime__initial", nothing); isnothing(__ovr_Kya_prime__initial) || (__initial_conditions[Kya_prime] = __ovr_Kya_prime__initial)
+  __ovr_Kya_prime__guess = pop!(__overrides, "Kya_prime__guess", nothing)
+  __ovr_Kyg0 = pop!(__overrides, "Kyg0", nothing); isnothing(__ovr_Kyg0) || push!(__eqs, Kyg0 ~ __ovr_Kyg0)
+  __ovr_Kyg0__initial = pop!(__overrides, "Kyg0__initial", nothing); isnothing(__ovr_Kyg0__initial) || (__initial_conditions[Kyg0] = __ovr_Kyg0__initial)
+  __ovr_Kyg0__guess = pop!(__overrides, "Kyg0__guess", nothing)
+  __ovr_SVyg = pop!(__overrides, "SVyg", nothing); isnothing(__ovr_SVyg) || push!(__eqs, SVyg ~ __ovr_SVyg)
+  __ovr_SVyg__initial = pop!(__overrides, "SVyg__initial", nothing); isnothing(__ovr_SVyg__initial) || (__initial_conditions[SVyg] = __ovr_SVyg__initial)
+  __ovr_SVyg__guess = pop!(__overrides, "SVyg__guess", nothing)
+  __ovr_By = pop!(__overrides, "By", nothing); isnothing(__ovr_By) || push!(__eqs, By ~ __ovr_By)
+  __ovr_By__initial = pop!(__overrides, "By__initial", nothing); isnothing(__ovr_By__initial) || (__initial_conditions[By] = __ovr_By__initial)
+  __ovr_By__guess = pop!(__overrides, "By__guess", nothing)
+  __ovr_Ey_raw = pop!(__overrides, "Ey_raw", nothing); isnothing(__ovr_Ey_raw) || push!(__eqs, Ey_raw ~ __ovr_Ey_raw)
+  __ovr_Ey_raw__initial = pop!(__overrides, "Ey_raw__initial", nothing); isnothing(__ovr_Ey_raw__initial) || (__initial_conditions[Ey_raw] = __ovr_Ey_raw__initial)
+  __ovr_Ey_raw__guess = pop!(__overrides, "Ey_raw__guess", nothing)
+  __ovr_Ey = pop!(__overrides, "Ey", nothing); isnothing(__ovr_Ey) || push!(__eqs, Ey ~ __ovr_Ey)
+  __ovr_Ey__initial = pop!(__overrides, "Ey__initial", nothing); isnothing(__ovr_Ey__initial) || (__initial_conditions[Ey] = __ovr_Ey__initial)
+  __ovr_Ey__guess = pop!(__overrides, "Ey__guess", nothing)
+  __ovr_SHy = pop!(__overrides, "SHy", nothing); isnothing(__ovr_SHy) || push!(__eqs, SHy ~ __ovr_SHy)
+  __ovr_SHy__initial = pop!(__overrides, "SHy__initial", nothing); isnothing(__ovr_SHy__initial) || (__initial_conditions[SHy] = __ovr_SHy__initial)
+  __ovr_SHy__guess = pop!(__overrides, "SHy__guess", nothing)
+  __ovr_SVy = pop!(__overrides, "SVy", nothing); isnothing(__ovr_SVy) || push!(__eqs, SVy ~ __ovr_SVy)
+  __ovr_SVy__initial = pop!(__overrides, "SVy__initial", nothing); isnothing(__ovr_SVy__initial) || (__initial_conditions[SVy] = __ovr_SVy__initial)
+  __ovr_SVy__guess = pop!(__overrides, "SVy__guess", nothing)
+  __ovr_alpha_y = pop!(__overrides, "alpha_y", nothing); isnothing(__ovr_alpha_y) || push!(__eqs, alpha_y ~ __ovr_alpha_y)
+  __ovr_alpha_y__initial = pop!(__overrides, "alpha_y__initial", nothing); isnothing(__ovr_alpha_y__initial) || (__initial_conditions[alpha_y] = __ovr_alpha_y__initial)
+  __ovr_alpha_y__guess = pop!(__overrides, "alpha_y__guess", nothing)
+  __ovr_Fy0 = pop!(__overrides, "Fy0", nothing); isnothing(__ovr_Fy0) || push!(__eqs, Fy0 ~ __ovr_Fy0)
+  __ovr_Fy0__initial = pop!(__overrides, "Fy0__initial", nothing); isnothing(__ovr_Fy0__initial) || (__initial_conditions[Fy0] = __ovr_Fy0__initial)
+  __ovr_Fy0__guess = pop!(__overrides, "Fy0__guess", nothing)
+  __ovr_SHyk = pop!(__overrides, "SHyk", nothing); isnothing(__ovr_SHyk) || push!(__eqs, SHyk ~ __ovr_SHyk)
+  __ovr_SHyk__initial = pop!(__overrides, "SHyk__initial", nothing); isnothing(__ovr_SHyk__initial) || (__initial_conditions[SHyk] = __ovr_SHyk__initial)
+  __ovr_SHyk__guess = pop!(__overrides, "SHyk__guess", nothing)
+  __ovr_Cyk = pop!(__overrides, "Cyk", nothing); isnothing(__ovr_Cyk) || push!(__eqs, Cyk ~ __ovr_Cyk)
+  __ovr_Cyk__initial = pop!(__overrides, "Cyk__initial", nothing); isnothing(__ovr_Cyk__initial) || (__initial_conditions[Cyk] = __ovr_Cyk__initial)
+  __ovr_Cyk__guess = pop!(__overrides, "Cyk__guess", nothing)
+  __ovr_Byk = pop!(__overrides, "Byk", nothing); isnothing(__ovr_Byk) || push!(__eqs, Byk ~ __ovr_Byk)
+  __ovr_Byk__initial = pop!(__overrides, "Byk__initial", nothing); isnothing(__ovr_Byk__initial) || (__initial_conditions[Byk] = __ovr_Byk__initial)
+  __ovr_Byk__guess = pop!(__overrides, "Byk__guess", nothing)
+  __ovr_Eyk_raw = pop!(__overrides, "Eyk_raw", nothing); isnothing(__ovr_Eyk_raw) || push!(__eqs, Eyk_raw ~ __ovr_Eyk_raw)
+  __ovr_Eyk_raw__initial = pop!(__overrides, "Eyk_raw__initial", nothing); isnothing(__ovr_Eyk_raw__initial) || (__initial_conditions[Eyk_raw] = __ovr_Eyk_raw__initial)
+  __ovr_Eyk_raw__guess = pop!(__overrides, "Eyk_raw__guess", nothing)
+  __ovr_Eyk = pop!(__overrides, "Eyk", nothing); isnothing(__ovr_Eyk) || push!(__eqs, Eyk ~ __ovr_Eyk)
+  __ovr_Eyk__initial = pop!(__overrides, "Eyk__initial", nothing); isnothing(__ovr_Eyk__initial) || (__initial_conditions[Eyk] = __ovr_Eyk__initial)
+  __ovr_Eyk__guess = pop!(__overrides, "Eyk__guess", nothing)
+  __ovr_kappa_s = pop!(__overrides, "kappa_s", nothing); isnothing(__ovr_kappa_s) || push!(__eqs, kappa_s ~ __ovr_kappa_s)
+  __ovr_kappa_s__initial = pop!(__overrides, "kappa_s__initial", nothing); isnothing(__ovr_kappa_s__initial) || (__initial_conditions[kappa_s] = __ovr_kappa_s__initial)
+  __ovr_kappa_s__guess = pop!(__overrides, "kappa_s__guess", nothing)
+  __ovr_Gyk0 = pop!(__overrides, "Gyk0", nothing); isnothing(__ovr_Gyk0) || push!(__eqs, Gyk0 ~ __ovr_Gyk0)
+  __ovr_Gyk0__initial = pop!(__overrides, "Gyk0__initial", nothing); isnothing(__ovr_Gyk0__initial) || (__initial_conditions[Gyk0] = __ovr_Gyk0__initial)
+  __ovr_Gyk0__guess = pop!(__overrides, "Gyk0__guess", nothing)
+  __ovr_Gyk = pop!(__overrides, "Gyk", nothing); isnothing(__ovr_Gyk) || push!(__eqs, Gyk ~ __ovr_Gyk)
+  __ovr_Gyk__initial = pop!(__overrides, "Gyk__initial", nothing); isnothing(__ovr_Gyk__initial) || (__initial_conditions[Gyk] = __ovr_Gyk__initial)
+  __ovr_Gyk__guess = pop!(__overrides, "Gyk__guess", nothing)
+  __ovr_Dvyk = pop!(__overrides, "Dvyk", nothing); isnothing(__ovr_Dvyk) || push!(__eqs, Dvyk ~ __ovr_Dvyk)
+  __ovr_Dvyk__initial = pop!(__overrides, "Dvyk__initial", nothing); isnothing(__ovr_Dvyk__initial) || (__initial_conditions[Dvyk] = __ovr_Dvyk__initial)
+  __ovr_Dvyk__guess = pop!(__overrides, "Dvyk__guess", nothing)
+  __ovr_SVyk = pop!(__overrides, "SVyk", nothing); isnothing(__ovr_SVyk) || push!(__eqs, SVyk ~ __ovr_SVyk)
+  __ovr_SVyk__initial = pop!(__overrides, "SVyk__initial", nothing); isnothing(__ovr_SVyk__initial) || (__initial_conditions[SVyk] = __ovr_SVyk__initial)
+  __ovr_SVyk__guess = pop!(__overrides, "SVyk__guess", nothing)
+  __ovr_Fy = pop!(__overrides, "Fy", nothing); isnothing(__ovr_Fy) || push!(__eqs, Fy ~ __ovr_Fy)
+  __ovr_Fy__initial = pop!(__overrides, "Fy__initial", nothing); isnothing(__ovr_Fy__initial) || (__initial_conditions[Fy] = __ovr_Fy__initial)
+  __ovr_Fy__guess = pop!(__overrides, "Fy__guess", nothing)
+  __ovr_Fy_prime = pop!(__overrides, "Fy_prime", nothing); isnothing(__ovr_Fy_prime) || push!(__eqs, Fy_prime ~ __ovr_Fy_prime)
+  __ovr_Fy_prime__initial = pop!(__overrides, "Fy_prime__initial", nothing); isnothing(__ovr_Fy_prime__initial) || (__initial_conditions[Fy_prime] = __ovr_Fy_prime__initial)
+  __ovr_Fy_prime__guess = pop!(__overrides, "Fy_prime__guess", nothing)
+  __ovr_SHt = pop!(__overrides, "SHt", nothing); isnothing(__ovr_SHt) || push!(__eqs, SHt ~ __ovr_SHt)
+  __ovr_SHt__initial = pop!(__overrides, "SHt__initial", nothing); isnothing(__ovr_SHt__initial) || (__initial_conditions[SHt] = __ovr_SHt__initial)
+  __ovr_SHt__guess = pop!(__overrides, "SHt__guess", nothing)
+  __ovr_alpha_t = pop!(__overrides, "alpha_t", nothing); isnothing(__ovr_alpha_t) || push!(__eqs, alpha_t ~ __ovr_alpha_t)
+  __ovr_alpha_t__initial = pop!(__overrides, "alpha_t__initial", nothing); isnothing(__ovr_alpha_t__initial) || (__initial_conditions[alpha_t] = __ovr_alpha_t__initial)
+  __ovr_alpha_t__guess = pop!(__overrides, "alpha_t__guess", nothing)
+  __ovr_Bt = pop!(__overrides, "Bt", nothing); isnothing(__ovr_Bt) || push!(__eqs, Bt ~ __ovr_Bt)
+  __ovr_Bt__initial = pop!(__overrides, "Bt__initial", nothing); isnothing(__ovr_Bt__initial) || (__initial_conditions[Bt] = __ovr_Bt__initial)
+  __ovr_Bt__guess = pop!(__overrides, "Bt__guess", nothing)
+  __ovr_Ct = pop!(__overrides, "Ct", nothing); isnothing(__ovr_Ct) || push!(__eqs, Ct ~ __ovr_Ct)
+  __ovr_Ct__initial = pop!(__overrides, "Ct__initial", nothing); isnothing(__ovr_Ct__initial) || (__initial_conditions[Ct] = __ovr_Ct__initial)
+  __ovr_Ct__guess = pop!(__overrides, "Ct__guess", nothing)
+  __ovr_Dt0 = pop!(__overrides, "Dt0", nothing); isnothing(__ovr_Dt0) || push!(__eqs, Dt0 ~ __ovr_Dt0)
+  __ovr_Dt0__initial = pop!(__overrides, "Dt0__initial", nothing); isnothing(__ovr_Dt0__initial) || (__initial_conditions[Dt0] = __ovr_Dt0__initial)
+  __ovr_Dt0__guess = pop!(__overrides, "Dt0__guess", nothing)
+  __ovr_Dt = pop!(__overrides, "Dt", nothing); isnothing(__ovr_Dt) || push!(__eqs, Dt ~ __ovr_Dt)
+  __ovr_Dt__initial = pop!(__overrides, "Dt__initial", nothing); isnothing(__ovr_Dt__initial) || (__initial_conditions[Dt] = __ovr_Dt__initial)
+  __ovr_Dt__guess = pop!(__overrides, "Dt__guess", nothing)
+  __ovr_Et_raw = pop!(__overrides, "Et_raw", nothing); isnothing(__ovr_Et_raw) || push!(__eqs, Et_raw ~ __ovr_Et_raw)
+  __ovr_Et_raw__initial = pop!(__overrides, "Et_raw__initial", nothing); isnothing(__ovr_Et_raw__initial) || (__initial_conditions[Et_raw] = __ovr_Et_raw__initial)
+  __ovr_Et_raw__guess = pop!(__overrides, "Et_raw__guess", nothing)
+  __ovr_Et = pop!(__overrides, "Et", nothing); isnothing(__ovr_Et) || push!(__eqs, Et ~ __ovr_Et)
+  __ovr_Et__initial = pop!(__overrides, "Et__initial", nothing); isnothing(__ovr_Et__initial) || (__initial_conditions[Et] = __ovr_Et__initial)
+  __ovr_Et__guess = pop!(__overrides, "Et__guess", nothing)
+  __ovr_SHf = pop!(__overrides, "SHf", nothing); isnothing(__ovr_SHf) || push!(__eqs, SHf ~ __ovr_SHf)
+  __ovr_SHf__initial = pop!(__overrides, "SHf__initial", nothing); isnothing(__ovr_SHf__initial) || (__initial_conditions[SHf] = __ovr_SHf__initial)
+  __ovr_SHf__guess = pop!(__overrides, "SHf__guess", nothing)
+  __ovr_alpha_r = pop!(__overrides, "alpha_r", nothing); isnothing(__ovr_alpha_r) || push!(__eqs, alpha_r ~ __ovr_alpha_r)
+  __ovr_alpha_r__initial = pop!(__overrides, "alpha_r__initial", nothing); isnothing(__ovr_alpha_r__initial) || (__initial_conditions[alpha_r] = __ovr_alpha_r__initial)
+  __ovr_alpha_r__guess = pop!(__overrides, "alpha_r__guess", nothing)
+  __ovr_Br = pop!(__overrides, "Br", nothing); isnothing(__ovr_Br) || push!(__eqs, Br ~ __ovr_Br)
+  __ovr_Br__initial = pop!(__overrides, "Br__initial", nothing); isnothing(__ovr_Br__initial) || (__initial_conditions[Br] = __ovr_Br__initial)
+  __ovr_Br__guess = pop!(__overrides, "Br__guess", nothing)
+  __ovr_Cr = pop!(__overrides, "Cr", nothing); isnothing(__ovr_Cr) || push!(__eqs, Cr ~ __ovr_Cr)
+  __ovr_Cr__initial = pop!(__overrides, "Cr__initial", nothing); isnothing(__ovr_Cr__initial) || (__initial_conditions[Cr] = __ovr_Cr__initial)
+  __ovr_Cr__guess = pop!(__overrides, "Cr__guess", nothing)
+  __ovr_Dr = pop!(__overrides, "Dr", nothing); isnothing(__ovr_Dr) || push!(__eqs, Dr ~ __ovr_Dr)
+  __ovr_Dr__initial = pop!(__overrides, "Dr__initial", nothing); isnothing(__ovr_Dr__initial) || (__initial_conditions[Dr] = __ovr_Dr__initial)
+  __ovr_Dr__guess = pop!(__overrides, "Dr__guess", nothing)
+  __ovr_alpha_t_eq = pop!(__overrides, "alpha_t_eq", nothing); isnothing(__ovr_alpha_t_eq) || push!(__eqs, alpha_t_eq ~ __ovr_alpha_t_eq)
+  __ovr_alpha_t_eq__initial = pop!(__overrides, "alpha_t_eq__initial", nothing); isnothing(__ovr_alpha_t_eq__initial) || (__initial_conditions[alpha_t_eq] = __ovr_alpha_t_eq__initial)
+  __ovr_alpha_t_eq__guess = pop!(__overrides, "alpha_t_eq__guess", nothing)
+  __ovr_alpha_r_eq = pop!(__overrides, "alpha_r_eq", nothing); isnothing(__ovr_alpha_r_eq) || push!(__eqs, alpha_r_eq ~ __ovr_alpha_r_eq)
+  __ovr_alpha_r_eq__initial = pop!(__overrides, "alpha_r_eq__initial", nothing); isnothing(__ovr_alpha_r_eq__initial) || (__initial_conditions[alpha_r_eq] = __ovr_alpha_r_eq__initial)
+  __ovr_alpha_r_eq__guess = pop!(__overrides, "alpha_r_eq__guess", nothing)
+  __ovr_t_pneu = pop!(__overrides, "t_pneu", nothing); isnothing(__ovr_t_pneu) || push!(__eqs, t_pneu ~ __ovr_t_pneu)
+  __ovr_t_pneu__initial = pop!(__overrides, "t_pneu__initial", nothing); isnothing(__ovr_t_pneu__initial) || (__initial_conditions[t_pneu] = __ovr_t_pneu__initial)
+  __ovr_t_pneu__guess = pop!(__overrides, "t_pneu__guess", nothing)
+  __ovr_s_arm = pop!(__overrides, "s_arm", nothing); isnothing(__ovr_s_arm) || push!(__eqs, s_arm ~ __ovr_s_arm)
+  __ovr_s_arm__initial = pop!(__overrides, "s_arm__initial", nothing); isnothing(__ovr_s_arm__initial) || (__initial_conditions[s_arm] = __ovr_s_arm__initial)
+  __ovr_s_arm__guess = pop!(__overrides, "s_arm__guess", nothing)
+  __ovr_Mz_prime = pop!(__overrides, "Mz_prime", nothing); isnothing(__ovr_Mz_prime) || push!(__eqs, Mz_prime ~ __ovr_Mz_prime)
+  __ovr_Mz_prime__initial = pop!(__overrides, "Mz_prime__initial", nothing); isnothing(__ovr_Mz_prime__initial) || (__initial_conditions[Mz_prime] = __ovr_Mz_prime__initial)
+  __ovr_Mz_prime__guess = pop!(__overrides, "Mz_prime__guess", nothing)
+  __ovr_Mzr = pop!(__overrides, "Mzr", nothing); isnothing(__ovr_Mzr) || push!(__eqs, Mzr ~ __ovr_Mzr)
+  __ovr_Mzr__initial = pop!(__overrides, "Mzr__initial", nothing); isnothing(__ovr_Mzr__initial) || (__initial_conditions[Mzr] = __ovr_Mzr__initial)
+  __ovr_Mzr__guess = pop!(__overrides, "Mzr__guess", nothing)
+  __ovr_Mz = pop!(__overrides, "Mz", nothing); isnothing(__ovr_Mz) || push!(__eqs, Mz ~ __ovr_Mz)
+  __ovr_Mz__initial = pop!(__overrides, "Mz__initial", nothing); isnothing(__ovr_Mz__initial) || (__initial_conditions[Mz] = __ovr_Mz__initial)
+  __ovr_Mz__guess = pop!(__overrides, "Mz__guess", nothing)
+  __ovr_Fy_c = pop!(__overrides, "Fy_c", nothing); isnothing(__ovr_Fy_c) || push!(__eqs, Fy_c ~ __ovr_Fy_c)
+  __ovr_Fy_c__initial = pop!(__overrides, "Fy_c__initial", nothing); isnothing(__ovr_Fy_c__initial) || (__initial_conditions[Fy_c] = __ovr_Fy_c__initial)
+  __ovr_Fy_c__guess = pop!(__overrides, "Fy_c__guess", nothing)
+  __ovr_Mz_c = pop!(__overrides, "Mz_c", nothing); isnothing(__ovr_Mz_c) || push!(__eqs, Mz_c ~ __ovr_Mz_c)
+  __ovr_Mz_c__initial = pop!(__overrides, "Mz_c__initial", nothing); isnothing(__ovr_Mz_c__initial) || (__initial_conditions[Mz_c] = __ovr_Mz_c__initial)
+  __ovr_Mz_c__guess = pop!(__overrides, "Mz_c__guess", nothing)
+  __ovr_f_wx = pop!(__overrides, "f_wx", nothing); isnothing(__ovr_f_wx) || push!(__eqs, f_wx ~ __ovr_f_wx)
+  __ovr_f_wx__initial = pop!(__overrides, "f_wx__initial", nothing); isnothing(__ovr_f_wx__initial) || (__initial_conditions[f_wx] = __ovr_f_wx__initial)
+  __ovr_f_wx__guess = pop!(__overrides, "f_wx__guess", nothing)
+  __ovr_f_wy = pop!(__overrides, "f_wy", nothing); isnothing(__ovr_f_wy) || push!(__eqs, f_wy ~ __ovr_f_wy)
+  __ovr_f_wy__initial = pop!(__overrides, "f_wy__initial", nothing); isnothing(__ovr_f_wy__initial) || (__initial_conditions[f_wy] = __ovr_f_wy__initial)
+  __ovr_f_wy__guess = pop!(__overrides, "f_wy__guess", nothing)
+  __ovr_tau_wx = pop!(__overrides, "tau_wx", nothing); isnothing(__ovr_tau_wx) || push!(__eqs, tau_wx ~ __ovr_tau_wx)
+  __ovr_tau_wx__initial = pop!(__overrides, "tau_wx__initial", nothing); isnothing(__ovr_tau_wx__initial) || (__initial_conditions[tau_wx] = __ovr_tau_wx__initial)
+  __ovr_tau_wx__guess = pop!(__overrides, "tau_wx__guess", nothing)
+  __ovr_tau_wy = pop!(__overrides, "tau_wy", nothing); isnothing(__ovr_tau_wy) || push!(__eqs, tau_wy ~ __ovr_tau_wy)
+  __ovr_tau_wy__initial = pop!(__overrides, "tau_wy__initial", nothing); isnothing(__ovr_tau_wy__initial) || (__initial_conditions[tau_wy] = __ovr_tau_wy__initial)
+  __ovr_tau_wy__guess = pop!(__overrides, "tau_wy__guess", nothing)
+  __ovr_tau_wz = pop!(__overrides, "tau_wz", nothing); isnothing(__ovr_tau_wz) || push!(__eqs, tau_wz ~ __ovr_tau_wz)
+  __ovr_tau_wz__initial = pop!(__overrides, "tau_wz__initial", nothing); isnothing(__ovr_tau_wz__initial) || (__initial_conditions[tau_wz] = __ovr_tau_wz__initial)
+  __ovr_tau_wz__guess = pop!(__overrides, "tau_wz__guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -486,6 +1282,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_Fz_raw__guess) || (__guesses[Fz_raw] = __ovr_Fz_raw__guess)
   isnothing(__ovr_Fz__guess) || (__guesses[Fz] = __ovr_Fz__guess)
   isnothing(__ovr_x_w__guess) || (__guesses[x_w] = __ovr_x_w__guess)
+  isnothing(__ovr_y_w__guess) || (__guesses[y_w] = __ovr_y_w__guess)
+  isnothing(__ovr_v_wx__guess) || (__guesses[v_wx] = __ovr_v_wx__guess)
+  isnothing(__ovr_v_wy__guess) || (__guesses[v_wy] = __ovr_v_wy__guess)
+  isnothing(__ovr_cos_gamma__guess) || (__guesses[cos_gamma] = __ovr_cos_gamma__guess)
   isnothing(__ovr_V_x__guess) || (__guesses[V_x] = __ovr_V_x__guess)
   isnothing(__ovr_omega__guess) || (__guesses[omega] = __ovr_omega__guess)
   isnothing(__ovr_V_sx__guess) || (__guesses[V_sx] = __ovr_V_sx__guess)
@@ -493,16 +1293,27 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_kappa__guess) || (__guesses[kappa] = __ovr_kappa__guess)
   isnothing(__ovr_u_x__guess) || (__guesses[u_x] = __ovr_u_x__guess)
   isnothing(__ovr_u_dot_free__guess) || (__guesses[u_dot_free] = __ovr_u_dot_free__guess)
-  isnothing(__ovr_kappa_sl__guess) || (__guesses[kappa_sl] = __ovr_kappa_sl__guess)
   isnothing(__ovr_kappa_prime__guess) || (__guesses[kappa_prime] = __ovr_kappa_prime__guess)
   isnothing(__ovr_sigma_kappa__guess) || (__guesses[sigma_kappa] = __ovr_sigma_kappa__guess)
-  isnothing(__ovr_C_Fx__guess) || (__guesses[C_Fx] = __ovr_C_Fx__guess)
+  isnothing(__ovr_V_y__guess) || (__guesses[V_y] = __ovr_V_y__guess)
+  isnothing(__ovr_V_y_mf__guess) || (__guesses[V_y_mf] = __ovr_V_y_mf__guess)
+  isnothing(__ovr_alpha__guess) || (__guesses[alpha] = __ovr_alpha__guess)
+  isnothing(__ovr_V_c__guess) || (__guesses[V_c] = __ovr_V_c__guess)
+  isnothing(__ovr_cos_alpha__guess) || (__guesses[cos_alpha] = __ovr_cos_alpha__guess)
+  isnothing(__ovr_sgn_Vx__guess) || (__guesses[sgn_Vx] = __ovr_sgn_Vx__guess)
+  isnothing(__ovr_v_y__guess) || (__guesses[v_y] = __ovr_v_y__guess)
+  isnothing(__ovr_v_dot_free__guess) || (__guesses[v_dot_free] = __ovr_v_dot_free__guess)
+  isnothing(__ovr_alpha_sl__guess) || (__guesses[alpha_sl] = __ovr_alpha_sl__guess)
+  isnothing(__ovr_alpha_prime__guess) || (__guesses[alpha_prime] = __ovr_alpha_prime__guess)
+  isnothing(__ovr_sigma_alpha__guess) || (__guesses[sigma_alpha] = __ovr_sigma_alpha__guess)
   isnothing(__ovr_Fz0_prime__guess) || (__guesses[Fz0_prime] = __ovr_Fz0_prime__guess)
   isnothing(__ovr_dfz__guess) || (__guesses[dfz] = __ovr_dfz__guess)
   isnothing(__ovr_dpi__guess) || (__guesses[dpi] = __ovr_dpi__guess)
   isnothing(__ovr_gamma_star__guess) || (__guesses[gamma_star] = __ovr_gamma_star__guess)
   isnothing(__ovr_lam_mux_star__guess) || (__guesses[lam_mux_star] = __ovr_lam_mux_star__guess)
   isnothing(__ovr_lam_mux_prime__guess) || (__guesses[lam_mux_prime] = __ovr_lam_mux_prime__guess)
+  isnothing(__ovr_lam_muy_star__guess) || (__guesses[lam_muy_star] = __ovr_lam_muy_star__guess)
+  isnothing(__ovr_lam_muy_prime__guess) || (__guesses[lam_muy_prime] = __ovr_lam_muy_prime__guess)
   isnothing(__ovr_lam_low__guess) || (__guesses[lam_low] = __ovr_lam_low__guess)
   isnothing(__ovr_mu_x__guess) || (__guesses[mu_x] = __ovr_mu_x__guess)
   isnothing(__ovr_Kxk_norm__guess) || (__guesses[Kxk_norm] = __ovr_Kxk_norm__guess)
@@ -515,10 +1326,73 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_SHx__guess) || (__guesses[SHx] = __ovr_SHx__guess)
   isnothing(__ovr_SVx__guess) || (__guesses[SVx] = __ovr_SVx__guess)
   isnothing(__ovr_kappa_x__guess) || (__guesses[kappa_x] = __ovr_kappa_x__guess)
+  isnothing(__ovr_Fx0__guess) || (__guesses[Fx0] = __ovr_Fx0__guess)
+  isnothing(__ovr_SHxa__guess) || (__guesses[SHxa] = __ovr_SHxa__guess)
+  isnothing(__ovr_Cxa__guess) || (__guesses[Cxa] = __ovr_Cxa__guess)
+  isnothing(__ovr_Bxa__guess) || (__guesses[Bxa] = __ovr_Bxa__guess)
+  isnothing(__ovr_Exa_raw__guess) || (__guesses[Exa_raw] = __ovr_Exa_raw__guess)
+  isnothing(__ovr_Exa__guess) || (__guesses[Exa] = __ovr_Exa__guess)
+  isnothing(__ovr_alpha_s__guess) || (__guesses[alpha_s] = __ovr_alpha_s__guess)
+  isnothing(__ovr_Gxa0__guess) || (__guesses[Gxa0] = __ovr_Gxa0__guess)
+  isnothing(__ovr_Gxa__guess) || (__guesses[Gxa] = __ovr_Gxa__guess)
   isnothing(__ovr_Fx__guess) || (__guesses[Fx] = __ovr_Fx__guess)
+  isnothing(__ovr_mu_y__guess) || (__guesses[mu_y] = __ovr_mu_y__guess)
+  isnothing(__ovr_Cy__guess) || (__guesses[Cy] = __ovr_Cy__guess)
+  isnothing(__ovr_Dy__guess) || (__guesses[Dy] = __ovr_Dy__guess)
+  isnothing(__ovr_Kya__guess) || (__guesses[Kya] = __ovr_Kya__guess)
+  isnothing(__ovr_Kya_prime__guess) || (__guesses[Kya_prime] = __ovr_Kya_prime__guess)
+  isnothing(__ovr_Kyg0__guess) || (__guesses[Kyg0] = __ovr_Kyg0__guess)
+  isnothing(__ovr_SVyg__guess) || (__guesses[SVyg] = __ovr_SVyg__guess)
+  isnothing(__ovr_By__guess) || (__guesses[By] = __ovr_By__guess)
+  isnothing(__ovr_Ey_raw__guess) || (__guesses[Ey_raw] = __ovr_Ey_raw__guess)
+  isnothing(__ovr_Ey__guess) || (__guesses[Ey] = __ovr_Ey__guess)
+  isnothing(__ovr_SHy__guess) || (__guesses[SHy] = __ovr_SHy__guess)
+  isnothing(__ovr_SVy__guess) || (__guesses[SVy] = __ovr_SVy__guess)
+  isnothing(__ovr_alpha_y__guess) || (__guesses[alpha_y] = __ovr_alpha_y__guess)
+  isnothing(__ovr_Fy0__guess) || (__guesses[Fy0] = __ovr_Fy0__guess)
+  isnothing(__ovr_SHyk__guess) || (__guesses[SHyk] = __ovr_SHyk__guess)
+  isnothing(__ovr_Cyk__guess) || (__guesses[Cyk] = __ovr_Cyk__guess)
+  isnothing(__ovr_Byk__guess) || (__guesses[Byk] = __ovr_Byk__guess)
+  isnothing(__ovr_Eyk_raw__guess) || (__guesses[Eyk_raw] = __ovr_Eyk_raw__guess)
+  isnothing(__ovr_Eyk__guess) || (__guesses[Eyk] = __ovr_Eyk__guess)
+  isnothing(__ovr_kappa_s__guess) || (__guesses[kappa_s] = __ovr_kappa_s__guess)
+  isnothing(__ovr_Gyk0__guess) || (__guesses[Gyk0] = __ovr_Gyk0__guess)
+  isnothing(__ovr_Gyk__guess) || (__guesses[Gyk] = __ovr_Gyk__guess)
+  isnothing(__ovr_Dvyk__guess) || (__guesses[Dvyk] = __ovr_Dvyk__guess)
+  isnothing(__ovr_SVyk__guess) || (__guesses[SVyk] = __ovr_SVyk__guess)
+  isnothing(__ovr_Fy__guess) || (__guesses[Fy] = __ovr_Fy__guess)
+  isnothing(__ovr_Fy_prime__guess) || (__guesses[Fy_prime] = __ovr_Fy_prime__guess)
+  isnothing(__ovr_SHt__guess) || (__guesses[SHt] = __ovr_SHt__guess)
+  isnothing(__ovr_alpha_t__guess) || (__guesses[alpha_t] = __ovr_alpha_t__guess)
+  isnothing(__ovr_Bt__guess) || (__guesses[Bt] = __ovr_Bt__guess)
+  isnothing(__ovr_Ct__guess) || (__guesses[Ct] = __ovr_Ct__guess)
+  isnothing(__ovr_Dt0__guess) || (__guesses[Dt0] = __ovr_Dt0__guess)
+  isnothing(__ovr_Dt__guess) || (__guesses[Dt] = __ovr_Dt__guess)
+  isnothing(__ovr_Et_raw__guess) || (__guesses[Et_raw] = __ovr_Et_raw__guess)
+  isnothing(__ovr_Et__guess) || (__guesses[Et] = __ovr_Et__guess)
+  isnothing(__ovr_SHf__guess) || (__guesses[SHf] = __ovr_SHf__guess)
+  isnothing(__ovr_alpha_r__guess) || (__guesses[alpha_r] = __ovr_alpha_r__guess)
+  isnothing(__ovr_Br__guess) || (__guesses[Br] = __ovr_Br__guess)
+  isnothing(__ovr_Cr__guess) || (__guesses[Cr] = __ovr_Cr__guess)
+  isnothing(__ovr_Dr__guess) || (__guesses[Dr] = __ovr_Dr__guess)
+  isnothing(__ovr_alpha_t_eq__guess) || (__guesses[alpha_t_eq] = __ovr_alpha_t_eq__guess)
+  isnothing(__ovr_alpha_r_eq__guess) || (__guesses[alpha_r_eq] = __ovr_alpha_r_eq__guess)
+  isnothing(__ovr_t_pneu__guess) || (__guesses[t_pneu] = __ovr_t_pneu__guess)
+  isnothing(__ovr_s_arm__guess) || (__guesses[s_arm] = __ovr_s_arm__guess)
+  isnothing(__ovr_Mz_prime__guess) || (__guesses[Mz_prime] = __ovr_Mz_prime__guess)
+  isnothing(__ovr_Mzr__guess) || (__guesses[Mzr] = __ovr_Mzr__guess)
+  isnothing(__ovr_Mz__guess) || (__guesses[Mz] = __ovr_Mz__guess)
+  isnothing(__ovr_Fy_c__guess) || (__guesses[Fy_c] = __ovr_Fy_c__guess)
+  isnothing(__ovr_Mz_c__guess) || (__guesses[Mz_c] = __ovr_Mz_c__guess)
+  isnothing(__ovr_f_wx__guess) || (__guesses[f_wx] = __ovr_f_wx__guess)
+  isnothing(__ovr_f_wy__guess) || (__guesses[f_wy] = __ovr_f_wy__guess)
+  isnothing(__ovr_tau_wx__guess) || (__guesses[tau_wx] = __ovr_tau_wx__guess)
+  isnothing(__ovr_tau_wy__guess) || (__guesses[tau_wy] = __ovr_tau_wy__guess)
+  isnothing(__ovr_tau_wz__guess) || (__guesses[tau_wz] = __ovr_tau_wz__guess)
 
   ### Initialization Equations
   push!(__initialization_eqs, u_x ~ 0)
+  push!(__initialization_eqs, v_y ~ 0)
 
   ### Assertions
   __assertions = []
@@ -533,19 +1407,31 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, Fz ~ ifelse(rho > 0, ifelse(Fz_raw > 0, Fz_raw, 0), 0))
   push!(__eqs, rho_Fz0 ~ FNOMIN / vertical_stiffness)
   push!(__eqs, Re ~ unloaded_radius - rho_Fz0 * (DREFF * atan(BREFF * (rho / rho_Fz0)) + FREFF * (rho / rho_Fz0)))
+  push!(__eqs, gamma_star ~ side * getindex(getproperty(wheel_center, :R), 2, 3))
+  push!(__eqs, cos_gamma ~ sqrt(max(1 - gamma_star ^ 2, eps_gamma ^ 2)))
   push!(__eqs, x_w ~ getindex(getproperty(wheel_center, :r_0), 1))
-  push!(__eqs, V_x ~ ModelingToolkit.D_nounits(x_w))
+  push!(__eqs, y_w ~ getindex(getproperty(wheel_center, :r_0), 2))
+  push!(__eqs, v_wx ~ ModelingToolkit.D_nounits(x_w))
+  push!(__eqs, v_wy ~ ModelingToolkit.D_nounits(y_w))
+  push!(__eqs, V_x ~ (v_wx * getindex(getproperty(wheel_center, :R), 2, 2) - v_wy * getindex(getproperty(wheel_center, :R), 2, 1)) / cos_gamma)
+  push!(__eqs, V_y ~ (v_wx * getindex(getproperty(wheel_center, :R), 2, 1) + v_wy * getindex(getproperty(wheel_center, :R), 2, 2)) / cos_gamma)
   push!(__eqs, omega ~ ModelingToolkit.D_nounits(spline.phi))
   push!(__eqs, V_sx ~ V_x - omega * Re)
   push!(__eqs, V_s ~ abs(V_sx))
   push!(__eqs, kappa ~ -V_sx / ifelse(abs(V_x) > eps_v, abs(V_x), eps_v))
+  push!(__eqs, V_y_mf ~ side * V_y)
+  push!(__eqs, alpha ~ atan(V_y_mf / ifelse(abs(V_x) > eps_v, abs(V_x), eps_v)))
+  push!(__eqs, V_c ~ sqrt(V_x ^ 2 + V_y ^ 2))
+  push!(__eqs, cos_alpha ~ V_x / (V_c + eps_vc))
+  push!(__eqs, sgn_Vx ~ ifelse(V_x >= 0, 1, -1))
   push!(__eqs, Fz0_prime ~ LFZO * FNOMIN)
   push!(__eqs, dfz ~ (Fz - Fz0_prime) / Fz0_prime)
   push!(__eqs, dpi ~ (INFLPRES - NOMPRES) / NOMPRES)
   push!(__eqs, lam_mux_star ~ LMUX / (1 + LMUV * (V_s / LONGVL)))
+  push!(__eqs, lam_muy_star ~ LMUY / (1 + LMUV * (V_s / LONGVL)))
   push!(__eqs, lam_mux_prime ~ Au * lam_mux_star / (1 + (Au - 1) * lam_mux_star))
+  push!(__eqs, lam_muy_prime ~ Au * lam_muy_star / (1 + (Au - 1) * lam_muy_star))
   push!(__eqs, lam_low ~ 0.5 * (1 - cos(π * min(abs(V_x), eps_v) / eps_v)))
-  push!(__eqs, gamma_star ~ getindex(getproperty(wheel_center, :R), 2, 3))
   push!(__eqs, mu_x ~ (PDX1 + PDX2 * dfz) * (1 + PPX3 * dpi + PPX4 * dpi ^ 2) * (1 - PDX3 * gamma_star ^ 2) * lam_mux_star)
   push!(__eqs, Kxk_norm ~ (PKX1 + PKX2 * dfz) * exp(PKX3 * dfz) * (1 + PPX1 * dpi + PPX2 * dpi ^ 2) * LKX)
   push!(__eqs, Kxk ~ Fz * Kxk_norm)
@@ -556,15 +1442,81 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, sigma_kappa ~ max(Kxk / longitudinal_stiffness, eps_sigma))
   push!(__eqs, u_dot_free ~ -V_sx - abs(V_x) * u_x / sigma_kappa)
   push!(__eqs, kappa_prime ~ (u_x - damp_vlow * (1 - lam_low) * V_sx) / sigma_kappa)
-  push!(__eqs, kappa_sl ~ 3 * mu_x / Kxk_norm)
-  push!(__eqs, ModelingToolkit.D_nounits(u_x) ~ ifelse(abs(kappa_prime) > kappa_sl, ifelse(abs(V_x) < eps_v, ifelse((V_sx + abs(V_x) * u_x / sigma_kappa) * u_x < 0, 0, u_dot_free), u_dot_free), u_dot_free))
+  push!(__eqs, alpha_sl ~ 3 * abs(Dy) / max(abs(Kya), eps_k))
+  push!(__eqs, ModelingToolkit.D_nounits(u_x) ~ ifelse(abs(alpha_r_eq) > alpha_sl, ifelse(abs(V_x) < eps_v, ifelse((V_sx + abs(V_x) * u_x / sigma_kappa) * u_x < 0, 0, u_dot_free), u_dot_free), u_dot_free))
   push!(__eqs, kappa_x ~ kappa_prime + SHx)
   push!(__eqs, Ex_raw ~ (PEX1 + PEX2 * dfz + PEX3 * dfz ^ 2) * (1 - PEX4 * ifelse(kappa_x >= 0, 1, -1)) * LEX)
   push!(__eqs, Ex ~ ifelse(Ex_raw > 1, 1, Ex_raw))
   push!(__eqs, SVx ~ Fz * (PVX1 + PVX2 * dfz) * LVX * lam_mux_prime * lam_low)
-  push!(__eqs, Fx ~ Dx * sin(Cx * atan(Bx * kappa_x - Ex * (Bx * kappa_x - atan(Bx * kappa_x)))) + SVx)
-  push!(__eqs, wheel_center.f ~ -wheel_center.R * [Fx, 0, Fz])
-  push!(__eqs, wheel_center.tau ~ [0, 0, 0])
+  push!(__eqs, Fx0 ~ Dx * sin(Cx * atan(Bx * kappa_x - Ex * (Bx * kappa_x - atan(Bx * kappa_x)))) + SVx)
+  push!(__eqs, mu_y ~ (PDY1 + PDY2 * dfz) * (1 + PPY3 * dpi + PPY4 * dpi ^ 2) * (1 - PDY3 * gamma_star ^ 2) * lam_muy_star)
+  push!(__eqs, Cy ~ PCY1 * LCY)
+  push!(__eqs, Dy ~ mu_y * Fz)
+  push!(__eqs, Kya ~ PKY1 * Fz0_prime * (1 + PPY1 * dpi) * (1 - PKY3 * abs(gamma_star)) * sin(PKY4 * atan((Fz / Fz0_prime) / ((PKY2 + PKY5 * gamma_star ^ 2) * (1 + PPY2 * dpi)))) * LKY)
+  push!(__eqs, Kya_prime ~ Kya + ifelse(Kya >= 0, eps_k, -eps_k))
+  push!(__eqs, Kyg0 ~ Fz * (PKY6 + PKY7 * dfz) * (1 + PPY5 * dpi) * LKYC * lam_low)
+  push!(__eqs, SVyg ~ Fz * (PVY3 + PVY4 * dfz) * gamma_star * LKYC * lam_muy_prime * lam_low)
+  push!(__eqs, SHy ~ (PHY1 + PHY2 * dfz) * LHY * lam_low + (Kyg0 * gamma_star - SVyg) / Kya_prime)
+  push!(__eqs, By ~ Kya / (Cy * Dy + ifelse(Dy >= 0, eps_y, -eps_y)))
+  push!(__eqs, sigma_alpha ~ max(abs(Kya) / lateral_stiffness, eps_sigma))
+  push!(__eqs, v_dot_free ~ V_y_mf - abs(V_x) * v_y / sigma_alpha)
+  push!(__eqs, alpha_prime ~ (v_y + damp_vlow * (1 - lam_low) * V_y_mf) / sigma_alpha)
+  push!(__eqs, ModelingToolkit.D_nounits(v_y) ~ ifelse(abs(alpha_r_eq) > alpha_sl, ifelse(abs(V_x) < eps_v, ifelse((-V_y_mf + V_x * v_y / sigma_alpha) * v_y < 0, 0, v_dot_free), v_dot_free), v_dot_free))
+  push!(__eqs, alpha_y ~ alpha_prime + SHy)
+  push!(__eqs, Ey_raw ~ (PEY1 + PEY2 * dfz) * (1 + PEY5 * gamma_star ^ 2 - (PEY3 + PEY4 * gamma_star) * ifelse(alpha_y >= 0, 1, -1)) * LEY)
+  push!(__eqs, Ey ~ ifelse(Ey_raw > 1, 1, Ey_raw))
+  push!(__eqs, SVy ~ Fz * (PVY1 + PVY2 * dfz) * LVY * lam_muy_prime * lam_low + SVyg)
+  push!(__eqs, Fy0 ~ Dy * sin(Cy * atan(By * alpha_y - Ey * (By * alpha_y - atan(By * alpha_y)))) + SVy)
+  push!(__eqs, SHxa ~ RHX1)
+  push!(__eqs, Cxa ~ RCX1)
+  push!(__eqs, Bxa ~ (RBX1 + RBX3 * gamma_star ^ 2) * cos(atan(RBX2 * kappa_prime)) * LXAL)
+  push!(__eqs, Exa_raw ~ REX1 + REX2 * dfz)
+  push!(__eqs, Exa ~ ifelse(Exa_raw > 1, 1, Exa_raw))
+  push!(__eqs, alpha_s ~ alpha_prime + SHxa)
+  push!(__eqs, Gxa0 ~ cos(Cxa * atan(Bxa * SHxa - Exa * (Bxa * SHxa - atan(Bxa * SHxa)))))
+  push!(__eqs, Gxa ~ cos(Cxa * atan(Bxa * alpha_s - Exa * (Bxa * alpha_s - atan(Bxa * alpha_s)))) / Gxa0)
+  push!(__eqs, Fx ~ Gxa * Fx0)
+  push!(__eqs, SHyk ~ RHY1 + RHY2 * dfz)
+  push!(__eqs, Cyk ~ RCY1)
+  push!(__eqs, Byk ~ (RBY1 + RBY4 * gamma_star ^ 2) * cos(atan(RBY2 * (alpha_prime - RBY3))) * LYKA)
+  push!(__eqs, Eyk_raw ~ REY1 + REY2 * dfz)
+  push!(__eqs, Eyk ~ ifelse(Eyk_raw > 1, 1, Eyk_raw))
+  push!(__eqs, kappa_s ~ kappa_prime + SHyk)
+  push!(__eqs, Gyk0 ~ cos(Cyk * atan(Byk * SHyk - Eyk * (Byk * SHyk - atan(Byk * SHyk)))))
+  push!(__eqs, Gyk ~ cos(Cyk * atan(Byk * kappa_s - Eyk * (Byk * kappa_s - atan(Byk * kappa_s)))) / Gyk0)
+  push!(__eqs, Dvyk ~ mu_y * Fz * (RVY1 + RVY2 * dfz + RVY3 * gamma_star) * cos(atan(RVY4 * alpha_prime)))
+  push!(__eqs, SVyk ~ Dvyk * sin(RVY5 * atan(RVY6 * kappa_prime)) * LVYKA)
+  push!(__eqs, Fy ~ Gyk * Fy0 + SVyk)
+  push!(__eqs, Fy_prime ~ Gyk * Fy0)
+  push!(__eqs, SHt ~ QHZ1 + QHZ2 * dfz + (QHZ3 + QHZ4 * dfz) * gamma_star)
+  push!(__eqs, alpha_t ~ alpha_prime + SHt)
+  push!(__eqs, Bt ~ (QBZ1 + QBZ2 * dfz + QBZ3 * dfz ^ 2) * (1 + QBZ5 * abs(gamma_star) + QBZ6 * gamma_star ^ 2) * (LKY / lam_muy_star))
+  push!(__eqs, Ct ~ QCZ1)
+  push!(__eqs, Dt0 ~ Fz * (unloaded_radius / Fz0_prime) * (QDZ1 + QDZ2 * dfz) * (1 - PPZ1 * dpi) * LTR * sgn_Vx)
+  push!(__eqs, Dt ~ Dt0 * (1 + QDZ3 * abs(gamma_star) + QDZ4 * gamma_star ^ 2))
+  push!(__eqs, Et_raw ~ (QEZ1 + QEZ2 * dfz + QEZ3 * dfz ^ 2) * (1 + (QEZ4 + QEZ5 * gamma_star) * (2 / π) * atan(Bt * Ct * alpha_t)))
+  push!(__eqs, Et ~ ifelse(Et_raw > 1, 1, Et_raw))
+  push!(__eqs, SHf ~ SHy + SVy / Kya_prime)
+  push!(__eqs, alpha_r ~ alpha_prime + SHf)
+  push!(__eqs, Br ~ QBZ9 * LKY / lam_muy_star + QBZ10 * By * Cy)
+  push!(__eqs, Cr ~ 1)
+  push!(__eqs, Dr ~ Fz * unloaded_radius * ((QDZ6 + QDZ7 * dfz) * LRES + ((QDZ8 + QDZ9 * dfz) * (1 + PPZ2 * dpi) + (QDZ10 + QDZ11 * dfz) * abs(gamma_star)) * gamma_star * LKZC) * lam_muy_star * sgn_Vx * cos_alpha)
+  push!(__eqs, alpha_t_eq ~ sqrt(alpha_t ^ 2 + (Kxk / Kya_prime) ^ 2 * kappa_prime ^ 2) * ifelse(alpha_t >= 0, 1, -1))
+  push!(__eqs, alpha_r_eq ~ sqrt(alpha_r ^ 2 + (Kxk / Kya_prime) ^ 2 * kappa_prime ^ 2) * ifelse(alpha_r >= 0, 1, -1))
+  push!(__eqs, t_pneu ~ Dt * cos(Ct * atan(Bt * alpha_t_eq - Et * (Bt * alpha_t_eq - atan(Bt * alpha_t_eq)))) * cos_alpha)
+  push!(__eqs, Mz_prime ~ -t_pneu * Fy_prime)
+  push!(__eqs, Mzr ~ Dr * cos(Cr * atan(Br * alpha_r_eq)) * cos_alpha)
+  push!(__eqs, s_arm ~ unloaded_radius * (SSZ1 + SSZ2 * (Fy / Fz0_prime) + (SSZ3 + SSZ4 * dfz) * gamma_star) * LS)
+  push!(__eqs, Mz ~ Mz_prime + Mzr + s_arm * Fx)
+  push!(__eqs, Fy_c ~ side * Fy)
+  push!(__eqs, Mz_c ~ side * Mz)
+  push!(__eqs, f_wx ~ (Fx * getindex(getproperty(wheel_center, :R), 2, 2) + Fy_c * getindex(getproperty(wheel_center, :R), 2, 1)) / cos_gamma)
+  push!(__eqs, f_wy ~ (Fy_c * getindex(getproperty(wheel_center, :R), 2, 2) - Fx * getindex(getproperty(wheel_center, :R), 2, 1)) / cos_gamma)
+  push!(__eqs, tau_wx ~ loaded_radius * Fy_c * getindex(getproperty(wheel_center, :R), 2, 2) / cos_gamma)
+  push!(__eqs, tau_wy ~ -loaded_radius * Fy_c * getindex(getproperty(wheel_center, :R), 2, 1) / cos_gamma)
+  push!(__eqs, tau_wz ~ Mz_c)
+  push!(__eqs, wheel_center.f ~ -wheel_center.R * [f_wx, f_wy, Fz])
+  push!(__eqs, wheel_center.tau ~ -wheel_center.R * [tau_wx, tau_wy, tau_wz])
   push!(__eqs, spline.tau ~ Fx * loaded_radius)
   push!(__eqs, slip ~ kappa)
 
