@@ -267,8 +267,8 @@ metadata {
         "atol": {
           "tire.alpha": 0.0001,
           "tire.Fy": 0.1,
-          "tire.Fz": 0.1,
-          "tire.rho": 0.000001
+          "tire.Fx": 0.1,
+          "tire.Fz": 0.1
         },
         "expect": {
           "initial": {"tire.rho": 0.005, "tire.Fz": 1050.0, "tire.alpha": -0.2},

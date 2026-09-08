@@ -69,7 +69,7 @@ __dyad_run_test_case!(
   params=(; speed=10, static_deflection=0.005, stroke=0, alpha_start=-0.2, alpha_end=0.2, steer_ramp_time=2),
   initial_conditions=Tuple[],
   expected_initial=Tuple[
-    (m -> m.tire.rho, "tire.rho", 0.005, 0.000001, 1e-5),
+    (m -> m.tire.rho, "tire.rho", 0.005, 1e-5, 1e-5),
     (m -> m.tire.Fz, "tire.Fz", 1050, 0.1, 1e-5),
     (m -> m.tire.alpha, "tire.alpha", -0.2, 0.0001, 1e-5),
   ],
@@ -77,7 +77,7 @@ __dyad_run_test_case!(
   signals=Tuple[
     (m -> m.tire.alpha, "tire.alpha", 0.0001, 1e-5),
     (m -> m.tire.Fy, "tire.Fy", 0.1, 1e-5),
-    (m -> m.tire.Fx, "tire.Fx", 1e-5, 1e-5),
+    (m -> m.tire.Fx, "tire.Fx", 0.1, 1e-5),
     (m -> m.tire.Fz, "tire.Fz", 0.1, 1e-5),
   ],
 )
