@@ -27,6 +27,7 @@ component FullVehicle
   front_suspension = VehicleComponents.Suspension() {^front_suspension}
   rear_suspension = VehicleComponents.Suspension() {^rear_suspension}
   control = VehicleComponents.TorqueControlLaunch() {^control}
+  aero = VehicleComponents.AeroLoad() {^aero}
 
   # Sprung mass properties
   parameter sprung_mass::Mass
@@ -38,35 +39,38 @@ component FullVehicle
 relations
 
   # Sprung mass
-  connect(body.frame_a, rig) {^id11}
-  connect(front_suspension.chassis, body.frame_a) {^id12}
-  connect(rear_suspension.chassis, body.frame_a) {^id13}
+  connect(body.frame_a, rig) {^id12}
+  connect(front_suspension.chassis, body.frame_a) {^id13}
+  connect(rear_suspension.chassis, body.frame_a) {^id14}
 
   # Corners to suspension
-  connect(front_suspension.wheel_left, corner_fl.wheel_center) {^id14}
-  connect(front_suspension.wheel_right, corner_fr.wheel_center) {^id15}
-  connect(rear_suspension.wheel_left, corner_rl.wheel_center) {^id16}
-  connect(rear_suspension.wheel_right, corner_rr.wheel_center) {^id17}
+  connect(front_suspension.wheel_left, corner_fl.wheel_center) {^id15}
+  connect(front_suspension.wheel_right, corner_fr.wheel_center) {^id16}
+  connect(rear_suspension.wheel_left, corner_rl.wheel_center) {^id17}
+  connect(rear_suspension.wheel_right, corner_rr.wheel_center) {^id18}
 
   # Torque control
-  connect(corner_fl.slip, control.slip_fl) {^id18}
-  connect(corner_fr.slip, control.slip_fr) {^id19}
-  connect(corner_rl.slip, control.slip_rl) {^id20}
-  connect(corner_rr.slip, control.slip_rr) {^id21}
-  connect(control.tau_fl, corner_fl.tau_cmd) {^id22}
-  connect(control.tau_fr, corner_fr.tau_cmd) {^id23}
-  connect(control.tau_rl, corner_rl.tau_cmd) {^id24}
-  connect(control.tau_rr, corner_rr.tau_cmd) {^id25}
-  connect(throttle, control.throttle) {^id26}
+  connect(corner_fl.slip, control.slip_fl) {^id19}
+  connect(corner_fr.slip, control.slip_fr) {^id20}
+  connect(corner_rl.slip, control.slip_rl) {^id21}
+  connect(corner_rr.slip, control.slip_rr) {^id22}
+  connect(control.tau_fl, corner_fl.tau_cmd) {^id23}
+  connect(control.tau_fr, corner_fr.tau_cmd) {^id24}
+  connect(control.tau_rl, corner_rl.tau_cmd) {^id25}
+  connect(control.tau_rr, corner_rr.tau_cmd) {^id26}
+  connect(throttle, control.throttle) {^id27}
+  connect(rig, aero.chassis) {^id28}
 
 metadata {
   "_links": {
+    "throttle": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
     "rig": {
       "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 450, "y2": 550}}}
     },
-    "throttle": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
     "body": {
-      "Dyad": {"placement": {"diagram": {"x1": 650, "x2": 750, "y1": 450, "y2": 550}}}
+      "Dyad": {
+        "placement": {"diagram": {"x1": 360, "x2": 460, "y1": 430, "y2": 530, "rot": 270}}
+      }
     },
     "corner_fl": {
       "Dyad": {"placement": {"diagram": {"x1": 360, "x2": 260, "y1": 380, "y2": 280}}}
@@ -89,20 +93,44 @@ metadata {
     "control": {
       "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 60, "y2": 160}}}
     },
-    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id12": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 500}], "E": 2}], "path": {}}},
-    "id13": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 500}], "E": 2}], "path": {}}},
-    "id14": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "aero": {
+      "Dyad": {"placement": {"diagram": {"x1": 680, "x2": 780, "y1": 450, "y2": 550}}}
+    },
+    "id12": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [{"x": 410, "y": 550}, {"x": 282.5, "y": 550}, {"x": 282.5, "y": 500}],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id13": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 500, "y": 550}, {"x": 410, "y": 550}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id14": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 500, "y": 550}, {"x": 410, "y": 550}], "E": 2}],
+        "path": {}
+      }
+    },
     "id15": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id16": {},
+    "id16": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
     "id17": {},
-    "id18": {
+    "id18": {},
+    "id19": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 210, "y": 373}, {"x": 210, "y": 88}], "E": 2}],
         "path": {}
       }
     },
-    "id19": {
+    "id20": {
       "Dyad": {
         "edges": [
           {
@@ -119,13 +147,13 @@ metadata {
         "path": {}
       }
     },
-    "id20": {
+    "id21": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 170, "y": 617}, {"x": 170, "y": 117}], "E": 2}],
         "path": {}
       }
     },
-    "id21": {
+    "id22": {
       "Dyad": {
         "edges": [
           {
@@ -142,7 +170,7 @@ metadata {
         "path": {}
       }
     },
-    "id22": {
+    "id23": {
       "Dyad": {
         "edges": [
           {
@@ -159,7 +187,7 @@ metadata {
         "path": {}
       }
     },
-    "id23": {
+    "id24": {
       "Dyad": {
         "edges": [
           {
@@ -176,7 +204,7 @@ metadata {
         "path": {}
       }
     },
-    "id24": {
+    "id25": {
       "Dyad": {
         "edges": [
           {
@@ -193,7 +221,7 @@ metadata {
         "path": {}
       }
     },
-    "id25": {
+    "id26": {
       "Dyad": {
         "edges": [
           {
@@ -210,12 +238,13 @@ metadata {
         "path": {}
       }
     },
-    "id26": {
+    "id27": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 40, "y": 70}, {"x": 40, "y": 67}], "E": 2}],
         "path": {}
       }
-    }
+    },
+    "id28": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
   }
 }
 end

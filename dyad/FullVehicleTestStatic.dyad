@@ -21,6 +21,12 @@ test component FullVehicleTestStatic
     sprung_I_11 = 30.0,
     sprung_I_22 = 80.0,
     sprung_I_33 = 90.0,
+    aero(
+      CdA = 1.2,
+      ClA = 2.0,
+      bal_f = 0.5,
+      wheelbase = 1.6
+    ),
     control(
       slip_target_front = 0.10,
       slip_target_rear = 0.10,

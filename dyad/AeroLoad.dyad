@@ -1,0 +1,51 @@
+component AeroLoad
+  """
+  Aerodynamic drag and downforce.
+
+  A pure force element. It carries no mass and applies a single resultant to the
+  frame it is attached to.
+  """
+
+  extends Styles
+
+  chassis = Dyad.Frame3D() {^chassis}
+
+  parameter rho::Density = 1.19
+  parameter CdA::Area
+  parameter ClA::Area
+  parameter bal_f::Real
+  parameter wheelbase::Length
+  parameter v_min::Velocity = 0.5
+
+  final parameter x_cop::Length = (1 - bal_f) * wheelbase
+  final parameter cop::Position[3] = [-x_cop, 0, 0]
+
+  variable x_ref::Length
+  variable v::Velocity
+  variable q::Pressure
+  variable drag::Force
+  variable downforce::Force
+  variable f_cop::Force[3]
+
+relations
+
+  x_ref = chassis.r_0[1]
+  v = der(x_ref)
+  q = 0.5 * rho * v ^ 2
+
+  drag = CdA * q * tanh(v / v_min)
+  downforce = ClA * q
+
+  f_cop = chassis.R * [-drag, 0, -downforce]
+
+  chassis.f = -f_cop
+  chassis.tau = [0, -x_cop * f_cop[3], x_cop * f_cop[2]]
+
+metadata {
+  "_links": {
+    "chassis": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 450, "y2": 550}}}
+    }
+  }
+}
+end
