@@ -34,6 +34,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
 connectors that can be connected together ([`Frame3D`](@ref))
  * `pushrod` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
+ * `steering_rack` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
+connectors that can be connected together ([`Frame3D`](@ref))
 
 ## Variables
 
@@ -179,9 +181,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named wheel = __Dyad__Frame3D())
   push!(__systems, @named chassis = __Dyad__Frame3D())
   push!(__systems, @named pushrod = __Dyad__Frame3D())
-  # Subcomponent mount_tierod of type MultibodyComponents.FixedTranslation
-  mount_tierod_overrides = __pop_subcomponent_overrides!(__overrides, "mount_tierod")
-  push!(__systems, @named mount_tierod = MultibodyComponents.FixedTranslation(; r=tierod_inner, render=false, mount_tierod_overrides...))
+  push!(__systems, @named steering_rack = __Dyad__Frame3D())
   # Subcomponent mount_uca_front of type MultibodyComponents.FixedTranslation
   mount_uca_front_overrides = __pop_subcomponent_overrides!(__overrides, "mount_uca_front")
   push!(__systems, @named mount_uca_front = MultibodyComponents.FixedTranslation(; r=uca_front, render=false, mount_uca_front_overrides...))
@@ -240,7 +240,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, toe ~ -side * getindex(getproperty(wheel_angles, :angles), 3))
   push!(__eqs, wc_height ~ getindex(getproperty(wheel, :r_0), 3) - wheel_center[3])
   push!(__eqs, connect(mount_uca_front.frame_a, chassis))
-  push!(__eqs, connect(mount_tierod.frame_a, chassis))
   push!(__eqs, connect(mount_lca_front.frame_a, chassis))
   push!(__eqs, connect(mount_lca_front.frame_b, lca_rev.frame_a))
   push!(__eqs, connect(lca_rev.frame_b, lca_rod_front.frame_a))
@@ -248,7 +247,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(mount_uca_front.frame_b, uca_rod_front.frame_b))
   push!(__eqs, connect(uca_rod_front.frame_a, lca_rod_front.frame_b))
   push!(__eqs, connect(uca_rod_front.frame_im, uca_rod_rear.frame_b))
-  push!(__eqs, connect(mount_tierod.frame_b, tie_rod.frame_a))
   push!(__eqs, connect(tie_rod.frame_b, uca_rod_front.frame_ia))
   push!(__eqs, connect(lca_to_wc.frame_a, tie_rod.frame_ib))
   push!(__eqs, connect(lca_to_wc.frame_b, camber_rot.frame_a))
@@ -258,6 +256,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(pushrod_to_uca.frame_a, pushrod))
   push!(__eqs, connect(chassis, wheel_angles.frame_a))
   push!(__eqs, connect(wheel, wheel_angles.frame_b))
+  push!(__eqs, connect(tie_rod.frame_a, steering_rack))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

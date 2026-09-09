@@ -12,6 +12,8 @@ test component SuspensionTestRig
     wheel_center_right = wheel_center_right,
     pushrod_outer_left = pushrod_outer_left,
     pushrod_outer_right = pushrod_outer_right,
+    tierod_inner_left = [0.080, 0.220, 0.2335],
+    tierod_inner_right = [0.080, -0.220, 0.2335],
     linkage_left(
       lca_front = [0.100, 0.195, 0.2085],
       lca_rear = [-0.100, 0.205, 0.1985],
@@ -90,11 +92,13 @@ relations
 
   initial wheel_position_left.v = 0.0
   initial wheel_position_right.v = 0.0
+  initial suspension.steering_rack.rack_drive.v = 0.0
   guess suspension.linkage_left.lca_rev.phi = 0.0
   guess suspension.linkage_right.lca_rev.phi = 0.0
 
   wheel_position_left.s_ref = (heave_amplitude + roll_amplitude) * sin(2 * π * freq * time)
   wheel_position_right.s_ref = (heave_amplitude - roll_amplitude) * sin(2 * π * freq * time)
+  suspension.steer = 0
  
   # Left jack
   connect(fixed_left.frame_b, prismatic_left.frame_a) {^id16}

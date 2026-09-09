@@ -1,0 +1,87 @@
+component SteeringRack
+  """
+  A massless steering rack.
+  
+  One rigid bar carrying both inner tie rod pickups. Left and right steer
+  angles come out of the tie rod and kingpin geometry rather than being
+  imposed on each side separately.
+  
+  Takes a steering wheel angle and converts it to rack travel through
+  rack_ratio, in metres of rack per radian of wheel. Positive moves the rack
+  toward the vehicle's left.
+  """
+
+  extends Styles
+
+  # External frames
+  chassis = Dyad.Frame3D() {^chassis}
+  tie_rod_left = Dyad.Frame3D() {^tie_rod_left}
+  tie_rod_right = Dyad.Frame3D() {^tie_rod_right}
+
+  # Steering wheel angle
+  steer = RealInput(units = "rad") {^steer}
+
+  # Rack travel
+  rack_slide = MultibodyComponents.Prismatic(n = rack_axis, render = false) {^rack_slide}
+  rack_drive = TranslationalComponents.Sources.Position() {^rack_drive}
+
+  rack_offset = MultibodyComponents.FixedTranslation(r = tierod_inner_right, render = false) {^rack_offset}
+  rack_bar = MultibodyComponents.FixedTranslation(r = rack_vec, radius = sty_rod_radius, color = sty_grey_dark) {^rack_bar}
+
+  # Hardpoints
+  parameter tierod_inner_left::Position[3]
+  parameter tierod_inner_right::Position[3]
+  parameter rack_axis::Real[3] = [0, 1, 0]
+  parameter rack_ratio::Real = 0.01
+  final parameter rack_vec::Dyad.Position[3] = tierod_inner_left - tierod_inner_right
+
+relations
+
+  rack_drive.s_ref = rack_ratio * steer
+
+  connect(chassis, rack_slide.frame_a) {^id9}
+  connect(rack_slide.frame_b, rack_offset.frame_a) {^id10}
+  connect(rack_drive.flange, rack_slide.axis) {^id11}
+  connect(rack_slide.support, rack_drive.support) {^id12}
+  connect(rack_offset.frame_b, tie_rod_right) {^id13}
+  connect(rack_offset.frame_b, rack_bar.frame_a) {^id14}
+  connect(rack_bar.frame_b, tie_rod_left) {^id15}
+
+metadata {
+  "_links": {
+    "chassis": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "y1": -50, "x2": 550, "y2": 50}}}
+    },
+    "tie_rod_left": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "y1": 450, "x2": 50, "y2": 550}}}
+    },
+    "tie_rod_right": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "y1": 450, "x2": 1050, "y2": 550}}}
+    },
+    "steer": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 60, "y2": 160}}}},
+    "rack_slide": {
+      "Dyad": {
+        "placement": {"diagram": {"x1": 450, "y1": 170, "x2": 550, "y2": 270, "rot": 90}}
+      }
+    },
+    "rack_drive": {
+      "Dyad": {"placement": {"diagram": {"x1": 220, "x2": 320, "y1": 70, "y2": 170}}}
+    },
+    "rack_offset": {
+      "Dyad": {
+        "placement": {"diagram": {"x1": 450, "y1": 330, "x2": 550, "y2": 430, "rot": 90}}
+      }
+    },
+    "rack_bar": {
+      "Dyad": {"placement": {"diagram": {"x1": 340, "y1": 450, "x2": 240, "y2": 550}}}
+    },
+    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id11": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 550, "y": 120}], "E": 2}], "path": {}}},
+    "id12": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 270, "y": 220}], "E": 2}], "path": {}}},
+    "id13": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 500}], "E": 2}], "path": {}}},
+    "id14": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 500}], "E": 2}], "path": {}}},
+    "id15": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+  }
+}
+end

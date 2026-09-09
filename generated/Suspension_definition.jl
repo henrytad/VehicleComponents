@@ -7,7 +7,7 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   Suspension(; name, wheel_center_left, wheel_center_right, pushrod_outer_left, pushrod_outer_right)
+   Suspension(; name, wheel_center_left, wheel_center_right, pushrod_outer_left, pushrod_outer_right, tierod_inner_left, tierod_inner_right)
 
 ## Parameters:
 
@@ -17,6 +17,8 @@ import Moshi as __Ext__Moshi
 | `wheel_center_right`         |                          | m  |    |
 | `pushrod_outer_left`         |                          | m  |    |
 | `pushrod_outer_right`         |                          | m  |    |
+| `tierod_inner_left`         |                          | m  |    |
+| `tierod_inner_right`         |                          | m  |    |
 
 ## Connectors
 
@@ -26,6 +28,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 connectors that can be connected together ([`Frame3D`](@ref))
  * `wheel_right` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
+ * `steer` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
 
 ## Variables
 
@@ -34,7 +37,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `wc_heave`         |                          | m  |
 | `wc_roll`         |                          | m  |
 """
-@component function Suspension(; name = nothing, wheel_center_left=nothing, wheel_center_right=nothing, pushrod_outer_left=nothing, pushrod_outer_right=nothing, kwargs...)
+@component function Suspension(; name = nothing, wheel_center_left=nothing, wheel_center_right=nothing, pushrod_outer_left=nothing, pushrod_outer_right=nothing, tierod_inner_left=nothing, tierod_inner_right=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -77,10 +80,17 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__pushrod_outer_right = pushrod_outer_right
   append!(__params, @parameters (pushrod_outer_right[1:3]::Real))
   __initial_conditions[pushrod_outer_right] = __local__pushrod_outer_right
+  __local__tierod_inner_left = tierod_inner_left
+  append!(__params, @parameters (tierod_inner_left[1:3]::Real))
+  __initial_conditions[tierod_inner_left] = __local__tierod_inner_left
+  __local__tierod_inner_right = tierod_inner_right
+  append!(__params, @parameters (tierod_inner_right[1:3]::Real))
+  __initial_conditions[tierod_inner_right] = __local__tierod_inner_right
 
   ### Final Parameters (assignments)
 
   ### Final Path Parameters
+  append!(__vars, @variables (steer(t)::Real), [input = true])
 
   ### Variables (declarations)
   append!(__vars, @variables (wc_heave(t)::Real))
@@ -110,6 +120,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   # Subcomponent linkage_right of type VehicleComponents.Linkage
   linkage_right_overrides = __pop_subcomponent_overrides!(__overrides, "linkage_right")
   push!(__systems, @named linkage_right = VehicleComponents.Linkage(; wheel_center=wheel_center_right, pushrod_outer=pushrod_outer_right, linkage_right_overrides...))
+  # Subcomponent steering_rack of type VehicleComponents.SteeringRack
+  steering_rack_overrides = __pop_subcomponent_overrides!(__overrides, "steering_rack")
+  push!(__systems, @named steering_rack = VehicleComponents.SteeringRack(; tierod_inner_left=tierod_inner_left, tierod_inner_right=tierod_inner_right, steering_rack_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
@@ -133,6 +146,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(linkage_right.pushrod, inboard.linkage_right))
   push!(__eqs, connect(linkage_left.wheel, wheel_left))
   push!(__eqs, connect(linkage_right.wheel, wheel_right))
+  push!(__eqs, connect(chassis, steering_rack.chassis))
+  push!(__eqs, connect(steering_rack.tie_rod_left, linkage_left.steering_rack))
+  push!(__eqs, connect(steering_rack.tie_rod_right, linkage_right.steering_rack))
+  push!(__eqs, connect(steer, steering_rack.steer))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

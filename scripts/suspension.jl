@@ -26,6 +26,8 @@ parameter_map = Dict([
     ssys.wheel_center_right => cr.wheel_center,
     ssys.pushrod_outer_left => cl.pushrod_outer,
     ssys.pushrod_outer_right => cr.pushrod_outer,
+    ssys.suspension.tierod_inner_left => cl.tierod_inner,
+    ssys.suspension.tierod_inner_right => cr.tierod_inner,
 
     # Left corner
     ssys.suspension.linkage_left.lca_front => cl.lca_front,

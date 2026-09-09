@@ -9,8 +9,9 @@ using GLMakie, JSON3, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenb
 # Setup
 # ===========================================================================
 const DEG = 180 / π
+const G = 9.80665
 
-@named model = VehicleComponents.FullVehicleTestStraightLine()
+@named model = VehicleComponents.FullVehicleTestStep()
 ssys = multibody(model)
 
 data_path = joinpath(pwd(), "assets", "vehicles", "MR25.json")
@@ -26,6 +27,8 @@ aero = data.aero
 front, rear = data.suspension.front, data.suspension.rear
 
 t_drive = 1.5
+t_steer = 3.0
+steer_angle = 0.15
 t_end = 6.0
 
 corners = [car.corner_fl, car.corner_fr, car.corner_rl, car.corner_rr]
@@ -301,13 +304,15 @@ parameter_map = Dict([
 
     # Setup
     ssys.drive_start_time => t_drive,
+    ssys.steer_start_time => t_steer,
+    ssys.steer_angle => steer_angle,
 ])
 
 # ===========================================================================
 # Solve
 # ===========================================================================
 prob = ODEProblem(ssys, parameter_map, (0.0, t_end))
-sol = solve(prob; tstops=[t_drive])
+sol = solve(prob; tstops=[t_drive, t_steer])
 
 # ===========================================================================
 # Report
@@ -388,7 +393,7 @@ mz = [sol(sol.t, idxs=c.wheel_assembly.tire.Mz_c).u for c in corners]
 fy_net = sum(fy)
 mz_net = sum(mz)
 y_drift = sol(sol.t, idxs=ssys.lateral_joint.s).u
-yaw_hold = sol(sol.t, idxs=ssys.yaw_joint.tau).u
+yaw_rate = sol(sol.t, idxs=ssys.yaw_joint.w).u
 vehicle_mass = body.mass +
                front.geometry.linkages.left.upright.mass + front.geometry.linkages.right.upright.mass +
                rear.geometry.linkages.left.upright.mass + rear.geometry.linkages.right.upright.mass +
@@ -405,7 +410,7 @@ println("  net Fy final       = ", round(fy_net[end], digits=2), " N  (",
     round(100 * abs(fy_net[end]) / max(fy_corner, eps()), digits=2), "% of the per-corner Fy, ",
     abs(fy_net[end]) < 0.02 * fy_corner ? "cancels" : "DOES NOT CANCEL", ")")
 println("  net Mz final       = ", round(mz_net[end], digits=3), " N.m")
-println("  yaw lock reaction  = ", round(yaw_hold[end], digits=3), " N.m")
+println("  peak yaw rate      = ", round(DEG * maximum(abs, yaw_rate), digits=1), " deg/s")
 println("  lateral drift      = ", round(1000 * y_drift[end], digits=1), " mm  (peak ",
     round(1000 * maximum(abs, y_drift), digits=1), " mm)")
 println("  vehicle mass       = ", round(vehicle_mass, digits=1), " kg")
@@ -507,9 +512,9 @@ p_camber = Plots.plot(sol; idxs=[l.camber * DEG for l in linkages],
 mark!(p_camber)
 
 p_attitude = Plots.plot(sol;
-    idxs=[ssys.roll_joint.phi * DEG, ssys.pitch_joint.phi * DEG],
+    idxs=[car.w_cg[3] * DEG, car.w_cg[2] * DEG],
     labels=["roll" "pitch"], linewidth=2,
-    xlabel="t [s]", ylabel="angle [deg]", title="Body attitude — roll and pitch");
+    xlabel="t [s]", ylabel="angle [deg]", title="Body attitude vs world");
 mark!(p_attitude)
 
 Plots.plot(p_fx, p_v, p_slip, p_sig, p_lim, p_lam, p_svx, p_fz, p_tau,
@@ -555,11 +560,24 @@ p_mz = Plots.plot(sol; idxs=[c.wheel_assembly.tire.Mz_c for c in corners],
     xlabel="t [s]", ylabel="Mz [N.m]", title="Aligning moment per corner");
 mark!(p_mz)
 
-p_yaw = Plots.plot(sol.t, yaw_hold; label="yaw lock reaction", color=:purple, linewidth=2,
-    xlabel="t [s]", ylabel="tau [N.m]", title="Torque the yaw lock absorbs (0 if balanced)");
+p_yaw = Plots.plot(sol.t, DEG * yaw_rate; label="yaw rate", color=:purple, linewidth=2,
+    xlabel="t [s]", ylabel="r [deg/s]", title="Yaw rate");
 mark!(p_yaw)
 
-Plots.plot(p_aero, p_heave, p_roll_spring, p_fy, p_net, p_drift, p_mz, p_yaw;
+a_long = sol(sol.t, idxs=car.a_cg[1]).u
+a_lat = sol(sol.t, idxs=car.a_cg[2]).u
+
+println("\n--- acceleration ---\n")
+println("  peak longitudinal  = ", round(maximum(abs, a_long) / G, digits=2), " g")
+println("  peak lateral       = ", round(maximum(abs, a_lat) / G, digits=2), " g")
+
+p_accel = Plots.plot(sol.t, [a_long / G a_lat / G];
+    labels=["longitudinal" "lateral"], color=[:steelblue :orangered], linewidth=2,
+    xlabel="t [s]", ylabel="a [g]", title="Body acceleration");
+Plots.vline!(p_accel, [t_steer]; color=:black, linestyle=:dash, linewidth=1, label="");
+mark!(p_accel)
+
+Plots.plot(p_aero, p_heave, p_roll_spring, p_fy, p_net, p_drift, p_mz, p_yaw, p_accel;
     layout=(3, 3), size=(1800, 1350), legendfontsize=7,
     left_margin=5Plots.PlotMeasures.mm, bottom_margin=5Plots.PlotMeasures.mm)
 
@@ -576,7 +594,7 @@ fig, tobs, scene = render(model, sol, sol.t[1];
     x=cam_offset[1], y=cam_offset[2], z=cam_offset[3],
     up=[0, 0, 1], slider=false, size=(800, 600))
 
-GLMakie.record(fig, "output/full_vehicle_straight_line.gif", timevec; framerate) do time
+GLMakie.record(fig, "output/full_vehicle_step.gif", timevec; framerate) do time
     tobs[] = time
     target = GLMakie.Vec3f(sol(time, idxs=cg)...)
     GLMakie.update_cam!(scene.scene, GLMakie.cameracontrols(scene.scene),
