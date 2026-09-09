@@ -5,6 +5,9 @@ using VehicleComponents
 
 using GLMakie, JSON3, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
 
+# ===========================================================================
+# Setup
+# ===========================================================================
 const DEG = 180 / π
 
 @named model = VehicleComponents.FullVehicleTestStraightLine()
@@ -19,17 +22,34 @@ tires = data.tires
 wheels = data.wheels
 drivetrain = data.drivetrain
 ctrl = data.control
+aero = data.aero
 front, rear = data.suspension.front, data.suspension.rear
 
 t_drive = 1.5
+t_end = 6.0
 
 corners = [car.corner_fl, car.corner_fr, car.corner_rl, car.corner_rr]
+linkages = [car.front_suspension.linkage_left, car.front_suspension.linkage_right,
+    car.rear_suspension.linkage_left, car.rear_suspension.linkage_right]
+inboards = [car.front_suspension.inboard, car.rear_suspension.inboard]
 
 # TireMF61 takes the data as describing a LEFT-side tyre and mirrors the right.
 # Which side each corner is on is structural and set in FullVehicle, so it
 # cannot be overridden here.
 @assert uppercase(String(tires.TYRESIDE)) == "LEFT" "tires.TYRESIDE is $(tires.TYRESIDE), but TireMF61 assumes a LEFT-side fit; mirror the data first"
 
+# AeroLoad places the centre of pressure at (1 - bal_f) * wheelbase aft of the
+# front axle, and nothing in the model ties that wheelbase to the suspension
+# geometry. Derive it from the same wheel centres the linkages are built from so
+# the two cannot drift apart.
+@assert front.geometry.linkages.left.wheel_center[1] == front.geometry.linkages.right.wheel_center[1] "front wheel centres disagree on x"
+@assert rear.geometry.linkages.left.wheel_center[1] == rear.geometry.linkages.right.wheel_center[1] "rear wheel centres disagree on x"
+wheelbase = front.geometry.linkages.left.wheel_center[1] -
+            rear.geometry.linkages.left.wheel_center[1]
+
+# ===========================================================================
+# Parameters
+# ===========================================================================
 tire_parameters(tire) = [
     # [DIMENSION] / [VERTICAL]
     tire.width => tires.WIDTH,
@@ -193,6 +213,50 @@ corner_parameters(corner, upright) = [
     corner.motor.gear_ratio => drivetrain.gear_ratio,
 ]
 
+linkage_parameters(linkage, geom, align) = [
+    linkage.lca_front => geom.lca_front,
+    linkage.lca_rear => geom.lca_rear,
+    linkage.lca_outer => geom.lca_outer,
+    linkage.uca_front => geom.uca_front,
+    linkage.uca_rear => geom.uca_rear,
+    linkage.uca_outer => geom.uca_outer,
+    linkage.tierod_inner => geom.tierod_inner,
+    linkage.tierod_outer => geom.tierod_outer,
+    linkage.static_camber => align.static_camber,
+    linkage.static_toe => align.static_toe,
+]
+
+inboard_parameters(inboard, geom, setup) = [
+    inboard.rocker_pivot_left => geom.rocker_pivot.left,
+    inboard.rocker_pivot_right => geom.rocker_pivot.right,
+    inboard.pushrod_inner_left => geom.pushrod_inner.left,
+    inboard.pushrod_inner_right => geom.pushrod_inner.right,
+    inboard.heave_pickup_left => geom.heave_pickup.left,
+    inboard.heave_pickup_right => geom.heave_pickup.right,
+    inboard.roll_pickup_left => geom.roll_pickup.left,
+    inboard.roll_pickup_right => geom.roll_pickup.right,
+    inboard.heave_stiffness => setup.heave.stiffness,
+    inboard.heave_damping => setup.heave.damping,
+    inboard.heave_preload => setup.heave.preload,
+    inboard.roll_stiffness => setup.roll.stiffness,
+    inboard.roll_damping => setup.roll.damping,
+    inboard.roll_preload => setup.roll.preload,
+    inboard.pushrod_adjust_left => setup.pushrod_adjust.left,
+    inboard.pushrod_adjust_right => setup.pushrod_adjust.right,
+]
+
+suspension_parameters(suspension, ax) = [
+    suspension.wheel_center_left => ax.geometry.linkages.left.wheel_center,
+    suspension.wheel_center_right => ax.geometry.linkages.right.wheel_center,
+    suspension.pushrod_outer_left => ax.geometry.linkages.left.pushrod_outer,
+    suspension.pushrod_outer_right => ax.geometry.linkages.right.pushrod_outer,
+    linkage_parameters(suspension.linkage_left,
+        ax.geometry.linkages.left, ax.setup.alignment.left)...,
+    linkage_parameters(suspension.linkage_right,
+        ax.geometry.linkages.right, ax.setup.alignment.right)...,
+    inboard_parameters(suspension.inboard, ax.geometry.inboard, ax.setup)...,
+]
+
 parameter_map = Dict([
     # torque control
     car.control.slip_target_front => ctrl.slip_target_front,
@@ -202,6 +266,13 @@ parameter_map = Dict([
     car.control.k => ctrl.slip_loop_gain,
     car.control.Ti => ctrl.slip_loop_Ti,
     car.control.Ni => ctrl.slip_loop_Ni,
+
+    # aero
+    car.aero.rho => aero.rho,
+    car.aero.CdA => aero.CdA,
+    car.aero.ClA => aero.ClA,
+    car.aero.bal_f => aero.balance_front,
+    car.aero.wheelbase => wheelbase,
 
     # body
     car.sprung_mass => body.mass,
@@ -222,134 +293,28 @@ parameter_map = Dict([
     corner_parameters(car.corner_rl, rear.geometry.linkages.left.upright)...,
     corner_parameters(car.corner_rr, rear.geometry.linkages.right.upright)...,
 
-    # front axle, shared references
-    car.front_suspension.wheel_center_left => front.geometry.linkages.left.wheel_center,
-    car.front_suspension.wheel_center_right => front.geometry.linkages.right.wheel_center,
-    car.front_suspension.pushrod_outer_left => front.geometry.linkages.left.pushrod_outer,
-    car.front_suspension.pushrod_outer_right => front.geometry.linkages.right.pushrod_outer,
-
-    # front left corner
-    car.front_suspension.linkage_left.lca_front => front.geometry.linkages.left.lca_front,
-    car.front_suspension.linkage_left.lca_rear => front.geometry.linkages.left.lca_rear,
-    car.front_suspension.linkage_left.lca_outer => front.geometry.linkages.left.lca_outer,
-    car.front_suspension.linkage_left.uca_front => front.geometry.linkages.left.uca_front,
-    car.front_suspension.linkage_left.uca_rear => front.geometry.linkages.left.uca_rear,
-    car.front_suspension.linkage_left.uca_outer => front.geometry.linkages.left.uca_outer,
-    car.front_suspension.linkage_left.tierod_inner => front.geometry.linkages.left.tierod_inner,
-    car.front_suspension.linkage_left.tierod_outer => front.geometry.linkages.left.tierod_outer,
-    car.front_suspension.linkage_left.static_camber => front.setup.alignment.left.static_camber,
-    car.front_suspension.linkage_left.static_toe => front.setup.alignment.left.static_toe,
-
-    # front right corner
-    car.front_suspension.linkage_right.lca_front => front.geometry.linkages.right.lca_front,
-    car.front_suspension.linkage_right.lca_rear => front.geometry.linkages.right.lca_rear,
-    car.front_suspension.linkage_right.lca_outer => front.geometry.linkages.right.lca_outer,
-    car.front_suspension.linkage_right.uca_front => front.geometry.linkages.right.uca_front,
-    car.front_suspension.linkage_right.uca_rear => front.geometry.linkages.right.uca_rear,
-    car.front_suspension.linkage_right.uca_outer => front.geometry.linkages.right.uca_outer,
-    car.front_suspension.linkage_right.tierod_inner => front.geometry.linkages.right.tierod_inner,
-    car.front_suspension.linkage_right.tierod_outer => front.geometry.linkages.right.tierod_outer,
-    car.front_suspension.linkage_right.static_camber => front.setup.alignment.right.static_camber,
-    car.front_suspension.linkage_right.static_toe => front.setup.alignment.right.static_toe,
-
-    # front inboard
-    car.front_suspension.inboard.rocker_pivot_left => front.geometry.inboard.rocker_pivot.left,
-    car.front_suspension.inboard.rocker_pivot_right => front.geometry.inboard.rocker_pivot.right,
-    car.front_suspension.inboard.pushrod_inner_left => front.geometry.inboard.pushrod_inner.left,
-    car.front_suspension.inboard.pushrod_inner_right => front.geometry.inboard.pushrod_inner.right,
-    car.front_suspension.inboard.heave_pickup_left => front.geometry.inboard.heave_pickup.left,
-    car.front_suspension.inboard.heave_pickup_right => front.geometry.inboard.heave_pickup.right,
-    car.front_suspension.inboard.roll_pickup_left => front.geometry.inboard.roll_pickup.left,
-    car.front_suspension.inboard.roll_pickup_right => front.geometry.inboard.roll_pickup.right,
-    car.front_suspension.inboard.heave_stiffness => front.setup.heave.stiffness,
-    car.front_suspension.inboard.heave_damping => front.setup.heave.damping,
-    car.front_suspension.inboard.heave_preload => front.setup.heave.preload,
-    car.front_suspension.inboard.roll_stiffness => front.setup.roll.stiffness,
-    car.front_suspension.inboard.roll_damping => front.setup.roll.damping,
-    car.front_suspension.inboard.roll_preload => front.setup.roll.preload,
-    car.front_suspension.inboard.pushrod_adjust_left => front.setup.pushrod_adjust.left,
-    car.front_suspension.inboard.pushrod_adjust_right => front.setup.pushrod_adjust.right,
-
-    # rear axle, shared references
-    car.rear_suspension.wheel_center_left => rear.geometry.linkages.left.wheel_center,
-    car.rear_suspension.wheel_center_right => rear.geometry.linkages.right.wheel_center,
-    car.rear_suspension.pushrod_outer_left => rear.geometry.linkages.left.pushrod_outer,
-    car.rear_suspension.pushrod_outer_right => rear.geometry.linkages.right.pushrod_outer,
-
-    # rear left corner
-    car.rear_suspension.linkage_left.lca_front => rear.geometry.linkages.left.lca_front,
-    car.rear_suspension.linkage_left.lca_rear => rear.geometry.linkages.left.lca_rear,
-    car.rear_suspension.linkage_left.lca_outer => rear.geometry.linkages.left.lca_outer,
-    car.rear_suspension.linkage_left.uca_front => rear.geometry.linkages.left.uca_front,
-    car.rear_suspension.linkage_left.uca_rear => rear.geometry.linkages.left.uca_rear,
-    car.rear_suspension.linkage_left.uca_outer => rear.geometry.linkages.left.uca_outer,
-    car.rear_suspension.linkage_left.tierod_inner => rear.geometry.linkages.left.tierod_inner,
-    car.rear_suspension.linkage_left.tierod_outer => rear.geometry.linkages.left.tierod_outer,
-    car.rear_suspension.linkage_left.static_camber => rear.setup.alignment.left.static_camber,
-    car.rear_suspension.linkage_left.static_toe => rear.setup.alignment.left.static_toe,
-
-    # rear right corner
-    car.rear_suspension.linkage_right.lca_front => rear.geometry.linkages.right.lca_front,
-    car.rear_suspension.linkage_right.lca_rear => rear.geometry.linkages.right.lca_rear,
-    car.rear_suspension.linkage_right.lca_outer => rear.geometry.linkages.right.lca_outer,
-    car.rear_suspension.linkage_right.uca_front => rear.geometry.linkages.right.uca_front,
-    car.rear_suspension.linkage_right.uca_rear => rear.geometry.linkages.right.uca_rear,
-    car.rear_suspension.linkage_right.uca_outer => rear.geometry.linkages.right.uca_outer,
-    car.rear_suspension.linkage_right.tierod_inner => rear.geometry.linkages.right.tierod_inner,
-    car.rear_suspension.linkage_right.tierod_outer => rear.geometry.linkages.right.tierod_outer,
-    car.rear_suspension.linkage_right.static_camber => rear.setup.alignment.right.static_camber,
-    car.rear_suspension.linkage_right.static_toe => rear.setup.alignment.right.static_toe,
-
-    # rear inboard
-    car.rear_suspension.inboard.rocker_pivot_left => rear.geometry.inboard.rocker_pivot.left,
-    car.rear_suspension.inboard.rocker_pivot_right => rear.geometry.inboard.rocker_pivot.right,
-    car.rear_suspension.inboard.pushrod_inner_left => rear.geometry.inboard.pushrod_inner.left,
-    car.rear_suspension.inboard.pushrod_inner_right => rear.geometry.inboard.pushrod_inner.right,
-    car.rear_suspension.inboard.heave_pickup_left => rear.geometry.inboard.heave_pickup.left,
-    car.rear_suspension.inboard.heave_pickup_right => rear.geometry.inboard.heave_pickup.right,
-    car.rear_suspension.inboard.roll_pickup_left => rear.geometry.inboard.roll_pickup.left,
-    car.rear_suspension.inboard.roll_pickup_right => rear.geometry.inboard.roll_pickup.right,
-    car.rear_suspension.inboard.heave_stiffness => rear.setup.heave.stiffness,
-    car.rear_suspension.inboard.heave_damping => rear.setup.heave.damping,
-    car.rear_suspension.inboard.heave_preload => rear.setup.heave.preload,
-    car.rear_suspension.inboard.roll_stiffness => rear.setup.roll.stiffness,
-    car.rear_suspension.inboard.roll_damping => rear.setup.roll.damping,
-    car.rear_suspension.inboard.roll_preload => rear.setup.roll.preload,
-    car.rear_suspension.inboard.pushrod_adjust_left => rear.setup.pushrod_adjust.left,
-    car.rear_suspension.inboard.pushrod_adjust_right => rear.setup.pushrod_adjust.right,
+    # suspension: geometry and setup
+    suspension_parameters(car.front_suspension, front)...,
+    suspension_parameters(car.rear_suspension, rear)...,
 
     # Setup
     ssys.drive_start_time => t_drive,
 ])
 
-prob = ODEProblem(ssys, parameter_map, (0.0, 6.0))
+# ===========================================================================
+# Solve
+# ===========================================================================
+prob = ODEProblem(ssys, parameter_map, (0.0, t_end))
 sol = solve(prob; tstops=[t_drive])
 
-# Chase camera
-cam_offset = GLMakie.Vec3f(-2.5, -0.35, 0.4)
-framerate = 25
-timevec = range(sol.t[1], sol.t[end], step=1 / framerate)
-
-cg = [car.body.frame_a.r_0[i] + body.cg[i] for i in 1:3]
-
-fig, tobs, scene = render(model, sol, sol.t[1];
-    x=cam_offset[1], y=cam_offset[2], z=cam_offset[3],
-    up=[0, 0, 1], slider=false, size=(800, 600))
-
-GLMakie.record(fig, "output/full_vehicle_straight_line.gif", timevec; framerate) do time
-    tobs[] = time
-    target = GLMakie.Vec3f(sol(time, idxs=cg)...)
-    GLMakie.update_cam!(scene.scene, GLMakie.cameracontrols(scene.scene),
-        target + cam_offset, target, GLMakie.Vec3f(0, 0, 1))
-end
-
+# ===========================================================================
+# Report
+# ===========================================================================
 corner_labels = ["FL" "FR" "RL" "RR"]
 corner_styles = [:solid :dash :solid :dash]
 corner_colors = [1 1 2 2]
 
 eps_sigma = 0.001
-
-mark!(p) = Plots.vline!(p, [t_drive]; color=:black, linestyle=:dot, linewidth=1, label="")
 
 tpre = filter(t -> t < t_drive, sol.t)
 println("\n--- before drive torque (t < $t_drive s) ---")
@@ -361,13 +326,122 @@ for (lbl, c) in zip(corner_labels, corners)
 end
 vpre = sol(tpre, idxs=ssys.longitudinal_joint.v).u
 println("  max|vehicle speed| = ", round(maximum(abs, vpre), sigdigits=4), " m/s")
-println("--- relaxation length over the whole run ---")
+
+println("\n--- relaxation length over the whole run ---")
 for (lbl, c) in zip(corner_labels, corners)
     sk = sol(sol.t, idxs=c.wheel_assembly.tire.sigma_kappa).u
-    println("  $lbl  sigma_kappa: ", round(1000*minimum(sk), sigdigits=3), " .. ",
-        round(1000*maximum(sk), sigdigits=3), " mm   (floor = ", 1000*eps_sigma, " mm)")
+    println("  $lbl  sigma_kappa: ", round(1000 * minimum(sk), sigdigits=3), " .. ",
+        round(1000 * maximum(sk), sigdigits=3), " mm   (floor = ", 1000 * eps_sigma, " mm)")
 end
-println("  final speed = ", round(sol(sol.t[end], idxs=ssys.longitudinal_joint.v), sigdigits=4), " m/s\n")
+println("  final speed = ", round(sol(sol.t[end], idxs=ssys.longitudinal_joint.v), sigdigits=4), " m/s")
+
+println("\n--- aero ---")
+println("  wheelbase = ", round(1000 * wheelbase, digits=1), " mm, balance = ",
+    round(100 * aero.balance_front, digits=1), "% front")
+println("  x_cop     = ", round(1000 * (1 - aero.balance_front) * wheelbase, digits=1),
+    " mm aft of the front axle, z = 0")
+let tend = sol.t[end]
+    println("  at t = ", round(tend, digits=3), " s, v = ",
+        round(sol(tend, idxs=car.aero.v), digits=2), " m/s")
+    println("    drag      = ", round(sol(tend, idxs=car.aero.drag), digits=1), " N")
+    println("    downforce = ", round(sol(tend, idxs=car.aero.downforce), digits=1), " N  (",
+        round(sol(tend, idxs=car.aero.downforce_front), digits=1), " front / ",
+        round(sol(tend, idxs=car.aero.downforce_rear), digits=1), " rear)")
+end
+
+# The rocker has a hard kinematic ceiling: the heave arm swings on a circle
+# about the pivot, and the spring stops shortening once that arm goes normal to
+# the spring axis. There the motion ratio is zero and the loop closure is
+# singular, so the margin to it is what matters, not the deflection alone.
+heave_dead_point(ax) =
+    let piv = ax.geometry.inboard.rocker_pivot.left, hp = ax.geometry.inboard.heave_pickup.left
+
+        2 * (hp[2] - (piv[2] - hypot(hp[2] - piv[2], hp[3] - piv[3])))
+    end
+
+println("\n--- heave travel ---")
+for (lbl, ib, ax) in (("front", car.front_suspension.inboard, front),
+    ("rear", car.rear_suspension.inboard, rear))
+    defl = sol(sol.t, idxs=ib.heave_deflection).u
+    dp = heave_dead_point(ax)
+    peak = maximum(defl)
+    println("  $lbl  peak compression = ", round(1000 * peak, digits=2), " mm",
+        "   (dead point ", round(1000 * dp, digits=1), " mm)")
+    println("         ", round(100 * peak / dp, digits=1), "% of the way to the dead point",
+        peak / dp > 0.8 ? "   *** TOO CLOSE ***" : "")
+end
+
+# Lateral balance. TireMF61 mirrors the fit per corner (`is_left` sets `side`,
+# which flips gamma_star and V_y_mf going in and undoes the flip on Fy_c and
+# Mz_c coming out), so ply steer, conicity and camber thrust should cancel left
+# to right. Two independent measurements of whether they do: lateral_joint is
+# free, so any net side force integrates into visible drift; yaw is locked, so
+# the net yaw moment appears as the torque the lock holds.
+#
+# Fy_c and Mz_c, not Fy and Mz: the latter are in each tyre fit's own
+# convention, which reads mirrored between left and right. Only the
+# contact-frame values are in a common frame and can meaningfully be summed.
+fy = [sol(sol.t, idxs=c.wheel_assembly.tire.Fy_c).u for c in corners]
+mz = [sol(sol.t, idxs=c.wheel_assembly.tire.Mz_c).u for c in corners]
+fy_net = sum(fy)
+mz_net = sum(mz)
+y_drift = sol(sol.t, idxs=ssys.lateral_joint.s).u
+yaw_hold = sol(sol.t, idxs=ssys.yaw_joint.tau).u
+vehicle_mass = body.mass +
+               front.geometry.linkages.left.upright.mass + front.geometry.linkages.right.upright.mass +
+               rear.geometry.linkages.left.upright.mass + rear.geometry.linkages.right.upright.mass +
+               4 * (wheels.rim_mass + tires.MASS)
+
+println("\n--- lateral balance (mirrored per corner, so these should cancel) ---")
+for (lbl, f) in zip(corner_labels, fy)
+    println("  $lbl  Fy final = ", lpad(round(f[end], digits=2), 9), " N")
+end
+# Judge the residual against the per-corner magnitude, not an absolute newton.
+# A fixed 1 N threshold calls a 1.5% residual on 84 N corners a failure.
+fy_corner = maximum(abs, [f[end] for f in fy])
+println("  net Fy final       = ", round(fy_net[end], digits=2), " N  (",
+    round(100 * abs(fy_net[end]) / max(fy_corner, eps()), digits=2), "% of the per-corner Fy, ",
+    abs(fy_net[end]) < 0.02 * fy_corner ? "cancels" : "DOES NOT CANCEL", ")")
+println("  net Mz final       = ", round(mz_net[end], digits=3), " N.m")
+println("  yaw lock reaction  = ", round(yaw_hold[end], digits=3), " N.m")
+println("  lateral drift      = ", round(1000 * y_drift[end], digits=1), " mm  (peak ",
+    round(1000 * maximum(abs, y_drift), digits=1), " mm)")
+println("  vehicle mass       = ", round(vehicle_mass, digits=1), " kg")
+println("  lateral accel      = ", round(fy_net[end] / vehicle_mass, digits=3), " m/s^2")
+
+travel(t) = sol(t, idxs=ssys.longitudinal_joint.s)
+s_launch = travel(t_drive)
+
+function time_to(distance)
+    f(t) = travel(t) - s_launch - distance
+    f(sol.t[end]) < 0 && return NaN
+    lo, hi = t_drive, sol.t[end]
+    for _ in 1:200
+        mid = (lo + hi) / 2
+        f(mid) < 0 ? (lo = mid) : (hi = mid)
+    end
+    (lo + hi) / 2
+end
+
+println("\n--- split times from launch ---")
+for d in (25.0, 50.0, 75.0)
+    t = time_to(d)
+    if isnan(t)
+        println("  ", lpad(Int(d), 2), " m: not reached in ",
+            round(sol.t[end] - t_drive, digits=2), " s")
+    else
+        v = sol(t, idxs=ssys.longitudinal_joint.v)
+        println("  ", lpad(Int(d), 2), " m: ", round(t - t_drive, digits=3), " s   passing at ",
+            round(v, digits=2), " m/s (", round(v * 3.6, digits=1), " km/h)")
+    end
+end
+println("  total travel = ", round(travel(sol.t[end]) - s_launch, digits=1), " m in ",
+    round(sol.t[end] - t_drive, digits=2), " s\n")
+
+# ===========================================================================
+# Plots
+# ===========================================================================
+mark!(p) = Plots.vline!(p, [t_drive]; color=:black, linestyle=:dot, linewidth=1, label="")
 
 p_fx = Plots.plot(sol; idxs=[c.wheel_assembly.tire.Fx for c in corners],
     labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
@@ -386,15 +460,11 @@ Plots.plot!(p_slip, sol;
     idxs=[corners[1].wheel_assembly.tire.kappa_prime, corners[3].wheel_assembly.tire.kappa_prime],
     labels=["FL kappa' (7.26)" "RL kappa' (7.26)"], color=[1 2], linestyle=:dash, linewidth=2)
 
-p_sig = Plots.plot(sol; idxs=[1000*c.wheel_assembly.tire.sigma_kappa for c in corners],
+p_sig = Plots.plot(sol; idxs=[1000 * c.wheel_assembly.tire.sigma_kappa for c in corners],
     labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
     xlabel="t [s]", ylabel="sigma_kappa [mm]", title="Relaxation length (7.8)")
-Plots.hline!(p_sig, [1000*eps_sigma]; color=:red, linestyle=:dot, label="eps_sigma floor")
+Plots.hline!(p_sig, [1000 * eps_sigma]; color=:red, linestyle=:dot, label="eps_sigma floor")
 
-# (7.25) gates both carcass deflections on one condition: the equivalent slip
-# angle of (4.E78) leaving +/- alpha_sl = 3*Dy/CFalpha, AND |Vx| below Vlow.
-# Leaving the band is necessary but not sufficient, so the speed gate is drawn
-# alongside: the limiter can only bite where both hold.
 p_lim = Plots.plot(sol;
     idxs=[corners[3].wheel_assembly.tire.alpha_r_eq,
         corners[3].wheel_assembly.tire.alpha_sl,
@@ -424,9 +494,6 @@ p_tau = Plots.plot(sol; idxs=[c.motor.tau for c in corners],
     labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
     xlabel="t [s]", ylabel="tau [N.m]", title="Motor torque")
 
-linkages = [car.front_suspension.linkage_left, car.front_suspension.linkage_right,
-    car.rear_suspension.linkage_left, car.rear_suspension.linkage_right]
-
 p_toe = Plots.plot(sol; idxs=[l.toe * DEG for l in linkages],
     labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
     xlabel="t [s]", ylabel="toe [deg]", title="Toe — positive is toe-in");
@@ -448,41 +515,23 @@ Plots.plot(p_fx, p_v, p_slip, p_sig, p_lim, p_lam, p_svx, p_fz, p_tau,
     layout=(4, 3), size=(1800, 1450), legendfontsize=6,
     left_margin=5Plots.PlotMeasures.mm, bottom_margin=5Plots.PlotMeasures.mm)
 
-# ---------------------------------------------------------------------------
-# Lateral balance. All four tyres carry one unmirrored coefficient set, so ply
-# steer, conicity and camber thrust push the same way on both sides rather than
-# cancelling. Two independent measurements of that:
-#   lateral_joint is free, so any net side force integrates into visible drift;
-#   yaw is locked, so the net yaw moment appears as the torque the lock holds.
-# If the sides genuinely cancelled, net Fy, the drift and the lock torque would
-# all sit at zero.
-# ---------------------------------------------------------------------------
-# Fy_c and Mz_c, not Fy and Mz: the latter are in each tyre fit's own convention,
-# which now reads mirrored between left and right. Only the contact-frame values
-# are in a common frame and can meaningfully be summed.
-fy = [sol(sol.t, idxs=c.wheel_assembly.tire.Fy_c).u for c in corners]
-mz = [sol(sol.t, idxs=c.wheel_assembly.tire.Mz_c).u for c in corners]
-fy_net = sum(fy)
-mz_net = sum(mz)
-y_drift = sol(sol.t, idxs=ssys.lateral_joint.s).u
-yaw_hold = sol(sol.t, idxs=ssys.yaw_joint.tau).u
+p_aero = Plots.plot(sol; idxs=[car.aero.drag, car.aero.downforce,
+        car.aero.downforce_front, car.aero.downforce_rear],
+    labels=["drag" "downforce" "DF front" "DF rear"], linewidth=2,
+    xlabel="t [s]", ylabel="force [N]", title="Aero");
+mark!(p_aero)
 
-println("\n--- lateral balance (one unmirrored coefficient set on all four corners) ---")
-for (lbl, f) in zip(corner_labels, fy)
-    println("  $lbl  Fy final = ", lpad(round(f[end], digits=2), 9), " N")
-end
-println("  net Fy final       = ", round(fy_net[end], digits=2), " N  ",
-    abs(fy_net[end]) < 1 ? "(cancels)" : "(DOES NOT CANCEL)")
-println("  net Mz final       = ", round(mz_net[end], digits=3), " N.m")
-println("  yaw lock reaction  = ", round(yaw_hold[end], digits=3), " N.m")
-println("  lateral drift      = ", round(1000 * y_drift[end], digits=1), " mm  (peak ",
-    round(1000 * maximum(abs, y_drift), digits=1), " mm)")
-vehicle_mass = body.mass +
-               front.geometry.linkages.left.upright.mass + front.geometry.linkages.right.upright.mass +
-               rear.geometry.linkages.left.upright.mass + rear.geometry.linkages.right.upright.mass +
-               4 * (wheels.rim_mass + tires.MASS)
-println("  vehicle mass       = ", round(vehicle_mass, digits=1), " kg")
-println("  lateral accel      = ", round(fy_net[end] / vehicle_mass, digits=3), " m/s^2")
+p_heave = Plots.plot(sol; idxs=[1000 * ib.heave_deflection for ib in inboards],
+    labels=["front" "rear"], linewidth=2,
+    xlabel="t [s]", ylabel="compression [mm]", title="Heave spring compression");
+Plots.hline!(p_heave, [1000 * heave_dead_point(front), 1000 * heave_dead_point(rear)];
+    color=[:red :red], linestyle=:dot, labels=["front dead point" "rear dead point"]);
+mark!(p_heave)
+
+p_roll_spring = Plots.plot(sol; idxs=[1000 * ib.roll_deflection for ib in inboards],
+    labels=["front" "rear"], linewidth=2,
+    xlabel="t [s]", ylabel="deflection [mm]", title="Roll spring deflection");
+mark!(p_roll_spring)
 
 p_fy = Plots.plot(sol; idxs=[c.wheel_assembly.tire.Fy_c for c in corners],
     labels=corner_labels, linestyle=corner_styles, color=corner_colors, linewidth=2,
@@ -508,34 +557,26 @@ p_yaw = Plots.plot(sol.t, yaw_hold; label="yaw lock reaction", color=:purple, li
     xlabel="t [s]", ylabel="tau [N.m]", title="Torque the yaw lock absorbs (0 if balanced)");
 mark!(p_yaw)
 
-Plots.plot(p_fy, p_net, p_drift, p_mz, p_yaw; layout=(2, 3), size=(1800, 900), legendfontsize=7,
+Plots.plot(p_aero, p_heave, p_roll_spring, p_fy, p_net, p_drift, p_mz, p_yaw;
+    layout=(3, 3), size=(1800, 1350), legendfontsize=7,
     left_margin=5Plots.PlotMeasures.mm, bottom_margin=5Plots.PlotMeasures.mm)
 
-travel(t) = sol(t, idxs=ssys.longitudinal_joint.s)
-s_launch = travel(t_drive)
+# ===========================================================================
+# Animation
+# ===========================================================================
+cam_offset = GLMakie.Vec3f(-2.5, -0.35, 0.4)
+framerate = 25
+timevec = range(sol.t[1], sol.t[end], step=1 / framerate)
 
-function time_to(distance)
-    f(t) = travel(t) - s_launch - distance
-    f(sol.t[end]) < 0 && return NaN
-    lo, hi = t_drive, sol.t[end]
-    for _ in 1:200
-        mid = (lo + hi) / 2
-        f(mid) < 0 ? (lo = mid) : (hi = mid)
-    end
-    (lo + hi) / 2
-end
+cg = [car.body.frame_a.r_0[i] + body.cg[i] for i in 1:3]
 
-println("\n--- split times from launch ---")
-for d in (25.0, 50.0, 75.0)
-    t = time_to(d)
-    if isnan(t)
-        println("  ", lpad(Int(d), 2), " m: not reached in ",
-            round(sol.t[end] - t_drive, digits=2), " s")
-    else
-        v = sol(t, idxs=ssys.longitudinal_joint.v)
-        println("  ", lpad(Int(d), 2), " m: ", round(t - t_drive, digits=3), " s   passing at ",
-            round(v, digits=2), " m/s (", round(v * 3.6, digits=1), " km/h)")
-    end
+fig, tobs, scene = render(model, sol, sol.t[1];
+    x=cam_offset[1], y=cam_offset[2], z=cam_offset[3],
+    up=[0, 0, 1], slider=false, size=(800, 600))
+
+GLMakie.record(fig, "output/full_vehicle_straight_line.gif", timevec; framerate) do time
+    tobs[] = time
+    target = GLMakie.Vec3f(sol(time, idxs=cg)...)
+    GLMakie.update_cam!(scene.scene, GLMakie.cameracontrols(scene.scene),
+        target + cam_offset, target, GLMakie.Vec3f(0, 0, 1))
 end
-println("  total travel = ", round(travel(sol.t[end]) - s_launch, digits=1), " m in ",
-    round(sol.t[end] - t_drive, digits=2), " s")

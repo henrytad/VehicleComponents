@@ -18,6 +18,7 @@ end
 include("test_internals.jl")
 
 @testset "`VehicleComponents`" begin
+include("AeroLoad_test.jl")
 include("CornerAssembly_test.jl")
 include("FullVehicleTestStatic_test.jl")
 include("FullVehicleTestStraightLine_test.jl")

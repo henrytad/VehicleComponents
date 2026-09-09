@@ -203,6 +203,7 @@ component.
 end
 
 
+include("AeroLoad_definition.jl")
 include("CornerAssembly_definition.jl")
 include("FullVehicleTestStatic_definition.jl")
 include("FullVehicleTestStraightLine_definition.jl")

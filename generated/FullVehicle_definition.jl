@@ -110,6 +110,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   # Subcomponent control of type VehicleComponents.TorqueControlLaunch
   control_overrides = __pop_subcomponent_overrides!(__overrides, "control")
   push!(__systems, @named control = VehicleComponents.TorqueControlLaunch(; control_overrides...))
+  # Subcomponent aero of type VehicleComponents.AeroLoad
+  aero_overrides = __pop_subcomponent_overrides!(__overrides, "aero")
+  push!(__systems, @named aero = VehicleComponents.AeroLoad(; aero_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
@@ -138,6 +141,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(control.tau_rl, corner_rl.tau_cmd))
   push!(__eqs, connect(control.tau_rr, corner_rr.tau_cmd))
   push!(__eqs, connect(throttle, control.throttle))
+  push!(__eqs, connect(rig, aero.chassis))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
