@@ -21,6 +21,7 @@ linkage, align = geom.linkages.left, setup.alignment.left
 parameter_map = Dict([
     # Test rig
     ssys.wheel_center => linkage.wheel_center,
+    ssys.tierod_inner => linkage.tierod_inner,
 
     # Geometry
     ssys.linkage.lca_front => linkage.lca_front,
@@ -29,7 +30,6 @@ parameter_map = Dict([
     ssys.linkage.uca_front => linkage.uca_front,
     ssys.linkage.uca_rear => linkage.uca_rear,
     ssys.linkage.uca_outer => linkage.uca_outer,
-    ssys.linkage.tierod_inner => linkage.tierod_inner,
     ssys.linkage.tierod_outer => linkage.tierod_outer,
     ssys.linkage.pushrod_outer => linkage.pushrod_outer,
 
