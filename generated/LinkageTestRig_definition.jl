@@ -7,17 +7,18 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   LinkageTestRig(; name, wheel_center, stroke, freq)
+   LinkageTestRig(; name, wheel_center, tierod_inner, stroke, freq)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
 | `wheel_center`         |                          | m  |   [0.000, 0.600, 0.3135] |
+| `tierod_inner`         |                          | m  |   [0.080, 0.220, 0.2335] |
 | `stroke`         |                          | m  |   0.0254 |
 | `freq`         |                          | Hz  |   0.5 |
 """
-@component function LinkageTestRig(; name = nothing, wheel_center=[Float64(0.0), 0.6, 0.3135], stroke=0.0254, freq=0.5, kwargs...)
+@component function LinkageTestRig(; name = nothing, wheel_center=[Float64(0.0), 0.6, 0.3135], tierod_inner=[0.08, 0.22, 0.2335], stroke=0.0254, freq=0.5, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -53,6 +54,9 @@ import Moshi as __Ext__Moshi
   __local__wheel_center = wheel_center
   append!(__params, @parameters (wheel_center[1:3]::Real))
   __initial_conditions[wheel_center] = __local__wheel_center
+  __local__tierod_inner = tierod_inner
+  append!(__params, @parameters (tierod_inner[1:3]::Real))
+  __initial_conditions[tierod_inner] = __local__tierod_inner
   __local__stroke = stroke
   append!(__params, @parameters (stroke::Real))
   __initial_conditions[stroke] = __local__stroke
@@ -89,9 +93,12 @@ import Moshi as __Ext__Moshi
   # Subcomponent wheel_position of type TranslationalComponents.Sources.Position
   wheel_position_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_position")
   push!(__systems, @named wheel_position = TranslationalComponents.Sources.Position(; wheel_position_overrides...))
+  # Subcomponent mount_tierod of type MultibodyComponents.Fixed
+  mount_tierod_overrides = __pop_subcomponent_overrides!(__overrides, "mount_tierod")
+  push!(__systems, @named mount_tierod = MultibodyComponents.Fixed(; r=tierod_inner, render=false, mount_tierod_overrides...))
   # Subcomponent linkage of type VehicleComponents.Linkage
   linkage_overrides = __pop_subcomponent_overrides!(__overrides, "linkage")
-  push!(__systems, @named linkage = VehicleComponents.Linkage(; lca_front=[0.1, 0.195, 0.2085], lca_outer=[0.005, 0.56, 0.2135], lca_rear=[-0.1, 0.205, 0.1985], uca_front=[0.08, 0.245, 0.3885], uca_outer=[-0.01, 0.53, 0.4135], uca_rear=[-0.08, 0.255, 0.3785], tierod_inner=[0.08, 0.22, 0.2335], tierod_outer=[0.075, 0.55, 0.2435], pushrod_outer=[Float64(0.0), 0.48, 0.4235], wheel_center=wheel_center, static_camber=Float64(0.0), static_toe=Float64(0.0), linkage_overrides...))
+  push!(__systems, @named linkage = VehicleComponents.Linkage(; lca_front=[0.1, 0.195, 0.2085], lca_outer=[0.005, 0.56, 0.2135], lca_rear=[-0.1, 0.205, 0.1985], uca_front=[0.08, 0.245, 0.3885], uca_outer=[-0.01, 0.53, 0.4135], uca_rear=[-0.08, 0.255, 0.3785], tierod_inner=tierod_inner, tierod_outer=[0.075, 0.55, 0.2435], pushrod_outer=[Float64(0.0), 0.48, 0.4235], wheel_center=wheel_center, static_camber=Float64(0.0), static_toe=Float64(0.0), linkage_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
@@ -113,6 +120,7 @@ import Moshi as __Ext__Moshi
   push!(__eqs, connect(wheel_position.flange, prismatic.axis))
   push!(__eqs, connect(linkage.chassis, world.frame_b))
   push!(__eqs, connect(linkage.wheel, actuation_rod.frame_b))
+  push!(__eqs, connect(mount_tierod.frame_b, linkage.steering_rack))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

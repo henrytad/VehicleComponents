@@ -22,8 +22,16 @@ import Moshi as __Ext__Moshi
 ## Connectors
 
  * `throttle` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `steer` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `rig` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
+
+## Variables
+
+| Name         | Description                         | Units  | 
+| ------------ | ----------------------------------- | ------ |
+| `w_cg`         |                          | rad  |
+| `a_cg`         |                          | m/s2  |
 """
 @component function FullVehicle(; name = nothing, sprung_mass=nothing, sprung_I_11=nothing, sprung_I_22=nothing, sprung_I_33=nothing, sprung_cg=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
@@ -76,10 +84,19 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Final Path Parameters
   append!(__vars, @variables (throttle(t)::Real), [input = true])
+  append!(__vars, @variables (steer(t)::Real), [input = true])
 
   ### Variables (declarations)
+  append!(__vars, @variables (w_cg(t)[1:3]::Real))
+  append!(__vars, @variables (a_cg(t)[1:3]::Real))
 
   ### Variables (assignments)
+  __ovr_w_cg = pop!(__overrides, "w_cg", nothing); isnothing(__ovr_w_cg) || push!(__eqs, w_cg ~ __ovr_w_cg)
+  __ovr_w_cg__initial = pop!(__overrides, "w_cg__initial", nothing); isnothing(__ovr_w_cg__initial) || (__initial_conditions[w_cg] = __ovr_w_cg__initial)
+  __ovr_w_cg__guess = pop!(__overrides, "w_cg__guess", nothing)
+  __ovr_a_cg = pop!(__overrides, "a_cg", nothing); isnothing(__ovr_a_cg) || push!(__eqs, a_cg ~ __ovr_a_cg)
+  __ovr_a_cg__initial = pop!(__overrides, "a_cg__initial", nothing); isnothing(__ovr_a_cg__initial) || (__initial_conditions[a_cg] = __ovr_a_cg__initial)
+  __ovr_a_cg__guess = pop!(__overrides, "a_cg__guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -113,11 +130,16 @@ connectors that can be connected together ([`Frame3D`](@ref))
   # Subcomponent aero of type VehicleComponents.AeroLoad
   aero_overrides = __pop_subcomponent_overrides!(__overrides, "aero")
   push!(__systems, @named aero = VehicleComponents.AeroLoad(; aero_overrides...))
+  # Subcomponent body_angles of type MultibodyComponents.AbsoluteAngles
+  body_angles_overrides = __pop_subcomponent_overrides!(__overrides, "body_angles")
+  push!(__systems, @named body_angles = MultibodyComponents.AbsoluteAngles(; sequence=[3, 2, 1], body_angles_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
 
   ### Guesses
+  isnothing(__ovr_w_cg__guess) || (__guesses[w_cg] = __ovr_w_cg__guess)
+  isnothing(__ovr_a_cg__guess) || (__guesses[a_cg] = __ovr_a_cg__guess)
 
   ### Initialization Equations
 
@@ -125,6 +147,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
+  push!(__eqs, w_cg ~ body_angles.angles)
+  push!(__eqs, a_cg ~ body.frame_a.f / sprung_mass)
+  push!(__eqs, rear_suspension.steer ~ 0)
   push!(__eqs, connect(body.frame_a, rig))
   push!(__eqs, connect(front_suspension.chassis, body.frame_a))
   push!(__eqs, connect(rear_suspension.chassis, body.frame_a))
@@ -142,6 +167,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(control.tau_rr, corner_rr.tau_cmd))
   push!(__eqs, connect(throttle, control.throttle))
   push!(__eqs, connect(rig, aero.chassis))
+  push!(__eqs, connect(steer, front_suspension.steer))
+  push!(__eqs, connect(rig, body_angles.frame_a))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

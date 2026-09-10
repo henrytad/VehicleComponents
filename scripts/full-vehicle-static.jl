@@ -225,6 +225,8 @@ parameter_map = Dict([
     car.front_suspension.wheel_center_right => front.geometry.linkages.right.wheel_center,
     car.front_suspension.pushrod_outer_left => front.geometry.linkages.left.pushrod_outer,
     car.front_suspension.pushrod_outer_right => front.geometry.linkages.right.pushrod_outer,
+    car.front_suspension.tierod_inner_left => front.geometry.linkages.left.tierod_inner,
+    car.front_suspension.tierod_inner_right => front.geometry.linkages.right.tierod_inner,
 
     # front left corner
     car.front_suspension.linkage_left.lca_front => front.geometry.linkages.left.lca_front,
@@ -273,6 +275,8 @@ parameter_map = Dict([
     car.rear_suspension.wheel_center_right => rear.geometry.linkages.right.wheel_center,
     car.rear_suspension.pushrod_outer_left => rear.geometry.linkages.left.pushrod_outer,
     car.rear_suspension.pushrod_outer_right => rear.geometry.linkages.right.pushrod_outer,
+    car.rear_suspension.tierod_inner_left => rear.geometry.linkages.left.tierod_inner,
+    car.rear_suspension.tierod_inner_right => rear.geometry.linkages.right.tierod_inner,
 
     # rear left corner
     car.rear_suspension.linkage_left.lca_front => rear.geometry.linkages.left.lca_front,

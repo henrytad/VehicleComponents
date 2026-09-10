@@ -11,7 +11,8 @@ test component LinkageTestRig
   prismatic = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^prismatic}
   actuation_rod = MultibodyComponents.SphericalSpherical(r_0 = [0, 0, actuation_rod_length], render = false) {^actuation_rod}
   wheel_position = TranslationalComponents.Sources.Position() {^wheel_position}
-  
+  mount_tierod = MultibodyComponents.Fixed(r = tierod_inner, render = false) {^mount_tierod}
+
   # Linkage
   linkage = VehicleComponents.Linkage(
     lca_front = [0.100, 0.195, 0.2085],
@@ -20,7 +21,7 @@ test component LinkageTestRig
     uca_front = [0.080, 0.245, 0.3885],
     uca_outer = [-0.010, 0.530, 0.4135],
     uca_rear = [-0.080, 0.255, 0.3785],
-    tierod_inner = [0.080, 0.220, 0.2335],
+    tierod_inner = tierod_inner,
     tierod_outer = [0.075, 0.550, 0.2435],
     pushrod_outer = [0.000, 0.480, 0.4235],
     wheel_center = wheel_center,
@@ -28,8 +29,8 @@ test component LinkageTestRig
     static_toe = 0.0
   ) {^linkage}
 
-  # Wheel centre
   parameter wheel_center::Position[3] = [0.000, 0.600, 0.3135]
+  parameter tierod_inner::Position[3] = [0.080, 0.220, 0.2335]
  
   # Rig hardware
   final parameter actuation_rod_length::Length = 0.1
@@ -52,6 +53,7 @@ relations
   connect(wheel_position.flange, prismatic.axis) {^id10}
   connect(linkage.chassis, world.frame_b) {^id11}
   connect(linkage.wheel, actuation_rod.frame_b) {^id12}
+  connect(mount_tierod.frame_b, linkage.steering_rack) {^id13}
 
 metadata {
   "Dyad": {
@@ -130,6 +132,10 @@ metadata {
         "tags": []
       }
     },
+    "mount_tierod": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 400, "y2": 500}}}
+    },
+    "id13": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
     "linkage": {
       "Dyad": {
         "placement": {

@@ -15,3 +15,8 @@
 !/Manifest.toml
 !/Project.toml
 !/README.md
+
+# README media only. Vehicle and tyre data under assets/ stays ignored.
+!/assets/
+/assets/*
+!/assets/media/

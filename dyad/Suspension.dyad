@@ -9,6 +9,7 @@ component Suspension
   chassis = Dyad.Frame3D() {^chassis}
   wheel_left = Dyad.Frame3D() {^wheel_left}
   wheel_right = Dyad.Frame3D() {^wheel_right}
+  steer = RealInput(units = "rad") {^steer}
 
   # Subsystems
   inboard = VehicleComponents.Inboard(
@@ -23,12 +24,18 @@ component Suspension
     wheel_center = wheel_center_right,
     pushrod_outer = pushrod_outer_right
   ) {^linkage_right}
-  
+  steering_rack = VehicleComponents.SteeringRack(
+    tierod_inner_left = tierod_inner_left,
+    tierod_inner_right = tierod_inner_right
+  ) {^steering_rack}
+
   # Shared references
   parameter wheel_center_left::Position[3]
   parameter wheel_center_right::Position[3]
   parameter pushrod_outer_left::Position[3]
   parameter pushrod_outer_right::Position[3]
+  parameter tierod_inner_left::Position[3]
+  parameter tierod_inner_right::Position[3]
 
   # Outputs
   variable wc_heave::Dyad.Length
@@ -41,17 +48,23 @@ relations
   wc_roll = (linkage_left.wc_height - linkage_right.wc_height) / 2
 
   # Chassis
-  connect(linkage_left.chassis, chassis) {^id8}
-  connect(linkage_right.chassis, chassis) {^id9}
-  connect(inboard.chassis, chassis) {^id13}
- 
+  connect(linkage_left.chassis, chassis) {^id9}
+  connect(linkage_right.chassis, chassis) {^id10}
+  connect(inboard.chassis, chassis) {^id11}
+
   # Linkages and inboard
-  connect(linkage_left.pushrod, inboard.linkage_left) {^id10}
-  connect(linkage_right.pushrod, inboard.linkage_right) {^id12}
- 
+  connect(linkage_left.pushrod, inboard.linkage_left) {^id12}
+  connect(linkage_right.pushrod, inboard.linkage_right) {^id13}
+
   # Wheels
-  connect(linkage_left.wheel, wheel_left) {^id11}
-  connect(linkage_right.wheel, wheel_right) {^id7}
+  connect(linkage_left.wheel, wheel_left) {^id14}
+  connect(linkage_right.wheel, wheel_right) {^id15}
+
+  # Steering
+  connect(chassis, steering_rack.chassis) {^id16}
+  connect(steering_rack.tie_rod_left, linkage_left.steering_rack) {^id17}
+  connect(steering_rack.tie_rod_right, linkage_right.steering_rack) {^id18}
+  connect(steer, steering_rack.steer) {^id19}
 
 metadata {
   "Dyad": {
@@ -97,6 +110,7 @@ metadata {
         "tags": []
       }
     },
+    "steer": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 30, "y2": 130}}}},
     "inboard": {
       "Dyad": {
         "placement": {
@@ -111,23 +125,68 @@ metadata {
     "linkage_right": {
       "Dyad": {"placement": {"diagram": {"x1": 670, "y1": 450, "x2": 770, "y2": 550}}}
     },
-    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id8": {
+    "steering_rack": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 650, "y2": 750}}}
+    },
+    "id9": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 390, "y": 500}, {"x": 390, "y": 0}], "E": 2}],
         "path": {}
       }
     },
-    "id9": {
+    "id10": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 610, "y": 500}, {"x": 610, "y": 0}], "E": 2}],
         "path": {}
       }
     },
-    "id10": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 280, "y": 320}], "E": 2}], "path": {}}},
-    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id12": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 720, "y": 320}], "E": 2}], "path": {}}},
-    "id13": {"Dyad": {"renderStyle": "standard", "edges": [{"S": 1, "E": 2, "M": []}]}}
+    "id11": {"Dyad": {"renderStyle": "standard", "edges": [{"S": 1, "E": 2, "M": []}]}},
+    "id12": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 280, "y": 320}], "E": 2}], "path": {}}},
+    "id13": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 720, "y": 320}], "E": 2}], "path": {}}},
+    "id14": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id15": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id16": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [{"x": 610, "y": 0}, {"x": 610, "y": 500}, {"x": 500, "y": 500}],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id17": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [{"x": 410, "y": 700}, {"x": 410, "y": 620}, {"x": 280, "y": 620}],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id18": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [{"x": 590, "y": 700}, {"x": 590, "y": 620}, {"x": 720, "y": 620}],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id19": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 170, "y": 80}, {"x": 170, "y": 661}], "E": 2}],
+        "path": {}
+      }
+    }
   }
 }
 end

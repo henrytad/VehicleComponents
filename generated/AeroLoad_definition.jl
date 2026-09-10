@@ -34,6 +34,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `q`         |                          | Pa  |
 | `drag`         |                          | N  |
 | `downforce`         |                          | N  |
+| `downforce_front`         |                          | N  |
+| `downforce_rear`         |                          | N  |
 | `f_cop`         |                          | N  |
 """
 @component function AeroLoad(; name = nothing, rho=1.19, CdA=nothing, ClA=nothing, bal_f=nothing, wheelbase=nothing, v_min=0.5, kwargs...)
@@ -119,6 +121,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (q(t)::Real))
   append!(__vars, @variables (drag(t)::Real))
   append!(__vars, @variables (downforce(t)::Real))
+  append!(__vars, @variables (downforce_front(t)::Real))
+  append!(__vars, @variables (downforce_rear(t)::Real))
   append!(__vars, @variables (f_cop(t)[1:3]::Real))
 
   ### Variables (assignments)
@@ -137,6 +141,12 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_downforce = pop!(__overrides, "downforce", nothing); isnothing(__ovr_downforce) || push!(__eqs, downforce ~ __ovr_downforce)
   __ovr_downforce__initial = pop!(__overrides, "downforce__initial", nothing); isnothing(__ovr_downforce__initial) || (__initial_conditions[downforce] = __ovr_downforce__initial)
   __ovr_downforce__guess = pop!(__overrides, "downforce__guess", nothing)
+  __ovr_downforce_front = pop!(__overrides, "downforce_front", nothing); isnothing(__ovr_downforce_front) || push!(__eqs, downforce_front ~ __ovr_downforce_front)
+  __ovr_downforce_front__initial = pop!(__overrides, "downforce_front__initial", nothing); isnothing(__ovr_downforce_front__initial) || (__initial_conditions[downforce_front] = __ovr_downforce_front__initial)
+  __ovr_downforce_front__guess = pop!(__overrides, "downforce_front__guess", nothing)
+  __ovr_downforce_rear = pop!(__overrides, "downforce_rear", nothing); isnothing(__ovr_downforce_rear) || push!(__eqs, downforce_rear ~ __ovr_downforce_rear)
+  __ovr_downforce_rear__initial = pop!(__overrides, "downforce_rear__initial", nothing); isnothing(__ovr_downforce_rear__initial) || (__initial_conditions[downforce_rear] = __ovr_downforce_rear__initial)
+  __ovr_downforce_rear__guess = pop!(__overrides, "downforce_rear__guess", nothing)
   __ovr_f_cop = pop!(__overrides, "f_cop", nothing); isnothing(__ovr_f_cop) || push!(__eqs, f_cop ~ __ovr_f_cop)
   __ovr_f_cop__initial = pop!(__overrides, "f_cop__initial", nothing); isnothing(__ovr_f_cop__initial) || (__initial_conditions[f_cop] = __ovr_f_cop__initial)
   __ovr_f_cop__guess = pop!(__overrides, "f_cop__guess", nothing)
@@ -156,6 +166,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_q__guess) || (__guesses[q] = __ovr_q__guess)
   isnothing(__ovr_drag__guess) || (__guesses[drag] = __ovr_drag__guess)
   isnothing(__ovr_downforce__guess) || (__guesses[downforce] = __ovr_downforce__guess)
+  isnothing(__ovr_downforce_front__guess) || (__guesses[downforce_front] = __ovr_downforce_front__guess)
+  isnothing(__ovr_downforce_rear__guess) || (__guesses[downforce_rear] = __ovr_downforce_rear__guess)
   isnothing(__ovr_f_cop__guess) || (__guesses[f_cop] = __ovr_f_cop__guess)
 
   ### Initialization Equations
@@ -169,9 +181,11 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, q ~ 0.5 * rho * v ^ 2)
   push!(__eqs, drag ~ CdA * q * tanh(v / v_min))
   push!(__eqs, downforce ~ ClA * q)
+  push!(__eqs, downforce_front ~ bal_f * downforce)
+  push!(__eqs, downforce_rear ~ (1 - bal_f) * downforce)
   push!(__eqs, f_cop ~ chassis.R * [-drag, 0, -downforce])
   push!(__eqs, chassis.f ~ -f_cop)
-  push!(__eqs, chassis.tau ~ [0, -x_cop * f_cop[3], x_cop * f_cop[2]])
+  push!(__eqs, chassis.tau ~ -LinearAlgebra.cross(cop, f_cop))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

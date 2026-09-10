@@ -25,6 +25,8 @@ component AeroLoad
   variable q::Pressure
   variable drag::Force
   variable downforce::Force
+  variable downforce_front::Force
+  variable downforce_rear::Force
   variable f_cop::Force[3]
 
 relations
@@ -35,11 +37,13 @@ relations
 
   drag = CdA * q * tanh(v / v_min)
   downforce = ClA * q
+  downforce_front = bal_f * downforce
+  downforce_rear = (1 - bal_f) * downforce
 
   f_cop = chassis.R * [-drag, 0, -downforce]
 
   chassis.f = -f_cop
-  chassis.tau = [0, -x_cop * f_cop[3], x_cop * f_cop[2]]
+  chassis.tau = -LinearAlgebra.cross(cop, f_cop)
 
 metadata {
   "_links": {
