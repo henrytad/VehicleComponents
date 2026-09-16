@@ -6,9 +6,9 @@ component RoadSurface
   and random phases. The waves are scaled so the profile along any straight track
   has the ISO 8608 displacement.
   """
-  x = RealInput() {^x}
-  y = RealInput() {^y}
-  z = RealOutput() {^z}
+  x = RealInput(units = "m") {^x}
+  y = RealInput(units = "m") {^y}
+  z = RealOutput(units = "m") {^z}
 
   structural parameter N::Integer = 64
   structural parameter seed::Integer = 1
