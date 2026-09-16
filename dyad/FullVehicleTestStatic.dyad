@@ -681,12 +681,20 @@ test component FullVehicleTestStatic
         heave_pickup_right = [-0.03, -0.114, 0.6635],
         roll_pickup_left = [-0.105, 0.108, 0.5865],
         roll_pickup_right = [-0.105, -0.108, 0.6605],
-        heave_stiffness = 35000.0,
-        heave_damping = 1500.0,
-        heave_preload = 0.0,
-        roll_stiffness = 35000.0,
-        roll_damping = 1500.0,
-        roll_preload = 0.0,
+        heave_strut(
+          spring(
+            c = 35000.0,
+            s_unstretched = 0.228,
+            perch_height = 0.0
+          )
+        ),
+        roll_strut(
+          spring(
+            c = 35000.0,
+            s_neutral = 0.2283243,
+            preload_travel = 0.0
+          )
+        ),
         pushrod_adjust_left = 0.0,
         pushrod_adjust_right = 0.0 
       ) 
@@ -731,12 +739,20 @@ test component FullVehicleTestStatic
         heave_pickup_right = [-1.57, -0.112, 0.5515],
         roll_pickup_left = [-1.64, 0.106, 0.4775],
         roll_pickup_right = [-1.64, -0.106, 0.5495],
-        heave_stiffness = 40000.0,
-        heave_damping = 1600.0,
-        heave_preload = 0.0,
-        roll_stiffness = 40000.0,
-        roll_damping = 1600.0,
-        roll_preload = 0.0,
+        heave_strut(
+          spring(
+            c = 40000.0,
+            s_unstretched = 0.224,
+            perch_height = 0.0
+          )
+        ),
+        roll_strut(
+          spring(
+            c = 40000.0,
+            s_neutral = 0.2238928,
+            preload_travel = 0.0
+          )
+        ),
         pushrod_adjust_left = 0.0,
         pushrod_adjust_right = 0.0 
       ) 

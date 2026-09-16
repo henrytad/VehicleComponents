@@ -22,12 +22,20 @@ test component InboardTestRig
     heave_pickup_right = [-0.030000, -0.114000, 0.663500],
     roll_pickup_left = [-0.105000, 0.108000, 0.586500],
     roll_pickup_right = [-0.105000, -0.108000, 0.660500],
-    heave_stiffness = 35000.0,
-    heave_damping = 1500.0,
-    roll_stiffness = 35000.0,
-    roll_damping = 1500.0,
-    heave_preload = 0.0,
-    roll_preload = 0.0,
+    heave_strut(
+      spring(
+        c = 35000.0,
+        s_unstretched = 0.228,
+        perch_height = 0.0
+      )
+    ),
+    roll_strut(
+      spring(
+        c = 35000.0,
+        s_neutral = 0.2283243,
+        preload_travel = 0.0
+      )
+    ),
     pushrod_adjust_left = 0.0,
     pushrod_adjust_right = 0.0
   ) {^inboard}
@@ -66,17 +74,12 @@ relations
   pushrod_position_left.s_ref = heave_motion + roll_motion
   pushrod_position_right.s_ref = heave_motion - roll_motion
 
-  # Left jack
   connect(fixed_left.frame_b, prismatic_left.frame_a) {^id9}
   connect(prismatic_left.support, pushrod_position_left.support) {^id10}
   connect(pushrod_position_left.flange, prismatic_left.axis) {^id11}
-  
-  # Right jack
   connect(fixed_right.frame_b, prismatic_right.frame_a) {^id12}
   connect(prismatic_right.support, pushrod_position_right.support) {^id13}
   connect(pushrod_position_right.flange, prismatic_right.axis) {^id14}
-  
-  # Inboard
   connect(prismatic_left.frame_b, inboard.linkage_left) {^id15}
   connect(prismatic_right.frame_b, inboard.linkage_right) {^id16}
   connect(inboard.chassis, world.frame_b) {^id17}
@@ -88,19 +91,17 @@ metadata {
       "heave": {
         "stop": 2,
         "params": {"heave_amplitude": 0.0254, "roll_amplitude": 0},
-        "atol": {"inboard.heave_deflection": 0.00001, "inboard.roll_deflection": 0.00001},
+        "atol": {"inboard.heave_strut.s": 0.00001, "inboard.roll_strut.s": 0.00001},
         "expect": {
-          "initial": {"inboard.heave_deflection": 0, "inboard.roll_deflection": 0},
-          "signals": ["inboard.heave_deflection", "inboard.roll_deflection"]
+          "signals": ["inboard.heave_strut.s", "inboard.roll_strut.s"]
         }
       },
       "roll": {
         "stop": 2,
         "params": {"heave_amplitude": 0, "roll_amplitude": 0.0254},
-        "atol": {"inboard.heave_deflection": 0.00001, "inboard.roll_deflection": 0.00001},
+        "atol": {"inboard.heave_strut.s": 0.00001, "inboard.roll_strut.s": 0.00001},
         "expect": {
-          "initial": {"inboard.heave_deflection": 0, "inboard.roll_deflection": 0},
-          "signals": ["inboard.heave_deflection", "inboard.roll_deflection"]
+          "signals": ["inboard.heave_strut.s", "inboard.roll_strut.s"]
         }
       }
     },

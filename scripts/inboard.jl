@@ -10,7 +10,7 @@ const MM = 1000
 @named model = VehicleComponents.InboardTestRig()
 ssys = multibody(model)
 
-data_path = joinpath(pwd(), "assets", "vehicles", "Test.json")
+data_path = joinpath(pwd(), "assets", "vehicles", "MR25.json")
 data = JSON3.read(read(data_path, String))
 
 front = data.suspension.front
@@ -31,12 +31,16 @@ parameter_map = Dict([
     ssys.inboard.roll_pickup_right => geom.inboard.roll_pickup.right,
 
     # Setup
-    ssys.inboard.heave_stiffness => setup.heave.stiffness,
-    ssys.inboard.heave_damping => setup.heave.damping,
-    ssys.inboard.heave_preload => setup.heave.preload,
-    ssys.inboard.roll_stiffness => setup.roll.stiffness,
-    ssys.inboard.roll_damping => setup.roll.damping,
-    ssys.inboard.roll_preload => setup.roll.preload,
+    ssys.inboard.heave_strut.spring.c => setup.heave.stiffness,
+    ssys.inboard.heave_strut.damper.force_map.independent_var => VehicleComponents.damper_map(data.dampers, setup.heave.damper).velocity,
+    ssys.inboard.heave_strut.damper.force_map.data => VehicleComponents.damper_map(data.dampers, setup.heave.damper).force,
+    ssys.inboard.heave_strut.spring.s_unstretched => setup.heave.s_unstretched,
+    ssys.inboard.heave_strut.spring.perch_height => setup.heave.perch_height,
+    ssys.inboard.roll_strut.spring.c => setup.roll.stiffness,
+    ssys.inboard.roll_strut.damper.force_map.independent_var => VehicleComponents.damper_map(data.dampers, setup.roll.damper).velocity,
+    ssys.inboard.roll_strut.damper.force_map.data => VehicleComponents.damper_map(data.dampers, setup.roll.damper).force,
+    ssys.inboard.roll_strut.spring.s_neutral => setup.roll.s_neutral,
+    ssys.inboard.roll_strut.spring.preload_travel => setup.roll.preload_travel,
     ssys.inboard.pushrod_adjust_left => setup.pushrod_adjust.left,
     ssys.inboard.pushrod_adjust_right => setup.pushrod_adjust.right,
 ])
@@ -46,19 +50,19 @@ sol = solve(prob)
 
 plot_deflection = Plots.plot(
     sol,
-    idxs=[MM * model.inboard.heave_deflection, MM * model.inboard.roll_deflection],
+    idxs=[MM * model.inboard.heave_strut.s, MM * model.inboard.roll_strut.s],
     ylabel="deflection [mm]",
     label=["heave" "roll"]
 );
 plot_spring = Plots.plot(
     sol,
-    idxs=[model.inboard.heave_spring_force, model.inboard.roll_spring_force],
+    idxs=[model.inboard.heave_strut.spring.f, model.inboard.roll_strut.spring.f],
     ylabel="spring force [N]",
     label=["heave" "roll"]
 );
 plot_damper = Plots.plot(
     sol,
-    idxs=[model.inboard.heave_damper_force, model.inboard.roll_damper_force],
+    idxs=[model.inboard.heave_strut.damper.f, model.inboard.roll_strut.damper.f],
     ylabel="damper force [N]",
     xlabel="time [s]",
     label=["heave" "roll"]
