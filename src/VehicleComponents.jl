@@ -4,6 +4,7 @@ using LinearAlgebra
 
 # Hand-written helpers must come before the generated code that calls them
 include("damper_maps.jl")
+include("road_surface.jl")
 
 include("../generated/module.jl")
 

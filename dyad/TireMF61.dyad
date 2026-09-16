@@ -1,13 +1,12 @@
 component TireMF61
   """
   Magic Formula 6.1 tire model
-
+  
   Currently models vertical, longitudinal, lateral forces and the aligning 
-  moment Mz. It carries no mass and no inertia.
-
-  Ground is flat at z = 0. Deflection is taken from the wheel centre height,
-  which assumes the contact patch sits directly below it.
-
+  moment Mz. It carries no mass and no inertia. Ground is the RoadSurface 
+  `road`: flat at z = 0 on average, with ISO 8608 roughness when 
+  `road.roughness` is set.
+  
   The overturning moment Mx (the QSX coefficients) and turn slip are not
   modelled; every turn-slip factor zeta is held at 1.
   """
@@ -18,6 +17,7 @@ component TireMF61
 
   spline = Dyad.Spline() {^spline}
   wheel_center = Dyad.Frame3D() {^wheel_center}
+  road = VehicleComponents.RoadSurface() {^road}
 
   visual = MultibodyComponents.CylinderShape(
     color = sty_black,
@@ -333,7 +333,7 @@ component TireMF61
   # ---------------------------------------------------------------------------
   # Vertical / kinematics
   # ---------------------------------------------------------------------------
-  "Height of the wheel centre above the ground plane"
+  "Height of the wheel centre above the road directly below it"
   variable z_w::Length
   "Vertical velocity of the wheel centre"
   variable v_z::Velocity
@@ -536,7 +536,9 @@ relations
   # ===========================================================================
   # Vertical
   # ===========================================================================
-  z_w = wheel_center.r_0[3]
+  road.x = x_w
+  road.y = y_w
+  z_w = wheel_center.r_0[3] - road.z
   v_z = der(z_w)
   z_bottom = z_w - unloaded_radius
   rho = ifelse(z_bottom < 0, -z_bottom, 0)
@@ -910,14 +912,20 @@ relations
 
 metadata {
   "_links": {
+    "slip": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 20, "y2": 120}}}
+    },
     "spline": {
       "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
     },
     "wheel_center": {
       "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 450, "y2": 550}}}
     },
-    "slip": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 20, "y2": 120}}}
+    "road": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 330, "y2": 430}}}
+    },
+    "visual": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 450, "y2": 550}}}
     }
   }
 }

@@ -54,6 +54,8 @@ wheelbase = front.geometry.linkages.left.wheel_center[1] -
 # Parameters
 # ===========================================================================
 tire_parameters(tire) = [
+    tire.road.roughness => data.road.roughness,
+
     # [DIMENSION] / [VERTICAL]
     tire.width => tires.WIDTH,
     tire.unloaded_radius => tires.UNLOADED_RADIUS,
@@ -604,3 +606,42 @@ GLMakie.record(fig, "output/full_vehicle_step.gif", timevec; framerate) do time
     GLMakie.update_cam!(scene.scene, GLMakie.cameracontrols(scene.scene),
         target + cam_offset, target, GLMakie.Vec3f(0, 0, 1))
 end
+
+# ===========================================================================
+# Road surface and tire load
+# ===========================================================================
+road_surface = VehicleComponents.road_waves(64, 1, 0.02, 3.0)
+road_t = range(t_drive, t_end, length=20000)
+road_paths = [(x=sol(road_t, idxs=c.wheel_assembly.tire.x_w).u,
+    y=sol(road_t, idxs=c.wheel_assembly.tire.y_w).u,
+    fz=sol(road_t, idxs=c.wheel_assembly.tire.Fz).u) for c in corners]
+
+road_x_lo, road_x_hi = extrema(vcat((p.x for p in road_paths)...))
+road_y_lo, road_y_hi = extrema(vcat((p.y for p in road_paths)...))
+road_xs = range(road_x_lo, road_x_hi, length=1200)
+road_ys = range(road_y_lo - 0.5, road_y_hi + 0.5, length=400)
+road_zs = [1000 * VehicleComponents.road_height(road_surface, data.road.roughness, x, y) for y in road_ys, x in road_xs]
+road_lim = maximum(abs, road_zs)
+
+p_road_surface = Plots.heatmap(road_xs, road_ys, road_zs;
+    color=:balance, clims=(-road_lim, road_lim),
+    xlabel="x [m]", ylabel="y [m]", colorbar_title="height [mm]",
+    title="Road surface under the car's path (roughness $(data.road.roughness) m^3)");
+for (i, p) in enumerate(road_paths)
+    Plots.plot!(p_road_surface, p.x, p.y;
+        label=corner_labels[i], linestyle=corner_styles[i], color=:black, linewidth=1)
+end
+
+p_road_height = Plots.plot(; xlabel="t [s]", ylabel="height [mm]", title="Road height under each tire");
+p_road_fz = Plots.plot(; xlabel="t [s]", ylabel="Fz [N]", title="Tire normal load");
+for (i, p) in enumerate(road_paths)
+    style = (label=corner_labels[i], linestyle=corner_styles[i], color=corner_colors[i], linewidth=2)
+    Plots.plot!(p_road_height, road_t,
+        1000 .* VehicleComponents.road_height.(Ref(road_surface), data.road.roughness, p.x, p.y); style...)
+    Plots.plot!(p_road_fz, road_t, p.fz; style...)
+end
+for p in (p_road_height, p_road_fz)
+    Plots.vline!(p, [t_steer]; color=:black, linestyle=:dash, linewidth=1, label="")
+end
+
+Plots.plot(p_road_surface, p_road_height, p_road_fz; layout=(3, 1), size=(1200, 1250))
