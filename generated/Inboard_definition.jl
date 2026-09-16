@@ -95,8 +95,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__params, @parameters (rocker_axis_left[1:3]::Real), [misc = "final"])
   append!(__params, @parameters (rocker_axis_raw_right[1:3]::Real), [misc = "final"])
   append!(__params, @parameters (rocker_axis_right[1:3]::Real), [misc = "final"])
-  append!(__params, @parameters (heave_install_length::Real), [misc = "final"])
-  append!(__params, @parameters (roll_install_length::Real), [misc = "final"])
 
   ### Deferred assignment (default values that depend on final parameters)
 
@@ -169,8 +167,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings[rocker_axis_left] = rocker_axis_raw_left / LinearAlgebra.norm(rocker_axis_raw_left)
   __bindings[rocker_axis_raw_right] = LinearAlgebra.cross(rocker_arm_right, heave_arm_vec_right)
   __bindings[rocker_axis_right] = rocker_axis_raw_right / LinearAlgebra.norm(rocker_axis_raw_right)
-  __bindings[heave_install_length] = LinearAlgebra.norm(heave_pickup_right - heave_pickup_left)
-  __bindings[roll_install_length] = LinearAlgebra.norm(roll_pickup_right - roll_pickup_left)
 
   ### Final Path Parameters
 

@@ -99,10 +99,6 @@ component Inboard
   final parameter rocker_axis_left::Real[3] = rocker_axis_raw_left / LinearAlgebra.norm(rocker_axis_raw_left)
   final parameter rocker_axis_raw_right::Real[3] = LinearAlgebra.cross(rocker_arm_right, heave_arm_vec_right)
   final parameter rocker_axis_right::Real[3] = rocker_axis_raw_right / LinearAlgebra.norm(rocker_axis_raw_right)
-  
-  # Spring lengths
-  final parameter heave_install_length::Length = LinearAlgebra.norm(heave_pickup_right - heave_pickup_left)
-  final parameter roll_install_length::Length = LinearAlgebra.norm(roll_pickup_right - roll_pickup_left)
 
 relations
 
