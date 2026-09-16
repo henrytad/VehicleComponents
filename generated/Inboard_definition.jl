@@ -7,7 +7,7 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   Inboard(; name, rocker_pivot_left, rocker_pivot_right, pushrod_inner_left, pushrod_inner_right, pushrod_outer_left, pushrod_outer_right, heave_pickup_left, heave_pickup_right, roll_pickup_left, roll_pickup_right, heave_stiffness, heave_damping, roll_stiffness, roll_damping, heave_preload, roll_preload, pushrod_adjust_left, pushrod_adjust_right)
+   Inboard(; name, rocker_pivot_left, rocker_pivot_right, pushrod_inner_left, pushrod_inner_right, pushrod_outer_left, pushrod_outer_right, heave_pickup_left, heave_pickup_right, roll_pickup_left, roll_pickup_right, pushrod_adjust_left, pushrod_adjust_right)
 
 ## Parameters:
 
@@ -23,12 +23,6 @@ import Moshi as __Ext__Moshi
 | `heave_pickup_right`         |                          | m  |    |
 | `roll_pickup_left`         |                          | m  |    |
 | `roll_pickup_right`         |                          | m  |    |
-| `heave_stiffness`         |                          | N/m  |    |
-| `heave_damping`         |                          | N.s/m  |    |
-| `roll_stiffness`         |                          | N/m  |    |
-| `roll_damping`         |                          | N.s/m  |    |
-| `heave_preload`         |                          | m  |    |
-| `roll_preload`         |                          | m  |    |
 | `pushrod_adjust_left`         |                          | m  |    |
 | `pushrod_adjust_right`         |                          | m  |    |
 
@@ -40,21 +34,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
 connectors that can be connected together ([`Frame3D`](@ref))
  * `linkage_right` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
-
-## Variables
-
-| Name         | Description                         | Units  | 
-| ------------ | ----------------------------------- | ------ |
-| `heave_deflection`         |                          | m  |
-| `roll_deflection`         |                          | m  |
-| `heave_force`         |                          | N  |
-| `roll_force`         |                          | N  |
-| `heave_spring_force`         |                          | N  |
-| `roll_spring_force`         |                          | N  |
-| `heave_damper_force`         |                          | N  |
-| `roll_damper_force`         |                          | N  |
 """
-@component function Inboard(; name = nothing, rocker_pivot_left=nothing, rocker_pivot_right=nothing, pushrod_inner_left=nothing, pushrod_inner_right=nothing, pushrod_outer_left=nothing, pushrod_outer_right=nothing, heave_pickup_left=nothing, heave_pickup_right=nothing, roll_pickup_left=nothing, roll_pickup_right=nothing, heave_stiffness=nothing, heave_damping=nothing, roll_stiffness=nothing, roll_damping=nothing, heave_preload=nothing, roll_preload=nothing, pushrod_adjust_left=nothing, pushrod_adjust_right=nothing, kwargs...)
+@component function Inboard(; name = nothing, rocker_pivot_left=nothing, rocker_pivot_right=nothing, pushrod_inner_left=nothing, pushrod_inner_right=nothing, pushrod_outer_left=nothing, pushrod_outer_right=nothing, heave_pickup_left=nothing, heave_pickup_right=nothing, roll_pickup_left=nothing, roll_pickup_right=nothing, pushrod_adjust_left=nothing, pushrod_adjust_right=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -116,8 +97,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__params, @parameters (rocker_axis_right[1:3]::Real), [misc = "final"])
   append!(__params, @parameters (heave_install_length::Real), [misc = "final"])
   append!(__params, @parameters (roll_install_length::Real), [misc = "final"])
-  append!(__params, @parameters (heave_unstretched::Real), [misc = "final"])
-  append!(__params, @parameters (roll_unstretched::Real), [misc = "final"])
 
   ### Deferred assignment (default values that depend on final parameters)
 
@@ -152,24 +131,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__roll_pickup_right = roll_pickup_right
   append!(__params, @parameters (roll_pickup_right[1:3]::Real))
   __initial_conditions[roll_pickup_right] = __local__roll_pickup_right
-  __local__heave_stiffness = heave_stiffness
-  append!(__params, @parameters (heave_stiffness::Real))
-  __initial_conditions[heave_stiffness] = __local__heave_stiffness
-  __local__heave_damping = heave_damping
-  append!(__params, @parameters (heave_damping::Real))
-  __initial_conditions[heave_damping] = __local__heave_damping
-  __local__roll_stiffness = roll_stiffness
-  append!(__params, @parameters (roll_stiffness::Real))
-  __initial_conditions[roll_stiffness] = __local__roll_stiffness
-  __local__roll_damping = roll_damping
-  append!(__params, @parameters (roll_damping::Real))
-  __initial_conditions[roll_damping] = __local__roll_damping
-  __local__heave_preload = heave_preload
-  append!(__params, @parameters (heave_preload::Real))
-  __initial_conditions[heave_preload] = __local__heave_preload
-  __local__roll_preload = roll_preload
-  append!(__params, @parameters (roll_preload::Real))
-  __initial_conditions[roll_preload] = __local__roll_preload
   __local__pushrod_adjust_left = pushrod_adjust_left
   append!(__params, @parameters (pushrod_adjust_left::Real))
   __initial_conditions[pushrod_adjust_left] = __local__pushrod_adjust_left
@@ -210,46 +171,12 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings[rocker_axis_right] = rocker_axis_raw_right / LinearAlgebra.norm(rocker_axis_raw_right)
   __bindings[heave_install_length] = LinearAlgebra.norm(heave_pickup_right - heave_pickup_left)
   __bindings[roll_install_length] = LinearAlgebra.norm(roll_pickup_right - roll_pickup_left)
-  __bindings[heave_unstretched] = heave_install_length + heave_preload
-  __bindings[roll_unstretched] = roll_install_length + roll_preload
 
   ### Final Path Parameters
 
   ### Variables (declarations)
-  append!(__vars, @variables (heave_deflection(t)::Real))
-  append!(__vars, @variables (roll_deflection(t)::Real))
-  append!(__vars, @variables (heave_force(t)::Real))
-  append!(__vars, @variables (roll_force(t)::Real))
-  append!(__vars, @variables (heave_spring_force(t)::Real))
-  append!(__vars, @variables (roll_spring_force(t)::Real))
-  append!(__vars, @variables (heave_damper_force(t)::Real))
-  append!(__vars, @variables (roll_damper_force(t)::Real))
 
   ### Variables (assignments)
-  __ovr_heave_deflection = pop!(__overrides, "heave_deflection", nothing); isnothing(__ovr_heave_deflection) || push!(__eqs, heave_deflection ~ __ovr_heave_deflection)
-  __ovr_heave_deflection__initial = pop!(__overrides, "heave_deflection__initial", nothing); isnothing(__ovr_heave_deflection__initial) || (__initial_conditions[heave_deflection] = __ovr_heave_deflection__initial)
-  __ovr_heave_deflection__guess = pop!(__overrides, "heave_deflection__guess", nothing)
-  __ovr_roll_deflection = pop!(__overrides, "roll_deflection", nothing); isnothing(__ovr_roll_deflection) || push!(__eqs, roll_deflection ~ __ovr_roll_deflection)
-  __ovr_roll_deflection__initial = pop!(__overrides, "roll_deflection__initial", nothing); isnothing(__ovr_roll_deflection__initial) || (__initial_conditions[roll_deflection] = __ovr_roll_deflection__initial)
-  __ovr_roll_deflection__guess = pop!(__overrides, "roll_deflection__guess", nothing)
-  __ovr_heave_force = pop!(__overrides, "heave_force", nothing); isnothing(__ovr_heave_force) || push!(__eqs, heave_force ~ __ovr_heave_force)
-  __ovr_heave_force__initial = pop!(__overrides, "heave_force__initial", nothing); isnothing(__ovr_heave_force__initial) || (__initial_conditions[heave_force] = __ovr_heave_force__initial)
-  __ovr_heave_force__guess = pop!(__overrides, "heave_force__guess", nothing)
-  __ovr_roll_force = pop!(__overrides, "roll_force", nothing); isnothing(__ovr_roll_force) || push!(__eqs, roll_force ~ __ovr_roll_force)
-  __ovr_roll_force__initial = pop!(__overrides, "roll_force__initial", nothing); isnothing(__ovr_roll_force__initial) || (__initial_conditions[roll_force] = __ovr_roll_force__initial)
-  __ovr_roll_force__guess = pop!(__overrides, "roll_force__guess", nothing)
-  __ovr_heave_spring_force = pop!(__overrides, "heave_spring_force", nothing); isnothing(__ovr_heave_spring_force) || push!(__eqs, heave_spring_force ~ __ovr_heave_spring_force)
-  __ovr_heave_spring_force__initial = pop!(__overrides, "heave_spring_force__initial", nothing); isnothing(__ovr_heave_spring_force__initial) || (__initial_conditions[heave_spring_force] = __ovr_heave_spring_force__initial)
-  __ovr_heave_spring_force__guess = pop!(__overrides, "heave_spring_force__guess", nothing)
-  __ovr_roll_spring_force = pop!(__overrides, "roll_spring_force", nothing); isnothing(__ovr_roll_spring_force) || push!(__eqs, roll_spring_force ~ __ovr_roll_spring_force)
-  __ovr_roll_spring_force__initial = pop!(__overrides, "roll_spring_force__initial", nothing); isnothing(__ovr_roll_spring_force__initial) || (__initial_conditions[roll_spring_force] = __ovr_roll_spring_force__initial)
-  __ovr_roll_spring_force__guess = pop!(__overrides, "roll_spring_force__guess", nothing)
-  __ovr_heave_damper_force = pop!(__overrides, "heave_damper_force", nothing); isnothing(__ovr_heave_damper_force) || push!(__eqs, heave_damper_force ~ __ovr_heave_damper_force)
-  __ovr_heave_damper_force__initial = pop!(__overrides, "heave_damper_force__initial", nothing); isnothing(__ovr_heave_damper_force__initial) || (__initial_conditions[heave_damper_force] = __ovr_heave_damper_force__initial)
-  __ovr_heave_damper_force__guess = pop!(__overrides, "heave_damper_force__guess", nothing)
-  __ovr_roll_damper_force = pop!(__overrides, "roll_damper_force", nothing); isnothing(__ovr_roll_damper_force) || push!(__eqs, roll_damper_force ~ __ovr_roll_damper_force)
-  __ovr_roll_damper_force__initial = pop!(__overrides, "roll_damper_force__initial", nothing); isnothing(__ovr_roll_damper_force__initial) || (__initial_conditions[roll_damper_force] = __ovr_roll_damper_force__initial)
-  __ovr_roll_damper_force__guess = pop!(__overrides, "roll_damper_force__guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -282,25 +209,17 @@ connectors that can be connected together ([`Frame3D`](@ref))
   # Subcomponent roll_arm_right of type MultibodyComponents.FixedTranslation
   roll_arm_right_overrides = __pop_subcomponent_overrides!(__overrides, "roll_arm_right")
   push!(__systems, @named roll_arm_right = MultibodyComponents.FixedTranslation(; r=roll_arm_vec_right, radius=sty_rod_radius, color=sty_grey_medium, roll_arm_right_overrides...))
-  # Subcomponent heave_spring of type MultibodyComponents.SpringDamperParallel
-  heave_spring_overrides = __pop_subcomponent_overrides!(__overrides, "heave_spring")
-  push!(__systems, @named heave_spring = MultibodyComponents.SpringDamperParallel(; c=heave_stiffness, d=heave_damping, s_unstretched=heave_install_length + heave_preload, radius=0.02, num_windings=Float64(15), N=600, color=sty_purple, heave_spring_overrides...))
-  # Subcomponent roll_spring of type MultibodyComponents.SpringDamperParallel
-  roll_spring_overrides = __pop_subcomponent_overrides!(__overrides, "roll_spring")
-  push!(__systems, @named roll_spring = MultibodyComponents.SpringDamperParallel(; c=roll_stiffness, d=roll_damping, s_unstretched=roll_install_length + roll_preload, radius=0.02, num_windings=Float64(15), N=600, color=sty_orange, roll_spring_overrides...))
+  # Subcomponent heave_strut of type VehicleComponents.Strut
+  heave_strut_overrides = __pop_subcomponent_overrides!(__overrides, "heave_strut")
+  push!(__systems, @named heave_strut = VehicleComponents.Strut(; color=sty_purple, heave_strut_overrides...))
+  # Subcomponent roll_strut of type VehicleComponents.RollStrut
+  roll_strut_overrides = __pop_subcomponent_overrides!(__overrides, "roll_strut")
+  push!(__systems, @named roll_strut = VehicleComponents.RollStrut(; color=sty_orange, roll_strut_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
 
   ### Guesses
-  isnothing(__ovr_heave_deflection__guess) || (__guesses[heave_deflection] = __ovr_heave_deflection__guess)
-  isnothing(__ovr_roll_deflection__guess) || (__guesses[roll_deflection] = __ovr_roll_deflection__guess)
-  isnothing(__ovr_heave_force__guess) || (__guesses[heave_force] = __ovr_heave_force__guess)
-  isnothing(__ovr_roll_force__guess) || (__guesses[roll_force] = __ovr_roll_force__guess)
-  isnothing(__ovr_heave_spring_force__guess) || (__guesses[heave_spring_force] = __ovr_heave_spring_force__guess)
-  isnothing(__ovr_roll_spring_force__guess) || (__guesses[roll_spring_force] = __ovr_roll_spring_force__guess)
-  isnothing(__ovr_heave_damper_force__guess) || (__guesses[heave_damper_force] = __ovr_heave_damper_force__guess)
-  isnothing(__ovr_roll_damper_force__guess) || (__guesses[roll_damper_force] = __ovr_roll_damper_force__guess)
 
   ### Initialization Equations
 
@@ -308,14 +227,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
-  push!(__eqs, heave_deflection ~ heave_install_length - heave_spring.s)
-  push!(__eqs, roll_deflection ~ roll_install_length - roll_spring.s)
-  push!(__eqs, heave_force ~ -heave_spring.f)
-  push!(__eqs, roll_force ~ -roll_spring.f)
-  push!(__eqs, heave_spring_force ~ heave_stiffness * (heave_unstretched - heave_spring.s))
-  push!(__eqs, roll_spring_force ~ roll_stiffness * (roll_unstretched - roll_spring.s))
-  push!(__eqs, heave_damper_force ~ heave_force - heave_spring_force)
-  push!(__eqs, roll_damper_force ~ roll_force - roll_spring_force)
   push!(__eqs, connect(mount_rocker_left.frame_a, chassis))
   push!(__eqs, connect(mount_rocker_right.frame_a, chassis))
   push!(__eqs, connect(rocker_left.frame_a, linkage_left))
@@ -326,10 +237,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(rocker_left.frame_ib, roll_arm_left.frame_a))
   push!(__eqs, connect(rocker_right.frame_ib, heave_arm_right.frame_a))
   push!(__eqs, connect(rocker_right.frame_ib, roll_arm_right.frame_a))
-  push!(__eqs, connect(heave_arm_left.frame_b, heave_spring.frame_a))
-  push!(__eqs, connect(heave_arm_right.frame_b, heave_spring.frame_b))
-  push!(__eqs, connect(roll_arm_left.frame_b, roll_spring.frame_a))
-  push!(__eqs, connect(roll_arm_right.frame_b, roll_spring.frame_b))
+  push!(__eqs, connect(heave_arm_left.frame_b, heave_strut.frame_a))
+  push!(__eqs, connect(heave_arm_right.frame_b, heave_strut.frame_b))
+  push!(__eqs, connect(roll_arm_left.frame_b, roll_strut.frame_a))
+  push!(__eqs, connect(roll_arm_right.frame_b, roll_strut.frame_b))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

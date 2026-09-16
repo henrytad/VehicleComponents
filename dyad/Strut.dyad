@@ -1,0 +1,74 @@
+component Strut
+  """
+  Spring and damper in parallel between frame_a and frame_b.
+  
+  The spring and damper are separate components so each force law can change on
+  its own. Rates and lengths are set on the spring directly, for example
+  heave_strut(spring(c = ...)), and the damper's force map at run time. This
+  component only carries the render settings.
+  """
+
+  frame_a = Dyad.Frame3D() {^frame_a}
+  frame_b = Dyad.Frame3D() {^frame_b}
+
+  spring = VehicleComponents.Spring(color = color) {^spring}
+  damper = VehicleComponents.Damper() {^damper}
+
+  "Distance between the origin of frame_a and the origin of frame_b"
+  variable s::Length
+  "Total line force (positive = tension)"
+  variable f::Dyad.Force
+  "Color in animations"
+  parameter color::Real[4] = world_default_spring_color()
+
+relations
+
+  s = spring.s
+  f = spring.f + damper.f
+
+  connect(frame_a, damper.frame_a) {^id5}
+  connect(damper.frame_b, frame_b) {^id6}
+  connect(frame_a, spring.frame_a) {^id7}
+  connect(frame_b, spring.frame_b) {^id8}
+
+metadata {
+  "_links": {
+    "frame_a": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "y1": 450, "x2": 50, "y2": 550}}}
+    },
+    "frame_b": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "y1": 450, "x2": 1050, "y2": 550}}}
+    },
+    "spring": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 330, "y2": 430}}}
+    },
+    "damper": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 560, "y2": 660}}}
+    },
+    "id5": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 300, "y": 500}, {"x": 300, "y": 610}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id6": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 690, "y": 610}, {"x": 690, "y": 500}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id7": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 300, "y": 500}, {"x": 300, "y": 380}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id8": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 690, "y": 500}, {"x": 690, "y": 380}], "E": 2}],
+        "path": {}
+      }
+    }
+  }
+}
+end

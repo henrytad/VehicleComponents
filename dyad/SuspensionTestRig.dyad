@@ -49,12 +49,20 @@ test component SuspensionTestRig
       heave_pickup_right = [-0.030, -0.114, 0.6635],
       roll_pickup_left = [-0.105, 0.108, 0.5865],
       roll_pickup_right = [-0.105, -0.108, 0.6605],
-      heave_stiffness = 35000.0,
-      heave_damping = 1500.0,
-      roll_stiffness = 35000.0,
-      roll_damping = 1500.0,
-      heave_preload = 0.0,
-      roll_preload = 0.0,
+      heave_strut(
+        spring(
+          c = 35000.0,
+          s_unstretched = 0.228,
+          perch_height = 0.0
+        )
+      ),
+      roll_strut(
+        spring(
+          c = 35000.0,
+          s_neutral = 0.2283243,
+          preload_travel = 0.0
+        )
+      ),
       pushrod_adjust_left = 0.0,
       pushrod_adjust_right = 0.0
     )
@@ -133,8 +141,8 @@ metadata {
           "suspension.linkage_right.camber": 1e-5,
           "suspension.linkage_left.toe": 1e-5,
           "suspension.linkage_right.toe": 1e-5,
-          "suspension.inboard.heave_deflection": 1e-5,
-          "suspension.inboard.roll_deflection": 1e-5
+          "suspension.inboard.heave_strut.s": 1e-5,
+          "suspension.inboard.roll_strut.s": 1e-5
         },
         "expect": {
           "initial": {
@@ -145,15 +153,13 @@ metadata {
             "suspension.linkage_left.camber": 0.0,
             "suspension.linkage_right.camber": 0.0,
             "suspension.linkage_left.toe": 0.0,
-            "suspension.linkage_right.toe": 0.0,
-            "suspension.inboard.heave_deflection": 0.0,
-            "suspension.inboard.roll_deflection": 0.0
+            "suspension.linkage_right.toe": 0.0
           },
           "signals": [
             "suspension.wc_heave",
             "suspension.wc_roll",
-            "suspension.inboard.heave_deflection",
-            "suspension.inboard.roll_deflection",
+            "suspension.inboard.heave_strut.s",
+            "suspension.inboard.roll_strut.s",
             "suspension.linkage_left.camber",
             "suspension.linkage_right.camber"
           ]
@@ -171,8 +177,8 @@ metadata {
           "suspension.linkage_right.camber": 1e-5,
           "suspension.linkage_left.toe": 1e-5,
           "suspension.linkage_right.toe": 1e-5,
-          "suspension.inboard.heave_deflection": 1e-5,
-          "suspension.inboard.roll_deflection": 1e-5
+          "suspension.inboard.heave_strut.s": 1e-5,
+          "suspension.inboard.roll_strut.s": 1e-5
         },
         "expect": {
           "initial": {
@@ -183,15 +189,13 @@ metadata {
             "suspension.linkage_left.camber": 0.0,
             "suspension.linkage_right.camber": 0.0,
             "suspension.linkage_left.toe": 0.0,
-            "suspension.linkage_right.toe": 0.0,
-            "suspension.inboard.heave_deflection": 0.0,
-            "suspension.inboard.roll_deflection": 0.0
+            "suspension.linkage_right.toe": 0.0
           },
           "signals": [
             "suspension.wc_heave",
             "suspension.wc_roll",
-            "suspension.inboard.heave_deflection",
-            "suspension.inboard.roll_deflection",
+            "suspension.inboard.heave_strut.s",
+            "suspension.inboard.roll_strut.s",
             "suspension.linkage_left.camber",
             "suspension.linkage_right.camber"
           ]

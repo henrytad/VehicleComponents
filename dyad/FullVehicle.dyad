@@ -1,10 +1,10 @@
 component FullVehicle
   """
   Full vehicle
-
+  
   The `rig` frame is the sprung mass reference. Attach it to ground through
   whatever DOF the study needs.
-
+  
   The vehicle takes a single `throttle` request and `control` decides what each 
   hub motor gets.
   """
@@ -116,7 +116,7 @@ metadata {
       "Dyad": {"placement": {"diagram": {"x1": 260, "x2": 360, "y1": 420, "y2": 520}}}
     },
     "body_angles": {
-      "Dyad": {"placement": {"diagram": {"x1": 180, "x2": 280, "y1": 800, "y2": 900}}}
+      "Dyad": {"placement": {"diagram": {"x1": 50, "x2": 150, "y1": 900, "y2": 1000}}}
     },
     "id14": {
       "Dyad": {
@@ -274,11 +274,11 @@ metadata {
     },
     "id31": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 410, "y": 230}, {"x": 410, "y": 290}], "E": 2}],
+        "edges": [{"S": 1, "M": [{"x": 420, "y": 230}, {"x": 420, "y": 372}], "E": 2}],
         "path": {}
       }
     },
-    "id32": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+    "id32": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 0, "y": 950}], "E": 2}], "path": {}}}
   }
 }
 end

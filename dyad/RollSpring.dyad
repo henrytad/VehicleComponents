@@ -1,0 +1,37 @@
+component RollSpring
+  """
+  Opposed bump-spring pack for a mode-decoupled roll element.
+
+  Models the two bump springs of a roll damper, one per direction of roll, as a
+  single double-acting line force. Force is zero at `s_neutral`, so the pack is
+  unstretched at zero roll and carries load either way.
+  """
+  extends MultibodyComponents.PartialLineForce
+  extends MultibodyComponents.Renderable(color = world_default_spring_color())
+
+  # Visualization shape
+  spring_shape = MultibodyComponents.SpringShape(render = render, color = color, num_windings = num_windings, N = N, end_ratio = end_ratio, r = frame_a.r_0, length_direction = r_rel_0, length = s, width = radius)
+
+  "Rate of each bump spring"
+  parameter c::TranslationalSpringConstant = 1.0
+  "Length at zero roll, where the pack carries no load"
+  parameter s_neutral::Length = 0
+  "Shim preload per spring, as travel. 0 means the springs just touch"
+  parameter preload_travel::Length = 0
+  "Radius in animations"
+  parameter radius::Real = 0.02
+  "Number of windings in animations"
+  parameter num_windings::Real = 15
+  "Number of points used to render each winding"
+  parameter N::Integer = 600
+  "Fraction of total length used for the tapered ends"
+  parameter end_ratio::Real = 0.1
+  "Deflection from the neutral length, positive in extension"
+  variable x::Length
+
+relations
+
+  x = s - s_neutral
+  f = ifelse(x > preload_travel, c * (x + preload_travel), ifelse(x < -preload_travel, c * (x - preload_travel), 2 * c * x))
+
+end

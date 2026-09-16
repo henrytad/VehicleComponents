@@ -45,7 +45,7 @@ inboards = [car.front_suspension.inboard, car.rear_suspension.inboard]
 @assert front.geometry.linkages.left.wheel_center[1] == front.geometry.linkages.right.wheel_center[1] "front wheel centres disagree on x"
 @assert rear.geometry.linkages.left.wheel_center[1] == rear.geometry.linkages.right.wheel_center[1] "rear wheel centres disagree on x"
 wheelbase = front.geometry.linkages.left.wheel_center[1] -
-            rear.geometry.linkages.left.wheel_center[1]
+    rear.geometry.linkages.left.wheel_center[1]
 
 # ===========================================================================
 # Parameters
@@ -235,12 +235,16 @@ inboard_parameters(inboard, geom, setup) = [
     inboard.heave_pickup_right => geom.heave_pickup.right,
     inboard.roll_pickup_left => geom.roll_pickup.left,
     inboard.roll_pickup_right => geom.roll_pickup.right,
-    inboard.heave_stiffness => setup.heave.stiffness,
-    inboard.heave_damping => setup.heave.damping,
-    inboard.heave_preload => setup.heave.preload,
-    inboard.roll_stiffness => setup.roll.stiffness,
-    inboard.roll_damping => setup.roll.damping,
-    inboard.roll_preload => setup.roll.preload,
+    inboard.heave_strut.spring.c => setup.heave.stiffness,
+    inboard.heave_strut.damper.force_map.independent_var => VehicleComponents.damper_map(data.dampers, setup.heave.damper).velocity,
+    inboard.heave_strut.damper.force_map.data => VehicleComponents.damper_map(data.dampers, setup.heave.damper).force,
+    inboard.heave_strut.spring.s_unstretched => setup.heave.s_unstretched,
+    inboard.heave_strut.spring.perch_height => setup.heave.perch_height,
+    inboard.roll_strut.spring.c => setup.roll.stiffness,
+    inboard.roll_strut.damper.force_map.independent_var => VehicleComponents.damper_map(data.dampers, setup.roll.damper).velocity,
+    inboard.roll_strut.damper.force_map.data => VehicleComponents.damper_map(data.dampers, setup.roll.damper).force,
+    inboard.roll_strut.spring.s_neutral => setup.roll.s_neutral,
+    inboard.roll_strut.spring.preload_travel => setup.roll.preload_travel,
     inboard.pushrod_adjust_left => setup.pushrod_adjust.left,
     inboard.pushrod_adjust_right => setup.pushrod_adjust.right,
 ]
@@ -364,7 +368,7 @@ heave_dead_point(ax) =
 println("\n--- heave travel ---")
 for (lbl, ib, ax) in (("front", car.front_suspension.inboard, front),
     ("rear", car.rear_suspension.inboard, rear))
-    defl = sol(sol.t, idxs=ib.heave_deflection).u
+    defl = sol(sol.t, idxs=ib.heave_strut.s).u
     dp = heave_dead_point(ax)
     peak = maximum(defl)
     println("  $lbl  peak compression = ", round(1000 * peak, digits=2), " mm",
@@ -390,9 +394,9 @@ mz_net = sum(mz)
 y_drift = sol(sol.t, idxs=ssys.lateral_joint.s).u
 yaw_hold = sol(sol.t, idxs=ssys.yaw_joint.tau).u
 vehicle_mass = body.mass +
-               front.geometry.linkages.left.upright.mass + front.geometry.linkages.right.upright.mass +
-               rear.geometry.linkages.left.upright.mass + rear.geometry.linkages.right.upright.mass +
-               4 * (wheels.rim_mass + tires.MASS)
+    front.geometry.linkages.left.upright.mass + front.geometry.linkages.right.upright.mass +
+    rear.geometry.linkages.left.upright.mass + rear.geometry.linkages.right.upright.mass +
+    4 * (wheels.rim_mass + tires.MASS)
 
 println("\n--- lateral balance (mirrored per corner, so these should cancel) ---")
 for (lbl, f) in zip(corner_labels, fy)
@@ -518,19 +522,19 @@ Plots.plot(p_fx, p_v, p_slip, p_sig, p_lim, p_lam, p_svx, p_fz, p_tau,
     left_margin=5Plots.PlotMeasures.mm, bottom_margin=5Plots.PlotMeasures.mm)
 
 p_aero = Plots.plot(sol; idxs=[car.aero.drag, car.aero.downforce,
-        car.aero.downforce_front, car.aero.downforce_rear],
+    car.aero.downforce_front, car.aero.downforce_rear],
     labels=["drag" "downforce" "DF front" "DF rear"], linewidth=2,
     xlabel="t [s]", ylabel="force [N]", title="Aero");
 mark!(p_aero)
 
-p_heave = Plots.plot(sol; idxs=[1000 * ib.heave_deflection for ib in inboards],
+p_heave = Plots.plot(sol; idxs=[1000 * ib.heave_strut.s for ib in inboards],
     labels=["front" "rear"], linewidth=2,
     xlabel="t [s]", ylabel="compression [mm]", title="Heave spring compression");
 Plots.hline!(p_heave, [1000 * heave_dead_point(front), 1000 * heave_dead_point(rear)];
     color=[:red :red], linestyle=:dot, labels=["front dead point" "rear dead point"]);
 mark!(p_heave)
 
-p_roll_spring = Plots.plot(sol; idxs=[1000 * ib.roll_deflection for ib in inboards],
+p_roll_spring = Plots.plot(sol; idxs=[1000 * ib.roll_strut.s for ib in inboards],
     labels=["front" "rear"], linewidth=2,
     xlabel="t [s]", ylabel="deflection [mm]", title="Roll spring deflection");
 mark!(p_roll_spring)

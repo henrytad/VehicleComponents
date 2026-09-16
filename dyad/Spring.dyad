@@ -1,0 +1,28 @@
+component Spring
+  extends MultibodyComponents.PartialLineForce
+  extends MultibodyComponents.Renderable(color = world_default_spring_color())
+
+  spring_shape = MultibodyComponents.SpringShape(render = render, color = color, num_windings = num_windings, N = N, end_ratio = end_ratio, r = frame_a.r_0, length_direction = r_rel_0, length = s, width = radius)
+
+  "Spring constant"
+  parameter c::TranslationalSpringConstant = 1.0
+  "Unstretched spring length"
+  parameter s_unstretched::Length = 0
+  "Perch height added to the free length"
+  parameter perch_height::Length = 0
+  "Strut length at which the spring leaves its perch"
+  final parameter s_contact::Length = s_unstretched + perch_height
+  "Radius in animations"
+  parameter radius::Real = 0.02
+  "Number of windings in animations"
+  parameter num_windings::Real = 15
+  "Number of points used to render each winding"
+  parameter N::Integer = 600
+  "Fraction of total length used for the tapered ends"
+  parameter end_ratio::Real = 0.1
+
+relations
+
+  f = ifelse(s > s_contact, 0, c * (s - s_contact))
+
+end

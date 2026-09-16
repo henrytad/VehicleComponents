@@ -1,0 +1,24 @@
+component Damper
+  """
+  Nonlinear damper: force looked up from a force-velocity map.
+  """
+  extends MultibodyComponents.PartialLineForce
+
+  structural parameter dataset::DyadData.DyadTimeseries = VehicleComponents.default_damper_dataset()
+
+  force_map = BlockComponents.Tables.ParameterizedInterpolation(
+    interpolation_type = BlockComponents.InterpolationType.LinearInterpolation(),
+    extrapolation_type = BlockComponents.ExtrapolationType.Linear(),
+    dataset = dataset
+  )
+
+  "Strut velocity seen by the damper, negative in compression"
+  variable v::Velocity
+
+relations
+
+  v = der(s)
+  force_map.u = v
+  f = force_map.y
+
+end

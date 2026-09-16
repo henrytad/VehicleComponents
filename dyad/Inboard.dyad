@@ -53,24 +53,8 @@ component Inboard
   ) {^roll_arm_right}
   
   # Springs
-  heave_spring = MultibodyComponents.SpringDamperParallel(
-    c = heave_stiffness,
-    d = heave_damping,
-    s_unstretched = heave_install_length + heave_preload,
-    radius = 0.02,
-    num_windings = 15,
-    N = 600,
-    color = sty_purple
-  ) {^heave_spring}
-  roll_spring = MultibodyComponents.SpringDamperParallel(
-    c = roll_stiffness,
-    d = roll_damping,
-    s_unstretched = roll_install_length + roll_preload,
-    radius = 0.02,
-    num_windings = 15,
-    N = 600,
-    color = sty_orange
-  ) {^roll_spring}
+  heave_strut = VehicleComponents.Strut(color = sty_purple) {^heave_strut}
+  roll_strut = VehicleComponents.RollStrut(color = sty_orange) {^roll_strut}
   
   # Hardpoints
   parameter rocker_pivot_left::Position[3]
@@ -84,15 +68,7 @@ component Inboard
   parameter roll_pickup_left::Position[3]
   parameter roll_pickup_right::Position[3]
   
-  # Spring rates and damping
-  parameter heave_stiffness::TranslationalSpringConstant
-  parameter heave_damping::TranslationalDampingConstant
-  parameter roll_stiffness::TranslationalSpringConstant
-  parameter roll_damping::TranslationalDampingConstant
-  
-  # Setup. Positive = spring compressed
-  parameter heave_preload::Length
-  parameter roll_preload::Length
+  # Setup. Spring rates, damping and lengths are set on heave_strut and roll_strut
   parameter pushrod_adjust_left::Length
   parameter pushrod_adjust_right::Length
   
@@ -127,58 +103,23 @@ component Inboard
   # Spring lengths
   final parameter heave_install_length::Length = LinearAlgebra.norm(heave_pickup_right - heave_pickup_left)
   final parameter roll_install_length::Length = LinearAlgebra.norm(roll_pickup_right - roll_pickup_left)
-  final parameter heave_unstretched::Length = heave_install_length + heave_preload
-  final parameter roll_unstretched::Length = roll_install_length + roll_preload
-  
-  # Outputs. Positive = compression
-  variable heave_deflection::Length
-  variable roll_deflection::Length
-  variable heave_force::Force
-  variable roll_force::Force
-  variable heave_spring_force::Force
-  variable roll_spring_force::Force
-  variable heave_damper_force::Force
-  variable roll_damper_force::Force
 
 relations
 
-  # Deflection
-  heave_deflection = heave_install_length - heave_spring.s
-  roll_deflection = roll_install_length - roll_spring.s
-  
-  # Total force
-  heave_force = -heave_spring.f
-  roll_force = -roll_spring.f
-  
-  # Spring force
-  heave_spring_force = heave_stiffness * (heave_unstretched - heave_spring.s)
-  roll_spring_force = roll_stiffness * (roll_unstretched - roll_spring.s)
-  
-  # Damper force
-  heave_damper_force = heave_force - heave_spring_force
-  roll_damper_force = roll_force - roll_spring_force
-  
-  # Chassis mounts
   connect(mount_rocker_left.frame_a, chassis) {^id14}
   connect(mount_rocker_right.frame_a, chassis) {^id15}
-  
-  # Rockers
   connect(rocker_left.frame_a, linkage_left) {^id16}
   connect(rocker_right.frame_a, linkage_right) {^id17}
   connect(rocker_left.frame_b, mount_rocker_left.frame_b) {^id18}
   connect(rocker_right.frame_b, mount_rocker_right.frame_b) {^id19}
-  
-  # Rocker arms
   connect(rocker_left.frame_ib, heave_arm_left.frame_a) {^id20}
   connect(rocker_left.frame_ib, roll_arm_left.frame_a) {^id21}
   connect(rocker_right.frame_ib, heave_arm_right.frame_a) {^id22}
   connect(rocker_right.frame_ib, roll_arm_right.frame_a) {^id23}
-  
-  # Springs
-  connect(heave_arm_left.frame_b, heave_spring.frame_a) {^id24}
-  connect(heave_arm_right.frame_b, heave_spring.frame_b) {^id25}
-  connect(roll_arm_left.frame_b, roll_spring.frame_a) {^id26}
-  connect(roll_arm_right.frame_b, roll_spring.frame_b) {^id27}
+  connect(heave_arm_left.frame_b, heave_strut.frame_a) {^id24}
+  connect(heave_arm_right.frame_b, heave_strut.frame_b) {^id25}
+  connect(roll_arm_left.frame_b, roll_strut.frame_a) {^id26}
+  connect(roll_arm_right.frame_b, roll_strut.frame_b) {^id27}
 
 metadata {
   "_links": {
@@ -240,7 +181,7 @@ metadata {
     "roll_arm_right": {
       "Dyad": {"placement": {"diagram": {"x1": 690, "x2": 590, "y1": 230, "y2": 330}}}
     },
-    "heave_spring": {
+    "heave_strut": {
       "Dyad": {
         "placement": {
           "diagram": {"iconName": "default", "x1": 450, "y1": 80, "x2": 550, "y2": 180, "rot": 0}
@@ -248,7 +189,7 @@ metadata {
         "tags": []
       }
     },
-    "roll_spring": {
+    "roll_strut": {
       "Dyad": {
         "placement": {
           "diagram": {"iconName": "default", "x1": 450, "y1": 230, "x2": 550, "y2": 330, "rot": 0}

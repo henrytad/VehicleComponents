@@ -1,0 +1,86 @@
+test component DamperTestRig
+  """
+  Damper test rig.
+  
+  The top of the damper is fixed and the bottom is driven along the damper axis
+  by a jack, so the damper sees a sinusoidal velocity sweep and its force can be
+  plotted against velocity. The jack starts from rest.
+  """
+
+  world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
+  top = MultibodyComponents.Fixed(r = [0, 0, damper_length], render = false) {^top}
+  damper = VehicleComponents.Damper() {^damper}
+
+  # Jack
+  base = MultibodyComponents.Fixed(r = [0, 0, 0], render = false) {^base}
+  jack = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^jack}
+  jack_position = TranslationalComponents.Sources.Position() {^jack_position}
+
+  parameter damper_length::Length = 0.25
+  parameter amplitude::Length = 0.02
+  parameter freq::Frequency = 5.0
+
+relations
+
+  initial jack_position.v = 0.0
+
+  jack_position.s_ref = amplitude * (1 - cos(2 * π * freq * time))
+
+  connect(top.frame_b, damper.frame_a) {^id7}
+  connect(damper.frame_b, jack.frame_b) {^id8}
+  connect(base.frame_b, jack.frame_a) {^id9}
+  connect(jack.support, jack_position.support) {^id10}
+  connect(jack_position.flange, jack.axis) {^id11}
+
+metadata {
+  "Dyad": {
+    "experiments": {},
+    "tests": {"sweep": {"stop": 0.4, "expect": {"signals": ["damper.v", "damper.f"]}}},
+    "icons": {"default": "dyad://Dyad/Default.svg"},
+    "path": {},
+    "doc": {"behavior": true}
+  },
+  "_links": {
+    "world": {"Dyad": {"placement": {"diagram": {"x1": 20, "y1": 10, "x2": 120, "y2": 110}}}},
+    "top": {
+      "Dyad": {
+        "placement": {"diagram": {"x1": 450, "x2": 550, "y1": 50, "y2": 150, "rot": 270}}
+      }
+    },
+    "damper": {
+      "Dyad": {
+        "placement": {"diagram": {"x1": 450, "x2": 550, "y1": 300, "y2": 400, "rot": 90}}
+      }
+    },
+    "base": {
+      "Dyad": {
+        "placement": {"diagram": {"x1": 450, "x2": 550, "y1": 800, "y2": 900, "rot": 270}}
+      }
+    },
+    "jack": {
+      "Dyad": {
+        "placement": {"diagram": {"x1": 450, "x2": 550, "y1": 550, "y2": 650, "rot": 270}}
+      }
+    },
+    "jack_position": {
+      "Dyad": {"placement": {"diagram": {"x1": 250, "x2": 350, "y1": 550, "y2": 650}}}
+    },
+    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id8": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id10": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [{"x": 590, "y": 600}, {"x": 590, "y": 710}, {"x": 300, "y": 710}],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+  }
+}
+end

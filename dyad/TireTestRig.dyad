@@ -1,13 +1,13 @@
 test component TireTestRig
   """
   Tire test rig.
-
+  
   Mounts the wheel centre at the unloaded radius, then sweeps it vertically.
-
+  
   With `speed` non-zero the carriage also rolls the wheel forward while the
   spin drive ramps wheel speed from `kappa_start` to `kappa_end`, which walks
   the tire across its slip curve at a held vertical load.
-
+  
   The steer drive does the same for slip angle, ramping from `alpha_start` to
   `alpha_end`. The carriage always travels along world x, so steering the wheel
   left puts the contact patch's lateral velocity along -y_c, which is a negative
@@ -207,26 +207,26 @@ relations
   spin.phi_ref = spin_rate_start * time + 0.5 * spin_accel * time ^ 2
   steer_position.phi_ref = -(alpha_start + alpha_rate * time)
 
-  connect(world.frame_b, mount.frame_a) {^id6}
-  connect(mount.frame_b, carriage.frame_a) {^id11}
-  connect(carriage.support, carriage_position.support) {^id12}
-  connect(carriage_position.flange, carriage.axis) {^id13}
-  connect(carriage.frame_b, prismatic.frame_a) {^id7}
-  connect(prismatic.support, wheel_position.support) {^id8}
-  connect(wheel_position.flange, prismatic.axis) {^id9}
-  connect(prismatic.frame_b, steer.frame_a) {^id16}
-  connect(steer.support, steer_position.support) {^id17}
-  connect(steer_position.spline, steer.axis) {^id18}
-  connect(steer.frame_b, tire.wheel_center) {^id10}
-  connect(spin.spline, tire.spline) {^id14}
-  connect(spin_ground.spline, spin.support) {^id15}
+  connect(world.frame_b, mount.frame_a) {^id12}
+  connect(mount.frame_b, carriage.frame_a) {^id13}
+  connect(carriage.support, carriage_position.support) {^id14}
+  connect(carriage_position.flange, carriage.axis) {^id15}
+  connect(carriage.frame_b, prismatic.frame_a) {^id16}
+  connect(prismatic.support, wheel_position.support) {^id17}
+  connect(wheel_position.flange, prismatic.axis) {^id18}
+  connect(prismatic.frame_b, steer.frame_a) {^id19}
+  connect(steer.support, steer_position.support) {^id20}
+  connect(steer_position.spline, steer.axis) {^id21}
+  connect(steer.frame_b, tire.wheel_center) {^id22}
+  connect(spin.spline, tire.spline) {^id23}
+  connect(spin_ground.spline, spin.support) {^id24}
 
 metadata {
   "Dyad": {
     "experiments": {},
     "tests": {
       "sweep": {
-        "stop": 2.0,
+        "stop": 2,
         "atol": {"tire.rho": 0.000001, "tire.Fz": 0.01, "tire.loaded_radius": 0.000001},
         "expect": {
           "initial": {"tire.rho": 0, "tire.Fz": 0, "tire.loaded_radius": 0.344},
@@ -234,44 +234,34 @@ metadata {
         }
       },
       "slip": {
-        "stop": 2.0,
+        "stop": 2,
         "params": {
-          "speed": 10.0,
+          "speed": 10,
           "static_deflection": 0.005,
-          "stroke": 0.0,
+          "stroke": 0,
           "kappa_start": -0.2,
           "kappa_end": 0.2,
-          "slip_ramp_time": 2.0
+          "slip_ramp_time": 2
         },
-        "atol": {
-          "tire.kappa": 0.0001,
-          "tire.Fx": 0.1,
-          "tire.Fz": 0.1,
-          "tire.rho": 0.000001
-        },
+        "atol": {"tire.kappa": 0.0001, "tire.Fx": 0.1, "tire.Fz": 0.1, "tire.rho": 0.000001},
         "expect": {
-          "initial": {"tire.rho": 0.005, "tire.Fz": 1050.0},
+          "initial": {"tire.rho": 0.005, "tire.Fz": 1050},
           "signals": ["tire.kappa", "tire.Fx", "tire.Fz", "tire.rho"]
         }
       },
       "slip_angle": {
-        "stop": 2.0,
+        "stop": 2,
         "params": {
-          "speed": 10.0,
+          "speed": 10,
           "static_deflection": 0.005,
-          "stroke": 0.0,
+          "stroke": 0,
           "alpha_start": -0.2,
           "alpha_end": 0.2,
-          "steer_ramp_time": 2.0
+          "steer_ramp_time": 2
         },
-        "atol": {
-          "tire.alpha": 0.0001,
-          "tire.Fy": 0.1,
-          "tire.Fx": 0.1,
-          "tire.Fz": 0.1
-        },
+        "atol": {"tire.alpha": 0.0001, "tire.Fy": 0.1, "tire.Fx": 0.1, "tire.Fz": 0.1},
         "expect": {
-          "initial": {"tire.rho": 0.005, "tire.Fz": 1050.0, "tire.alpha": -0.2},
+          "initial": {"tire.rho": 0.005, "tire.Fz": 1050, "tire.alpha": -0.2},
           "signals": ["tire.alpha", "tire.Fy", "tire.Fx", "tire.Fz"]
         }
       }
@@ -282,17 +272,14 @@ metadata {
     "tire": {
       "Dyad": {"placement": {"diagram": {"x1": 730, "x2": 830, "y1": 450, "y2": 550}}}
     },
-    "steer": {
-      "Dyad": {"placement": {"diagram": {"x1": 580, "x2": 680, "y1": 450, "y2": 550}}}
-    },
-    "steer_position": {
-      "Dyad": {"placement": {"diagram": {"x1": 490, "x2": 590, "y1": 310, "y2": 410}}}
-    },
-    "id16": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id17": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 540, "y": 550}], "E": 2}], "path": {}}},
-    "id18": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 630, "y": 360}], "E": 2}], "path": {}}},
     "mount": {
       "Dyad": {"placement": {"diagram": {"x1": 170, "x2": 270, "y1": 450, "y2": 550}}}
+    },
+    "carriage": {
+      "Dyad": {"placement": {"diagram": {"x1": 300, "x2": 400, "y1": 450, "y2": 550}}}
+    },
+    "carriage_position": {
+      "Dyad": {"placement": {"diagram": {"x1": 210, "x2": 310, "y1": 310, "y2": 410}}}
     },
     "prismatic": {
       "Dyad": {"placement": {"diagram": {"x1": 440, "x2": 540, "y1": 450, "y2": 550}}}
@@ -300,21 +287,11 @@ metadata {
     "wheel_position": {
       "Dyad": {"placement": {"diagram": {"x1": 350, "x2": 450, "y1": 310, "y2": 410}}}
     },
-    "id6": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 140, "y": 60}, {"x": 140, "y": 500}], "E": 2}],
-        "path": {}
-      }
+    "steer": {
+      "Dyad": {"placement": {"diagram": {"x1": 580, "x2": 680, "y1": 450, "y2": 550}}}
     },
-    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id8": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 400, "y": 550}], "E": 2}], "path": {}}},
-    "id9": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 490, "y": 360}], "E": 2}], "path": {}}},
-    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "carriage": {
-      "Dyad": {"placement": {"diagram": {"x1": 300, "x2": 400, "y1": 450, "y2": 550}}}
-    },
-    "carriage_position": {
-      "Dyad": {"placement": {"diagram": {"x1": 210, "x2": 310, "y1": 310, "y2": 410}}}
+    "steer_position": {
+      "Dyad": {"placement": {"diagram": {"x1": 490, "x2": 590, "y1": 310, "y2": 410}}}
     },
     "spin": {
       "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
@@ -322,11 +299,29 @@ metadata {
     "spin_ground": {
       "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 620, "y2": 720}}}
     },
-    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id12": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 260, "y": 550}], "E": 2}], "path": {}}},
-    "id13": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 350, "y": 360}], "E": 2}], "path": {}}},
-    "id14": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id15": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+    "id12": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 140, "y": 60}, {"x": 140, "y": 500}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id13": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id14": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 260, "y": 550}], "E": 2}], "path": {}}},
+    "id15": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 350, "y": 360}], "E": 2}], "path": {}}},
+    "id16": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id17": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 400, "y": 550}], "E": 2}], "path": {}}},
+    "id18": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 490, "y": 360}], "E": 2}], "path": {}}},
+    "id19": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id20": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 595, "y": 460}, {"x": 540, "y": 460}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id21": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 630, "y": 360}], "E": 2}], "path": {}}},
+    "id22": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id23": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id24": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
   }
 }
 end

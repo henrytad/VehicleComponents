@@ -17,14 +17,11 @@ __dyad_run_test_case!(
   solver=ODEAlg.Auto(),
   params=(; heave_amplitude=0.0254, roll_amplitude=0),
   initial_conditions=Tuple[],
-  expected_initial=Tuple[
-    (m -> m.inboard.heave_deflection, "inboard.heave_deflection", 0, 0.00001, 1e-5),
-    (m -> m.inboard.roll_deflection, "inboard.roll_deflection", 0, 0.00001, 1e-5),
-  ],
+  expected_initial=Tuple[],
   expected_final=Tuple[],
   signals=Tuple[
-    (m -> m.inboard.heave_deflection, "inboard.heave_deflection", 0.00001, 1e-5),
-    (m -> m.inboard.roll_deflection, "inboard.roll_deflection", 0.00001, 1e-5),
+    (m -> m.inboard.heave_strut.s, "inboard.heave_strut.s", 0.00001, 1e-5),
+    (m -> m.inboard.roll_strut.s, "inboard.roll_strut.s", 0.00001, 1e-5),
   ],
 )
 __dyad_run_test_case!(
@@ -40,13 +37,10 @@ __dyad_run_test_case!(
   solver=ODEAlg.Auto(),
   params=(; heave_amplitude=0, roll_amplitude=0.0254),
   initial_conditions=Tuple[],
-  expected_initial=Tuple[
-    (m -> m.inboard.heave_deflection, "inboard.heave_deflection", 0, 0.00001, 1e-5),
-    (m -> m.inboard.roll_deflection, "inboard.roll_deflection", 0, 0.00001, 1e-5),
-  ],
+  expected_initial=Tuple[],
   expected_final=Tuple[],
   signals=Tuple[
-    (m -> m.inboard.heave_deflection, "inboard.heave_deflection", 0.00001, 1e-5),
-    (m -> m.inboard.roll_deflection, "inboard.roll_deflection", 0.00001, 1e-5),
+    (m -> m.inboard.heave_strut.s, "inboard.heave_strut.s", 0.00001, 1e-5),
+    (m -> m.inboard.roll_strut.s, "inboard.roll_strut.s", 0.00001, 1e-5),
   ],
 )
