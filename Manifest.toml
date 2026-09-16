@@ -2,7 +2,7 @@
 
 julia_version = "1.12.7-dyad"
 manifest_format = "2.0"
-project_hash = "5a1d78e54113d16cf5f3e9d654dd0284da12fa7b"
+project_hash = "d8d6a11bd0d471f533b68c44fcd8542b8e4aa9b9"
 
 [[deps.ADTypes]]
 uuid = "47edcb42-4c32-4615-8424-f2b9edc5f35b"

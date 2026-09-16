@@ -1,0 +1,41 @@
+component RoadSurface
+  """
+  Random road surface to ISO 8608.
+  
+  Height of the road at (x, y), as a sum of plane waves with random directions
+  and random phases. The waves are scaled so the profile along any straight track
+  has the ISO 8608 displacement.
+  """
+  x = RealInput() {^x}
+  y = RealInput() {^y}
+  z = RealOutput() {^z}
+
+  structural parameter N::Integer = 64
+  structural parameter seed::Integer = 1
+  structural parameter n_min::Real = 0.02
+  structural parameter n_max::Real = 3.0
+
+  "Road roughness coefficient. 0 is a smooth road"
+  parameter roughness::Real = 0
+
+  final parameter amplitude::Real[N] = VehicleComponents.road_wave_amplitude(N, seed, n_min, n_max)
+  final parameter kx::Real[N] = VehicleComponents.road_wave_kx(N, seed, n_min, n_max)
+  final parameter ky::Real[N] = VehicleComponents.road_wave_ky(N, seed, n_min, n_max)
+  final parameter phase::Real[N] = VehicleComponents.road_wave_phase(N, seed, n_min, n_max)
+
+relations
+
+  z = VehicleComponents.road_height(amplitude, kx, ky, phase, roughness, x, y)
+
+metadata {
+  "_links": {
+    "x": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
+    "y": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 200, "y2": 300}}}
+    },
+    "z": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 20, "y2": 120}}}
+    }
+  }
+}
+end

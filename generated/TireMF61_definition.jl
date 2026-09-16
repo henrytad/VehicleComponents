@@ -172,7 +172,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
 | Name         | Description                         | Units  | 
 | ------------ | ----------------------------------- | ------ |
-| `z_w`         | Height of the wheel centre above the ground plane                         | m  |
+| `z_w`         | Height of the wheel centre above the road directly below it                         | m  |
 | `v_z`         | Vertical velocity of the wheel centre                         | m/s  |
 | `z_bottom`         | Height of the lowest point of the undeflected tyre (in contact when < 0)                         | m  |
 | `rho`         | Radial deflection (>= 0)                         | m  |
@@ -787,7 +787,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (slip(t)::Real), [output = true])
 
   ### Variables (declarations)
-  append!(__vars, @variables (z_w(t)::Real), [description = "Height of the wheel centre above the ground plane"])
+  append!(__vars, @variables (z_w(t)::Real), [description = "Height of the wheel centre above the road directly below it"])
   append!(__vars, @variables (v_z(t)::Real), [description = "Vertical velocity of the wheel centre"])
   append!(__vars, @variables (z_bottom(t)::Real), [description = "Height of the lowest point of the undeflected tyre (in contact when < 0)"])
   append!(__vars, @variables (rho(t)::Real), [description = "Radial deflection (>= 0)"])
@@ -1264,6 +1264,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Components
   push!(__systems, @named spline = __Dyad__Spline())
   push!(__systems, @named wheel_center = __Dyad__Frame3D())
+  # Subcomponent road of type VehicleComponents.RoadSurface
+  road_overrides = __pop_subcomponent_overrides!(__overrides, "road")
+  push!(__systems, @named road = VehicleComponents.RoadSurface(; road_overrides...))
   # Subcomponent visual of type MultibodyComponents.CylinderShape
   visual_overrides = __pop_subcomponent_overrides!(__overrides, "visual")
   push!(__systems, @named visual = MultibodyComponents.CylinderShape(; color=sty_black, r=wheel_center.r_0, R=transpose(wheel_center.R), r_shape=[0, -width / 2, 0], length_direction=[0, 1, 0], width_direction=[1, 0, 0], length=width, width=2 * unloaded_radius, height=2 * unloaded_radius, visual_overrides...))
@@ -1398,7 +1401,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
-  push!(__eqs, z_w ~ getindex(getproperty(wheel_center, :r_0), 3))
+  push!(__eqs, road.x ~ x_w)
+  push!(__eqs, road.y ~ y_w)
+  push!(__eqs, z_w ~ getindex(getproperty(wheel_center, :r_0), 3) - road.z)
   push!(__eqs, v_z ~ ModelingToolkit.D_nounits(z_w))
   push!(__eqs, z_bottom ~ z_w - unloaded_radius)
   push!(__eqs, rho ~ ifelse(z_bottom < 0, -z_bottom, 0))

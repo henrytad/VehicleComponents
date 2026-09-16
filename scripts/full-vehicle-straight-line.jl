@@ -51,6 +51,8 @@ wheelbase = front.geometry.linkages.left.wheel_center[1] -
 # Parameters
 # ===========================================================================
 tire_parameters(tire) = [
+    tire.road.roughness => data.road.roughness,
+
     # [DIMENSION] / [VERTICAL]
     tire.width => tires.WIDTH,
     tire.unloaded_radius => tires.UNLOADED_RADIUS,
@@ -586,3 +588,45 @@ GLMakie.record(fig, "output/full_vehicle_straight_line.gif", timevec; framerate)
     GLMakie.update_cam!(scene.scene, GLMakie.cameracontrols(scene.scene),
         target + cam_offset, target, GLMakie.Vec3f(0, 0, 1))
 end
+
+# ===========================================================================
+# Road surface and tire load
+# ===========================================================================
+road_surface = VehicleComponents.road_waves(64, 1, 0.02, 3.0)
+track_y = [front.geometry.linkages.left.wheel_center[2], front.geometry.linkages.right.wheel_center[2]]
+
+road_t = range(t_drive, t_end, length=20000)
+road_fz = [(x=sol(road_t, idxs=c.wheel_assembly.tire.x_w).u,
+    fz=sol(road_t, idxs=c.wheel_assembly.tire.Fz).u) for c in corners]
+road_reach = minimum(maximum(r.x) for r in road_fz)
+println("Road: every tire has covered at least $(round(road_reach, digits=1)) m by t_end")
+
+function road_window_plot(x_lo, x_hi)
+    xs = range(x_lo, x_hi, length=round(Int, 50 * (x_hi - x_lo)) + 1)
+    ys = range(-1.0, 1.0, length=201)
+    zs = [1000 * VehicleComponents.road_height(road_surface, data.road.roughness, x, y) for y in ys, x in xs]
+    lim = maximum(abs, zs)
+
+    p_surface = Plots.heatmap(xs, ys, zs;
+        color=:balance, clims=(-lim, lim),
+        xlabel="x [m]", ylabel="y [m]", colorbar_title="height [mm]",
+        title="Road surface, $(x_lo)-$(x_hi) m (roughness $(data.road.roughness) m^3)")
+    Plots.hline!(p_surface, track_y; color=:black, linestyle=:dash, label="front wheel tracks")
+
+    p_tracks = Plots.plot(xs,
+        [1000 * VehicleComponents.road_height(road_surface, data.road.roughness, x, y) for x in xs, y in track_y];
+        labels=["left track" "right track"], linewidth=2, xlims=(x_lo, x_hi),
+        xlabel="x [m]", ylabel="height [mm]", title="Road height along the front wheel tracks")
+
+    short = x_hi <= road_reach ? "" : " (car only reaches $(round(road_reach, digits=1)) m)"
+    p_fz = Plots.plot(; xlabel="x [m] (each tire's own position)", ylabel="Fz [N]", xlims=(x_lo, x_hi),
+        title="Tire normal load over the road$short")
+    for (i, r) in enumerate(road_fz)
+        Plots.plot!(p_fz, r.x, r.fz;
+            label=corner_labels[i], linestyle=corner_styles[i], color=corner_colors[i], linewidth=2)
+    end
+
+    return Plots.plot(p_surface, p_tracks, p_fz; layout=(3, 1), size=(1200, 1250))
+end
+
+display(road_window_plot(50.0, 75.0))
