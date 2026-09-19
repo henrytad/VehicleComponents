@@ -53,8 +53,15 @@ component Inboard
   ) {^roll_arm_right}
   
   # Springs
-  heave_strut = VehicleComponents.Strut(color = sty_purple) {^heave_strut}
-  roll_strut = VehicleComponents.RollStrut(color = sty_orange) {^roll_strut}
+  heave_strut = VehicleComponents.Strut(
+    color = sty_purple,
+    dataset = heave_dataset
+  ) {^heave_strut}
+  roll_strut = VehicleComponents.RollStrut(color = sty_orange, dataset = roll_dataset) {^roll_strut}
+
+  # TODO: Remove dataset and color as pass through parameters once Dyad compiling is fixed
+  structural parameter heave_dataset::DyadData.DyadTimeseries
+  structural parameter roll_dataset::DyadData.DyadTimeseries
   
   # Hardpoints
   parameter rocker_pivot_left::Position[3]

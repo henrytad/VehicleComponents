@@ -34,272 +34,272 @@ component TireMF61
   # ---------------------------------------------------------------------------
   # TIR data - [DIMENSION] / [VERTICAL]
   # ---------------------------------------------------------------------------
-  parameter width::Length
-  parameter unloaded_radius::Length
-  parameter vertical_stiffness::TranslationalSpringConstant
-  parameter vertical_damping::TranslationalDampingConstant
-  parameter FNOMIN::Force
-  parameter BREFF::Real
-  parameter DREFF::Real
-  parameter FREFF::Real
+  parameter width::Length = VehicleComponents.params.tires.WIDTH
+  parameter unloaded_radius::Length = VehicleComponents.params.tires.UNLOADED_RADIUS
+  parameter vertical_stiffness::TranslationalSpringConstant = VehicleComponents.params.tires.VERTICAL_STIFFNESS
+  parameter vertical_damping::TranslationalDampingConstant = VehicleComponents.params.tires.VERTICAL_DAMPING
+  parameter FNOMIN::Force = VehicleComponents.params.tires.FNOMIN
+  parameter BREFF::Real = VehicleComponents.params.tires.BREFF
+  parameter DREFF::Real = VehicleComponents.params.tires.DREFF
+  parameter FREFF::Real = VehicleComponents.params.tires.FREFF
 
   # ---------------------------------------------------------------------------
   # TIR data - [STRUCTURAL]
   # ---------------------------------------------------------------------------
   "Tyre overall longitudinal stiffness. Sets the relaxation length."
-  parameter longitudinal_stiffness::TranslationalSpringConstant
+  parameter longitudinal_stiffness::TranslationalSpringConstant = VehicleComponents.params.tires.LONGITUDINAL_STIFFNESS
   "Tyre overall lateral stiffness. Sets the lateral relaxation length."
-  parameter lateral_stiffness::TranslationalSpringConstant
+  parameter lateral_stiffness::TranslationalSpringConstant = VehicleComponents.params.tires.LATERAL_STIFFNESS
 
   # ---------------------------------------------------------------------------
   # TIR data - [OPERATING_CONDITIONS]
   # ---------------------------------------------------------------------------
-  parameter INFLPRES::Pressure
-  parameter NOMPRES::Pressure
-  parameter LONGVL::Velocity
+  parameter INFLPRES::Pressure = VehicleComponents.params.tires.INFLPRES
+  parameter NOMPRES::Pressure = VehicleComponents.params.tires.NOMPRES
+  parameter LONGVL::Velocity = VehicleComponents.params.tires.LONGVL
 
   # ---------------------------------------------------------------------------
   # TIR data - [LONGITUDINAL_COEFFICIENTS]
   # ---------------------------------------------------------------------------
   "Shape factor Cfx"
-  parameter PCX1::Real
+  parameter PCX1::Real = VehicleComponents.params.tires.PCX1
   "Longitudinal friction Mux at Fznom"
-  parameter PDX1::Real
+  parameter PDX1::Real = VehicleComponents.params.tires.PDX1
   "Variation of friction Mux with load"
-  parameter PDX2::Real
+  parameter PDX2::Real = VehicleComponents.params.tires.PDX2
   "Variation of friction Mux with camber squared"
-  parameter PDX3::Real
+  parameter PDX3::Real = VehicleComponents.params.tires.PDX3
   "Longitudinal curvature Efx at Fznom"
-  parameter PEX1::Real
+  parameter PEX1::Real = VehicleComponents.params.tires.PEX1
   "Variation of curvature Efx with load"
-  parameter PEX2::Real
+  parameter PEX2::Real = VehicleComponents.params.tires.PEX2
   "Variation of curvature Efx with load squared"
-  parameter PEX3::Real
+  parameter PEX3::Real = VehicleComponents.params.tires.PEX3
   "Factor in curvature Efx while driving"
-  parameter PEX4::Real
+  parameter PEX4::Real = VehicleComponents.params.tires.PEX4
   "Longitudinal slip stiffness Kfx/Fz at Fznom"
-  parameter PKX1::Real
+  parameter PKX1::Real = VehicleComponents.params.tires.PKX1
   "Variation of slip stiffness Kfx/Fz with load"
-  parameter PKX2::Real
+  parameter PKX2::Real = VehicleComponents.params.tires.PKX2
   "Exponent in slip stiffness Kfx/Fz with load"
-  parameter PKX3::Real
+  parameter PKX3::Real = VehicleComponents.params.tires.PKX3
   "Horizontal shift Shx at Fznom"
-  parameter PHX1::Real
+  parameter PHX1::Real = VehicleComponents.params.tires.PHX1
   "Variation of shift Shx with load"
-  parameter PHX2::Real
+  parameter PHX2::Real = VehicleComponents.params.tires.PHX2
   "Vertical shift Svx/Fz at Fznom"
-  parameter PVX1::Real
+  parameter PVX1::Real = VehicleComponents.params.tires.PVX1
   "Variation of shift Svx/Fz with load"
-  parameter PVX2::Real
+  parameter PVX2::Real = VehicleComponents.params.tires.PVX2
   "Linear influence of inflation pressure on longitudinal slip stiffness"
-  parameter PPX1::Real
+  parameter PPX1::Real = VehicleComponents.params.tires.PPX1
   "Quadratic influence of inflation pressure on longitudinal slip stiffness"
-  parameter PPX2::Real
+  parameter PPX2::Real = VehicleComponents.params.tires.PPX2
   "Linear influence of inflation pressure on peak longitudinal friction"
-  parameter PPX3::Real
+  parameter PPX3::Real = VehicleComponents.params.tires.PPX3
   "Quadratic influence of inflation pressure on peak longitudinal friction"
-  parameter PPX4::Real
+  parameter PPX4::Real = VehicleComponents.params.tires.PPX4
   "Slope factor for combined slip Fx reduction"
-  parameter RBX1::Real
+  parameter RBX1::Real = VehicleComponents.params.tires.RBX1
   "Variation of slope Fx reduction with kappa"
-  parameter RBX2::Real
+  parameter RBX2::Real = VehicleComponents.params.tires.RBX2
   "Influence of camber on stiffness for Fx combined"
-  parameter RBX3::Real
+  parameter RBX3::Real = VehicleComponents.params.tires.RBX3
   "Shape factor for combined slip Fx reduction"
-  parameter RCX1::Real
+  parameter RCX1::Real = VehicleComponents.params.tires.RCX1
   "Curvature factor of combined Fx"
-  parameter REX1::Real
+  parameter REX1::Real = VehicleComponents.params.tires.REX1
   "Curvature factor of combined Fx with load"
-  parameter REX2::Real
+  parameter REX2::Real = VehicleComponents.params.tires.REX2
   "Shift factor for combined slip Fx reduction"
-  parameter RHX1::Real
+  parameter RHX1::Real = VehicleComponents.params.tires.RHX1
 
   # ---------------------------------------------------------------------------
   # TIR data - [LATERAL_COEFFICIENTS]
   # ---------------------------------------------------------------------------
   "Shape factor Cfy"
-  parameter PCY1::Real
+  parameter PCY1::Real = VehicleComponents.params.tires.PCY1
   "Lateral friction Muy at Fznom"
-  parameter PDY1::Real
+  parameter PDY1::Real = VehicleComponents.params.tires.PDY1
   "Variation of friction Muy with load"
-  parameter PDY2::Real
+  parameter PDY2::Real = VehicleComponents.params.tires.PDY2
   "Variation of friction Muy with camber squared"
-  parameter PDY3::Real
+  parameter PDY3::Real = VehicleComponents.params.tires.PDY3
   "Lateral curvature Efy at Fznom"
-  parameter PEY1::Real
+  parameter PEY1::Real = VehicleComponents.params.tires.PEY1
   "Variation of curvature Efy with load"
-  parameter PEY2::Real
+  parameter PEY2::Real = VehicleComponents.params.tires.PEY2
   "Zero order camber dependency of curvature Efy"
-  parameter PEY3::Real
+  parameter PEY3::Real = VehicleComponents.params.tires.PEY3
   "Variation of curvature Efy with camber"
-  parameter PEY4::Real
+  parameter PEY4::Real = VehicleComponents.params.tires.PEY4
   "Variation of curvature Efy with camber squared"
-  parameter PEY5::Real
+  parameter PEY5::Real = VehicleComponents.params.tires.PEY5
   "Maximum value of stiffness Kfy/Fznom"
-  parameter PKY1::Real
+  parameter PKY1::Real = VehicleComponents.params.tires.PKY1
   "Load at which Kfy reaches maximum value, over Fznom"
-  parameter PKY2::Real
+  parameter PKY2::Real = VehicleComponents.params.tires.PKY2
   "Variation of Kfy/Fznom with camber"
-  parameter PKY3::Real
+  parameter PKY3::Real = VehicleComponents.params.tires.PKY3
   "Peak stiffness variation with camber squared"
-  parameter PKY4::Real
+  parameter PKY4::Real = VehicleComponents.params.tires.PKY4
   "Fz at which Kfy is maximum, variation with camber squared"
-  parameter PKY5::Real
+  parameter PKY5::Real = VehicleComponents.params.tires.PKY5
   "Camber stiffness factor"
-  parameter PKY6::Real
+  parameter PKY6::Real = VehicleComponents.params.tires.PKY6
   "Camber stiffness variation with load"
-  parameter PKY7::Real
+  parameter PKY7::Real = VehicleComponents.params.tires.PKY7
   "Horizontal shift Shy at Fznom"
-  parameter PHY1::Real
+  parameter PHY1::Real = VehicleComponents.params.tires.PHY1
   "Variation of shift Shy with load"
-  parameter PHY2::Real
+  parameter PHY2::Real = VehicleComponents.params.tires.PHY2
   "Vertical shift in Svy/Fz at Fznom"
-  parameter PVY1::Real
+  parameter PVY1::Real = VehicleComponents.params.tires.PVY1
   "Variation of shift Svy/Fz with load"
-  parameter PVY2::Real
+  parameter PVY2::Real = VehicleComponents.params.tires.PVY2
   "Variation of shift Svy/Fz with camber"
-  parameter PVY3::Real
+  parameter PVY3::Real = VehicleComponents.params.tires.PVY3
   "Variation of shift Svy/Fz with camber and load"
-  parameter PVY4::Real
+  parameter PVY4::Real = VehicleComponents.params.tires.PVY4
   "Linear influence of inflation pressure on cornering stiffness"
-  parameter PPY1::Real
+  parameter PPY1::Real = VehicleComponents.params.tires.PPY1
   "Quadratic influence of inflation pressure on cornering stiffness"
-  parameter PPY2::Real
+  parameter PPY2::Real = VehicleComponents.params.tires.PPY2
   "Linear influence of inflation pressure on peak lateral friction"
-  parameter PPY3::Real
+  parameter PPY3::Real = VehicleComponents.params.tires.PPY3
   "Quadratic influence of inflation pressure on peak lateral friction"
-  parameter PPY4::Real
+  parameter PPY4::Real = VehicleComponents.params.tires.PPY4
   "Influence of inflation pressure on camber stiffness"
-  parameter PPY5::Real
+  parameter PPY5::Real = VehicleComponents.params.tires.PPY5
   "Slope factor for combined Fy reduction"
-  parameter RBY1::Real
+  parameter RBY1::Real = VehicleComponents.params.tires.RBY1
   "Variation of slope Fy reduction with alpha"
-  parameter RBY2::Real
+  parameter RBY2::Real = VehicleComponents.params.tires.RBY2
   "Shift term for alpha in slope Fy reduction"
-  parameter RBY3::Real
+  parameter RBY3::Real = VehicleComponents.params.tires.RBY3
   "Influence of camber on stiffness of Fy combined"
-  parameter RBY4::Real
+  parameter RBY4::Real = VehicleComponents.params.tires.RBY4
   "Shape factor for combined Fy reduction"
-  parameter RCY1::Real
+  parameter RCY1::Real = VehicleComponents.params.tires.RCY1
   "Curvature factor of combined Fy"
-  parameter REY1::Real
+  parameter REY1::Real = VehicleComponents.params.tires.REY1
   "Curvature factor of combined Fy with load"
-  parameter REY2::Real
+  parameter REY2::Real = VehicleComponents.params.tires.REY2
   "Shift factor for combined Fy reduction"
-  parameter RHY1::Real
+  parameter RHY1::Real = VehicleComponents.params.tires.RHY1
   "Shift factor for combined Fy reduction with load"
-  parameter RHY2::Real
+  parameter RHY2::Real = VehicleComponents.params.tires.RHY2
   "Kappa induced side force Svyk/Muy*Fz at Fznom"
-  parameter RVY1::Real
+  parameter RVY1::Real = VehicleComponents.params.tires.RVY1
   "Variation of Svyk/Muy*Fz with load"
-  parameter RVY2::Real
+  parameter RVY2::Real = VehicleComponents.params.tires.RVY2
   "Variation of Svyk/Muy*Fz with camber"
-  parameter RVY3::Real
+  parameter RVY3::Real = VehicleComponents.params.tires.RVY3
   "Variation of Svyk/Muy*Fz with alpha"
-  parameter RVY4::Real
+  parameter RVY4::Real = VehicleComponents.params.tires.RVY4
   "Variation of Svyk/Muy*Fz with kappa"
-  parameter RVY5::Real
+  parameter RVY5::Real = VehicleComponents.params.tires.RVY5
   "Variation of Svyk/Muy*Fz with atan(kappa)"
-  parameter RVY6::Real
+  parameter RVY6::Real = VehicleComponents.params.tires.RVY6
 
   # ---------------------------------------------------------------------------
   # TIR data - [ALIGNING_COEFFICIENTS]
   # ---------------------------------------------------------------------------
   "Trail slope factor for trail Bpt at Fznom"
-  parameter QBZ1::Real
+  parameter QBZ1::Real = VehicleComponents.params.tires.QBZ1
   "Variation of slope Bpt with load"
-  parameter QBZ2::Real
+  parameter QBZ2::Real = VehicleComponents.params.tires.QBZ2
   "Variation of slope Bpt with load squared"
-  parameter QBZ3::Real
+  parameter QBZ3::Real = VehicleComponents.params.tires.QBZ3
   "Variation of slope Bpt with camber. PAC2002 only; 4.E40 has no term for it."
-  parameter QBZ4::Real
+  parameter QBZ4::Real = VehicleComponents.params.tires.QBZ4
   "Variation of slope Bpt with absolute camber"
-  parameter QBZ5::Real
+  parameter QBZ5::Real = VehicleComponents.params.tires.QBZ5
   "Variation of slope Bpt with camber squared"
-  parameter QBZ6::Real
+  parameter QBZ6::Real = VehicleComponents.params.tires.QBZ6
   "Slope factor Br of residual torque Mzr"
-  parameter QBZ9::Real
+  parameter QBZ9::Real = VehicleComponents.params.tires.QBZ9
   "Slope factor Br of residual torque Mzr"
-  parameter QBZ10::Real
+  parameter QBZ10::Real = VehicleComponents.params.tires.QBZ10
   "Shape factor Cpt for pneumatic trail"
-  parameter QCZ1::Real
+  parameter QCZ1::Real = VehicleComponents.params.tires.QCZ1
   "Peak trail Dpt = Dpt*(Fz/Fznom*R0)"
-  parameter QDZ1::Real
+  parameter QDZ1::Real = VehicleComponents.params.tires.QDZ1
   "Variation of peak Dpt with load"
-  parameter QDZ2::Real
+  parameter QDZ2::Real = VehicleComponents.params.tires.QDZ2
   "Variation of peak Dpt with camber"
-  parameter QDZ3::Real
+  parameter QDZ3::Real = VehicleComponents.params.tires.QDZ3
   "Variation of peak Dpt with camber squared"
-  parameter QDZ4::Real
+  parameter QDZ4::Real = VehicleComponents.params.tires.QDZ4
   "Peak residual torque Dmr = Dmr/(Fz*R0)"
-  parameter QDZ6::Real
+  parameter QDZ6::Real = VehicleComponents.params.tires.QDZ6
   "Variation of peak factor Dmr with load"
-  parameter QDZ7::Real
+  parameter QDZ7::Real = VehicleComponents.params.tires.QDZ7
   "Variation of peak factor Dmr with camber"
-  parameter QDZ8::Real
+  parameter QDZ8::Real = VehicleComponents.params.tires.QDZ8
   "Variation of peak factor Dmr with camber and load"
-  parameter QDZ9::Real
+  parameter QDZ9::Real = VehicleComponents.params.tires.QDZ9
   "Variation of peak factor Dmr with camber squared"
-  parameter QDZ10::Real
+  parameter QDZ10::Real = VehicleComponents.params.tires.QDZ10
   "Variation of peak factor Dmr with camber squared and load"
-  parameter QDZ11::Real
+  parameter QDZ11::Real = VehicleComponents.params.tires.QDZ11
   "Trail curvature Ept at Fznom"
-  parameter QEZ1::Real
+  parameter QEZ1::Real = VehicleComponents.params.tires.QEZ1
   "Variation of curvature Ept with load"
-  parameter QEZ2::Real
+  parameter QEZ2::Real = VehicleComponents.params.tires.QEZ2
   "Variation of curvature Ept with load squared"
-  parameter QEZ3::Real
+  parameter QEZ3::Real = VehicleComponents.params.tires.QEZ3
   "Variation of curvature Ept with sign of alpha-t"
-  parameter QEZ4::Real
+  parameter QEZ4::Real = VehicleComponents.params.tires.QEZ4
   "Variation of Ept with camber and sign of alpha-t"
-  parameter QEZ5::Real
+  parameter QEZ5::Real = VehicleComponents.params.tires.QEZ5
   "Trail horizontal shift Sht at Fznom"
-  parameter QHZ1::Real
+  parameter QHZ1::Real = VehicleComponents.params.tires.QHZ1
   "Variation of shift Sht with load"
-  parameter QHZ2::Real
+  parameter QHZ2::Real = VehicleComponents.params.tires.QHZ2
   "Variation of shift Sht with camber"
-  parameter QHZ3::Real
+  parameter QHZ3::Real = VehicleComponents.params.tires.QHZ3
   "Variation of shift Sht with camber and load"
-  parameter QHZ4::Real
+  parameter QHZ4::Real = VehicleComponents.params.tires.QHZ4
   "Linear influence of inflation pressure on pneumatic trail"
-  parameter PPZ1::Real
+  parameter PPZ1::Real = VehicleComponents.params.tires.PPZ1
   "Influence of inflation pressure on residual aligning torque"
-  parameter PPZ2::Real
+  parameter PPZ2::Real = VehicleComponents.params.tires.PPZ2
   "Nominal value of s/R0: effect of Fx on Mz"
-  parameter SSZ1::Real
+  parameter SSZ1::Real = VehicleComponents.params.tires.SSZ1
   "Variation of distance s/R0 with Fy/Fznom"
-  parameter SSZ2::Real
+  parameter SSZ2::Real = VehicleComponents.params.tires.SSZ2
   "Variation of distance s/R0 with camber"
-  parameter SSZ3::Real
+  parameter SSZ3::Real = VehicleComponents.params.tires.SSZ3
   "Variation of distance s/R0 with load and camber"
-  parameter SSZ4::Real
+  parameter SSZ4::Real = VehicleComponents.params.tires.SSZ4
 
   # ---------------------------------------------------------------------------
   # TIR data - [SCALING_COEFFICIENTS]
   # ---------------------------------------------------------------------------
-  parameter LFZO::Real = 1
-  parameter LCX::Real = 1
-  parameter LMUX::Real = 1
-  parameter LEX::Real = 1
-  parameter LKX::Real = 1
-  parameter LHX::Real = 1
-  parameter LVX::Real = 1
-  parameter LCY::Real = 1
-  parameter LMUY::Real = 1
-  parameter LEY::Real = 1
-  parameter LKY::Real = 1
-  parameter LHY::Real = 1
-  parameter LVY::Real = 1
-  parameter LKYC::Real = 1
-  parameter LXAL::Real = 1
-  parameter LYKA::Real = 1
-  parameter LVYKA::Real = 1
-  parameter LTR::Real = 1
-  parameter LRES::Real = 1
-  parameter LKZC::Real = 1
-  parameter LS::Real = 1
+  parameter LFZO::Real = VehicleComponents.params.tires.LFZO
+  parameter LCX::Real = VehicleComponents.params.tires.LCX
+  parameter LMUX::Real = VehicleComponents.params.tires.LMUX
+  parameter LEX::Real = VehicleComponents.params.tires.LEX
+  parameter LKX::Real = VehicleComponents.params.tires.LKX
+  parameter LHX::Real = VehicleComponents.params.tires.LHX
+  parameter LVX::Real = VehicleComponents.params.tires.LVX
+  parameter LCY::Real = VehicleComponents.params.tires.LCY
+  parameter LMUY::Real = VehicleComponents.params.tires.LMUY
+  parameter LEY::Real = VehicleComponents.params.tires.LEY
+  parameter LKY::Real = VehicleComponents.params.tires.LKY
+  parameter LHY::Real = VehicleComponents.params.tires.LHY
+  parameter LVY::Real = VehicleComponents.params.tires.LVY
+  parameter LKYC::Real = VehicleComponents.params.tires.LKYC
+  parameter LXAL::Real = VehicleComponents.params.tires.LXAL
+  parameter LYKA::Real = VehicleComponents.params.tires.LYKA
+  parameter LVYKA::Real = VehicleComponents.params.tires.LVYKA
+  parameter LTR::Real = VehicleComponents.params.tires.LTR
+  parameter LRES::Real = VehicleComponents.params.tires.LRES
+  parameter LKZC::Real = VehicleComponents.params.tires.LKZC
+  parameter LS::Real = VehicleComponents.params.tires.LS
   "Slip-speed friction decay. Leave at 0 unless modelling a wet surface."
-  parameter LMUV::Real = 0
+  parameter LMUV::Real = VehicleComponents.params.tires.LMUV
 
   # ---------------------------------------------------------------------------
   # Mounted side

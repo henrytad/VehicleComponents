@@ -1,30 +1,17 @@
-using JSON3, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
-
 # Run `using VehicleComponents` if not already in env. If you try importing it again you'll
 # get an "importing VehicleComponents into Main conflicts with an existing global" error.
 # If you restart the REPL and rerun the lines, you will not get the error.
 using VehicleComponents
 
+using ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
+
 @named model = VehicleComponents.DamperTestRig()
 ssys = multibody(model)
-
-data_path = joinpath(pwd(), "assets", "vehicles", "MR25.json")
-data = JSON3.read(read(data_path, String))
-
-# Damper to sweep. The setup entry picks the valve code and both clicks.
-axle, mode = :front, :heave
-selection = data.suspension[axle].setup[mode].damper
-curve = VehicleComponents.damper_map(data.dampers, selection)
-
-parameter_map = Dict([
-    ssys.damper.force_map.independent_var => curve.velocity,
-    ssys.damper.force_map.data => curve.force,
-])
-
-prob = ODEProblem(ssys, parameter_map, (0.0, 0.4))
+prob = ODEProblem(ssys, [], (0.0, 0.4))
 sol = solve(prob)
 
-name = "$axle $mode: $(selection.valve_code), compression $(selection.compression_position), extension $(selection.extension_position)"
+selection = VehicleComponents.params.suspension.front.setup.heave.damper
+name = "front heave: $(selection.valve_code), compression $(selection.compression_position), extension $(selection.extension_position)"
 
 t = range(0.0, 0.4, length=2000)
 plot_curve = Plots.plot(

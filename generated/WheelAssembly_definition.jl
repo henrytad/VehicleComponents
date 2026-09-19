@@ -14,10 +14,10 @@ import Moshi as __Ext__Moshi
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
 | `is_left`         |                          | --  |    |
-| `rim_mass`         |                          | kg  |    |
-| `rim_inertia`         |                          | kg.m2  |    |
-| `tire_mass`         |                          | kg  |    |
-| `tire_inertia`         |                          | kg.m2  |    |
+| `rim_mass`         |                          | kg  |   VehicleComp...ls.rim_mass |
+| `rim_inertia`         |                          | kg.m2  |   VehicleComp...rim_inertia |
+| `tire_mass`         |                          | kg  |   VehicleComp....tires.MASS |
+| `tire_inertia`         |                          | kg.m2  |   VehicleComp...s.tires.IYY |
 
 ## Connectors
 
@@ -26,7 +26,7 @@ import Moshi as __Ext__Moshi
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function WheelAssembly(; name = nothing, is_left=nothing, rim_mass=nothing, rim_inertia=nothing, tire_mass=nothing, tire_inertia=nothing, kwargs...)
+@component function WheelAssembly(; name = nothing, is_left=nothing, rim_mass=VehicleComponents.params.wheels.rim_mass, rim_inertia=VehicleComponents.params.wheels.rim_inertia, tire_mass=VehicleComponents.params.tires.MASS, tire_inertia=VehicleComponents.params.tires.IYY, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:

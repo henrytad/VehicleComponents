@@ -14,30 +14,32 @@ test component InboardTestRig
   inboard = VehicleComponents.Inboard(
     pushrod_outer_left = pushrod_outer_left,
     pushrod_outer_right = pushrod_outer_right,
-    rocker_pivot_left = [-0.030000, 0.120000, 0.623500],
-    rocker_pivot_right = [-0.030000, -0.120000, 0.623500],
-    pushrod_inner_left = [-0.030000, 0.138000, 0.653500],
-    pushrod_inner_right = [-0.030000, -0.138000, 0.653500],
-    heave_pickup_left = [-0.030000, 0.114000, 0.663500],
-    heave_pickup_right = [-0.030000, -0.114000, 0.663500],
-    roll_pickup_left = [-0.105000, 0.108000, 0.586500],
-    roll_pickup_right = [-0.105000, -0.108000, 0.660500],
+    rocker_pivot_left = VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.left,
+    rocker_pivot_right = VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.right,
+    pushrod_inner_left = VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.left,
+    pushrod_inner_right = VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.right,
+    heave_pickup_left = VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.left,
+    heave_pickup_right = VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.right,
+    roll_pickup_left = VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.left,
+    roll_pickup_right = VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.right,
     heave_strut(
       spring(
-        c = 35000.0,
-        s_unstretched = 0.228,
-        perch_height = 0.0
+        c = VehicleComponents.params.suspension.front.setup.heave.stiffness,
+        s_unstretched = VehicleComponents.params.suspension.front.setup.heave.s_unstretched,
+        perch_height = VehicleComponents.params.suspension.front.setup.heave.perch_height
       )
     ),
     roll_strut(
       spring(
-        c = 35000.0,
-        s_neutral = 0.2283243,
-        preload_travel = 0.0
+        c = VehicleComponents.params.suspension.front.setup.roll.stiffness,
+        s_neutral = VehicleComponents.params.suspension.front.setup.roll.s_neutral,
+        preload_travel = VehicleComponents.params.suspension.front.setup.roll.preload_travel
       )
     ),
-    pushrod_adjust_left = 0.0,
-    pushrod_adjust_right = 0.0
+    heave_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper),
+    roll_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.roll.damper),
+    pushrod_adjust_left = VehicleComponents.params.suspension.front.setup.pushrod_adjust.left,
+    pushrod_adjust_right = VehicleComponents.params.suspension.front.setup.pushrod_adjust.right
   ) {^inboard}
 
   # Left jack
@@ -51,10 +53,10 @@ test component InboardTestRig
   pushrod_position_right = TranslationalComponents.Sources.Position() {^pushrod_position_right}
   
   # Pushrod outer pickups
-  parameter pushrod_outer_left::Position[3] = [0.000000, 0.480000, 0.423500]
-  parameter pushrod_outer_right::Position[3] = [0.000000, -0.480000, 0.423500]
-  
-  # Excitation
+  parameter pushrod_outer_left::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer
+  parameter pushrod_outer_right::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.right.pushrod_outer
+
+  # Excitation, set by the rig rather than the car
   parameter heave_amplitude::Length = 0.0254
   parameter roll_amplitude::Length = 0.0254
   parameter heave_freq::Frequency = 0.5

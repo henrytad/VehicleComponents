@@ -16,7 +16,7 @@ component RoadSurface
   structural parameter n_max::Real = 3.0
 
   "Road roughness coefficient. 0 is a smooth road"
-  parameter roughness::Real = 0
+  parameter roughness::Real = VehicleComponents.params.road.roughness
 
   final parameter amplitude::Real[N] = VehicleComponents.road_wave_amplitude(N, seed, n_min, n_max)
   final parameter kx::Real[N] = VehicleComponents.road_wave_kx(N, seed, n_min, n_max)

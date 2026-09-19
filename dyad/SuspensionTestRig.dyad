@@ -12,60 +12,60 @@ test component SuspensionTestRig
     wheel_center_right = wheel_center_right,
     pushrod_outer_left = pushrod_outer_left,
     pushrod_outer_right = pushrod_outer_right,
-    tierod_inner_left = [0.080, 0.220, 0.2335],
-    tierod_inner_right = [0.080, -0.220, 0.2335],
+    tierod_inner_left = VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner,
+    tierod_inner_right = VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_inner,
     linkage_left(
-      lca_front = [0.100, 0.195, 0.2085],
-      lca_rear = [-0.100, 0.205, 0.1985],
-      lca_outer = [0.005, 0.560, 0.2135],
-      uca_front = [0.080, 0.245, 0.3885],
-      uca_rear = [-0.080, 0.255, 0.3785],
-      uca_outer = [-0.010, 0.530, 0.4135],
-      tierod_inner = [0.080, 0.220, 0.2335],
-      tierod_outer = [0.075, 0.550, 0.2435],
-      static_camber = 0.0,
-      static_toe = 0.0
+      lca_front = VehicleComponents.params.suspension.front.geometry.linkages.left.lca_front,
+      lca_rear = VehicleComponents.params.suspension.front.geometry.linkages.left.lca_rear,
+      lca_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.lca_outer,
+      uca_front = VehicleComponents.params.suspension.front.geometry.linkages.left.uca_front,
+      uca_rear = VehicleComponents.params.suspension.front.geometry.linkages.left.uca_rear,
+      uca_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.uca_outer,
+      tierod_inner = VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner,
+      tierod_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_outer,
+      static_camber = VehicleComponents.params.suspension.front.setup.alignment.left.static_camber,
+      static_toe = VehicleComponents.params.suspension.front.setup.alignment.left.static_toe
     ),
     linkage_right(
-      lca_front = [0.100, -0.195, 0.2085],
-      lca_rear = [-0.100, -0.205, 0.1985],
-      lca_outer = [0.005, -0.560, 0.2135],
-      uca_front = [0.080, -0.245, 0.3885],
-      uca_rear = [-0.080, -0.255, 0.3785],
-      uca_outer = [-0.010, -0.530, 0.4135],
-      tierod_inner = [0.080, -0.220, 0.2335],
-      tierod_outer = [0.075, -0.550, 0.2435],
-      static_camber = 0.0,
-      static_toe = 0.0
+      lca_front = VehicleComponents.params.suspension.front.geometry.linkages.right.lca_front,
+      lca_rear = VehicleComponents.params.suspension.front.geometry.linkages.right.lca_rear,
+      lca_outer = VehicleComponents.params.suspension.front.geometry.linkages.right.lca_outer,
+      uca_front = VehicleComponents.params.suspension.front.geometry.linkages.right.uca_front,
+      uca_rear = VehicleComponents.params.suspension.front.geometry.linkages.right.uca_rear,
+      uca_outer = VehicleComponents.params.suspension.front.geometry.linkages.right.uca_outer,
+      tierod_inner = VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_inner,
+      tierod_outer = VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_outer,
+      static_camber = VehicleComponents.params.suspension.front.setup.alignment.right.static_camber,
+      static_toe = VehicleComponents.params.suspension.front.setup.alignment.right.static_toe
     ),
     inboard(
-      pushrod_outer_left = pushrod_outer_left,
-      pushrod_outer_right = pushrod_outer_right,
-      rocker_pivot_left = [-0.030, 0.120, 0.6235],
-      rocker_pivot_right = [-0.030, -0.120, 0.6235],
-      pushrod_inner_left = [-0.030, 0.138, 0.6535],
-      pushrod_inner_right = [-0.030, -0.138, 0.6535],
-      heave_pickup_left = [-0.030, 0.114, 0.6635],
-      heave_pickup_right = [-0.030, -0.114, 0.6635],
-      roll_pickup_left = [-0.105, 0.108, 0.5865],
-      roll_pickup_right = [-0.105, -0.108, 0.6605],
+      rocker_pivot_left = VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.left,
+      rocker_pivot_right = VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.right,
+      pushrod_inner_left = VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.left,
+      pushrod_inner_right = VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.right,
+      heave_pickup_left = VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.left,
+      heave_pickup_right = VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.right,
+      roll_pickup_left = VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.left,
+      roll_pickup_right = VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.right,
+      pushrod_adjust_left = VehicleComponents.params.suspension.front.setup.pushrod_adjust.left,
+      pushrod_adjust_right = VehicleComponents.params.suspension.front.setup.pushrod_adjust.right,
       heave_strut(
         spring(
-          c = 35000.0,
-          s_unstretched = 0.228,
-          perch_height = 0.0
+          c = VehicleComponents.params.suspension.front.setup.heave.stiffness,
+          s_unstretched = VehicleComponents.params.suspension.front.setup.heave.s_unstretched,
+          perch_height = VehicleComponents.params.suspension.front.setup.heave.perch_height
         )
       ),
       roll_strut(
         spring(
-          c = 35000.0,
-          s_neutral = 0.2283243,
-          preload_travel = 0.0
+          c = VehicleComponents.params.suspension.front.setup.roll.stiffness,
+          s_neutral = VehicleComponents.params.suspension.front.setup.roll.s_neutral,
+          preload_travel = VehicleComponents.params.suspension.front.setup.roll.preload_travel
         )
-      ),
-      pushrod_adjust_left = 0.0,
-      pushrod_adjust_right = 0.0
-    )
+      )
+    ),
+    heave_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper),
+    roll_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.roll.damper)
   ) {^suspension}
 
   # Left jack
@@ -81,10 +81,10 @@ test component SuspensionTestRig
   wheel_position_right = TranslationalComponents.Sources.Position() {^wheel_position_right}
  
   # Shared references
-  parameter wheel_center_left::Position[3] = [0.000, 0.600, 0.3135]
-  parameter wheel_center_right::Position[3] = [0.000, -0.600, 0.3135]
-  parameter pushrod_outer_left::Position[3] = [0.000, 0.480, 0.4235]
-  parameter pushrod_outer_right::Position[3] = [0.000, -0.480, 0.4235]
+  parameter wheel_center_left::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.left.wheel_center
+  parameter wheel_center_right::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.right.wheel_center
+  parameter pushrod_outer_left::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer
+  parameter pushrod_outer_right::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.right.pushrod_outer
  
   # Rig
   final parameter jack_rod_length::Length = 0.1

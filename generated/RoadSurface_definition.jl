@@ -17,7 +17,7 @@ import Moshi as __Ext__Moshi
 | `seed`         |                          | --  |   1 |
 | `n_min`         |                          | --  |   0.02 |
 | `n_max`         |                          | --  |   3.0 |
-| `roughness`         | Road roughness coefficient. 0 is a smooth road                         | --  |   0 |
+| `roughness`         | Road roughness coefficient. 0 is a smooth road                         | --  |   VehicleComp...d.roughness |
 
 ## Connectors
 
@@ -25,7 +25,7 @@ import Moshi as __Ext__Moshi
  * `y` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `z` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
 """
-@component function RoadSurface(; name = nothing, N=64, seed=1, n_min=0.02, n_max=Float64(3.0), roughness=Float64(0), kwargs...)
+@component function RoadSurface(; name = nothing, N=64, seed=1, n_min=0.02, n_max=Float64(3.0), roughness=VehicleComponents.params.road.roughness, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:

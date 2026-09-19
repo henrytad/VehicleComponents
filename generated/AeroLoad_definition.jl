@@ -13,11 +13,11 @@ import Moshi as __Ext__Moshi
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `rho`         |                          | kg/m3  |   1.19 |
-| `CdA`         |                          | m2  |    |
-| `ClA`         |                          | m2  |    |
-| `bal_f`         |                          | --  |    |
-| `wheelbase`         |                          | m  |    |
+| `rho`         |                          | kg/m3  |   VehicleComp...ms.aero.rho |
+| `CdA`         |                          | m2  |   VehicleComp...ms.aero.CdA |
+| `ClA`         |                          | m2  |   VehicleComp...ms.aero.ClA |
+| `bal_f`         |                          | --  |   VehicleComp...lance_front |
+| `wheelbase`         |                          | m  |   VehicleComp...nts.params) |
 | `v_min`         |                          | m/s  |   0.5 |
 
 ## Connectors
@@ -38,7 +38,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `downforce_rear`         |                          | N  |
 | `f_cop`         |                          | N  |
 """
-@component function AeroLoad(; name = nothing, rho=1.19, CdA=nothing, ClA=nothing, bal_f=nothing, wheelbase=nothing, v_min=0.5, kwargs...)
+@component function AeroLoad(; name = nothing, rho=VehicleComponents.params.aero.rho, CdA=VehicleComponents.params.aero.CdA, ClA=VehicleComponents.params.aero.ClA, bal_f=VehicleComponents.params.aero.balance_front, wheelbase=VehicleComponents.Data.wheelbase(VehicleComponents.params), v_min=0.5, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:

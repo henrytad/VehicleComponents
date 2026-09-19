@@ -9,7 +9,7 @@ component HubMotor
   wheel_center = Dyad.Frame3D() {^wheel_center}
   spline = Dyad.Spline() {^spline}
 
-  parameter gear_ratio::Real = 1.0
+  parameter gear_ratio::Real = VehicleComponents.params.drivetrain.gear_ratio
 
   variable tau_wheel::Torque
 

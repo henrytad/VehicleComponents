@@ -13,13 +13,13 @@ import Moshi as __Ext__Moshi
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `slip_target_front`         |                          | --  |    |
-| `slip_target_rear`         |                          | --  |    |
-| `launch_torque`         |                          | --  |    |
-| `motor_torque_max`         |                          | --  |    |
-| `k`         |                          | --  |    |
-| `Ti`         |                          | s  |    |
-| `Ni`         |                          | --  |    |
+| `slip_target_front`         |                          | --  |   VehicleComp...arget_front |
+| `slip_target_rear`         |                          | --  |   VehicleComp...target_rear |
+| `launch_torque`         |                          | --  |   VehicleComp...unch_torque |
+| `motor_torque_max`         |                          | --  |   VehicleComp..._torque_max |
+| `k`         |                          | --  |   VehicleComp...p_loop_gain |
+| `Ti`         |                          | s  |   VehicleComp...lip_loop_Ti |
+| `Ni`         |                          | --  |   VehicleComp...lip_loop_Ni |
 
 ## Connectors
 
@@ -33,7 +33,7 @@ import Moshi as __Ext__Moshi
  * `tau_rl` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
  * `tau_rr` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
 """
-@component function TorqueControlLaunch(; name = nothing, slip_target_front=nothing, slip_target_rear=nothing, launch_torque=nothing, motor_torque_max=nothing, k=nothing, Ti=nothing, Ni=nothing, kwargs...)
+@component function TorqueControlLaunch(; name = nothing, slip_target_front=VehicleComponents.params.control.slip_target_front, slip_target_rear=VehicleComponents.params.control.slip_target_rear, launch_torque=VehicleComponents.params.control.launch_torque, motor_torque_max=VehicleComponents.params.control.motor_torque_max, k=VehicleComponents.params.control.slip_loop_gain, Ti=VehicleComponents.params.control.slip_loop_Ti, Ni=VehicleComponents.params.control.slip_loop_Ni, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:

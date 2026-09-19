@@ -10,11 +10,11 @@ component AeroLoad
 
   chassis = Dyad.Frame3D() {^chassis}
 
-  parameter rho::Density = 1.19
-  parameter CdA::Area
-  parameter ClA::Area
-  parameter bal_f::Real
-  parameter wheelbase::Length
+  parameter rho::Density = VehicleComponents.params.aero.rho
+  parameter CdA::Area = VehicleComponents.params.aero.CdA
+  parameter ClA::Area = VehicleComponents.params.aero.ClA
+  parameter bal_f::Real = VehicleComponents.params.aero.balance_front
+  parameter wheelbase::Length = VehicleComponents.Data.wheelbase(VehicleComponents.params)
   parameter v_min::Velocity = 0.5
 
   final parameter x_cop::Length = (1 - bal_f) * wheelbase

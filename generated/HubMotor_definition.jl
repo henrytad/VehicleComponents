@@ -13,7 +13,7 @@ import Moshi as __Ext__Moshi
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `gear_ratio`         |                          | --  |   1.0 |
+| `gear_ratio`         |                          | --  |   VehicleComp....gear_ratio |
 
 ## Connectors
 
@@ -28,7 +28,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | ------------ | ----------------------------------- | ------ |
 | `tau_wheel`         |                          | N.m  |
 """
-@component function HubMotor(; name = nothing, gear_ratio=Float64(1.0), kwargs...)
+@component function HubMotor(; name = nothing, gear_ratio=VehicleComponents.params.drivetrain.gear_ratio, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:

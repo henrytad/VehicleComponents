@@ -36,13 +36,13 @@ component TorqueControlLaunch
     final Ni = Ni
   ) {^control_rr}
 
-  parameter slip_target_front::Real
-  parameter slip_target_rear::Real
-  parameter launch_torque::Real
-  parameter motor_torque_max::Real
-  parameter k::Real
-  parameter Ti::Time
-  parameter Ni::Real
+  parameter slip_target_front::Real = VehicleComponents.params.control.slip_target_front
+  parameter slip_target_rear::Real = VehicleComponents.params.control.slip_target_rear
+  parameter launch_torque::Real = VehicleComponents.params.control.launch_torque
+  parameter motor_torque_max::Real = VehicleComponents.params.control.motor_torque_max
+  parameter k::Real = VehicleComponents.params.control.slip_loop_gain
+  parameter Ti::Time = VehicleComponents.params.control.slip_loop_Ti
+  parameter Ni::Real = VehicleComponents.params.control.slip_loop_Ni
 
 relations
 

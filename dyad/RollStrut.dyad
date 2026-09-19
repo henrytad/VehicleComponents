@@ -7,10 +7,12 @@ component RollStrut
   frame_b = Dyad.Frame3D() {^frame_b}
 
   spring = VehicleComponents.RollSpring(color = color) {^spring}
-  damper = VehicleComponents.Damper() {^damper}
+  damper = VehicleComponents.Damper(dataset = dataset) {^damper}
 
-  "Color of spring for animation"
-  parameter color::Real[4] = world_default_spring_color()
+  # TODO: Remove dataset and color as pass through parameters once Dyad compiling is fixed
+  structural parameter dataset::DyadData.DyadTimeseries
+  parameter color::Real[4]
+
   "Distance between the origin of frame_a and the origin of frame_b"
   variable s::Length
   "Total line force, negative is compression"
