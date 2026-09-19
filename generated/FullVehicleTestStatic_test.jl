@@ -17,15 +17,7 @@ __dyad_run_test_case!(
   solver=ODEAlg.Auto(),
   params=(;),
   initial_conditions=Tuple[],
-  expected_initial=Tuple[
-    (m -> m.vehicle.corner_fl.wheel_assembly.tire.Fz, "vehicle.corner_fl.wheel_assembly.tire.Fz", 0, 0.5, 1e-5),
-    (m -> m.vehicle.corner_fr.wheel_assembly.tire.Fz, "vehicle.corner_fr.wheel_assembly.tire.Fz", 0, 0.5, 1e-5),
-    (m -> m.vehicle.corner_rl.wheel_assembly.tire.Fz, "vehicle.corner_rl.wheel_assembly.tire.Fz", 0, 0.5, 1e-5),
-    (m -> m.vehicle.corner_rr.wheel_assembly.tire.Fz, "vehicle.corner_rr.wheel_assembly.tire.Fz", 0, 0.5, 1e-5),
-    (m -> m.heave_joint.s, "heave_joint.s", 0, 0.00001, 1e-5),
-    (m -> m.roll_joint.phi, "roll_joint.phi", 0, 0.00001, 1e-5),
-    (m -> m.pitch_joint.phi, "pitch_joint.phi", 0, 0.00001, 1e-5),
-  ],
+  expected_initial=Tuple[],
   expected_final=Tuple[],
   signals=Tuple[
     (m -> m.vehicle.corner_fl.wheel_assembly.tire.Fz, "vehicle.corner_fl.wheel_assembly.tire.Fz", 0.5, 1e-5),

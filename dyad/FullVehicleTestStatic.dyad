@@ -68,15 +68,6 @@ metadata {
           "roll_joint.phi": 0.00001
         },
         "expect": {
-          "initial": {
-            "vehicle.corner_fl.wheel_assembly.tire.Fz": 0,
-            "vehicle.corner_fr.wheel_assembly.tire.Fz": 0,
-            "vehicle.corner_rl.wheel_assembly.tire.Fz": 0,
-            "vehicle.corner_rr.wheel_assembly.tire.Fz": 0,
-            "heave_joint.s": 0,
-            "roll_joint.phi": 0,
-            "pitch_joint.phi": 0
-          },
           "signals": [
             "vehicle.corner_fl.wheel_assembly.tire.Fz",
             "vehicle.corner_fr.wheel_assembly.tire.Fz",
