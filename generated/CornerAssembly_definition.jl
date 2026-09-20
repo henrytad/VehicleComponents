@@ -22,7 +22,7 @@ import Moshi as __Ext__Moshi
 
 ## Connectors
 
- * `motor_torque` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `motor_demand` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `brake_demand` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `slip` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
@@ -75,7 +75,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Final Parameters (assignments)
 
   ### Final Path Parameters
-  append!(__vars, @variables (motor_torque(t)::Real), [input = true])
+  append!(__vars, @variables (motor_demand(t)::Real), [input = true])
   append!(__vars, @variables (brake_demand(t)::Real), [input = true])
   append!(__vars, @variables (slip(t)::Real), [output = true])
 
@@ -116,7 +116,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(wheel_center, upright.frame_a))
   push!(__eqs, connect(motor.wheel_center, wheel_center))
   push!(__eqs, connect(wheel_assembly.spline, motor.spline))
-  push!(__eqs, connect(motor_torque, motor.tau))
+  push!(__eqs, connect(motor_demand, motor.demand))
   push!(__eqs, connect(wheel_assembly.slip, slip))
   push!(__eqs, connect(wheel_assembly.spline, brake.spline))
   push!(__eqs, connect(brake_demand, brake.brake_demand))

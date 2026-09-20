@@ -73,6 +73,7 @@ function vehicle_channels(model, sol; rate::Int=100)
         add("a_tire_toe_$tag", () -> linkage.toe, DEG, "deg")
         add("s_wheel_$tag", () -> linkage.wc_height, MM, "mm")
         add("tq_motor_$tag", () -> corner.motor.tau_motor, 1, "N.m")
+        add("pwr_motor_$tag", () -> corner.motor.power, 1 / 1000, "kW")
         add("tq_drive_wheel_$tag", () -> corner.motor.tau_wheel, 1, "N.m")
         add("tq_brake_wheel_$tag", () -> corner.brake.tau_brake, 1, "N.m")
 

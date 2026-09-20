@@ -126,8 +126,13 @@ end
     rim_inertia::Float64
 end
 
+"""
+One hub motor.
+"""
 @kwdef struct Drivetrain
     gear_ratio::Float64
+    motor_max_torque::Float64
+    motor_max_power::Float64
 end
 
 """
@@ -161,12 +166,13 @@ end
     rho::Float64
 end
 
-"Traction control settings."
+"""
+Traction control settings.
+"""
 @kwdef struct Control
     slip_target_front::Float64
     slip_target_rear::Float64
     launch_torque::Float64
-    motor_torque_max::Float64
     slip_loop_gain::Float64
     slip_loop_Ti::Float64
     slip_loop_Ni::Float64

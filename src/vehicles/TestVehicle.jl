@@ -483,7 +483,7 @@ const Vehicle = Vehicle(
         MBELT=5.4,
     ),
     wheels=Wheels(rim_mass=3.0, rim_inertia=0.05),
-    drivetrain=Drivetrain(gear_ratio=14.0),
+    drivetrain=Drivetrain(gear_ratio=14.0, motor_max_torque=21.0, motor_max_power=20000.0),
     brakes=Brakes(max_torque=250.0, bias=0.6),
     body=Body(
         mass=250.0,
@@ -494,9 +494,8 @@ const Vehicle = Vehicle(
     control=Control(
         slip_target_front=0.1,
         slip_target_rear=0.1,
-        launch_torque=5.0,
-        motor_torque_max=21.0,
-        slip_loop_gain=40.0,
+        launch_torque=5.0 / 20.0,
+        slip_loop_gain=40.0 / 20.0,
         slip_loop_Ti=0.02,
         slip_loop_Ni=0.9,
     ),

@@ -9,7 +9,15 @@ t_end = 24.0
 
 @named model = VehicleComponents.FullVehicleTestStep()
 ssys = multibody(model)
-prob = ODEProblem(ssys, [ssys.steer_angle => steer_angle, ssys.throttle.height => 0.1, ssys.throttle.duration => 22.5, ssys.vehicle.control.motor_torque_max => 3], (0.0, t_end))
+prob = ODEProblem(ssys, [
+    ssys.steer_angle => steer_angle,
+    ssys.throttle.height => 0.1,
+    ssys.throttle.duration => 22.5,
+    ssys.vehicle.corner_fl.motor.max_torque => 3,
+    ssys.vehicle.corner_fr.motor.max_torque => 3,
+    ssys.vehicle.corner_rl.motor.max_torque => 3,
+    ssys.vehicle.corner_rr.motor.max_torque => 3,
+], (0.0, t_end))
 sol = solve(prob; tstops=[t_drive, t_steer])
 
 # ===========================================================================
