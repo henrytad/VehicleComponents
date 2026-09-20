@@ -7,7 +7,7 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   TorqueControlLaunch(; name, slip_target_front, slip_target_rear, launch_torque, motor_torque_max, k, Ti, Ni)
+   TorqueControlLaunch(; name, slip_target_front, slip_target_rear, launch_torque, k, Ti, Ni)
 
 ## Parameters:
 
@@ -16,7 +16,6 @@ import Moshi as __Ext__Moshi
 | `slip_target_front`         |                          | --  |   VehicleComp...arget_front |
 | `slip_target_rear`         |                          | --  |   VehicleComp...target_rear |
 | `launch_torque`         |                          | --  |   VehicleComp...unch_torque |
-| `motor_torque_max`         |                          | --  |   VehicleComp..._torque_max |
 | `k`         |                          | --  |   VehicleComp...p_loop_gain |
 | `Ti`         |                          | s  |   VehicleComp...lip_loop_Ti |
 | `Ni`         |                          | --  |   VehicleComp...lip_loop_Ni |
@@ -28,12 +27,12 @@ import Moshi as __Ext__Moshi
  * `slip_fr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `slip_rl` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `slip_rr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `tau_fl` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
- * `tau_fr` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
- * `tau_rl` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
- * `tau_rr` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `demand_fl` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `demand_fr` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `demand_rl` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `demand_rr` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
 """
-@component function TorqueControlLaunch(; name = nothing, slip_target_front=VehicleComponents.params.control.slip_target_front, slip_target_rear=VehicleComponents.params.control.slip_target_rear, launch_torque=VehicleComponents.params.control.launch_torque, motor_torque_max=VehicleComponents.params.control.motor_torque_max, k=VehicleComponents.params.control.slip_loop_gain, Ti=VehicleComponents.params.control.slip_loop_Ti, Ni=VehicleComponents.params.control.slip_loop_Ni, kwargs...)
+@component function TorqueControlLaunch(; name = nothing, slip_target_front=VehicleComponents.params.control.slip_target_front, slip_target_rear=VehicleComponents.params.control.slip_target_rear, launch_torque=VehicleComponents.params.control.launch_torque, k=VehicleComponents.params.control.slip_loop_gain, Ti=VehicleComponents.params.control.slip_loop_Ti, Ni=VehicleComponents.params.control.slip_loop_Ni, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -73,9 +72,6 @@ import Moshi as __Ext__Moshi
   __local__launch_torque = launch_torque
   append!(__params, @parameters (launch_torque::Real))
   __initial_conditions[launch_torque] = __local__launch_torque
-  __local__motor_torque_max = motor_torque_max
-  append!(__params, @parameters (motor_torque_max::Real))
-  __initial_conditions[motor_torque_max] = __local__motor_torque_max
   __local__k = k
   append!(__params, @parameters (k::Real))
   __initial_conditions[k] = __local__k
@@ -94,10 +90,10 @@ import Moshi as __Ext__Moshi
   append!(__vars, @variables (slip_fr(t)::Real), [input = true])
   append!(__vars, @variables (slip_rl(t)::Real), [input = true])
   append!(__vars, @variables (slip_rr(t)::Real), [input = true])
-  append!(__vars, @variables (tau_fl(t)::Real), [output = true])
-  append!(__vars, @variables (tau_fr(t)::Real), [output = true])
-  append!(__vars, @variables (tau_rl(t)::Real), [output = true])
-  append!(__vars, @variables (tau_rr(t)::Real), [output = true])
+  append!(__vars, @variables (demand_fl(t)::Real), [output = true])
+  append!(__vars, @variables (demand_fr(t)::Real), [output = true])
+  append!(__vars, @variables (demand_rl(t)::Real), [output = true])
+  append!(__vars, @variables (demand_rr(t)::Real), [output = true])
 
   ### Variables (declarations)
 
@@ -112,7 +108,6 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named control_fl = VehicleComponents.TorqueControlTC(; control_fl_overrides...))
   __bindings[control_fl.slip_target] = slip_target_front
   __bindings[control_fl.launch_torque] = launch_torque
-  __bindings[control_fl.motor_torque_max] = motor_torque_max
   __bindings[control_fl.k] = k
   __bindings[control_fl.Ti] = Ti
   __bindings[control_fl.Ni] = Ni
@@ -123,8 +118,6 @@ import Moshi as __Ext__Moshi
   delete!(__control_fl_ics, __control_fl_slip_target)
   __control_fl_launch_torque = Symbolics.unwrap(__no_namespace_control_fl.launch_torque)::Symbolics.SymbolicT
   delete!(__control_fl_ics, __control_fl_launch_torque)
-  __control_fl_motor_torque_max = Symbolics.unwrap(__no_namespace_control_fl.motor_torque_max)::Symbolics.SymbolicT
-  delete!(__control_fl_ics, __control_fl_motor_torque_max)
   __control_fl_k = Symbolics.unwrap(__no_namespace_control_fl.k)::Symbolics.SymbolicT
   delete!(__control_fl_ics, __control_fl_k)
   __control_fl_Ti = Symbolics.unwrap(__no_namespace_control_fl.Ti)::Symbolics.SymbolicT
@@ -136,7 +129,6 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named control_fr = VehicleComponents.TorqueControlTC(; control_fr_overrides...))
   __bindings[control_fr.slip_target] = slip_target_front
   __bindings[control_fr.launch_torque] = launch_torque
-  __bindings[control_fr.motor_torque_max] = motor_torque_max
   __bindings[control_fr.k] = k
   __bindings[control_fr.Ti] = Ti
   __bindings[control_fr.Ni] = Ni
@@ -147,8 +139,6 @@ import Moshi as __Ext__Moshi
   delete!(__control_fr_ics, __control_fr_slip_target)
   __control_fr_launch_torque = Symbolics.unwrap(__no_namespace_control_fr.launch_torque)::Symbolics.SymbolicT
   delete!(__control_fr_ics, __control_fr_launch_torque)
-  __control_fr_motor_torque_max = Symbolics.unwrap(__no_namespace_control_fr.motor_torque_max)::Symbolics.SymbolicT
-  delete!(__control_fr_ics, __control_fr_motor_torque_max)
   __control_fr_k = Symbolics.unwrap(__no_namespace_control_fr.k)::Symbolics.SymbolicT
   delete!(__control_fr_ics, __control_fr_k)
   __control_fr_Ti = Symbolics.unwrap(__no_namespace_control_fr.Ti)::Symbolics.SymbolicT
@@ -160,7 +150,6 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named control_rl = VehicleComponents.TorqueControlTC(; control_rl_overrides...))
   __bindings[control_rl.slip_target] = slip_target_rear
   __bindings[control_rl.launch_torque] = launch_torque
-  __bindings[control_rl.motor_torque_max] = motor_torque_max
   __bindings[control_rl.k] = k
   __bindings[control_rl.Ti] = Ti
   __bindings[control_rl.Ni] = Ni
@@ -171,8 +160,6 @@ import Moshi as __Ext__Moshi
   delete!(__control_rl_ics, __control_rl_slip_target)
   __control_rl_launch_torque = Symbolics.unwrap(__no_namespace_control_rl.launch_torque)::Symbolics.SymbolicT
   delete!(__control_rl_ics, __control_rl_launch_torque)
-  __control_rl_motor_torque_max = Symbolics.unwrap(__no_namespace_control_rl.motor_torque_max)::Symbolics.SymbolicT
-  delete!(__control_rl_ics, __control_rl_motor_torque_max)
   __control_rl_k = Symbolics.unwrap(__no_namespace_control_rl.k)::Symbolics.SymbolicT
   delete!(__control_rl_ics, __control_rl_k)
   __control_rl_Ti = Symbolics.unwrap(__no_namespace_control_rl.Ti)::Symbolics.SymbolicT
@@ -184,7 +171,6 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named control_rr = VehicleComponents.TorqueControlTC(; control_rr_overrides...))
   __bindings[control_rr.slip_target] = slip_target_rear
   __bindings[control_rr.launch_torque] = launch_torque
-  __bindings[control_rr.motor_torque_max] = motor_torque_max
   __bindings[control_rr.k] = k
   __bindings[control_rr.Ti] = Ti
   __bindings[control_rr.Ni] = Ni
@@ -195,8 +181,6 @@ import Moshi as __Ext__Moshi
   delete!(__control_rr_ics, __control_rr_slip_target)
   __control_rr_launch_torque = Symbolics.unwrap(__no_namespace_control_rr.launch_torque)::Symbolics.SymbolicT
   delete!(__control_rr_ics, __control_rr_launch_torque)
-  __control_rr_motor_torque_max = Symbolics.unwrap(__no_namespace_control_rr.motor_torque_max)::Symbolics.SymbolicT
-  delete!(__control_rr_ics, __control_rr_motor_torque_max)
   __control_rr_k = Symbolics.unwrap(__no_namespace_control_rr.k)::Symbolics.SymbolicT
   delete!(__control_rr_ics, __control_rr_k)
   __control_rr_Ti = Symbolics.unwrap(__no_namespace_control_rr.Ti)::Symbolics.SymbolicT
@@ -220,10 +204,10 @@ import Moshi as __Ext__Moshi
   push!(__eqs, connect(slip_fr, control_fr.slip))
   push!(__eqs, connect(slip_rl, control_rl.slip))
   push!(__eqs, connect(slip_rr, control_rr.slip))
-  push!(__eqs, connect(control_fl.tau, tau_fl))
-  push!(__eqs, connect(control_fr.tau, tau_fr))
-  push!(__eqs, connect(control_rl.tau, tau_rl))
-  push!(__eqs, connect(control_rr.tau, tau_rr))
+  push!(__eqs, connect(control_fl.demand, demand_fl))
+  push!(__eqs, connect(control_fr.demand, demand_fr))
+  push!(__eqs, connect(control_rl.demand, demand_rl))
+  push!(__eqs, connect(control_rr.demand, demand_rr))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

@@ -6,7 +6,6 @@ component TorqueControlLaunch
   control_fl = VehicleComponents.TorqueControlTC(
     final slip_target = slip_target_front,
     final launch_torque = launch_torque,
-    final motor_torque_max = motor_torque_max,
     final k = k,
     final Ti = Ti,
     final Ni = Ni
@@ -14,7 +13,6 @@ component TorqueControlLaunch
   control_fr = VehicleComponents.TorqueControlTC(
     final slip_target = slip_target_front,
     final launch_torque = launch_torque,
-    final motor_torque_max = motor_torque_max,
     final k = k,
     final Ti = Ti,
     final Ni = Ni
@@ -22,7 +20,6 @@ component TorqueControlLaunch
   control_rl = VehicleComponents.TorqueControlTC(
     final slip_target = slip_target_rear,
     final launch_torque = launch_torque,
-    final motor_torque_max = motor_torque_max,
     final k = k,
     final Ti = Ti,
     final Ni = Ni
@@ -30,7 +27,6 @@ component TorqueControlLaunch
   control_rr = VehicleComponents.TorqueControlTC(
     final slip_target = slip_target_rear,
     final launch_torque = launch_torque,
-    final motor_torque_max = motor_torque_max,
     final k = k,
     final Ti = Ti,
     final Ni = Ni
@@ -39,7 +35,6 @@ component TorqueControlLaunch
   parameter slip_target_front::Real = VehicleComponents.params.control.slip_target_front
   parameter slip_target_rear::Real = VehicleComponents.params.control.slip_target_rear
   parameter launch_torque::Real = VehicleComponents.params.control.launch_torque
-  parameter motor_torque_max::Real = VehicleComponents.params.control.motor_torque_max
   parameter k::Real = VehicleComponents.params.control.slip_loop_gain
   parameter Ti::Time = VehicleComponents.params.control.slip_loop_Ti
   parameter Ni::Real = VehicleComponents.params.control.slip_loop_Ni
@@ -51,10 +46,10 @@ relations
   connect(slip_fr, control_fr.slip) {^id7}
   connect(slip_rl, control_rl.slip) {^id8}
   connect(slip_rr, control_rr.slip) {^id9}
-  connect(control_fl.tau, tau_fl) {^id10}
-  connect(control_fr.tau, tau_fr) {^id11}
-  connect(control_rl.tau, tau_rl) {^id12}
-  connect(control_rr.tau, tau_rr) {^id13}
+  connect(control_fl.demand, demand_fl) {^id10}
+  connect(control_fr.demand, demand_fr) {^id11}
+  connect(control_rl.demand, demand_rl) {^id12}
+  connect(control_rr.demand, demand_rr) {^id13}
 
 metadata {
   "Dyad": {

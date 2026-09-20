@@ -2,29 +2,45 @@ component HubMotor
   """
   Outboard motor: torque source with its reaction carried by the structure it
   is bolted to.
+
+  Takes a 0 to 1 demand. Below base speed, `max_power / (max_torque * gear_ratio)`,
+  full demand gives `max_torque`. Above it the available torque is
+  `max_power / omega`.
   """
 
-  tau = RealInput(units = "N.m") {^tau}
+  demand = RealInput(units = "1") {^demand}
 
   wheel_center = Dyad.Frame3D() {^wheel_center}
   spline = Dyad.Spline() {^spline}
 
   parameter gear_ratio::Real = VehicleComponents.params.drivetrain.gear_ratio
+  parameter max_torque::Torque = VehicleComponents.params.drivetrain.motor_max_torque
+  parameter max_power::Power = VehicleComponents.params.drivetrain.motor_max_power
+  parameter omega_min::AngularVelocity = 5.0
 
+  variable omega::AngularVelocity
+  variable tau_demand::Torque
+  variable tau_limit::Torque
   variable tau_motor::Torque
   variable tau_wheel::Torque
+  variable power::Power
 
 relations
 
-  tau_motor = tau
-  tau_wheel = tau * gear_ratio
+  omega = der(spline.phi)
+  tau_demand = demand * max_torque * gear_ratio
+  tau_limit = max_power / max(abs(omega), omega_min)
+  tau_wheel = min(tau_demand, tau_limit)
+  tau_motor = tau_wheel / gear_ratio
+  power = tau_wheel * omega
+
   spline.tau = -tau_wheel
   wheel_center.f = [0, 0, 0]
   wheel_center.tau = [0, 1, 0] * tau_wheel
 
 metadata {
   "_links": {
-    "tau": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
+    "demand": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
     "wheel_center": {
       "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 440, "y2": 540}}}
     },

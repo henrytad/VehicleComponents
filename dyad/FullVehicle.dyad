@@ -228,10 +228,10 @@ relations
   connect(corner_fr.slip, control.slip_fr) {^id23}
   connect(corner_rl.slip, control.slip_rl) {^id24}
   connect(corner_rr.slip, control.slip_rr) {^id25}
-  connect(control.tau_fl, corner_fl.motor_torque) {^id26}
-  connect(control.tau_fr, corner_fr.motor_torque) {^id27}
-  connect(control.tau_rl, corner_rl.motor_torque) {^id28}
-  connect(control.tau_rr, corner_rr.motor_torque) {^id29}
+  connect(control.demand_fl, corner_fl.motor_demand) {^id26}
+  connect(control.demand_fr, corner_fr.motor_demand) {^id27}
+  connect(control.demand_rl, corner_rl.motor_demand) {^id28}
+  connect(control.demand_rr, corner_rr.motor_demand) {^id29}
   connect(throttle, control.throttle) {^id30}
 
   # Brakes

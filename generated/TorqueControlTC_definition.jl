@@ -7,7 +7,7 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   TorqueControlTC(; name, slip_target, launch_torque, motor_torque_max, k, Ti, Ni)
+   TorqueControlTC(; name, slip_target, launch_torque, k, Ti, Ni)
 
 ## Parameters:
 
@@ -15,7 +15,6 @@ import Moshi as __Ext__Moshi
 | ------------ | ----------------------------------- | ------ | --------------- |
 | `slip_target`         |                          | --  |    |
 | `launch_torque`         |                          | --  |    |
-| `motor_torque_max`         |                          | --  |    |
 | `k`         |                          | --  |    |
 | `Ti`         |                          | s  |    |
 | `Ni`         |                          | --  |    |
@@ -24,9 +23,9 @@ import Moshi as __Ext__Moshi
 
  * `slip` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `throttle` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `tau` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `demand` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
 """
-@component function TorqueControlTC(; name = nothing, slip_target=nothing, launch_torque=nothing, motor_torque_max=nothing, k=nothing, Ti=nothing, Ni=nothing, kwargs...)
+@component function TorqueControlTC(; name = nothing, slip_target=nothing, launch_torque=nothing, k=nothing, Ti=nothing, Ni=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -64,9 +63,6 @@ import Moshi as __Ext__Moshi
   __local__launch_torque = launch_torque
   append!(__params, @parameters (launch_torque::Real))
   __initial_conditions[launch_torque] = __local__launch_torque
-  __local__motor_torque_max = motor_torque_max
-  append!(__params, @parameters (motor_torque_max::Real))
-  __initial_conditions[motor_torque_max] = __local__motor_torque_max
   __local__k = k
   append!(__params, @parameters (k::Real))
   __initial_conditions[k] = __local__k
@@ -83,7 +79,7 @@ import Moshi as __Ext__Moshi
   ### Final Path Parameters
   append!(__vars, @variables (slip(t)::Real), [input = true])
   append!(__vars, @variables (throttle(t)::Real), [input = true])
-  append!(__vars, @variables (tau(t)::Real), [output = true])
+  append!(__vars, @variables (demand(t)::Real), [output = true])
 
   ### Variables (declarations)
 
@@ -118,7 +114,7 @@ import Moshi as __Ext__Moshi
   __bindings[pid.Ti] = Ti
   __bindings[pid.Ni] = Ni
   __bindings[pid.wp] = wp
-  __bindings[pid.y_max] = motor_torque_max
+  __bindings[pid.y_max] = Float64(1)
   __bindings[pid.y_min] = Float64(0)
   __bindings[pid.k_ff] = Float64(1)
   # Now remove initial conditions in pid that correspond to the bindings just added
@@ -158,7 +154,7 @@ import Moshi as __Ext__Moshi
   push!(__eqs, connect(torque_ff.y, pid.u_ff))
   push!(__eqs, connect(slip, pid.u_m))
   push!(__eqs, connect(pid.y, gate.u1))
-  push!(__eqs, connect(gate.y, tau))
+  push!(__eqs, connect(gate.y, demand))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

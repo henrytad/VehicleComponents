@@ -7,10 +7,10 @@ partial component TorqueControl
   slip_rl = RealInput() {^slip_rl}
   slip_rr = RealInput() {^slip_rr}
 
-  tau_fl = RealOutput(units = "N.m") {^tau_fl}
-  tau_fr = RealOutput(units = "N.m") {^tau_fr}
-  tau_rl = RealOutput(units = "N.m") {^tau_rl}
-  tau_rr = RealOutput(units = "N.m") {^tau_rr}
+  demand_fl = RealOutput(units = "1") {^demand_fl}
+  demand_fr = RealOutput(units = "1") {^demand_fr}
+  demand_rl = RealOutput(units = "1") {^demand_rl}
+  demand_rr = RealOutput(units = "1") {^demand_rr}
 
 relations
 
@@ -30,16 +30,16 @@ metadata {
     "slip_rr": {
       "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 660, "y2": 760}}}
     },
-    "tau_fl": {
+    "demand_fl": {
       "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 230, "y2": 330}}}
     },
-    "tau_fr": {
+    "demand_fr": {
       "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 380, "y2": 480}}}
     },
-    "tau_rl": {
+    "demand_rl": {
       "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 520, "y2": 620}}}
     },
-    "tau_rr": {
+    "demand_rr": {
       "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 660, "y2": 760}}}
     }
   }
