@@ -7,13 +7,14 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   CornerAssembly(; name, is_left, upright_mass, upright_I_11, upright_I_22, upright_I_33)
+   CornerAssembly(; name, is_left, is_front, upright_mass, upright_I_11, upright_I_22, upright_I_33)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
 | `is_left`         |                          | --  |    |
+| `is_front`         |                          | --  |    |
 | `upright_mass`         |                          | kg  |    |
 | `upright_I_11`         |                          | kg.m2  |    |
 | `upright_I_22`         |                          | kg.m2  |    |
@@ -21,12 +22,13 @@ import Moshi as __Ext__Moshi
 
 ## Connectors
 
- * `tau_cmd` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `motor_torque` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `brake_demand` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `slip` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function CornerAssembly(; name = nothing, is_left=nothing, upright_mass=nothing, upright_I_11=nothing, upright_I_22=nothing, upright_I_33=nothing, kwargs...)
+@component function CornerAssembly(; name = nothing, is_left=nothing, is_front=nothing, upright_mass=nothing, upright_I_11=nothing, upright_I_22=nothing, upright_I_33=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -73,7 +75,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Final Parameters (assignments)
 
   ### Final Path Parameters
-  append!(__vars, @variables (tau_cmd(t)::Real), [input = true])
+  append!(__vars, @variables (motor_torque(t)::Real), [input = true])
+  append!(__vars, @variables (brake_demand(t)::Real), [input = true])
   append!(__vars, @variables (slip(t)::Real), [output = true])
 
   ### Variables (declarations)
@@ -91,6 +94,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   # Subcomponent motor of type VehicleComponents.HubMotor
   motor_overrides = __pop_subcomponent_overrides!(__overrides, "motor")
   push!(__systems, @named motor = VehicleComponents.HubMotor(; motor_overrides...))
+  # Subcomponent brake of type VehicleComponents.Brake
+  brake_overrides = __pop_subcomponent_overrides!(__overrides, "brake")
+  push!(__systems, @named brake = VehicleComponents.Brake(; is_front=is_front, brake_overrides...))
   # Subcomponent upright of type MultibodyComponents.Body
   upright_overrides = __pop_subcomponent_overrides!(__overrides, "upright")
   push!(__systems, @named upright = MultibodyComponents.Body(; m=upright_mass, r_cm=[Float64(0), Float64(0), Float64(0)], I_11=upright_I_11, I_22=upright_I_22, I_33=upright_I_33, cylinder_radius=Float64(0), upright_overrides...))
@@ -110,8 +116,11 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(wheel_center, upright.frame_a))
   push!(__eqs, connect(motor.wheel_center, wheel_center))
   push!(__eqs, connect(wheel_assembly.spline, motor.spline))
-  push!(__eqs, connect(tau_cmd, motor.tau))
+  push!(__eqs, connect(motor_torque, motor.tau))
   push!(__eqs, connect(wheel_assembly.slip, slip))
+  push!(__eqs, connect(wheel_assembly.spline, brake.spline))
+  push!(__eqs, connect(brake_demand, brake.brake_demand))
+  push!(__eqs, connect(brake.wheel_center, wheel_center))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

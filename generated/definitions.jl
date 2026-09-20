@@ -204,6 +204,7 @@ end
 
 
 include("AeroLoad_definition.jl")
+include("Brake_definition.jl")
 include("CornerAssembly_definition.jl")
 include("DamperTestRig_definition.jl")
 include("Damper_definition.jl")

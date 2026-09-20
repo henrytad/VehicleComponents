@@ -7,19 +7,22 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   FullVehicleTestStraightLine(; name, drive_start_time, marker_spacing, marker_offset, marker_height, marker_diameter)
+   FullVehicleTestStraightLine(; name, drive_start_time, drive_duration, brake_level, brake_start_time, marker_spacing, marker_offset, marker_height, marker_diameter)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
 | `drive_start_time`         |                          | s  |   1.5 |
+| `drive_duration`         |                          | s  |   1.5 |
+| `brake_level`         |                          | --  |   0.0 |
+| `brake_start_time`         |                          | s  |   1.5 |
 | `marker_spacing`         |                          | m  |   25.0 |
 | `marker_offset`         |                          | m  |   1.5 |
 | `marker_height`         |                          | m  |   1.0 |
 | `marker_diameter`         |                          | m  |   0.1 |
 """
-@component function FullVehicleTestStraightLine(; name = nothing, drive_start_time=1.5, marker_spacing=Float64(25.0), marker_offset=1.5, marker_height=Float64(1.0), marker_diameter=0.1, kwargs...)
+@component function FullVehicleTestStraightLine(; name = nothing, drive_start_time=1.5, drive_duration=1.5, brake_level=Float64(0.0), brake_start_time=1.5, marker_spacing=Float64(25.0), marker_offset=1.5, marker_height=Float64(1.0), marker_diameter=0.1, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -64,6 +67,15 @@ import Moshi as __Ext__Moshi
   __local__drive_start_time = drive_start_time
   append!(__params, @parameters (drive_start_time::Real))
   __initial_conditions[drive_start_time] = __local__drive_start_time
+  __local__drive_duration = drive_duration
+  append!(__params, @parameters (drive_duration::Real))
+  __initial_conditions[drive_duration] = __local__drive_duration
+  __local__brake_level = brake_level
+  append!(__params, @parameters (brake_level::Real))
+  __initial_conditions[brake_level] = __local__brake_level
+  __local__brake_start_time = brake_start_time
+  append!(__params, @parameters (brake_start_time::Real))
+  __initial_conditions[brake_start_time] = __local__brake_start_time
   __local__marker_spacing = marker_spacing
   append!(__params, @parameters (marker_spacing::Real))
   __initial_conditions[marker_spacing] = __local__marker_spacing
@@ -100,9 +112,18 @@ import Moshi as __Ext__Moshi
   # Subcomponent world of type MultibodyComponents.World
   world_overrides = __pop_subcomponent_overrides!(__overrides, "world")
   push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
-  # Subcomponent throttle of type BlockComponents.Sources.Step
+  # Subcomponent throttle_on of type BlockComponents.Sources.Step
+  throttle_on_overrides = __pop_subcomponent_overrides!(__overrides, "throttle_on")
+  push!(__systems, @named throttle_on = BlockComponents.Sources.Step(; height=Float64(1.0), offset=Float64(0.0), start_time=drive_start_time, throttle_on_overrides...))
+  # Subcomponent throttle_off of type BlockComponents.Sources.Step
+  throttle_off_overrides = __pop_subcomponent_overrides!(__overrides, "throttle_off")
+  push!(__systems, @named throttle_off = BlockComponents.Sources.Step(; height=-1.0, offset=Float64(0.0), start_time=drive_start_time + drive_duration, throttle_off_overrides...))
+  # Subcomponent throttle of type BlockComponents.Math.Add
   throttle_overrides = __pop_subcomponent_overrides!(__overrides, "throttle")
-  push!(__systems, @named throttle = BlockComponents.Sources.Step(; height=Float64(1.0), offset=Float64(0.0), start_time=drive_start_time, throttle_overrides...))
+  push!(__systems, @named throttle = BlockComponents.Math.Add(; throttle_overrides...))
+  # Subcomponent brake of type BlockComponents.Sources.Step
+  brake_overrides = __pop_subcomponent_overrides!(__overrides, "brake")
+  push!(__systems, @named brake = BlockComponents.Sources.Step(; height=brake_level, offset=Float64(0.0), start_time=brake_start_time, brake_overrides...))
   # Subcomponent steer of type BlockComponents.Sources.Constant
   steer_overrides = __pop_subcomponent_overrides!(__overrides, "steer")
   push!(__systems, @named steer = BlockComponents.Sources.Constant(; k=Float64(0.0), steer_overrides...))
@@ -182,7 +203,10 @@ import Moshi as __Ext__Moshi
   __assertions = []
 
   ### Equations
+  push!(__eqs, connect(throttle_on.y, throttle.u1))
+  push!(__eqs, connect(throttle_off.y, throttle.u2))
   push!(__eqs, connect(throttle.y, vehicle.throttle))
+  push!(__eqs, connect(brake.y, vehicle.brake))
   push!(__eqs, connect(steer.y, vehicle.steer))
   push!(__eqs, connect(world.frame_b, lateral_joint.frame_a))
   push!(__eqs, connect(lateral_joint.frame_b, longitudinal_joint.frame_a))

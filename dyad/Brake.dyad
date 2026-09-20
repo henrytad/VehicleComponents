@@ -1,0 +1,52 @@
+component Brake
+  """
+  Friction brake at one corner.
+
+  Takes a 0 to 1 pressure demand and applies a torque opposing wheel rotation,
+  with the reaction carried by the upright.
+
+  The torque tapers through tanh over `omega_eps` so that a brake held on at a
+  standstill cannot drive the wheel backwards.
+
+  `brake_bias` splits the fixed total between the axles. There is no ABS, so
+  whichever axle is over-braked for its instantaneous load simply locks.
+  """
+
+  brake_demand = RealInput(units = "1") {^brake_demand}
+
+  wheel_center = Dyad.Frame3D() {^wheel_center}
+  spline = Dyad.Spline() {^spline}
+
+  structural parameter is_front::Boolean
+
+  parameter max_torque::Torque
+  parameter brake_bias::Real
+  parameter omega_eps::AngularVelocity = 0.5
+  
+  final parameter bias_factor::Real = ifelse(is_front, 2 * brake_bias, 2 * (1 - brake_bias))
+
+  variable omega::AngularVelocity
+  variable tau_brake::Torque
+
+relations
+
+  omega = der(spline.phi)
+  tau_brake = max_torque * bias_factor * brake_demand * tanh(omega / omega_eps)
+
+  spline.tau = tau_brake
+
+  wheel_center.f = [0, 0, 0]
+  wheel_center.tau = [0, 1, 0] * (-tau_brake)
+
+metadata {
+  "_links": {
+    "brake_demand": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
+    "wheel_center": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 440, "y2": 540}}}
+    },
+    "spline": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
+    }
+  }
+}
+end

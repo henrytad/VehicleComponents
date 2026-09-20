@@ -48,7 +48,8 @@ function vehicle_channels(model, sol; rate::Int=100)
     add("v_vy", () -> car.v_cg[2], KMH, "km/h")
 
     # Driver inputs
-    add("a_th", () -> car.throttle, 100, "%")
+    add("r_throttle", () -> car.throttle, 100, "%")
+    add("r_brake", () -> car.brake, 100, "%")
     add("a_steer", () -> car.steer, DEG, "deg")
 
     # Aero
@@ -71,7 +72,9 @@ function vehicle_channels(model, sol; rate::Int=100)
         add("a_tire_inclination_$tag", () -> linkage.camber, DEG, "deg")
         add("a_tire_toe_$tag", () -> linkage.toe, DEG, "deg")
         add("s_wheel_$tag", () -> linkage.wc_height, MM, "mm")
-        add("tq_wheel_$tag", () -> corner.motor.tau_wheel, 1, "N.m")
+        add("tq_motor_$tag", () -> corner.motor.tau_motor, 1, "N.m")
+        add("tq_drive_wheel_$tag", () -> corner.motor.tau_wheel, 1, "N.m")
+        add("tq_brake_wheel_$tag", () -> corner.brake.tau_brake, 1, "N.m")
 
         # Joint loads
         for (axis, i) in (("x", 1), ("y", 2), ("z", 3))

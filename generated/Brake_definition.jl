@@ -7,17 +7,20 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   HubMotor(; name, gear_ratio)
+   Brake(; name, is_front, max_torque, brake_bias, omega_eps)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `gear_ratio`         |                          | --  |   VehicleComp....gear_ratio |
+| `is_front`         |                          | --  |    |
+| `max_torque`         |                          | N.m  |    |
+| `brake_bias`         |                          | --  |    |
+| `omega_eps`         |                          | rad/s  |   0.5 |
 
 ## Connectors
 
- * `tau` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `brake_demand` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
  * `spline` - This connector represents a rotational spline with angle and torque as the potential and flow variables, respectively. ([`Spline`](@ref))
@@ -26,15 +29,15 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
 | Name         | Description                         | Units  | 
 | ------------ | ----------------------------------- | ------ |
-| `tau_motor`         |                          | N.m  |
-| `tau_wheel`         |                          | N.m  |
+| `omega`         |                          | rad/s  |
+| `tau_brake`         |                          | N.m  |
 """
-@component function HubMotor(; name = nothing, gear_ratio=VehicleComponents.params.drivetrain.gear_ratio, kwargs...)
+@component function Brake(; name = nothing, is_front=nothing, max_torque=nothing, brake_bias=nothing, omega_eps=0.5, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
   
-    @named model = HubMotor()
+    @named model = Brake()
   """))
 
   __overrides = __build_overrides(kwargs)
@@ -56,30 +59,38 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Path Parameters (non-final)
 
   ### Final Parameters (declarations)
+  append!(__params, @parameters (bias_factor::Real), [misc = "final"])
 
   ### Deferred assignment (default values that depend on final parameters)
 
   ### Symbolic Parameters
-  __local__gear_ratio = gear_ratio
-  append!(__params, @parameters (gear_ratio::Real))
-  __initial_conditions[gear_ratio] = __local__gear_ratio
+  __local__max_torque = max_torque
+  append!(__params, @parameters (max_torque::Real))
+  __initial_conditions[max_torque] = __local__max_torque
+  __local__brake_bias = brake_bias
+  append!(__params, @parameters (brake_bias::Real))
+  __initial_conditions[brake_bias] = __local__brake_bias
+  __local__omega_eps = omega_eps
+  append!(__params, @parameters (omega_eps::Real))
+  __initial_conditions[omega_eps] = __local__omega_eps
 
   ### Final Parameters (assignments)
+  __bindings[bias_factor] = ifelse(is_front, 2 * brake_bias, 2 * (1 - brake_bias))
 
   ### Final Path Parameters
-  append!(__vars, @variables (tau(t)::Real), [input = true])
+  append!(__vars, @variables (brake_demand(t)::Real), [input = true])
 
   ### Variables (declarations)
-  append!(__vars, @variables (tau_motor(t)::Real))
-  append!(__vars, @variables (tau_wheel(t)::Real))
+  append!(__vars, @variables (omega(t)::Real))
+  append!(__vars, @variables (tau_brake(t)::Real))
 
   ### Variables (assignments)
-  __ovr_tau_motor = pop!(__overrides, "tau_motor", nothing); isnothing(__ovr_tau_motor) || push!(__eqs, tau_motor ~ __ovr_tau_motor)
-  __ovr_tau_motor__initial = pop!(__overrides, "tau_motor__initial", nothing); isnothing(__ovr_tau_motor__initial) || (__initial_conditions[tau_motor] = __ovr_tau_motor__initial)
-  __ovr_tau_motor__guess = pop!(__overrides, "tau_motor__guess", nothing)
-  __ovr_tau_wheel = pop!(__overrides, "tau_wheel", nothing); isnothing(__ovr_tau_wheel) || push!(__eqs, tau_wheel ~ __ovr_tau_wheel)
-  __ovr_tau_wheel__initial = pop!(__overrides, "tau_wheel__initial", nothing); isnothing(__ovr_tau_wheel__initial) || (__initial_conditions[tau_wheel] = __ovr_tau_wheel__initial)
-  __ovr_tau_wheel__guess = pop!(__overrides, "tau_wheel__guess", nothing)
+  __ovr_omega = pop!(__overrides, "omega", nothing); isnothing(__ovr_omega) || push!(__eqs, omega ~ __ovr_omega)
+  __ovr_omega__initial = pop!(__overrides, "omega__initial", nothing); isnothing(__ovr_omega__initial) || (__initial_conditions[omega] = __ovr_omega__initial)
+  __ovr_omega__guess = pop!(__overrides, "omega__guess", nothing)
+  __ovr_tau_brake = pop!(__overrides, "tau_brake", nothing); isnothing(__ovr_tau_brake) || push!(__eqs, tau_brake ~ __ovr_tau_brake)
+  __ovr_tau_brake__initial = pop!(__overrides, "tau_brake__initial", nothing); isnothing(__ovr_tau_brake__initial) || (__initial_conditions[tau_brake] = __ovr_tau_brake__initial)
+  __ovr_tau_brake__guess = pop!(__overrides, "tau_brake__guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -92,8 +103,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
 
   ### Guesses
-  isnothing(__ovr_tau_motor__guess) || (__guesses[tau_motor] = __ovr_tau_motor__guess)
-  isnothing(__ovr_tau_wheel__guess) || (__guesses[tau_wheel] = __ovr_tau_wheel__guess)
+  isnothing(__ovr_omega__guess) || (__guesses[omega] = __ovr_omega__guess)
+  isnothing(__ovr_tau_brake__guess) || (__guesses[tau_brake] = __ovr_tau_brake__guess)
 
   ### Initialization Equations
 
@@ -101,13 +112,13 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
-  push!(__eqs, tau_motor ~ tau)
-  push!(__eqs, tau_wheel ~ tau * gear_ratio)
-  push!(__eqs, spline.tau ~ -tau_wheel)
+  push!(__eqs, omega ~ ModelingToolkit.D_nounits(spline.phi))
+  push!(__eqs, tau_brake ~ max_torque * bias_factor * brake_demand * tanh(omega / omega_eps))
+  push!(__eqs, spline.tau ~ tau_brake)
   push!(__eqs, wheel_center.f ~ [0, 0, 0])
-  push!(__eqs, wheel_center.tau ~ [0, 1, 0] * tau_wheel)
+  push!(__eqs, wheel_center.tau ~ [0, 1, 0] * (-tau_brake))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
-export HubMotor
+export Brake

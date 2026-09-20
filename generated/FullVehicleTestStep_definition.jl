@@ -7,13 +7,15 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   FullVehicleTestStep(; name, drive_start_time, steer_start_time, steer_angle, marker_spacing, marker_offset, marker_height, marker_diameter)
+   FullVehicleTestStep(; name, drive_start_time, brake_level, brake_start_time, steer_start_time, steer_angle, marker_spacing, marker_offset, marker_height, marker_diameter)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
 | `drive_start_time`         |                          | s  |   1.5 |
+| `brake_level`         |                          | --  |   0.0 |
+| `brake_start_time`         |                          | s  |   1.5 |
 | `steer_start_time`         |                          | s  |   3.0 |
 | `steer_angle`         |                          | rad  |   0.15 |
 | `marker_spacing`         |                          | m  |   25.0 |
@@ -21,7 +23,7 @@ import Moshi as __Ext__Moshi
 | `marker_height`         |                          | m  |   1.0 |
 | `marker_diameter`         |                          | m  |   0.1 |
 """
-@component function FullVehicleTestStep(; name = nothing, drive_start_time=1.5, steer_start_time=Float64(3.0), steer_angle=0.15, marker_spacing=Float64(25.0), marker_offset=1.5, marker_height=Float64(1.0), marker_diameter=0.1, kwargs...)
+@component function FullVehicleTestStep(; name = nothing, drive_start_time=1.5, brake_level=Float64(0.0), brake_start_time=1.5, steer_start_time=Float64(3.0), steer_angle=0.15, marker_spacing=Float64(25.0), marker_offset=1.5, marker_height=Float64(1.0), marker_diameter=0.1, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -66,6 +68,12 @@ import Moshi as __Ext__Moshi
   __local__drive_start_time = drive_start_time
   append!(__params, @parameters (drive_start_time::Real))
   __initial_conditions[drive_start_time] = __local__drive_start_time
+  __local__brake_level = brake_level
+  append!(__params, @parameters (brake_level::Real))
+  __initial_conditions[brake_level] = __local__brake_level
+  __local__brake_start_time = brake_start_time
+  append!(__params, @parameters (brake_start_time::Real))
+  __initial_conditions[brake_start_time] = __local__brake_start_time
   __local__steer_start_time = steer_start_time
   append!(__params, @parameters (steer_start_time::Real))
   __initial_conditions[steer_start_time] = __local__steer_start_time
@@ -111,6 +119,9 @@ import Moshi as __Ext__Moshi
   # Subcomponent throttle of type BlockComponents.Sources.Ramp
   throttle_overrides = __pop_subcomponent_overrides!(__overrides, "throttle")
   push!(__systems, @named throttle = BlockComponents.Sources.Ramp(; duration=Float64(1.0), height=Float64(1.0), offset=Float64(0.0), start_time=drive_start_time, throttle_overrides...))
+  # Subcomponent brake of type BlockComponents.Sources.Step
+  brake_overrides = __pop_subcomponent_overrides!(__overrides, "brake")
+  push!(__systems, @named brake = BlockComponents.Sources.Step(; height=brake_level, offset=Float64(0.0), start_time=brake_start_time, brake_overrides...))
   # Subcomponent steer of type BlockComponents.Sources.Step
   steer_overrides = __pop_subcomponent_overrides!(__overrides, "steer")
   push!(__systems, @named steer = BlockComponents.Sources.Step(; height=steer_angle, offset=Float64(0.0), start_time=steer_start_time, steer_overrides...))
@@ -190,6 +201,7 @@ import Moshi as __Ext__Moshi
 
   ### Equations
   push!(__eqs, connect(throttle.y, vehicle.throttle))
+  push!(__eqs, connect(brake.y, vehicle.brake))
   push!(__eqs, connect(steer.y, vehicle.steer))
   push!(__eqs, connect(world.frame_b, lateral_joint.frame_a))
   push!(__eqs, connect(lateral_joint.frame_b, longitudinal_joint.frame_a))
