@@ -108,9 +108,9 @@ import Moshi as __Ext__Moshi
   # Subcomponent world of type MultibodyComponents.World
   world_overrides = __pop_subcomponent_overrides!(__overrides, "world")
   push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
-  # Subcomponent throttle of type BlockComponents.Sources.Step
+  # Subcomponent throttle of type BlockComponents.Sources.Ramp
   throttle_overrides = __pop_subcomponent_overrides!(__overrides, "throttle")
-  push!(__systems, @named throttle = BlockComponents.Sources.Step(; height=Float64(1.0), offset=Float64(0.0), start_time=drive_start_time, throttle_overrides...))
+  push!(__systems, @named throttle = BlockComponents.Sources.Ramp(; duration=Float64(1.0), height=Float64(1.0), offset=Float64(0.0), start_time=drive_start_time, throttle_overrides...))
   # Subcomponent steer of type BlockComponents.Sources.Step
   steer_overrides = __pop_subcomponent_overrides!(__overrides, "steer")
   push!(__systems, @named steer = BlockComponents.Sources.Step(; height=steer_angle, offset=Float64(0.0), start_time=steer_start_time, steer_overrides...))

@@ -44,6 +44,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `toe`         |                          | rad  |
 | `camber`         |                          | rad  |
 | `wc_height`         |                          | m  |
+| `f_lca`         |                          | N  |
+| `f_uca`         |                          | N  |
+| `f_push`         |                          | N  |
+| `f_uca_ball`         |                          | N  |
 """
 @component function Linkage(; name = nothing, lca_front=nothing, lca_outer=nothing, lca_rear=nothing, uca_front=nothing, uca_outer=nothing, uca_rear=nothing, tierod_inner=nothing, tierod_outer=nothing, wheel_center=nothing, pushrod_outer=nothing, static_camber=nothing, static_toe=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
@@ -162,6 +166,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (toe(t)::Real))
   append!(__vars, @variables (camber(t)::Real))
   append!(__vars, @variables (wc_height(t)::Real))
+  append!(__vars, @variables (f_lca(t)[1:3]::Real))
+  append!(__vars, @variables (f_uca(t)[1:3]::Real))
+  append!(__vars, @variables (f_push(t)[1:3]::Real))
+  append!(__vars, @variables (f_uca_ball(t)[1:3]::Real))
 
   ### Variables (assignments)
   __ovr_toe = pop!(__overrides, "toe", nothing); isnothing(__ovr_toe) || push!(__eqs, toe ~ __ovr_toe)
@@ -173,6 +181,18 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_wc_height = pop!(__overrides, "wc_height", nothing); isnothing(__ovr_wc_height) || push!(__eqs, wc_height ~ __ovr_wc_height)
   __ovr_wc_height__initial = pop!(__overrides, "wc_height__initial", nothing); isnothing(__ovr_wc_height__initial) || (__initial_conditions[wc_height] = __ovr_wc_height__initial)
   __ovr_wc_height__guess = pop!(__overrides, "wc_height__guess", nothing)
+  __ovr_f_lca = pop!(__overrides, "f_lca", nothing); isnothing(__ovr_f_lca) || push!(__eqs, f_lca ~ __ovr_f_lca)
+  __ovr_f_lca__initial = pop!(__overrides, "f_lca__initial", nothing); isnothing(__ovr_f_lca__initial) || (__initial_conditions[f_lca] = __ovr_f_lca__initial)
+  __ovr_f_lca__guess = pop!(__overrides, "f_lca__guess", nothing)
+  __ovr_f_uca = pop!(__overrides, "f_uca", nothing); isnothing(__ovr_f_uca) || push!(__eqs, f_uca ~ __ovr_f_uca)
+  __ovr_f_uca__initial = pop!(__overrides, "f_uca__initial", nothing); isnothing(__ovr_f_uca__initial) || (__initial_conditions[f_uca] = __ovr_f_uca__initial)
+  __ovr_f_uca__guess = pop!(__overrides, "f_uca__guess", nothing)
+  __ovr_f_push = pop!(__overrides, "f_push", nothing); isnothing(__ovr_f_push) || push!(__eqs, f_push ~ __ovr_f_push)
+  __ovr_f_push__initial = pop!(__overrides, "f_push__initial", nothing); isnothing(__ovr_f_push__initial) || (__initial_conditions[f_push] = __ovr_f_push__initial)
+  __ovr_f_push__guess = pop!(__overrides, "f_push__guess", nothing)
+  __ovr_f_uca_ball = pop!(__overrides, "f_uca_ball", nothing); isnothing(__ovr_f_uca_ball) || push!(__eqs, f_uca_ball ~ __ovr_f_uca_ball)
+  __ovr_f_uca_ball__initial = pop!(__overrides, "f_uca_ball__initial", nothing); isnothing(__ovr_f_uca_ball__initial) || (__initial_conditions[f_uca_ball] = __ovr_f_uca_ball__initial)
+  __ovr_f_uca_ball__guess = pop!(__overrides, "f_uca_ball__guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -218,6 +238,15 @@ connectors that can be connected together ([`Frame3D`](@ref))
   # Subcomponent wheel_angles of type MultibodyComponents.RelativeAngles
   wheel_angles_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_angles")
   push!(__systems, @named wheel_angles = MultibodyComponents.RelativeAngles(; sequence=[1, 2, 3], wheel_angles_overrides...))
+  # Subcomponent lca_ball of type MultibodyComponents.CutForceAndTorque
+  lca_ball_overrides = __pop_subcomponent_overrides!(__overrides, "lca_ball")
+  push!(__systems, @named lca_ball = MultibodyComponents.CutForceAndTorque(; resolve_in_frame=MultibodyComponents.ResolveInFrame.FrameResolve(), lca_ball_overrides...))
+  # Subcomponent uca_mount of type MultibodyComponents.CutForceAndTorque
+  uca_mount_overrides = __pop_subcomponent_overrides!(__overrides, "uca_mount")
+  push!(__systems, @named uca_mount = MultibodyComponents.CutForceAndTorque(; resolve_in_frame=MultibodyComponents.ResolveInFrame.FrameResolve(), uca_mount_overrides...))
+  # Subcomponent push_load of type MultibodyComponents.CutForceAndTorque
+  push_load_overrides = __pop_subcomponent_overrides!(__overrides, "push_load")
+  push!(__systems, @named push_load = MultibodyComponents.CutForceAndTorque(; resolve_in_frame=MultibodyComponents.ResolveInFrame.FrameResolve(), push_load_overrides...))
   # Subcomponent pushrod_to_uca of type MultibodyComponents.FixedTranslation
   pushrod_to_uca_overrides = __pop_subcomponent_overrides!(__overrides, "pushrod_to_uca")
   push!(__systems, @named pushrod_to_uca = MultibodyComponents.FixedTranslation(; r=uca_outer - pushrod_outer, radius=sty_rod_radius, color=sty_grey_light, pushrod_to_uca_overrides...))
@@ -229,6 +258,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_toe__guess) || (__guesses[toe] = __ovr_toe__guess)
   isnothing(__ovr_camber__guess) || (__guesses[camber] = __ovr_camber__guess)
   isnothing(__ovr_wc_height__guess) || (__guesses[wc_height] = __ovr_wc_height__guess)
+  isnothing(__ovr_f_lca__guess) || (__guesses[f_lca] = __ovr_f_lca__guess)
+  isnothing(__ovr_f_uca__guess) || (__guesses[f_uca] = __ovr_f_uca__guess)
+  isnothing(__ovr_f_push__guess) || (__guesses[f_push] = __ovr_f_push__guess)
+  isnothing(__ovr_f_uca_ball__guess) || (__guesses[f_uca_ball] = __ovr_f_uca_ball__guess)
 
   ### Initialization Equations
 
@@ -239,13 +272,21 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, camber ~ -side * getindex(getproperty(wheel_angles, :angles), 1))
   push!(__eqs, toe ~ -side * getindex(getproperty(wheel_angles, :angles), 3))
   push!(__eqs, wc_height ~ getindex(getproperty(wheel, :r_0), 3) - wheel_center[3])
+  push!(__eqs, f_lca ~ lca_ball.force)
+  push!(__eqs, f_uca ~ uca_mount.force)
+  push!(__eqs, f_push ~ push_load.force)
+  push!(__eqs, f_uca_ball ~ -(f_uca + f_push))
   push!(__eqs, connect(mount_uca_front.frame_a, chassis))
   push!(__eqs, connect(mount_lca_front.frame_a, chassis))
   push!(__eqs, connect(mount_lca_front.frame_b, lca_rev.frame_a))
   push!(__eqs, connect(lca_rev.frame_b, lca_rod_front.frame_a))
   push!(__eqs, connect(lca_rod_rear.frame_b, lca_rod_front.frame_b))
-  push!(__eqs, connect(mount_uca_front.frame_b, uca_rod_front.frame_b))
-  push!(__eqs, connect(uca_rod_front.frame_a, lca_rod_front.frame_b))
+  push!(__eqs, connect(mount_uca_front.frame_b, uca_mount.frame_a))
+  push!(__eqs, connect(uca_mount.frame_b, uca_rod_front.frame_b))
+  push!(__eqs, connect(uca_mount.frame_resolve, chassis))
+  push!(__eqs, connect(lca_rod_front.frame_b, lca_ball.frame_a))
+  push!(__eqs, connect(lca_ball.frame_b, uca_rod_front.frame_a))
+  push!(__eqs, connect(lca_ball.frame_resolve, chassis))
   push!(__eqs, connect(uca_rod_front.frame_im, uca_rod_rear.frame_b))
   push!(__eqs, connect(tie_rod.frame_b, uca_rod_front.frame_ia))
   push!(__eqs, connect(lca_to_wc.frame_a, tie_rod.frame_ib))
@@ -253,7 +294,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(camber_rot.frame_b, toe_rot.frame_a))
   push!(__eqs, connect(toe_rot.frame_b, wheel))
   push!(__eqs, connect(pushrod_to_uca.frame_b, uca_rod_front.frame_im))
-  push!(__eqs, connect(pushrod_to_uca.frame_a, pushrod))
+  push!(__eqs, connect(pushrod, push_load.frame_a))
+  push!(__eqs, connect(push_load.frame_b, pushrod_to_uca.frame_a))
+  push!(__eqs, connect(push_load.frame_resolve, chassis))
   push!(__eqs, connect(chassis, wheel_angles.frame_a))
   push!(__eqs, connect(wheel, wheel_angles.frame_b))
   push!(__eqs, connect(tie_rod.frame_a, steering_rack))

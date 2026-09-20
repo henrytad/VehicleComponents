@@ -182,12 +182,14 @@ component FullVehicle
 
   variable w_cg::Angle[3]
   variable a_cg::Acceleration[3]
+  variable v_cg::Velocity[3]
 
 relations
 
   # Measurements
   w_cg = body_angles.angles
   a_cg = body.frame_a.f / sprung_mass
+  v_cg = MultibodyComponents.resolve2(body.frame_a.R, body.v_cm_0)
 
   # Sprung mass
   connect(body.frame_a, rig) {^id14}

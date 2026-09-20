@@ -34,15 +34,8 @@ function vehicle_channels(model, sol; rate::Int=100)
 
     sample(signal) = sol(times, idxs=signal).u
 
-    function add(name, signal, scale, unit)
-        try
-            values = signal()
-            values isa AbstractVector{<:Real} || (values = sample(values))
-            push!(channels, Motec.Channel(name, values .* scale; freq=rate, unit))
-        catch
-            push!(skipped, name)
-        end
-    end
+    specs = Tuple{String,Any,Float64,String}[]
+    add(name, signal, scale, unit) = push!(specs, (name, signal, scale, unit))
 
     # Body
     add("acc_x", () -> car.a_cg[1], 1 / G, "G")
@@ -51,10 +44,11 @@ function vehicle_channels(model, sol; rate::Int=100)
     add("a_yaw", () -> car.w_cg[1], DEG, "deg")
     add("a_pitch", () -> car.w_cg[2], DEG, "deg")
     add("a_roll", () -> car.w_cg[3], DEG, "deg")
-    add("v_ground_speed", () -> car.aero.v, KMH, "km/h")
+    add("v_vx", () -> car.v_cg[1], KMH, "km/h")
+    add("v_vy", () -> car.v_cg[2], KMH, "km/h")
 
     # Driver inputs
-    add("ath", () -> car.throttle, 100, "%")
+    add("a_th", () -> car.throttle, 100, "%")
     add("a_steer", () -> car.steer, DEG, "deg")
 
     # Aero
@@ -78,6 +72,14 @@ function vehicle_channels(model, sol; rate::Int=100)
         add("a_tire_toe_$tag", () -> linkage.toe, DEG, "deg")
         add("s_wheel_$tag", () -> linkage.wc_height, MM, "mm")
         add("tq_wheel_$tag", () -> corner.motor.tau_wheel, 1, "N.m")
+
+        # Joint loads
+        for (axis, i) in (("x", 1), ("y", 2), ("z", 3))
+            add("f_lca_$(axis)_$tag", () -> linkage.f_lca[i], 1, "N")
+            add("f_uca_ball_$(axis)_$tag", () -> linkage.f_uca_ball[i], 1, "N")
+            add("f_uca_mount_$(axis)_$tag", () -> linkage.f_uca[i], 1, "N")
+            add("f_pushrod_$(axis)_$tag", () -> linkage.f_push[i], 1, "N")
+        end
     end
 
     # Axles
@@ -89,6 +91,35 @@ function vehicle_channels(model, sol; rate::Int=100)
         add("s_damper_roll_$tag", () -> inboard.roll_strut.s, MM, "mm")
         add("f_damper_heave_$tag", () -> inboard.heave_strut.f, 1, "N")
         add("f_damper_roll_$tag", () -> inboard.roll_strut.f, 1, "N")
+    end
+
+    signals = Any[(try spec[2]() catch; nothing end) for spec in specs]
+    direct = [i for (i, s) in enumerate(signals) if !(s === nothing || s isa AbstractVector{<:Real})]
+    series = Dict{Int,Vector{Float64}}()
+
+    if !isempty(direct)
+        try
+            batch = sol(times, idxs=[signals[i] for i in direct])
+            for (k, i) in enumerate(direct)
+                series[i] = Float64[u[k] for u in batch.u]
+            end
+        catch
+            for i in direct
+                try
+                    series[i] = sample(signals[i])
+                catch
+                end
+            end
+        end
+    end
+
+    for (i, (name, _, scale, unit)) in enumerate(specs)
+        values = signals[i] isa AbstractVector{<:Real} ? signals[i] : get(series, i, nothing)
+        if values === nothing
+            push!(skipped, name)
+        else
+            push!(channels, Motec.Channel(name, values .* scale; freq=rate, unit))
+        end
     end
 
     isempty(skipped) ||

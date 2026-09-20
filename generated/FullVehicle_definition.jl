@@ -32,6 +32,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | ------------ | ----------------------------------- | ------ |
 | `w_cg`         |                          | rad  |
 | `a_cg`         |                          | m/s2  |
+| `v_cg`         |                          | m/s  |
 """
 @component function FullVehicle(; name = nothing, sprung_mass=VehicleComponents.params.body.mass, sprung_I_11=VehicleComponents.params.body.i_11, sprung_I_22=VehicleComponents.params.body.i_22, sprung_I_33=VehicleComponents.params.body.i_33, sprung_cg=VehicleComponents.params.body.cg, kwargs...)
   isnothing(name) && throw(ArgumentError("""
@@ -89,6 +90,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Variables (declarations)
   append!(__vars, @variables (w_cg(t)[1:3]::Real))
   append!(__vars, @variables (a_cg(t)[1:3]::Real))
+  append!(__vars, @variables (v_cg(t)[1:3]::Real))
 
   ### Variables (assignments)
   __ovr_w_cg = pop!(__overrides, "w_cg", nothing); isnothing(__ovr_w_cg) || push!(__eqs, w_cg ~ __ovr_w_cg)
@@ -97,6 +99,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_a_cg = pop!(__overrides, "a_cg", nothing); isnothing(__ovr_a_cg) || push!(__eqs, a_cg ~ __ovr_a_cg)
   __ovr_a_cg__initial = pop!(__overrides, "a_cg__initial", nothing); isnothing(__ovr_a_cg__initial) || (__initial_conditions[a_cg] = __ovr_a_cg__initial)
   __ovr_a_cg__guess = pop!(__overrides, "a_cg__guess", nothing)
+  __ovr_v_cg = pop!(__overrides, "v_cg", nothing); isnothing(__ovr_v_cg) || push!(__eqs, v_cg ~ __ovr_v_cg)
+  __ovr_v_cg__initial = pop!(__overrides, "v_cg__initial", nothing); isnothing(__ovr_v_cg__initial) || (__initial_conditions[v_cg] = __ovr_v_cg__initial)
+  __ovr_v_cg__guess = pop!(__overrides, "v_cg__guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -140,6 +145,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Guesses
   isnothing(__ovr_w_cg__guess) || (__guesses[w_cg] = __ovr_w_cg__guess)
   isnothing(__ovr_a_cg__guess) || (__guesses[a_cg] = __ovr_a_cg__guess)
+  isnothing(__ovr_v_cg__guess) || (__guesses[v_cg] = __ovr_v_cg__guess)
 
   ### Initialization Equations
 
@@ -149,6 +155,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Equations
   push!(__eqs, w_cg ~ body_angles.angles)
   push!(__eqs, a_cg ~ body.frame_a.f / sprung_mass)
+  push!(__eqs, v_cg ~ MultibodyComponents.resolve2(body.frame_a.R, body.v_cm_0))
   push!(__eqs, rear_suspension.steer ~ 0)
   push!(__eqs, connect(body.frame_a, rig))
   push!(__eqs, connect(front_suspension.chassis, body.frame_a))
