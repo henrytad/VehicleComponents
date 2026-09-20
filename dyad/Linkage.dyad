@@ -73,7 +73,12 @@ component Linkage
 
   # Camber and toe are the wheel's rotation relative to the body
   wheel_angles = MultibodyComponents.RelativeAngles(sequence = [1, 2, 3]) {^wheel_angles}
-  
+
+  # Joint load sensors. Resolved in the chassis frame.
+  lca_ball = MultibodyComponents.CutForceAndTorque(resolve_in_frame = MultibodyComponents.ResolveInFrame.FrameResolve()) {^lca_ball}
+  uca_mount = MultibodyComponents.CutForceAndTorque(resolve_in_frame = MultibodyComponents.ResolveInFrame.FrameResolve()) {^uca_mount}
+  push_load = MultibodyComponents.CutForceAndTorque(resolve_in_frame = MultibodyComponents.ResolveInFrame.FrameResolve()) {^push_load}
+
   # Push rod pickup
   pushrod_to_uca = MultibodyComponents.FixedTranslation(
     r = uca_outer - pushrod_outer,
@@ -120,6 +125,10 @@ component Linkage
   variable toe::Dyad.Angle
   variable camber::Dyad.Angle
   variable wc_height::Dyad.Length
+  variable f_lca::Dyad.Force[3]
+  variable f_uca::Dyad.Force[3]
+  variable f_push::Dyad.Force[3]
+  variable f_uca_ball::Dyad.Force[3]
 
 relations
 
@@ -128,33 +137,45 @@ relations
   toe = -side * wheel_angles.angles[3]
   wc_height = wheel.r_0[3] - wheel_center[3]
 
+  # Joint loads
+  f_lca = lca_ball.force
+  f_uca = uca_mount.force
+  f_push = push_load.force
+  f_uca_ball = -(f_uca + f_push)
+
   # Chassis mounts
-  connect(mount_uca_front.frame_a, chassis) {^id18}
-  connect(mount_lca_front.frame_a, chassis) {^id19}
+  connect(mount_uca_front.frame_a, chassis) {^id21}
+  connect(mount_lca_front.frame_a, chassis) {^id22}
 
   # Lower control arm
-  connect(mount_lca_front.frame_b, lca_rev.frame_a) {^id20}
-  connect(lca_rev.frame_b, lca_rod_front.frame_a) {^id21}
-  connect(lca_rod_rear.frame_b, lca_rod_front.frame_b) {^id22}
+  connect(mount_lca_front.frame_b, lca_rev.frame_a) {^id23}
+  connect(lca_rev.frame_b, lca_rod_front.frame_a) {^id24}
+  connect(lca_rod_rear.frame_b, lca_rod_front.frame_b) {^id25}
 
   # Upper control arm loop
-  connect(mount_uca_front.frame_b, uca_rod_front.frame_b) {^id23}
-  connect(uca_rod_front.frame_a, lca_rod_front.frame_b) {^id24}
-  connect(uca_rod_front.frame_im, uca_rod_rear.frame_b) {^id25}
-  connect(tie_rod.frame_b, uca_rod_front.frame_ia) {^id26}
+  connect(mount_uca_front.frame_b, uca_mount.frame_a) {^id26}
+  connect(uca_mount.frame_b, uca_rod_front.frame_b) {^id27}
+  connect(uca_mount.frame_resolve, chassis) {^id28}
+  connect(lca_rod_front.frame_b, lca_ball.frame_a) {^id29}
+  connect(lca_ball.frame_b, uca_rod_front.frame_a) {^id30}
+  connect(lca_ball.frame_resolve, chassis) {^id31}
+  connect(uca_rod_front.frame_im, uca_rod_rear.frame_b) {^id32}
+  connect(tie_rod.frame_b, uca_rod_front.frame_ia) {^id33}
 
   # Upright and wheel
-  connect(lca_to_wc.frame_a, tie_rod.frame_ib) {^id27}
-  connect(lca_to_wc.frame_b, camber_rot.frame_a) {^id28}
-  connect(camber_rot.frame_b, toe_rot.frame_a) {^id29}
-  connect(toe_rot.frame_b, wheel) {^id30}
-  connect(pushrod_to_uca.frame_b, uca_rod_front.frame_im) {^id31}
-  connect(pushrod_to_uca.frame_a, pushrod) {^id32}
+  connect(lca_to_wc.frame_a, tie_rod.frame_ib) {^id34}
+  connect(lca_to_wc.frame_b, camber_rot.frame_a) {^id35}
+  connect(camber_rot.frame_b, toe_rot.frame_a) {^id36}
+  connect(toe_rot.frame_b, wheel) {^id37}
+  connect(pushrod_to_uca.frame_b, uca_rod_front.frame_im) {^id38}
+  connect(pushrod, push_load.frame_a) {^id39}
+  connect(push_load.frame_b, pushrod_to_uca.frame_a) {^id40}
+  connect(push_load.frame_resolve, chassis) {^id41}
 
   # Camber and toe sensor
-  connect(chassis, wheel_angles.frame_a) {^id33}
-  connect(wheel, wheel_angles.frame_b) {^id34}
-  connect(tie_rod.frame_a, steering_rack) {^id35}
+  connect(chassis, wheel_angles.frame_a) {^id42}
+  connect(wheel, wheel_angles.frame_b) {^id43}
+  connect(tie_rod.frame_a, steering_rack) {^id44}
 
 metadata {
   "_links": {
@@ -171,6 +192,9 @@ metadata {
     },
     "pushrod": {
       "Dyad": {"placement": {"diagram": {"x1": 450, "y1": -50, "x2": 550, "y2": 50}}}
+    },
+    "steering_rack": {
+      "Dyad": {"placement": {"diagram": {"x1": 460, "x2": 540, "y1": 960, "y2": 1040}}}
     },
     "mount_uca_front": {
       "Dyad": {"placement": {"diagram": {"x1": 90, "y1": 210, "x2": 190, "y2": 310}}}
@@ -218,36 +242,62 @@ metadata {
     "wheel_angles": {
       "Dyad": {"placement": {"diagram": {"x1": 450, "y1": 840, "x2": 550, "y2": 940}}}
     },
+    "lca_ball": {
+      "Dyad": {"placement": {"diagram": {"x1": 650, "x2": 750, "y1": 670, "y2": 770}}}
+    },
+    "uca_mount": {
+      "Dyad": {"placement": {"diagram": {"x1": 240, "x2": 340, "y1": 210, "y2": 310}}}
+    },
+    "push_load": {
+      "Dyad": {"placement": {"diagram": {"x1": 760, "x2": 660, "y1": 100, "y2": 200}}}
+    },
     "pushrod_to_uca": {
       "Dyad": {"placement": {"diagram": {"x1": 550, "y1": 100, "x2": 450, "y2": 200}}}
     },
-    "steering_rack": {
-      "Dyad": {"placement": {"diagram": {"x1": 460, "x2": 540, "y1": 960, "y2": 1040}}}
-    },
-    "id18": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 0, "y": 260}], "E": 2}], "path": {}}},
-    "id19": {
+    "id21": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 0, "y": 260}], "E": 2}], "path": {}}},
+    "id22": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 0, "y": 720}], "E": 2}],
         "renderStyle": "standard"
       }
     },
-    "id20": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
-    "id21": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id22": {
+    "id23": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id24": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id25": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 480, "y": 820}, {"x": 480, "y": 720}], "E": 2}],
         "path": {}
       }
     },
-    "id23": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id24": {
+    "id26": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id27": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id28": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 530, "y": 260}, {"x": 530, "y": 720}], "E": 2}],
+        "edges": [{"S": 1, "M": [{"x": 0, "y": 210}, {"x": 0, "y": 500}], "E": 2}],
         "path": {}
       }
     },
-    "id25": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 430, "y": 150}], "E": 2}], "path": {}}},
-    "id26": {
+    "id29": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id30": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 820, "y": 720}, {"x": 820, "y": 260}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id31": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [{"x": 700, "y": 620}, {"x": 240, "y": 620}, {"x": 240, "y": 500}],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id32": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 430, "y": 150}], "E": 2}], "path": {}}},
+    "id33": {
       "Dyad": {
         "edges": [
           {
@@ -259,33 +309,41 @@ metadata {
         "path": {}
       }
     },
-    "id27": {
+    "id34": {
       "Dyad": {
         "edges": [
           {
             "S": 1,
-            "M": [{"x": 560, "y": 500}, {"x": 560, "y": 580}, {"x": 442, "y": 580}],
+            "M": [{"x": 560, "y": 500}, {"x": 560, "y": 600}, {"x": 442, "y": 600}],
             "E": 2
           }
         ],
         "path": {}
       }
     },
-    "id28": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id29": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id30": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id31": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 430, "y": 150}], "E": 2}], "path": {}}},
-    "id32": {
+    "id35": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id36": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id37": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id38": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 430, "y": 150}], "E": 2}], "path": {}}},
+    "id39": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 760, "y": 0}], "E": 2}], "path": {}}},
+    "id40": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id41": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 610, "y": 150}, {"x": 610, "y": 0}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [{"x": 710, "y": 90}, {"x": 0, "y": 90}, {"x": 0, "y": 500}],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
-    "id33": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 0, "y": 890}], "E": 2}], "path": {}}},
-    "id34": {
+    "id42": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 0, "y": 890}], "E": 2}], "path": {}}},
+    "id43": {
       "Dyad": {"edges": [{"S": 1, "M": [{"x": 1000, "y": 890}], "E": 2}], "path": {}}
     },
-    "id35": {
+    "id44": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 290, "y": 500}, {"x": 290, "y": 1000}], "E": 2}],
         "path": {}

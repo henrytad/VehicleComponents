@@ -1,8 +1,5 @@
-# Run `using VehicleComponents` if not already in env. If you try importing it again you'll
-# get an "importing VehicleComponents into Main conflicts with an existing global" error.
-# If you restart the REPL and rerun the lines, you will not get the error.
+using Revise
 using VehicleComponents
-
 using GLMakie, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
 
 @named model = VehicleComponents.FullVehicleTestStatic()

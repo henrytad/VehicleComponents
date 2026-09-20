@@ -1,8 +1,5 @@
-# Run `using VehicleComponents` if not already in env. If you try importing it again you'll
-# get an "importing VehicleComponents into Main conflicts with an existing global" error.
-# If you restart the REPL and rerun the lines, you will not get the error.
+using Revise
 using VehicleComponents
-
 using GLMakie, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
 
 t_drive = 1.5
@@ -32,15 +29,32 @@ cam_offset = GLMakie.Vec3f(-2.5, -0.35, 0.4)
 framerate = 25
 timevec = range(sol.t[1], sol.t[end], step=1 / framerate)
 
-cg = [ssys.vehicle.body.frame_a.r_0[i] + VehicleComponents.params.body.cg[i] for i in 1:3]
-
 fig, tobs, scene = render(model, sol, sol.t[1];
     x=cam_offset[1], y=cam_offset[2], z=cam_offset[3],
     up=[0, 0, 1], slider=false, size=(800, 600))
 
+body_r0 = collect(ssys.vehicle.body.frame_a.r_0)
+body_R = vec(ssys.vehicle.body.frame_a.R)
+
 GLMakie.record(fig, "output/full_vehicle_step.gif", timevec; framerate) do time
     tobs[] = time
-    target = GLMakie.Vec3f(sol(time, idxs=cg)...)
-    GLMakie.update_cam!(scene.scene, GLMakie.cameracontrols(scene.scene),
-        target + cam_offset, target, GLMakie.Vec3f(0, 0, 1))
+
+    r0 = sol(time, idxs=body_r0)
+    R = reshape(sol(time, idxs=body_R), 3, 3)
+
+    cg_world = MultibodyComponents.resolve1(
+        R, VehicleComponents.params.body.cg
+    )
+    offset_world = MultibodyComponents.resolve1(R, collect(cam_offset))
+
+    target = GLMakie.Vec3f((r0 .+ cg_world)...)
+    camera = target + GLMakie.Vec3f(offset_world...)
+
+    GLMakie.update_cam!(
+        scene.scene,
+        GLMakie.cameracontrols(scene.scene),
+        camera,
+        target,
+        GLMakie.Vec3f(0, 0, 1),
+    )
 end
