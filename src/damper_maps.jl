@@ -1,12 +1,6 @@
 using DyadData: DyadTimeseries
 
 """
-Velocity breakpoints of the Multimatic DSSV valve code tables, in m/s: the
-published 0, 10, 25, 50, 100 ... 500 mm/s.
-"""
-const DAMPER_VELOCITIES = [0.0, 0.01, 0.025, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
-
-"""
     signed_damper_curve(velocity, compression, extension)
 
 Build the single curve `Damper` interpolates from a table in the form damper data
@@ -36,37 +30,28 @@ end
 """
     damper_map(dampers, selection)
 
-Curve for one damper from the vehicle JSON. `dampers` is the valve code catalog
-(`data.dampers`) and `selection` is a setup entry such as `setup.heave.damper`,
-naming a `valve_code` and the `compression_position` and `extension_position`
-clicks. The two adjusters are independent, so the compression side comes from
-one position's column and the extension side from another's.
+Curve for one damper. `dampers` is the valve code catalog (`data.dampers`) and
+`selection` is a setup entry such as `setup.heave.damper`, naming a `valve_code`
+and the `compression_position` and `extension_position` clicks. The two adjusters
+are independent, so the compression side comes from one position's column and the
+extension side from another's.
 """
 function damper_map(dampers, selection)
-    table = dampers[Symbol(selection.valve_code)]
-    compression = table.positions[Symbol(selection.compression_position)].compression
-    extension = table.positions[Symbol(selection.extension_position)].extension
+    table = dampers[selection.valve_code]
+    compression = table.positions[selection.compression_position].compression
+    extension = table.positions[selection.extension_position].extension
     return signed_damper_curve(table.velocity, compression, extension)
 end
 
 """
-    linear_damper_map(d; velocity = DAMPER_VELOCITIES)
+    damper_dataset(selection; dampers = params.dampers)
 
-A linear damper, `f = d * der(s)`, on the valve code breakpoints so it fits
-`Damper`'s map. Linear extrapolation keeps it exact beyond them. For setups that
-give a single damping coefficient rather than a valve code.
+The map a `Damper` interpolates, for the valve code and clicks named by a setup
+entry such as `setup.heave.damper`. This is what a strut's `dataset` takes, so a
+damper carries its own curve instead of being patched at run time.
 """
-linear_damper_map(d; velocity = DAMPER_VELOCITIES) =
-    signed_damper_curve(velocity, d .* velocity, -d .* velocity)
-
-"""
-    default_damper_dataset()
-
-The map `Damper` is built with: linear 1500 N·s/m. Its length fixes how many
-points every run-time map must have, `2 * 13 - 1 = 25`.
-"""
-function default_damper_dataset()
-    curve = linear_damper_map(1500.0)
+function damper_dataset(selection; dampers = params.dampers)
+    curve = damper_map(dampers, selection)
     return DyadTimeseries(hcat(curve.velocity, curve.force);
         independent_var = "velocity", dependent_vars = ["force"])
 end

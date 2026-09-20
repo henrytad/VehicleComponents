@@ -1,44 +1,16 @@
-using GLMakie, JSON3, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
-
 # Run `using VehicleComponents` if not already in env. If you try importing it again you'll
 # get an "importing VehicleComponents into Main conflicts with an existing global" error.
 # If you restart the REPL and rerun the lines, you will not get the error.
 using VehicleComponents
+
+using GLMakie, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
 
 const DEG = 180 / π
 const MM = 1000
 
 @named model = VehicleComponents.LinkageTestRig()
 ssys = multibody(model)
-
-data_path = joinpath(pwd(), "assets", "vehicles", "Test.json")
-data = JSON3.read(read(data_path, String))
-
-front = data.suspension.front
-geom, setup = front.geometry, front.setup
-linkage, align = geom.linkages.left, setup.alignment.left
-
-parameter_map = Dict([
-    # Test rig
-    ssys.wheel_center => linkage.wheel_center,
-    ssys.tierod_inner => linkage.tierod_inner,
-
-    # Geometry
-    ssys.linkage.lca_front => linkage.lca_front,
-    ssys.linkage.lca_rear => linkage.lca_rear,
-    ssys.linkage.lca_outer => linkage.lca_outer,
-    ssys.linkage.uca_front => linkage.uca_front,
-    ssys.linkage.uca_rear => linkage.uca_rear,
-    ssys.linkage.uca_outer => linkage.uca_outer,
-    ssys.linkage.tierod_outer => linkage.tierod_outer,
-    ssys.linkage.pushrod_outer => linkage.pushrod_outer,
-
-    # Alignment
-    ssys.linkage.static_camber => align.static_camber,
-    ssys.linkage.static_toe => align.static_toe,
-])
-
-prob = ODEProblem(ssys, parameter_map, (0.0, 2.0))
+prob = ODEProblem(ssys, [], (0.0, 2.0))
 sol = solve(prob)
 
 plot_camber = Plots.plot(

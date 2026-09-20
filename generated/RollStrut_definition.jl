@@ -7,13 +7,14 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   RollStrut(; name, color)
+   RollStrut(; name, dataset, color)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `color`         | Color of spring for animation                         | --  |   world_defau...ing_color() |
+| `dataset`         |                          | --  |    |
+| `color`         |                          | --  |    |
 
 ## Connectors
 
@@ -29,7 +30,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `s`         | Distance between the origin of frame_a and the origin of frame_b                         | m  |
 | `f`         | Total line force, negative is compression                         | N  |
 """
-@component function RollStrut(; name = nothing, color=world_default_spring_color(), kwargs...)
+@component function RollStrut(; name = nothing, dataset=nothing, color=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -61,7 +62,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Symbolic Parameters
   __local__color = color
-  append!(__params, @parameters (color[1:4]::Real), [description = "Color of spring for animation"])
+  append!(__params, @parameters (color[1:4]::Real))
   __initial_conditions[color] = __local__color
 
   ### Final Parameters (assignments)
@@ -91,7 +92,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named spring = VehicleComponents.RollSpring(; color=color, spring_overrides...))
   # Subcomponent damper of type VehicleComponents.Damper
   damper_overrides = __pop_subcomponent_overrides!(__overrides, "damper")
-  push!(__systems, @named damper = VehicleComponents.Damper(; damper_overrides...))
+  push!(__systems, @named damper = VehicleComponents.Damper(; dataset=dataset, damper_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))

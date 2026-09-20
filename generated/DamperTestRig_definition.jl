@@ -78,7 +78,7 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named top = MultibodyComponents.Fixed(; r=[Float64(0), Float64(0), damper_length], render=false, top_overrides...))
   # Subcomponent damper of type VehicleComponents.Damper
   damper_overrides = __pop_subcomponent_overrides!(__overrides, "damper")
-  push!(__systems, @named damper = VehicleComponents.Damper(; damper_overrides...))
+  push!(__systems, @named damper = VehicleComponents.Damper(; dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper), damper_overrides...))
   # Subcomponent base of type MultibodyComponents.Fixed
   base_overrides = __pop_subcomponent_overrides!(__overrides, "base")
   push!(__systems, @named base = MultibodyComponents.Fixed(; r=[Float64(0), Float64(0), Float64(0)], render=false, base_overrides...))

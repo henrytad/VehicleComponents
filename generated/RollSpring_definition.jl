@@ -17,7 +17,7 @@ import Moshi as __Ext__Moshi
 | `fixed_rotation_at_frame_b`         |                          | --  |   false |
 | `s_small`         |                          | --  |   1e-10 |
 | `render`         |                          | --  |   true |
-| `color`         |                          | --  |   world_defau...ing_color() |
+| `color`         |                          | --  |   [0.5, 0.5, 0.5, 1.0] |
 | `specular_coefficient`         |                          | --  |   1.5 |
 | `c`         | Rate of each bump spring                         | N/m  |   1.0 |
 | `s_neutral`         | Length at zero roll, where the pack carries no load                         | m  |   0 |
@@ -47,7 +47,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `f`         | Scalar line force (positive = tension)                         | N  |
 | `x`         | Deflection from the neutral length, positive in extension                         | m  |
 """
-@component function RollSpring(; name = nothing, fixed_rotation_at_frame_a=false, fixed_rotation_at_frame_b=false, s_small=1e-10, render=true, color=world_default_spring_color(), specular_coefficient=1.5, c=Float64(1.0), s_neutral=Float64(0), preload_travel=Float64(0), radius=0.02, num_windings=Float64(15), N=600, end_ratio=0.1, kwargs...)
+@component function RollSpring(; name = nothing, fixed_rotation_at_frame_a=false, fixed_rotation_at_frame_b=false, s_small=1e-10, render=true, color=[0.5, 0.5, 0.5, Float64(1.0)], specular_coefficient=1.5, c=Float64(1.0), s_neutral=Float64(0), preload_travel=Float64(0), radius=0.02, num_windings=Float64(15), N=600, end_ratio=0.1, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:

@@ -7,12 +7,14 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   Inboard(; name, rocker_pivot_left, rocker_pivot_right, pushrod_inner_left, pushrod_inner_right, pushrod_outer_left, pushrod_outer_right, heave_pickup_left, heave_pickup_right, roll_pickup_left, roll_pickup_right, pushrod_adjust_left, pushrod_adjust_right)
+   Inboard(; name, heave_dataset, roll_dataset, rocker_pivot_left, rocker_pivot_right, pushrod_inner_left, pushrod_inner_right, pushrod_outer_left, pushrod_outer_right, heave_pickup_left, heave_pickup_right, roll_pickup_left, roll_pickup_right, pushrod_adjust_left, pushrod_adjust_right)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
+| `heave_dataset`         |                          | --  |    |
+| `roll_dataset`         |                          | --  |    |
 | `rocker_pivot_left`         |                          | m  |    |
 | `rocker_pivot_right`         |                          | m  |    |
 | `pushrod_inner_left`         |                          | m  |    |
@@ -35,7 +37,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
  * `linkage_right` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function Inboard(; name = nothing, rocker_pivot_left=nothing, rocker_pivot_right=nothing, pushrod_inner_left=nothing, pushrod_inner_right=nothing, pushrod_outer_left=nothing, pushrod_outer_right=nothing, heave_pickup_left=nothing, heave_pickup_right=nothing, roll_pickup_left=nothing, roll_pickup_right=nothing, pushrod_adjust_left=nothing, pushrod_adjust_right=nothing, kwargs...)
+@component function Inboard(; name = nothing, heave_dataset=nothing, roll_dataset=nothing, rocker_pivot_left=nothing, rocker_pivot_right=nothing, pushrod_inner_left=nothing, pushrod_inner_right=nothing, pushrod_outer_left=nothing, pushrod_outer_right=nothing, heave_pickup_left=nothing, heave_pickup_right=nothing, roll_pickup_left=nothing, roll_pickup_right=nothing, pushrod_adjust_left=nothing, pushrod_adjust_right=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -207,10 +209,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named roll_arm_right = MultibodyComponents.FixedTranslation(; r=roll_arm_vec_right, radius=sty_rod_radius, color=sty_grey_medium, roll_arm_right_overrides...))
   # Subcomponent heave_strut of type VehicleComponents.Strut
   heave_strut_overrides = __pop_subcomponent_overrides!(__overrides, "heave_strut")
-  push!(__systems, @named heave_strut = VehicleComponents.Strut(; color=sty_purple, heave_strut_overrides...))
+  push!(__systems, @named heave_strut = VehicleComponents.Strut(; color=sty_purple, dataset=heave_dataset, heave_strut_overrides...))
   # Subcomponent roll_strut of type VehicleComponents.RollStrut
   roll_strut_overrides = __pop_subcomponent_overrides!(__overrides, "roll_strut")
-  push!(__systems, @named roll_strut = VehicleComponents.RollStrut(; color=sty_orange, roll_strut_overrides...))
+  push!(__systems, @named roll_strut = VehicleComponents.RollStrut(; color=sty_orange, dataset=roll_dataset, roll_strut_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))

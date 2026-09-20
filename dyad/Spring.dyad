@@ -1,6 +1,6 @@
 component Spring
   extends MultibodyComponents.PartialLineForce
-  extends MultibodyComponents.Renderable(color = world_default_spring_color())
+  extends MultibodyComponents.Renderable
 
   spring_shape = MultibodyComponents.SpringShape(render = render, color = color, num_windings = num_windings, N = N, end_ratio = end_ratio, r = frame_a.r_0, length_direction = r_rel_0, length = s, width = radius)
 

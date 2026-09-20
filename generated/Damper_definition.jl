@@ -15,7 +15,7 @@ import Moshi as __Ext__Moshi
 | ------------ | ----------------------------------- | ------ | --------------- |
 | `fixed_rotation_at_frame_a`         |                          | --  |   false |
 | `fixed_rotation_at_frame_b`         |                          | --  |   false |
-| `dataset`         |                          | --  |   VehicleComp...r_dataset() |
+| `dataset`         |                          | --  |    |
 | `s_small`         |                          | --  |   1e-10 |
 
 ## Connectors
@@ -38,7 +38,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `f`         | Scalar line force (positive = tension)                         | N  |
 | `v`         | Strut velocity seen by the damper, negative in compression                         | m/s  |
 """
-@component function Damper(; name = nothing, fixed_rotation_at_frame_a=false, fixed_rotation_at_frame_b=false, dataset=VehicleComponents.default_damper_dataset(), s_small=1e-10, kwargs...)
+@component function Damper(; name = nothing, fixed_rotation_at_frame_a=false, fixed_rotation_at_frame_b=false, dataset=nothing, s_small=1e-10, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:

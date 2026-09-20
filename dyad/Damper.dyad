@@ -4,7 +4,7 @@ component Damper
   """
   extends MultibodyComponents.PartialLineForce
 
-  structural parameter dataset::DyadData.DyadTimeseries = VehicleComponents.default_damper_dataset()
+  structural parameter dataset::DyadData.DyadTimeseries
 
   force_map = BlockComponents.Tables.ParameterizedInterpolation(
     interpolation_type = BlockComponents.InterpolationType.LinearInterpolation(),

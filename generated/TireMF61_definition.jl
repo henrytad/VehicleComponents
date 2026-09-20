@@ -14,143 +14,143 @@ import Moshi as __Ext__Moshi
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
 | `is_left`         |                          | --  |    |
-| `width`         |                          | m  |    |
-| `unloaded_radius`         |                          | m  |    |
-| `vertical_stiffness`         |                          | N/m  |    |
-| `vertical_damping`         |                          | N.s/m  |    |
-| `FNOMIN`         |                          | N  |    |
-| `BREFF`         |                          | --  |    |
-| `DREFF`         |                          | --  |    |
-| `FREFF`         |                          | --  |    |
-| `longitudinal_stiffness`         | Tyre overall longitudinal stiffness. Sets the relaxation length.                         | N/m  |    |
-| `lateral_stiffness`         | Tyre overall lateral stiffness. Sets the lateral relaxation length.                         | N/m  |    |
-| `INFLPRES`         |                          | Pa  |    |
-| `NOMPRES`         |                          | Pa  |    |
-| `LONGVL`         |                          | m/s  |    |
-| `PCX1`         | Shape factor Cfx                         | --  |    |
-| `PDX1`         | Longitudinal friction Mux at Fznom                         | --  |    |
-| `PDX2`         | Variation of friction Mux with load                         | --  |    |
-| `PDX3`         | Variation of friction Mux with camber squared                         | --  |    |
-| `PEX1`         | Longitudinal curvature Efx at Fznom                         | --  |    |
-| `PEX2`         | Variation of curvature Efx with load                         | --  |    |
-| `PEX3`         | Variation of curvature Efx with load squared                         | --  |    |
-| `PEX4`         | Factor in curvature Efx while driving                         | --  |    |
-| `PKX1`         | Longitudinal slip stiffness Kfx/Fz at Fznom                         | --  |    |
-| `PKX2`         | Variation of slip stiffness Kfx/Fz with load                         | --  |    |
-| `PKX3`         | Exponent in slip stiffness Kfx/Fz with load                         | --  |    |
-| `PHX1`         | Horizontal shift Shx at Fznom                         | --  |    |
-| `PHX2`         | Variation of shift Shx with load                         | --  |    |
-| `PVX1`         | Vertical shift Svx/Fz at Fznom                         | --  |    |
-| `PVX2`         | Variation of shift Svx/Fz with load                         | --  |    |
-| `PPX1`         | Linear influence of inflation pressure on longitudinal slip stiffness                         | --  |    |
-| `PPX2`         | Quadratic influence of inflation pressure on longitudinal slip stiffness                         | --  |    |
-| `PPX3`         | Linear influence of inflation pressure on peak longitudinal friction                         | --  |    |
-| `PPX4`         | Quadratic influence of inflation pressure on peak longitudinal friction                         | --  |    |
-| `RBX1`         | Slope factor for combined slip Fx reduction                         | --  |    |
-| `RBX2`         | Variation of slope Fx reduction with kappa                         | --  |    |
-| `RBX3`         | Influence of camber on stiffness for Fx combined                         | --  |    |
-| `RCX1`         | Shape factor for combined slip Fx reduction                         | --  |    |
-| `REX1`         | Curvature factor of combined Fx                         | --  |    |
-| `REX2`         | Curvature factor of combined Fx with load                         | --  |    |
-| `RHX1`         | Shift factor for combined slip Fx reduction                         | --  |    |
-| `PCY1`         | Shape factor Cfy                         | --  |    |
-| `PDY1`         | Lateral friction Muy at Fznom                         | --  |    |
-| `PDY2`         | Variation of friction Muy with load                         | --  |    |
-| `PDY3`         | Variation of friction Muy with camber squared                         | --  |    |
-| `PEY1`         | Lateral curvature Efy at Fznom                         | --  |    |
-| `PEY2`         | Variation of curvature Efy with load                         | --  |    |
-| `PEY3`         | Zero order camber dependency of curvature Efy                         | --  |    |
-| `PEY4`         | Variation of curvature Efy with camber                         | --  |    |
-| `PEY5`         | Variation of curvature Efy with camber squared                         | --  |    |
-| `PKY1`         | Maximum value of stiffness Kfy/Fznom                         | --  |    |
-| `PKY2`         | Load at which Kfy reaches maximum value, over Fznom                         | --  |    |
-| `PKY3`         | Variation of Kfy/Fznom with camber                         | --  |    |
-| `PKY4`         | Peak stiffness variation with camber squared                         | --  |    |
-| `PKY5`         | Fz at which Kfy is maximum, variation with camber squared                         | --  |    |
-| `PKY6`         | Camber stiffness factor                         | --  |    |
-| `PKY7`         | Camber stiffness variation with load                         | --  |    |
-| `PHY1`         | Horizontal shift Shy at Fznom                         | --  |    |
-| `PHY2`         | Variation of shift Shy with load                         | --  |    |
-| `PVY1`         | Vertical shift in Svy/Fz at Fznom                         | --  |    |
-| `PVY2`         | Variation of shift Svy/Fz with load                         | --  |    |
-| `PVY3`         | Variation of shift Svy/Fz with camber                         | --  |    |
-| `PVY4`         | Variation of shift Svy/Fz with camber and load                         | --  |    |
-| `PPY1`         | Linear influence of inflation pressure on cornering stiffness                         | --  |    |
-| `PPY2`         | Quadratic influence of inflation pressure on cornering stiffness                         | --  |    |
-| `PPY3`         | Linear influence of inflation pressure on peak lateral friction                         | --  |    |
-| `PPY4`         | Quadratic influence of inflation pressure on peak lateral friction                         | --  |    |
-| `PPY5`         | Influence of inflation pressure on camber stiffness                         | --  |    |
-| `RBY1`         | Slope factor for combined Fy reduction                         | --  |    |
-| `RBY2`         | Variation of slope Fy reduction with alpha                         | --  |    |
-| `RBY3`         | Shift term for alpha in slope Fy reduction                         | --  |    |
-| `RBY4`         | Influence of camber on stiffness of Fy combined                         | --  |    |
-| `RCY1`         | Shape factor for combined Fy reduction                         | --  |    |
-| `REY1`         | Curvature factor of combined Fy                         | --  |    |
-| `REY2`         | Curvature factor of combined Fy with load                         | --  |    |
-| `RHY1`         | Shift factor for combined Fy reduction                         | --  |    |
-| `RHY2`         | Shift factor for combined Fy reduction with load                         | --  |    |
-| `RVY1`         | Kappa induced side force Svyk/Muy*Fz at Fznom                         | --  |    |
-| `RVY2`         | Variation of Svyk/Muy*Fz with load                         | --  |    |
-| `RVY3`         | Variation of Svyk/Muy*Fz with camber                         | --  |    |
-| `RVY4`         | Variation of Svyk/Muy*Fz with alpha                         | --  |    |
-| `RVY5`         | Variation of Svyk/Muy*Fz with kappa                         | --  |    |
-| `RVY6`         | Variation of Svyk/Muy*Fz with atan(kappa)                         | --  |    |
-| `QBZ1`         | Trail slope factor for trail Bpt at Fznom                         | --  |    |
-| `QBZ2`         | Variation of slope Bpt with load                         | --  |    |
-| `QBZ3`         | Variation of slope Bpt with load squared                         | --  |    |
-| `QBZ4`         | Variation of slope Bpt with camber. PAC2002 only; 4.E40 has no term for it.                         | --  |    |
-| `QBZ5`         | Variation of slope Bpt with absolute camber                         | --  |    |
-| `QBZ6`         | Variation of slope Bpt with camber squared                         | --  |    |
-| `QBZ9`         | Slope factor Br of residual torque Mzr                         | --  |    |
-| `QBZ10`         | Slope factor Br of residual torque Mzr                         | --  |    |
-| `QCZ1`         | Shape factor Cpt for pneumatic trail                         | --  |    |
-| `QDZ1`         | Peak trail Dpt = Dpt*(Fz/Fznom*R0)                         | --  |    |
-| `QDZ2`         | Variation of peak Dpt with load                         | --  |    |
-| `QDZ3`         | Variation of peak Dpt with camber                         | --  |    |
-| `QDZ4`         | Variation of peak Dpt with camber squared                         | --  |    |
-| `QDZ6`         | Peak residual torque Dmr = Dmr/(Fz*R0)                         | --  |    |
-| `QDZ7`         | Variation of peak factor Dmr with load                         | --  |    |
-| `QDZ8`         | Variation of peak factor Dmr with camber                         | --  |    |
-| `QDZ9`         | Variation of peak factor Dmr with camber and load                         | --  |    |
-| `QDZ10`         | Variation of peak factor Dmr with camber squared                         | --  |    |
-| `QDZ11`         | Variation of peak factor Dmr with camber squared and load                         | --  |    |
-| `QEZ1`         | Trail curvature Ept at Fznom                         | --  |    |
-| `QEZ2`         | Variation of curvature Ept with load                         | --  |    |
-| `QEZ3`         | Variation of curvature Ept with load squared                         | --  |    |
-| `QEZ4`         | Variation of curvature Ept with sign of alpha-t                         | --  |    |
-| `QEZ5`         | Variation of Ept with camber and sign of alpha-t                         | --  |    |
-| `QHZ1`         | Trail horizontal shift Sht at Fznom                         | --  |    |
-| `QHZ2`         | Variation of shift Sht with load                         | --  |    |
-| `QHZ3`         | Variation of shift Sht with camber                         | --  |    |
-| `QHZ4`         | Variation of shift Sht with camber and load                         | --  |    |
-| `PPZ1`         | Linear influence of inflation pressure on pneumatic trail                         | --  |    |
-| `PPZ2`         | Influence of inflation pressure on residual aligning torque                         | --  |    |
-| `SSZ1`         | Nominal value of s/R0: effect of Fx on Mz                         | --  |    |
-| `SSZ2`         | Variation of distance s/R0 with Fy/Fznom                         | --  |    |
-| `SSZ3`         | Variation of distance s/R0 with camber                         | --  |    |
-| `SSZ4`         | Variation of distance s/R0 with load and camber                         | --  |    |
-| `LFZO`         |                          | --  |   1 |
-| `LCX`         |                          | --  |   1 |
-| `LMUX`         |                          | --  |   1 |
-| `LEX`         |                          | --  |   1 |
-| `LKX`         |                          | --  |   1 |
-| `LHX`         |                          | --  |   1 |
-| `LVX`         |                          | --  |   1 |
-| `LCY`         |                          | --  |   1 |
-| `LMUY`         |                          | --  |   1 |
-| `LEY`         |                          | --  |   1 |
-| `LKY`         |                          | --  |   1 |
-| `LHY`         |                          | --  |   1 |
-| `LVY`         |                          | --  |   1 |
-| `LKYC`         |                          | --  |   1 |
-| `LXAL`         |                          | --  |   1 |
-| `LYKA`         |                          | --  |   1 |
-| `LVYKA`         |                          | --  |   1 |
-| `LTR`         |                          | --  |   1 |
-| `LRES`         |                          | --  |   1 |
-| `LKZC`         |                          | --  |   1 |
-| `LS`         |                          | --  |   1 |
-| `LMUV`         | Slip-speed friction decay. Leave at 0 unless modelling a wet surface.                         | --  |   0 |
+| `width`         |                          | m  |   VehicleComp...tires.WIDTH |
+| `unloaded_radius`         |                          | m  |   VehicleComp...ADED_RADIUS |
+| `vertical_stiffness`         |                          | N/m  |   VehicleComp...L_STIFFNESS |
+| `vertical_damping`         |                          | N.s/m  |   VehicleComp...CAL_DAMPING |
+| `FNOMIN`         |                          | N  |   VehicleComp...ires.FNOMIN |
+| `BREFF`         |                          | --  |   VehicleComp...tires.BREFF |
+| `DREFF`         |                          | --  |   VehicleComp...tires.DREFF |
+| `FREFF`         |                          | --  |   VehicleComp...tires.FREFF |
+| `longitudinal_stiffness`         | Tyre overall longitudinal stiffness. Sets the relaxation length.                         | N/m  |   VehicleComp...L_STIFFNESS |
+| `lateral_stiffness`         | Tyre overall lateral stiffness. Sets the lateral relaxation length.                         | N/m  |   VehicleComp...L_STIFFNESS |
+| `INFLPRES`         |                          | Pa  |   VehicleComp...es.INFLPRES |
+| `NOMPRES`         |                          | Pa  |   VehicleComp...res.NOMPRES |
+| `LONGVL`         |                          | m/s  |   VehicleComp...ires.LONGVL |
+| `PCX1`         | Shape factor Cfx                         | --  |   VehicleComp....tires.PCX1 |
+| `PDX1`         | Longitudinal friction Mux at Fznom                         | --  |   VehicleComp....tires.PDX1 |
+| `PDX2`         | Variation of friction Mux with load                         | --  |   VehicleComp....tires.PDX2 |
+| `PDX3`         | Variation of friction Mux with camber squared                         | --  |   VehicleComp....tires.PDX3 |
+| `PEX1`         | Longitudinal curvature Efx at Fznom                         | --  |   VehicleComp....tires.PEX1 |
+| `PEX2`         | Variation of curvature Efx with load                         | --  |   VehicleComp....tires.PEX2 |
+| `PEX3`         | Variation of curvature Efx with load squared                         | --  |   VehicleComp....tires.PEX3 |
+| `PEX4`         | Factor in curvature Efx while driving                         | --  |   VehicleComp....tires.PEX4 |
+| `PKX1`         | Longitudinal slip stiffness Kfx/Fz at Fznom                         | --  |   VehicleComp....tires.PKX1 |
+| `PKX2`         | Variation of slip stiffness Kfx/Fz with load                         | --  |   VehicleComp....tires.PKX2 |
+| `PKX3`         | Exponent in slip stiffness Kfx/Fz with load                         | --  |   VehicleComp....tires.PKX3 |
+| `PHX1`         | Horizontal shift Shx at Fznom                         | --  |   VehicleComp....tires.PHX1 |
+| `PHX2`         | Variation of shift Shx with load                         | --  |   VehicleComp....tires.PHX2 |
+| `PVX1`         | Vertical shift Svx/Fz at Fznom                         | --  |   VehicleComp....tires.PVX1 |
+| `PVX2`         | Variation of shift Svx/Fz with load                         | --  |   VehicleComp....tires.PVX2 |
+| `PPX1`         | Linear influence of inflation pressure on longitudinal slip stiffness                         | --  |   VehicleComp....tires.PPX1 |
+| `PPX2`         | Quadratic influence of inflation pressure on longitudinal slip stiffness                         | --  |   VehicleComp....tires.PPX2 |
+| `PPX3`         | Linear influence of inflation pressure on peak longitudinal friction                         | --  |   VehicleComp....tires.PPX3 |
+| `PPX4`         | Quadratic influence of inflation pressure on peak longitudinal friction                         | --  |   VehicleComp....tires.PPX4 |
+| `RBX1`         | Slope factor for combined slip Fx reduction                         | --  |   VehicleComp....tires.RBX1 |
+| `RBX2`         | Variation of slope Fx reduction with kappa                         | --  |   VehicleComp....tires.RBX2 |
+| `RBX3`         | Influence of camber on stiffness for Fx combined                         | --  |   VehicleComp....tires.RBX3 |
+| `RCX1`         | Shape factor for combined slip Fx reduction                         | --  |   VehicleComp....tires.RCX1 |
+| `REX1`         | Curvature factor of combined Fx                         | --  |   VehicleComp....tires.REX1 |
+| `REX2`         | Curvature factor of combined Fx with load                         | --  |   VehicleComp....tires.REX2 |
+| `RHX1`         | Shift factor for combined slip Fx reduction                         | --  |   VehicleComp....tires.RHX1 |
+| `PCY1`         | Shape factor Cfy                         | --  |   VehicleComp....tires.PCY1 |
+| `PDY1`         | Lateral friction Muy at Fznom                         | --  |   VehicleComp....tires.PDY1 |
+| `PDY2`         | Variation of friction Muy with load                         | --  |   VehicleComp....tires.PDY2 |
+| `PDY3`         | Variation of friction Muy with camber squared                         | --  |   VehicleComp....tires.PDY3 |
+| `PEY1`         | Lateral curvature Efy at Fznom                         | --  |   VehicleComp....tires.PEY1 |
+| `PEY2`         | Variation of curvature Efy with load                         | --  |   VehicleComp....tires.PEY2 |
+| `PEY3`         | Zero order camber dependency of curvature Efy                         | --  |   VehicleComp....tires.PEY3 |
+| `PEY4`         | Variation of curvature Efy with camber                         | --  |   VehicleComp....tires.PEY4 |
+| `PEY5`         | Variation of curvature Efy with camber squared                         | --  |   VehicleComp....tires.PEY5 |
+| `PKY1`         | Maximum value of stiffness Kfy/Fznom                         | --  |   VehicleComp....tires.PKY1 |
+| `PKY2`         | Load at which Kfy reaches maximum value, over Fznom                         | --  |   VehicleComp....tires.PKY2 |
+| `PKY3`         | Variation of Kfy/Fznom with camber                         | --  |   VehicleComp....tires.PKY3 |
+| `PKY4`         | Peak stiffness variation with camber squared                         | --  |   VehicleComp....tires.PKY4 |
+| `PKY5`         | Fz at which Kfy is maximum, variation with camber squared                         | --  |   VehicleComp....tires.PKY5 |
+| `PKY6`         | Camber stiffness factor                         | --  |   VehicleComp....tires.PKY6 |
+| `PKY7`         | Camber stiffness variation with load                         | --  |   VehicleComp....tires.PKY7 |
+| `PHY1`         | Horizontal shift Shy at Fznom                         | --  |   VehicleComp....tires.PHY1 |
+| `PHY2`         | Variation of shift Shy with load                         | --  |   VehicleComp....tires.PHY2 |
+| `PVY1`         | Vertical shift in Svy/Fz at Fznom                         | --  |   VehicleComp....tires.PVY1 |
+| `PVY2`         | Variation of shift Svy/Fz with load                         | --  |   VehicleComp....tires.PVY2 |
+| `PVY3`         | Variation of shift Svy/Fz with camber                         | --  |   VehicleComp....tires.PVY3 |
+| `PVY4`         | Variation of shift Svy/Fz with camber and load                         | --  |   VehicleComp....tires.PVY4 |
+| `PPY1`         | Linear influence of inflation pressure on cornering stiffness                         | --  |   VehicleComp....tires.PPY1 |
+| `PPY2`         | Quadratic influence of inflation pressure on cornering stiffness                         | --  |   VehicleComp....tires.PPY2 |
+| `PPY3`         | Linear influence of inflation pressure on peak lateral friction                         | --  |   VehicleComp....tires.PPY3 |
+| `PPY4`         | Quadratic influence of inflation pressure on peak lateral friction                         | --  |   VehicleComp....tires.PPY4 |
+| `PPY5`         | Influence of inflation pressure on camber stiffness                         | --  |   VehicleComp....tires.PPY5 |
+| `RBY1`         | Slope factor for combined Fy reduction                         | --  |   VehicleComp....tires.RBY1 |
+| `RBY2`         | Variation of slope Fy reduction with alpha                         | --  |   VehicleComp....tires.RBY2 |
+| `RBY3`         | Shift term for alpha in slope Fy reduction                         | --  |   VehicleComp....tires.RBY3 |
+| `RBY4`         | Influence of camber on stiffness of Fy combined                         | --  |   VehicleComp....tires.RBY4 |
+| `RCY1`         | Shape factor for combined Fy reduction                         | --  |   VehicleComp....tires.RCY1 |
+| `REY1`         | Curvature factor of combined Fy                         | --  |   VehicleComp....tires.REY1 |
+| `REY2`         | Curvature factor of combined Fy with load                         | --  |   VehicleComp....tires.REY2 |
+| `RHY1`         | Shift factor for combined Fy reduction                         | --  |   VehicleComp....tires.RHY1 |
+| `RHY2`         | Shift factor for combined Fy reduction with load                         | --  |   VehicleComp....tires.RHY2 |
+| `RVY1`         | Kappa induced side force Svyk/Muy*Fz at Fznom                         | --  |   VehicleComp....tires.RVY1 |
+| `RVY2`         | Variation of Svyk/Muy*Fz with load                         | --  |   VehicleComp....tires.RVY2 |
+| `RVY3`         | Variation of Svyk/Muy*Fz with camber                         | --  |   VehicleComp....tires.RVY3 |
+| `RVY4`         | Variation of Svyk/Muy*Fz with alpha                         | --  |   VehicleComp....tires.RVY4 |
+| `RVY5`         | Variation of Svyk/Muy*Fz with kappa                         | --  |   VehicleComp....tires.RVY5 |
+| `RVY6`         | Variation of Svyk/Muy*Fz with atan(kappa)                         | --  |   VehicleComp....tires.RVY6 |
+| `QBZ1`         | Trail slope factor for trail Bpt at Fznom                         | --  |   VehicleComp....tires.QBZ1 |
+| `QBZ2`         | Variation of slope Bpt with load                         | --  |   VehicleComp....tires.QBZ2 |
+| `QBZ3`         | Variation of slope Bpt with load squared                         | --  |   VehicleComp....tires.QBZ3 |
+| `QBZ4`         | Variation of slope Bpt with camber. PAC2002 only; 4.E40 has no term for it.                         | --  |   VehicleComp....tires.QBZ4 |
+| `QBZ5`         | Variation of slope Bpt with absolute camber                         | --  |   VehicleComp....tires.QBZ5 |
+| `QBZ6`         | Variation of slope Bpt with camber squared                         | --  |   VehicleComp....tires.QBZ6 |
+| `QBZ9`         | Slope factor Br of residual torque Mzr                         | --  |   VehicleComp....tires.QBZ9 |
+| `QBZ10`         | Slope factor Br of residual torque Mzr                         | --  |   VehicleComp...tires.QBZ10 |
+| `QCZ1`         | Shape factor Cpt for pneumatic trail                         | --  |   VehicleComp....tires.QCZ1 |
+| `QDZ1`         | Peak trail Dpt = Dpt*(Fz/Fznom*R0)                         | --  |   VehicleComp....tires.QDZ1 |
+| `QDZ2`         | Variation of peak Dpt with load                         | --  |   VehicleComp....tires.QDZ2 |
+| `QDZ3`         | Variation of peak Dpt with camber                         | --  |   VehicleComp....tires.QDZ3 |
+| `QDZ4`         | Variation of peak Dpt with camber squared                         | --  |   VehicleComp....tires.QDZ4 |
+| `QDZ6`         | Peak residual torque Dmr = Dmr/(Fz*R0)                         | --  |   VehicleComp....tires.QDZ6 |
+| `QDZ7`         | Variation of peak factor Dmr with load                         | --  |   VehicleComp....tires.QDZ7 |
+| `QDZ8`         | Variation of peak factor Dmr with camber                         | --  |   VehicleComp....tires.QDZ8 |
+| `QDZ9`         | Variation of peak factor Dmr with camber and load                         | --  |   VehicleComp....tires.QDZ9 |
+| `QDZ10`         | Variation of peak factor Dmr with camber squared                         | --  |   VehicleComp...tires.QDZ10 |
+| `QDZ11`         | Variation of peak factor Dmr with camber squared and load                         | --  |   VehicleComp...tires.QDZ11 |
+| `QEZ1`         | Trail curvature Ept at Fznom                         | --  |   VehicleComp....tires.QEZ1 |
+| `QEZ2`         | Variation of curvature Ept with load                         | --  |   VehicleComp....tires.QEZ2 |
+| `QEZ3`         | Variation of curvature Ept with load squared                         | --  |   VehicleComp....tires.QEZ3 |
+| `QEZ4`         | Variation of curvature Ept with sign of alpha-t                         | --  |   VehicleComp....tires.QEZ4 |
+| `QEZ5`         | Variation of Ept with camber and sign of alpha-t                         | --  |   VehicleComp....tires.QEZ5 |
+| `QHZ1`         | Trail horizontal shift Sht at Fznom                         | --  |   VehicleComp....tires.QHZ1 |
+| `QHZ2`         | Variation of shift Sht with load                         | --  |   VehicleComp....tires.QHZ2 |
+| `QHZ3`         | Variation of shift Sht with camber                         | --  |   VehicleComp....tires.QHZ3 |
+| `QHZ4`         | Variation of shift Sht with camber and load                         | --  |   VehicleComp....tires.QHZ4 |
+| `PPZ1`         | Linear influence of inflation pressure on pneumatic trail                         | --  |   VehicleComp....tires.PPZ1 |
+| `PPZ2`         | Influence of inflation pressure on residual aligning torque                         | --  |   VehicleComp....tires.PPZ2 |
+| `SSZ1`         | Nominal value of s/R0: effect of Fx on Mz                         | --  |   VehicleComp....tires.SSZ1 |
+| `SSZ2`         | Variation of distance s/R0 with Fy/Fznom                         | --  |   VehicleComp....tires.SSZ2 |
+| `SSZ3`         | Variation of distance s/R0 with camber                         | --  |   VehicleComp....tires.SSZ3 |
+| `SSZ4`         | Variation of distance s/R0 with load and camber                         | --  |   VehicleComp....tires.SSZ4 |
+| `LFZO`         |                          | --  |   VehicleComp....tires.LFZO |
+| `LCX`         |                          | --  |   VehicleComp...s.tires.LCX |
+| `LMUX`         |                          | --  |   VehicleComp....tires.LMUX |
+| `LEX`         |                          | --  |   VehicleComp...s.tires.LEX |
+| `LKX`         |                          | --  |   VehicleComp...s.tires.LKX |
+| `LHX`         |                          | --  |   VehicleComp...s.tires.LHX |
+| `LVX`         |                          | --  |   VehicleComp...s.tires.LVX |
+| `LCY`         |                          | --  |   VehicleComp...s.tires.LCY |
+| `LMUY`         |                          | --  |   VehicleComp....tires.LMUY |
+| `LEY`         |                          | --  |   VehicleComp...s.tires.LEY |
+| `LKY`         |                          | --  |   VehicleComp...s.tires.LKY |
+| `LHY`         |                          | --  |   VehicleComp...s.tires.LHY |
+| `LVY`         |                          | --  |   VehicleComp...s.tires.LVY |
+| `LKYC`         |                          | --  |   VehicleComp....tires.LKYC |
+| `LXAL`         |                          | --  |   VehicleComp....tires.LXAL |
+| `LYKA`         |                          | --  |   VehicleComp....tires.LYKA |
+| `LVYKA`         |                          | --  |   VehicleComp...tires.LVYKA |
+| `LTR`         |                          | --  |   VehicleComp...s.tires.LTR |
+| `LRES`         |                          | --  |   VehicleComp....tires.LRES |
+| `LKZC`         |                          | --  |   VehicleComp....tires.LKZC |
+| `LS`         |                          | --  |   VehicleComp...ms.tires.LS |
+| `LMUV`         | Slip-speed friction decay. Leave at 0 unless modelling a wet surface.                         | --  |   VehicleComp....tires.LMUV |
 | `Au`         | Digressive friction factor Au (4.E8), suggested 10                         | --  |   10 |
 | `eps_x`         | Singularity guard on Bx (4.E16). Only bites below Fz ~ eps_x / (PCX1 * PDX1).                         | N  |   0.1 |
 | `eps_y`         | Singularity guard on By (4.E26).                         | N  |   0.1 |
@@ -290,7 +290,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `tau_wy`         |                          | N.m  |
 | `tau_wz`         |                          | N.m  |
 """
-@component function TireMF61(; name = nothing, is_left=nothing, width=nothing, unloaded_radius=nothing, vertical_stiffness=nothing, vertical_damping=nothing, FNOMIN=nothing, BREFF=nothing, DREFF=nothing, FREFF=nothing, longitudinal_stiffness=nothing, lateral_stiffness=nothing, INFLPRES=nothing, NOMPRES=nothing, LONGVL=nothing, PCX1=nothing, PDX1=nothing, PDX2=nothing, PDX3=nothing, PEX1=nothing, PEX2=nothing, PEX3=nothing, PEX4=nothing, PKX1=nothing, PKX2=nothing, PKX3=nothing, PHX1=nothing, PHX2=nothing, PVX1=nothing, PVX2=nothing, PPX1=nothing, PPX2=nothing, PPX3=nothing, PPX4=nothing, RBX1=nothing, RBX2=nothing, RBX3=nothing, RCX1=nothing, REX1=nothing, REX2=nothing, RHX1=nothing, PCY1=nothing, PDY1=nothing, PDY2=nothing, PDY3=nothing, PEY1=nothing, PEY2=nothing, PEY3=nothing, PEY4=nothing, PEY5=nothing, PKY1=nothing, PKY2=nothing, PKY3=nothing, PKY4=nothing, PKY5=nothing, PKY6=nothing, PKY7=nothing, PHY1=nothing, PHY2=nothing, PVY1=nothing, PVY2=nothing, PVY3=nothing, PVY4=nothing, PPY1=nothing, PPY2=nothing, PPY3=nothing, PPY4=nothing, PPY5=nothing, RBY1=nothing, RBY2=nothing, RBY3=nothing, RBY4=nothing, RCY1=nothing, REY1=nothing, REY2=nothing, RHY1=nothing, RHY2=nothing, RVY1=nothing, RVY2=nothing, RVY3=nothing, RVY4=nothing, RVY5=nothing, RVY6=nothing, QBZ1=nothing, QBZ2=nothing, QBZ3=nothing, QBZ4=nothing, QBZ5=nothing, QBZ6=nothing, QBZ9=nothing, QBZ10=nothing, QCZ1=nothing, QDZ1=nothing, QDZ2=nothing, QDZ3=nothing, QDZ4=nothing, QDZ6=nothing, QDZ7=nothing, QDZ8=nothing, QDZ9=nothing, QDZ10=nothing, QDZ11=nothing, QEZ1=nothing, QEZ2=nothing, QEZ3=nothing, QEZ4=nothing, QEZ5=nothing, QHZ1=nothing, QHZ2=nothing, QHZ3=nothing, QHZ4=nothing, PPZ1=nothing, PPZ2=nothing, SSZ1=nothing, SSZ2=nothing, SSZ3=nothing, SSZ4=nothing, LFZO=Float64(1), LCX=Float64(1), LMUX=Float64(1), LEX=Float64(1), LKX=Float64(1), LHX=Float64(1), LVX=Float64(1), LCY=Float64(1), LMUY=Float64(1), LEY=Float64(1), LKY=Float64(1), LHY=Float64(1), LVY=Float64(1), LKYC=Float64(1), LXAL=Float64(1), LYKA=Float64(1), LVYKA=Float64(1), LTR=Float64(1), LRES=Float64(1), LKZC=Float64(1), LS=Float64(1), LMUV=Float64(0), Au=Float64(10), eps_x=0.1, eps_y=0.1, eps_k=0.1, eps_gamma=0.01, eps_v=Float64(1.0), eps_vc=0.1, eps_sigma=0.001, damp_vlow=0.001, kwargs...)
+@component function TireMF61(; name = nothing, is_left=nothing, width=VehicleComponents.params.tires.WIDTH, unloaded_radius=VehicleComponents.params.tires.UNLOADED_RADIUS, vertical_stiffness=VehicleComponents.params.tires.VERTICAL_STIFFNESS, vertical_damping=VehicleComponents.params.tires.VERTICAL_DAMPING, FNOMIN=VehicleComponents.params.tires.FNOMIN, BREFF=VehicleComponents.params.tires.BREFF, DREFF=VehicleComponents.params.tires.DREFF, FREFF=VehicleComponents.params.tires.FREFF, longitudinal_stiffness=VehicleComponents.params.tires.LONGITUDINAL_STIFFNESS, lateral_stiffness=VehicleComponents.params.tires.LATERAL_STIFFNESS, INFLPRES=VehicleComponents.params.tires.INFLPRES, NOMPRES=VehicleComponents.params.tires.NOMPRES, LONGVL=VehicleComponents.params.tires.LONGVL, PCX1=VehicleComponents.params.tires.PCX1, PDX1=VehicleComponents.params.tires.PDX1, PDX2=VehicleComponents.params.tires.PDX2, PDX3=VehicleComponents.params.tires.PDX3, PEX1=VehicleComponents.params.tires.PEX1, PEX2=VehicleComponents.params.tires.PEX2, PEX3=VehicleComponents.params.tires.PEX3, PEX4=VehicleComponents.params.tires.PEX4, PKX1=VehicleComponents.params.tires.PKX1, PKX2=VehicleComponents.params.tires.PKX2, PKX3=VehicleComponents.params.tires.PKX3, PHX1=VehicleComponents.params.tires.PHX1, PHX2=VehicleComponents.params.tires.PHX2, PVX1=VehicleComponents.params.tires.PVX1, PVX2=VehicleComponents.params.tires.PVX2, PPX1=VehicleComponents.params.tires.PPX1, PPX2=VehicleComponents.params.tires.PPX2, PPX3=VehicleComponents.params.tires.PPX3, PPX4=VehicleComponents.params.tires.PPX4, RBX1=VehicleComponents.params.tires.RBX1, RBX2=VehicleComponents.params.tires.RBX2, RBX3=VehicleComponents.params.tires.RBX3, RCX1=VehicleComponents.params.tires.RCX1, REX1=VehicleComponents.params.tires.REX1, REX2=VehicleComponents.params.tires.REX2, RHX1=VehicleComponents.params.tires.RHX1, PCY1=VehicleComponents.params.tires.PCY1, PDY1=VehicleComponents.params.tires.PDY1, PDY2=VehicleComponents.params.tires.PDY2, PDY3=VehicleComponents.params.tires.PDY3, PEY1=VehicleComponents.params.tires.PEY1, PEY2=VehicleComponents.params.tires.PEY2, PEY3=VehicleComponents.params.tires.PEY3, PEY4=VehicleComponents.params.tires.PEY4, PEY5=VehicleComponents.params.tires.PEY5, PKY1=VehicleComponents.params.tires.PKY1, PKY2=VehicleComponents.params.tires.PKY2, PKY3=VehicleComponents.params.tires.PKY3, PKY4=VehicleComponents.params.tires.PKY4, PKY5=VehicleComponents.params.tires.PKY5, PKY6=VehicleComponents.params.tires.PKY6, PKY7=VehicleComponents.params.tires.PKY7, PHY1=VehicleComponents.params.tires.PHY1, PHY2=VehicleComponents.params.tires.PHY2, PVY1=VehicleComponents.params.tires.PVY1, PVY2=VehicleComponents.params.tires.PVY2, PVY3=VehicleComponents.params.tires.PVY3, PVY4=VehicleComponents.params.tires.PVY4, PPY1=VehicleComponents.params.tires.PPY1, PPY2=VehicleComponents.params.tires.PPY2, PPY3=VehicleComponents.params.tires.PPY3, PPY4=VehicleComponents.params.tires.PPY4, PPY5=VehicleComponents.params.tires.PPY5, RBY1=VehicleComponents.params.tires.RBY1, RBY2=VehicleComponents.params.tires.RBY2, RBY3=VehicleComponents.params.tires.RBY3, RBY4=VehicleComponents.params.tires.RBY4, RCY1=VehicleComponents.params.tires.RCY1, REY1=VehicleComponents.params.tires.REY1, REY2=VehicleComponents.params.tires.REY2, RHY1=VehicleComponents.params.tires.RHY1, RHY2=VehicleComponents.params.tires.RHY2, RVY1=VehicleComponents.params.tires.RVY1, RVY2=VehicleComponents.params.tires.RVY2, RVY3=VehicleComponents.params.tires.RVY3, RVY4=VehicleComponents.params.tires.RVY4, RVY5=VehicleComponents.params.tires.RVY5, RVY6=VehicleComponents.params.tires.RVY6, QBZ1=VehicleComponents.params.tires.QBZ1, QBZ2=VehicleComponents.params.tires.QBZ2, QBZ3=VehicleComponents.params.tires.QBZ3, QBZ4=VehicleComponents.params.tires.QBZ4, QBZ5=VehicleComponents.params.tires.QBZ5, QBZ6=VehicleComponents.params.tires.QBZ6, QBZ9=VehicleComponents.params.tires.QBZ9, QBZ10=VehicleComponents.params.tires.QBZ10, QCZ1=VehicleComponents.params.tires.QCZ1, QDZ1=VehicleComponents.params.tires.QDZ1, QDZ2=VehicleComponents.params.tires.QDZ2, QDZ3=VehicleComponents.params.tires.QDZ3, QDZ4=VehicleComponents.params.tires.QDZ4, QDZ6=VehicleComponents.params.tires.QDZ6, QDZ7=VehicleComponents.params.tires.QDZ7, QDZ8=VehicleComponents.params.tires.QDZ8, QDZ9=VehicleComponents.params.tires.QDZ9, QDZ10=VehicleComponents.params.tires.QDZ10, QDZ11=VehicleComponents.params.tires.QDZ11, QEZ1=VehicleComponents.params.tires.QEZ1, QEZ2=VehicleComponents.params.tires.QEZ2, QEZ3=VehicleComponents.params.tires.QEZ3, QEZ4=VehicleComponents.params.tires.QEZ4, QEZ5=VehicleComponents.params.tires.QEZ5, QHZ1=VehicleComponents.params.tires.QHZ1, QHZ2=VehicleComponents.params.tires.QHZ2, QHZ3=VehicleComponents.params.tires.QHZ3, QHZ4=VehicleComponents.params.tires.QHZ4, PPZ1=VehicleComponents.params.tires.PPZ1, PPZ2=VehicleComponents.params.tires.PPZ2, SSZ1=VehicleComponents.params.tires.SSZ1, SSZ2=VehicleComponents.params.tires.SSZ2, SSZ3=VehicleComponents.params.tires.SSZ3, SSZ4=VehicleComponents.params.tires.SSZ4, LFZO=VehicleComponents.params.tires.LFZO, LCX=VehicleComponents.params.tires.LCX, LMUX=VehicleComponents.params.tires.LMUX, LEX=VehicleComponents.params.tires.LEX, LKX=VehicleComponents.params.tires.LKX, LHX=VehicleComponents.params.tires.LHX, LVX=VehicleComponents.params.tires.LVX, LCY=VehicleComponents.params.tires.LCY, LMUY=VehicleComponents.params.tires.LMUY, LEY=VehicleComponents.params.tires.LEY, LKY=VehicleComponents.params.tires.LKY, LHY=VehicleComponents.params.tires.LHY, LVY=VehicleComponents.params.tires.LVY, LKYC=VehicleComponents.params.tires.LKYC, LXAL=VehicleComponents.params.tires.LXAL, LYKA=VehicleComponents.params.tires.LYKA, LVYKA=VehicleComponents.params.tires.LVYKA, LTR=VehicleComponents.params.tires.LTR, LRES=VehicleComponents.params.tires.LRES, LKZC=VehicleComponents.params.tires.LKZC, LS=VehicleComponents.params.tires.LS, LMUV=VehicleComponents.params.tires.LMUV, Au=Float64(10), eps_x=0.1, eps_y=0.1, eps_k=0.1, eps_gamma=0.01, eps_v=Float64(1.0), eps_vc=0.1, eps_sigma=0.001, damp_vlow=0.001, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:

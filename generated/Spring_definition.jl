@@ -17,7 +17,7 @@ import Moshi as __Ext__Moshi
 | `fixed_rotation_at_frame_b`         |                          | --  |   false |
 | `s_small`         |                          | --  |   1e-10 |
 | `render`         |                          | --  |   true |
-| `color`         |                          | --  |   world_defau...ing_color() |
+| `color`         |                          | --  |   [0.5, 0.5, 0.5, 1.0] |
 | `specular_coefficient`         |                          | --  |   1.5 |
 | `c`         | Spring constant                         | N/m  |   1.0 |
 | `s_unstretched`         | Unstretched spring length                         | m  |   0 |
@@ -46,7 +46,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `e_a`         | Unit vector from frame_a to frame_b, resolved in frame_a                         | --  |
 | `f`         | Scalar line force (positive = tension)                         | N  |
 """
-@component function Spring(; name = nothing, fixed_rotation_at_frame_a=false, fixed_rotation_at_frame_b=false, s_small=1e-10, render=true, color=world_default_spring_color(), specular_coefficient=1.5, c=Float64(1.0), s_unstretched=Float64(0), perch_height=Float64(0), radius=0.02, num_windings=Float64(15), N=600, end_ratio=0.1, kwargs...)
+@component function Spring(; name = nothing, fixed_rotation_at_frame_a=false, fixed_rotation_at_frame_b=false, s_small=1e-10, render=true, color=[0.5, 0.5, 0.5, Float64(1.0)], specular_coefficient=1.5, c=Float64(1.0), s_unstretched=Float64(0), perch_height=Float64(0), radius=0.02, num_windings=Float64(15), N=600, end_ratio=0.1, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:

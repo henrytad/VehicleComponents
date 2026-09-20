@@ -12,14 +12,16 @@ component Strut
   frame_b = Dyad.Frame3D() {^frame_b}
 
   spring = VehicleComponents.Spring(color = color) {^spring}
-  damper = VehicleComponents.Damper() {^damper}
+  damper = VehicleComponents.Damper(dataset = dataset) {^damper}
+
+  # TODO: Remove dataset and color as pass through parameters once Dyad compiling is fixed
+  structural parameter dataset::DyadData.DyadTimeseries
+  parameter color::Real[4]
 
   "Distance between the origin of frame_a and the origin of frame_b"
   variable s::Length
   "Total line force (positive = tension)"
   variable f::Dyad.Force
-  "Color in animations"
-  parameter color::Real[4] = world_default_spring_color()
 
 relations
 

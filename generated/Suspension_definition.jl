@@ -7,12 +7,14 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   Suspension(; name, wheel_center_left, wheel_center_right, pushrod_outer_left, pushrod_outer_right, tierod_inner_left, tierod_inner_right)
+   Suspension(; name, heave_dataset, roll_dataset, wheel_center_left, wheel_center_right, pushrod_outer_left, pushrod_outer_right, tierod_inner_left, tierod_inner_right)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
+| `heave_dataset`         |                          | --  |    |
+| `roll_dataset`         |                          | --  |    |
 | `wheel_center_left`         |                          | m  |    |
 | `wheel_center_right`         |                          | m  |    |
 | `pushrod_outer_left`         |                          | m  |    |
@@ -37,7 +39,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `wc_heave`         |                          | m  |
 | `wc_roll`         |                          | m  |
 """
-@component function Suspension(; name = nothing, wheel_center_left=nothing, wheel_center_right=nothing, pushrod_outer_left=nothing, pushrod_outer_right=nothing, tierod_inner_left=nothing, tierod_inner_right=nothing, kwargs...)
+@component function Suspension(; name = nothing, heave_dataset=nothing, roll_dataset=nothing, wheel_center_left=nothing, wheel_center_right=nothing, pushrod_outer_left=nothing, pushrod_outer_right=nothing, tierod_inner_left=nothing, tierod_inner_right=nothing, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -113,7 +115,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named wheel_right = __Dyad__Frame3D())
   # Subcomponent inboard of type VehicleComponents.Inboard
   inboard_overrides = __pop_subcomponent_overrides!(__overrides, "inboard")
-  push!(__systems, @named inboard = VehicleComponents.Inboard(; pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, inboard_overrides...))
+  push!(__systems, @named inboard = VehicleComponents.Inboard(; pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, heave_dataset=heave_dataset, roll_dataset=roll_dataset, inboard_overrides...))
   # Subcomponent linkage_left of type VehicleComponents.Linkage
   linkage_left_overrides = __pop_subcomponent_overrides!(__overrides, "linkage_left")
   push!(__systems, @named linkage_left = VehicleComponents.Linkage(; wheel_center=wheel_center_left, pushrod_outer=pushrod_outer_left, linkage_left_overrides...))

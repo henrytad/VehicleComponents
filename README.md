@@ -2,7 +2,7 @@
 
 VehicleComponents is a Julia/Dyad multibody vehicle-dynamics modeling library for building and simulating modular full-vehicle assemblies. It integrates suspension linkages and inboard heave/roll systems, hub motors with torque control, aerodynamic loads, and a Magic Formula 6.1 tire model to support parameterized performance studies.
 
-![Straight line acceleration](assets/media/full_vehicle_straight_line.gif)
+![Straight line acceleration](assets/full_vehicle_straight_line.gif)
 
 ## Getting Started
 

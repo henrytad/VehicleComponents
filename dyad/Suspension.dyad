@@ -14,7 +14,9 @@ component Suspension
   # Subsystems
   inboard = VehicleComponents.Inboard(
     pushrod_outer_left = pushrod_outer_left,
-    pushrod_outer_right = pushrod_outer_right
+    pushrod_outer_right = pushrod_outer_right,
+    heave_dataset = heave_dataset,
+    roll_dataset = roll_dataset
   ) {^inboard}
   linkage_left = VehicleComponents.Linkage(
     wheel_center = wheel_center_left,
@@ -28,6 +30,10 @@ component Suspension
     tierod_inner_left = tierod_inner_left,
     tierod_inner_right = tierod_inner_right
   ) {^steering_rack}
+
+  # TODO: Remove dataset and color as pass through parameters once Dyad compiling is fixed
+  structural parameter heave_dataset::DyadData.DyadTimeseries
+  structural parameter roll_dataset::DyadData.DyadTimeseries
 
   # Shared references
   parameter wheel_center_left::Position[3]

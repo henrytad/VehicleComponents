@@ -13,8 +13,8 @@ import Moshi as __Ext__Moshi
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `pushrod_outer_left`         |                          | m  |   [0.000000, ..., 0.423500] |
-| `pushrod_outer_right`         |                          | m  |   [0.000000, ..., 0.423500] |
+| `pushrod_outer_left`         |                          | m  |   VehicleComp...shrod_outer |
+| `pushrod_outer_right`         |                          | m  |   VehicleComp...shrod_outer |
 | `heave_amplitude`         |                          | m  |   0.0254 |
 | `roll_amplitude`         |                          | m  |   0.0254 |
 | `heave_freq`         |                          | Hz  |   0.5 |
@@ -27,7 +27,7 @@ import Moshi as __Ext__Moshi
 | `heave_motion`         |                          | m  |
 | `roll_motion`         |                          | m  |
 """
-@component function InboardTestRig(; name = nothing, pushrod_outer_left=[Float64(0.0), 0.48, 0.4235], pushrod_outer_right=[Float64(0.0), -0.48, 0.4235], heave_amplitude=0.0254, roll_amplitude=0.0254, heave_freq=0.5, roll_freq=1.25, kwargs...)
+@component function InboardTestRig(; name = nothing, pushrod_outer_left=VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer, pushrod_outer_right=VehicleComponents.params.suspension.front.geometry.linkages.right.pushrod_outer, heave_amplitude=0.0254, roll_amplitude=0.0254, heave_freq=0.5, roll_freq=1.25, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -102,7 +102,7 @@ import Moshi as __Ext__Moshi
   push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
   # Subcomponent inboard of type VehicleComponents.Inboard
   inboard_overrides = __pop_subcomponent_overrides!(__overrides, "inboard")
-  push!(__systems, @named inboard = VehicleComponents.Inboard(; pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, rocker_pivot_left=[-0.03, 0.12, 0.6235], rocker_pivot_right=[-0.03, -0.12, 0.6235], pushrod_inner_left=[-0.03, 0.138, 0.6535], pushrod_inner_right=[-0.03, -0.138, 0.6535], heave_pickup_left=[-0.03, 0.114, 0.6635], heave_pickup_right=[-0.03, -0.114, 0.6635], roll_pickup_left=[-0.105, 0.108, 0.5865], roll_pickup_right=[-0.105, -0.108, 0.6605], heave_strut.spring.c=35000.0, heave_strut.spring.s_unstretched=0.228, heave_strut.spring.perch_height=0.0, roll_strut.spring.c=35000.0, roll_strut.spring.s_neutral=0.2283243, roll_strut.spring.preload_travel=0.0, pushrod_adjust_left=Float64(0.0), pushrod_adjust_right=Float64(0.0), inboard_overrides...))
+  push!(__systems, @named inboard = VehicleComponents.Inboard(; pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, rocker_pivot_left=VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.left, rocker_pivot_right=VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.right, pushrod_inner_left=VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.left, pushrod_inner_right=VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.right, heave_pickup_left=VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.left, heave_pickup_right=VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.right, roll_pickup_left=VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.left, roll_pickup_right=VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.right, heave_strut.spring.c=VehicleComponents.params.suspension.front.setup.heave.stiffness, heave_strut.spring.s_unstretched=VehicleComponents.params.suspension.front.setup.heave.s_unstretched, heave_strut.spring.perch_height=VehicleComponents.params.suspension.front.setup.heave.perch_height, roll_strut.spring.c=VehicleComponents.params.suspension.front.setup.roll.stiffness, roll_strut.spring.s_neutral=VehicleComponents.params.suspension.front.setup.roll.s_neutral, roll_strut.spring.preload_travel=VehicleComponents.params.suspension.front.setup.roll.preload_travel, heave_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper), roll_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.roll.damper), pushrod_adjust_left=VehicleComponents.params.suspension.front.setup.pushrod_adjust.left, pushrod_adjust_right=VehicleComponents.params.suspension.front.setup.pushrod_adjust.right, inboard_overrides...))
   # Subcomponent fixed_left of type MultibodyComponents.Fixed
   fixed_left_overrides = __pop_subcomponent_overrides!(__overrides, "fixed_left")
   push!(__systems, @named fixed_left = MultibodyComponents.Fixed(; r=pushrod_outer_left, render=false, fixed_left_overrides...))

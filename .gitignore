@@ -4,6 +4,7 @@
 # Allowlist
 !/.github/
 !/.vscode/
+!/assets/
 !/dyad/
 !/generated/
 !/scripts/
@@ -16,7 +17,5 @@
 !/Project.toml
 !/README.md
 
-# README media only. Vehicle and tyre data under assets/ stays ignored.
-!/assets/
-/assets/*
-!/assets/media/
+# The real car data stays hidden
+/src/vehicles/MR25.jl

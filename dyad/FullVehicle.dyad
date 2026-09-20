@@ -21,22 +21,164 @@ component FullVehicle
     I_33 = sprung_I_33,
     cylinder_radius = 0
   ) {^body}
-  corner_fl = VehicleComponents.CornerAssembly(is_left = true) {^corner_fl}
-  corner_fr = VehicleComponents.CornerAssembly(is_left = false) {^corner_fr}
-  corner_rl = VehicleComponents.CornerAssembly(is_left = true) {^corner_rl}
-  corner_rr = VehicleComponents.CornerAssembly(is_left = false) {^corner_rr}
-  front_suspension = VehicleComponents.Suspension() {^front_suspension}
-  rear_suspension = VehicleComponents.Suspension() {^rear_suspension}
+  corner_fl = VehicleComponents.CornerAssembly(
+    is_left = true,
+    upright_mass = VehicleComponents.params.suspension.front.geometry.linkages.left.upright.mass,
+    upright_I_11 = VehicleComponents.params.suspension.front.geometry.linkages.left.upright.i_11,
+    upright_I_22 = VehicleComponents.params.suspension.front.geometry.linkages.left.upright.i_22,
+    upright_I_33 = VehicleComponents.params.suspension.front.geometry.linkages.left.upright.i_33
+  ) {^corner_fl}
+  corner_fr = VehicleComponents.CornerAssembly(
+    is_left = false,
+    upright_mass = VehicleComponents.params.suspension.front.geometry.linkages.right.upright.mass,
+    upright_I_11 = VehicleComponents.params.suspension.front.geometry.linkages.right.upright.i_11,
+    upright_I_22 = VehicleComponents.params.suspension.front.geometry.linkages.right.upright.i_22,
+    upright_I_33 = VehicleComponents.params.suspension.front.geometry.linkages.right.upright.i_33
+  ) {^corner_fr}
+  corner_rl = VehicleComponents.CornerAssembly(
+    is_left = true,
+    upright_mass = VehicleComponents.params.suspension.rear.geometry.linkages.left.upright.mass,
+    upright_I_11 = VehicleComponents.params.suspension.rear.geometry.linkages.left.upright.i_11,
+    upright_I_22 = VehicleComponents.params.suspension.rear.geometry.linkages.left.upright.i_22,
+    upright_I_33 = VehicleComponents.params.suspension.rear.geometry.linkages.left.upright.i_33
+  ) {^corner_rl}
+  corner_rr = VehicleComponents.CornerAssembly(
+    is_left = false,
+    upright_mass = VehicleComponents.params.suspension.rear.geometry.linkages.right.upright.mass,
+    upright_I_11 = VehicleComponents.params.suspension.rear.geometry.linkages.right.upright.i_11,
+    upright_I_22 = VehicleComponents.params.suspension.rear.geometry.linkages.right.upright.i_22,
+    upright_I_33 = VehicleComponents.params.suspension.rear.geometry.linkages.right.upright.i_33
+  ) {^corner_rr}
+  front_suspension = VehicleComponents.Suspension(
+    wheel_center_left = VehicleComponents.params.suspension.front.geometry.linkages.left.wheel_center,
+    wheel_center_right = VehicleComponents.params.suspension.front.geometry.linkages.right.wheel_center,
+    pushrod_outer_left = VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer,
+    pushrod_outer_right = VehicleComponents.params.suspension.front.geometry.linkages.right.pushrod_outer,
+    tierod_inner_left = VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner,
+    tierod_inner_right = VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_inner,
+    linkage_left(
+      lca_front = VehicleComponents.params.suspension.front.geometry.linkages.left.lca_front,
+      lca_rear = VehicleComponents.params.suspension.front.geometry.linkages.left.lca_rear,
+      lca_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.lca_outer,
+      uca_front = VehicleComponents.params.suspension.front.geometry.linkages.left.uca_front,
+      uca_rear = VehicleComponents.params.suspension.front.geometry.linkages.left.uca_rear,
+      uca_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.uca_outer,
+      tierod_inner = VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner,
+      tierod_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_outer,
+      static_camber = VehicleComponents.params.suspension.front.setup.alignment.left.static_camber,
+      static_toe = VehicleComponents.params.suspension.front.setup.alignment.left.static_toe
+    ),
+    linkage_right(
+      lca_front = VehicleComponents.params.suspension.front.geometry.linkages.right.lca_front,
+      lca_rear = VehicleComponents.params.suspension.front.geometry.linkages.right.lca_rear,
+      lca_outer = VehicleComponents.params.suspension.front.geometry.linkages.right.lca_outer,
+      uca_front = VehicleComponents.params.suspension.front.geometry.linkages.right.uca_front,
+      uca_rear = VehicleComponents.params.suspension.front.geometry.linkages.right.uca_rear,
+      uca_outer = VehicleComponents.params.suspension.front.geometry.linkages.right.uca_outer,
+      tierod_inner = VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_inner,
+      tierod_outer = VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_outer,
+      static_camber = VehicleComponents.params.suspension.front.setup.alignment.right.static_camber,
+      static_toe = VehicleComponents.params.suspension.front.setup.alignment.right.static_toe
+    ),
+    inboard(
+      rocker_pivot_left = VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.left,
+      rocker_pivot_right = VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.right,
+      pushrod_inner_left = VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.left,
+      pushrod_inner_right = VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.right,
+      heave_pickup_left = VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.left,
+      heave_pickup_right = VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.right,
+      roll_pickup_left = VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.left,
+      roll_pickup_right = VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.right,
+      pushrod_adjust_left = VehicleComponents.params.suspension.front.setup.pushrod_adjust.left,
+      pushrod_adjust_right = VehicleComponents.params.suspension.front.setup.pushrod_adjust.right,
+      heave_strut(
+        spring(
+          c = VehicleComponents.params.suspension.front.setup.heave.stiffness,
+          s_unstretched = VehicleComponents.params.suspension.front.setup.heave.s_unstretched,
+          perch_height = VehicleComponents.params.suspension.front.setup.heave.perch_height
+        )
+      ),
+      roll_strut(
+        spring(
+          c = VehicleComponents.params.suspension.front.setup.roll.stiffness,
+          s_neutral = VehicleComponents.params.suspension.front.setup.roll.s_neutral,
+          preload_travel = VehicleComponents.params.suspension.front.setup.roll.preload_travel
+        )
+      )
+    ),
+    heave_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper),
+    roll_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.roll.damper)
+  ) {^front_suspension}
+  rear_suspension = VehicleComponents.Suspension(
+    wheel_center_left = VehicleComponents.params.suspension.rear.geometry.linkages.left.wheel_center,
+    wheel_center_right = VehicleComponents.params.suspension.rear.geometry.linkages.right.wheel_center,
+    pushrod_outer_left = VehicleComponents.params.suspension.rear.geometry.linkages.left.pushrod_outer,
+    pushrod_outer_right = VehicleComponents.params.suspension.rear.geometry.linkages.right.pushrod_outer,
+    tierod_inner_left = VehicleComponents.params.suspension.rear.geometry.linkages.left.tierod_inner,
+    tierod_inner_right = VehicleComponents.params.suspension.rear.geometry.linkages.right.tierod_inner,
+    linkage_left(
+      lca_front = VehicleComponents.params.suspension.rear.geometry.linkages.left.lca_front,
+      lca_rear = VehicleComponents.params.suspension.rear.geometry.linkages.left.lca_rear,
+      lca_outer = VehicleComponents.params.suspension.rear.geometry.linkages.left.lca_outer,
+      uca_front = VehicleComponents.params.suspension.rear.geometry.linkages.left.uca_front,
+      uca_rear = VehicleComponents.params.suspension.rear.geometry.linkages.left.uca_rear,
+      uca_outer = VehicleComponents.params.suspension.rear.geometry.linkages.left.uca_outer,
+      tierod_inner = VehicleComponents.params.suspension.rear.geometry.linkages.left.tierod_inner,
+      tierod_outer = VehicleComponents.params.suspension.rear.geometry.linkages.left.tierod_outer,
+      static_camber = VehicleComponents.params.suspension.rear.setup.alignment.left.static_camber,
+      static_toe = VehicleComponents.params.suspension.rear.setup.alignment.left.static_toe
+    ),
+    linkage_right(
+      lca_front = VehicleComponents.params.suspension.rear.geometry.linkages.right.lca_front,
+      lca_rear = VehicleComponents.params.suspension.rear.geometry.linkages.right.lca_rear,
+      lca_outer = VehicleComponents.params.suspension.rear.geometry.linkages.right.lca_outer,
+      uca_front = VehicleComponents.params.suspension.rear.geometry.linkages.right.uca_front,
+      uca_rear = VehicleComponents.params.suspension.rear.geometry.linkages.right.uca_rear,
+      uca_outer = VehicleComponents.params.suspension.rear.geometry.linkages.right.uca_outer,
+      tierod_inner = VehicleComponents.params.suspension.rear.geometry.linkages.right.tierod_inner,
+      tierod_outer = VehicleComponents.params.suspension.rear.geometry.linkages.right.tierod_outer,
+      static_camber = VehicleComponents.params.suspension.rear.setup.alignment.right.static_camber,
+      static_toe = VehicleComponents.params.suspension.rear.setup.alignment.right.static_toe
+    ),
+    inboard(
+      rocker_pivot_left = VehicleComponents.params.suspension.rear.geometry.inboard.rocker_pivot.left,
+      rocker_pivot_right = VehicleComponents.params.suspension.rear.geometry.inboard.rocker_pivot.right,
+      pushrod_inner_left = VehicleComponents.params.suspension.rear.geometry.inboard.pushrod_inner.left,
+      pushrod_inner_right = VehicleComponents.params.suspension.rear.geometry.inboard.pushrod_inner.right,
+      heave_pickup_left = VehicleComponents.params.suspension.rear.geometry.inboard.heave_pickup.left,
+      heave_pickup_right = VehicleComponents.params.suspension.rear.geometry.inboard.heave_pickup.right,
+      roll_pickup_left = VehicleComponents.params.suspension.rear.geometry.inboard.roll_pickup.left,
+      roll_pickup_right = VehicleComponents.params.suspension.rear.geometry.inboard.roll_pickup.right,
+      pushrod_adjust_left = VehicleComponents.params.suspension.rear.setup.pushrod_adjust.left,
+      pushrod_adjust_right = VehicleComponents.params.suspension.rear.setup.pushrod_adjust.right,
+      heave_strut(
+        spring(
+          c = VehicleComponents.params.suspension.rear.setup.heave.stiffness,
+          s_unstretched = VehicleComponents.params.suspension.rear.setup.heave.s_unstretched,
+          perch_height = VehicleComponents.params.suspension.rear.setup.heave.perch_height
+        )
+      ),
+      roll_strut(
+        spring(
+          c = VehicleComponents.params.suspension.rear.setup.roll.stiffness,
+          s_neutral = VehicleComponents.params.suspension.rear.setup.roll.s_neutral,
+          preload_travel = VehicleComponents.params.suspension.rear.setup.roll.preload_travel
+        )
+      )
+    ),
+    heave_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.rear.setup.heave.damper),
+    roll_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.rear.setup.roll.damper)
+  ) {^rear_suspension}
   control = VehicleComponents.TorqueControlLaunch() {^control}
   aero = VehicleComponents.AeroLoad() {^aero}
   body_angles = MultibodyComponents.AbsoluteAngles(sequence = [3, 2, 1]) {^body_angles}
 
   # Sprung mass properties
-  parameter sprung_mass::Mass
-  parameter sprung_I_11::Inertia
-  parameter sprung_I_22::Inertia
-  parameter sprung_I_33::Inertia
-  parameter sprung_cg::Position[3]
+  parameter sprung_mass::Mass = VehicleComponents.params.body.mass
+  parameter sprung_I_11::Inertia = VehicleComponents.params.body.i_11
+  parameter sprung_I_22::Inertia = VehicleComponents.params.body.i_22
+  parameter sprung_I_33::Inertia = VehicleComponents.params.body.i_33
+  parameter sprung_cg::Position[3] = VehicleComponents.params.body.cg
 
   variable w_cg::Angle[3]
   variable a_cg::Acceleration[3]

@@ -23,10 +23,10 @@ component WheelAssembly
 
   structural parameter is_left::Boolean
 
-  parameter rim_mass::Mass
-  parameter rim_inertia::Inertia
-  parameter tire_mass::Mass
-  parameter tire_inertia::Inertia
+  parameter rim_mass::Mass = VehicleComponents.params.wheels.rim_mass
+  parameter rim_inertia::Inertia = VehicleComponents.params.wheels.rim_inertia
+  parameter tire_mass::Mass = VehicleComponents.params.tires.MASS
+  parameter tire_inertia::Inertia = VehicleComponents.params.tires.IYY
 
   final parameter wheel_mass::Mass = rim_mass + tire_mass
   final parameter spin_inertia::Inertia = rim_inertia + tire_inertia
