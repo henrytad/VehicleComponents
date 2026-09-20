@@ -16,6 +16,18 @@ prob = ODEProblem(ssys, [ssys.steer_angle => steer_angle], (0.0, t_end))
 sol = solve(prob; tstops=[t_drive, t_steer])
 
 # ===========================================================================
+# MoTeC export
+# ===========================================================================
+VehicleComponents.Telemetry.write_telemetry(
+    model, sol;
+    run="step_steer",
+    vehicle_id=VehicleComponents.params.name,
+    venue="Step steer",
+    event="FullVehicleTestStep",
+    comment="drive at $(t_drive) s, $(steer_angle) rad step at $(t_steer) s"
+)
+
+# ===========================================================================
 # Animation
 # ===========================================================================
 cam_offset = GLMakie.Vec3f(-2.5, -0.35, 0.4)

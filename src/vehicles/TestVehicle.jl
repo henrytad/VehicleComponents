@@ -1,4 +1,4 @@
-const TestVehicle = Vehicle(
+const Vehicle = Vehicle(
     name="TestVehicle",
     units="SI",
     suspension=Suspension(

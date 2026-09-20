@@ -14,6 +14,18 @@ prob = ODEProblem(ssys, [], (0.0, t_end))
 sol = solve(prob; tstops=[t_drive])
 
 # ===========================================================================
+# MoTeC export
+# ===========================================================================
+VehicleComponents.Telemetry.write_telemetry(
+    model, sol;
+    run="straight_line",
+    vehicle_id=VehicleComponents.params.name,
+    venue="Straight line",
+    event="FullVehicleTestStraightLine",
+    comment="drive at $(t_drive) s"
+)
+
+# ===========================================================================
 # Animation
 # ===========================================================================
 cam_offset = GLMakie.Vec3f(-2.5, -0.35, 0.4)
