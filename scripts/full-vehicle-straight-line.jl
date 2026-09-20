@@ -2,13 +2,21 @@ using Revise
 using VehicleComponents
 using GLMakie, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
 
+# Settle, 3 s of full throttle, then 4 s on the brake
 t_drive = 1.5
-t_end = 5.5
+t_brake = t_drive + 3.0
+t_end = t_brake + 4.0
+brake_level = 1.0
 
 @named model = VehicleComponents.FullVehicleTestStraightLine()
 ssys = multibody(model)
-prob = ODEProblem(ssys, [], (0.0, t_end))
-sol = solve(prob; tstops=[t_drive])
+prob = ODEProblem(ssys, [
+    ssys.drive_start_time => t_drive,
+    ssys.drive_duration => t_brake - t_drive,
+    ssys.brake_start_time => t_brake,
+    ssys.brake_level => brake_level,
+], (0.0, t_end))
+sol = solve(prob; tstops=[t_drive, t_brake])
 
 # ===========================================================================
 # MoTeC export
@@ -19,7 +27,7 @@ VehicleComponents.Telemetry.write_telemetry(
     vehicle_id=VehicleComponents.params.name,
     venue="Straight line",
     event="FullVehicleTestStraightLine",
-    comment="drive at $(t_drive) s"
+    comment="drive at $(t_drive) s, brake $(brake_level) at $(t_brake) s"
 )
 
 # ===========================================================================
@@ -36,7 +44,7 @@ fig, tobs, scene = render(model, sol, sol.t[1];
 body_r0 = collect(ssys.vehicle.body.frame_a.r_0)
 body_R = vec(ssys.vehicle.body.frame_a.R)
 
-GLMakie.record(fig, "output/full_vehicle_step.gif", timevec; framerate) do time
+GLMakie.record(fig, "output/full_vehicle_straight_line.gif", timevec; framerate) do time
     tobs[] = time
 
     r0 = sol(time, idxs=body_r0)

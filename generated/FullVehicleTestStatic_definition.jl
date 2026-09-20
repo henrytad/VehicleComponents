@@ -59,6 +59,9 @@ import Moshi as __Ext__Moshi
   # Subcomponent throttle of type BlockComponents.Sources.Constant
   throttle_overrides = __pop_subcomponent_overrides!(__overrides, "throttle")
   push!(__systems, @named throttle = BlockComponents.Sources.Constant(; k=Float64(0.0), throttle_overrides...))
+  # Subcomponent brake of type BlockComponents.Sources.Constant
+  brake_overrides = __pop_subcomponent_overrides!(__overrides, "brake")
+  push!(__systems, @named brake = BlockComponents.Sources.Constant(; k=Float64(0.0), brake_overrides...))
   # Subcomponent steer of type BlockComponents.Sources.Constant
   steer_overrides = __pop_subcomponent_overrides!(__overrides, "steer")
   push!(__systems, @named steer = BlockComponents.Sources.Constant(; k=Float64(0.0), steer_overrides...))
@@ -111,6 +114,7 @@ import Moshi as __Ext__Moshi
 
   ### Equations
   push!(__eqs, connect(throttle.y, vehicle.throttle))
+  push!(__eqs, connect(brake.y, vehicle.brake))
   push!(__eqs, connect(steer.y, vehicle.steer))
   push!(__eqs, connect(world.frame_b, heave_joint.frame_a))
   push!(__eqs, connect(heave_joint.frame_b, roll_joint.frame_a))

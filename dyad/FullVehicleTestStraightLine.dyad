@@ -10,12 +10,22 @@ test component FullVehicleTestStraightLine
 
   world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
 
-  throttle = BlockComponents.Sources.Step(
+  throttle_on = BlockComponents.Sources.Step(
     height = 1.0,
     offset = 0.0,
     start_time = drive_start_time
-  ) {^throttle}
-
+  ) {^throttle_on}
+  throttle_off = BlockComponents.Sources.Step(
+    height = -1.0,
+    offset = 0.0,
+    start_time = drive_start_time + drive_duration
+  ) {^throttle_off}
+  throttle = BlockComponents.Math.Add() {^throttle}
+  brake = BlockComponents.Sources.Step(
+    height = brake_level,
+    offset = 0.0,
+    start_time = brake_start_time
+  ) {^brake}
   steer = BlockComponents.Sources.Constant(k = 0.0) {^steer}
 
   longitudinal_joint = MultibodyComponents.Prismatic(n = [1, 0, 0], render = false) {^longitudinal_joint}
@@ -25,7 +35,7 @@ test component FullVehicleTestStraightLine
   pitch_joint = MultibodyComponents.Revolute(n = [0, 1, 0], render = false) {^pitch_joint}
   yaw_joint = MultibodyComponents.Revolute(n = [0, 0, 1], render = false) {^yaw_joint}
   yaw_lock = RotationalComponents.Components.Fixed(phi0 = 0.0) {^yaw_lock}
-
+  
   vehicle = VehicleComponents.FullVehicle() {^vehicle}
 
   # Animations
@@ -67,6 +77,9 @@ test component FullVehicleTestStraightLine
   ) {^post_4}
 
   parameter drive_start_time::Time = 1.5
+  parameter drive_duration::Time = 1.5
+  parameter brake_level::Real = 0.0
+  parameter brake_start_time::Time = 1.5
   parameter marker_spacing::Length = 25.0
   parameter marker_offset::Length = 1.5
   parameter marker_height::Length = 1.0
@@ -103,16 +116,19 @@ relations
   initial vehicle.front_suspension.steering_rack.rack_drive.v = 0.0
   initial vehicle.rear_suspension.steering_rack.rack_drive.v = 0.0
 
-  connect(throttle.y, vehicle.throttle) {^id16}
-  connect(steer.y, vehicle.steer) {^id17}
-  connect(world.frame_b, lateral_joint.frame_a) {^id18}
-  connect(lateral_joint.frame_b, longitudinal_joint.frame_a) {^id19}
-  connect(longitudinal_joint.frame_b, heave_joint.frame_a) {^id20}
-  connect(heave_joint.frame_b, roll_joint.frame_a) {^id21}
-  connect(roll_joint.frame_b, pitch_joint.frame_a) {^id22}
-  connect(pitch_joint.frame_b, yaw_joint.frame_a) {^id23}
-  connect(yaw_joint.axis, yaw_lock.spline) {^id24}
-  connect(yaw_joint.frame_b, vehicle.rig) {^id25}
+  connect(throttle_on.y, throttle.u1) {^id19}
+  connect(throttle_off.y, throttle.u2) {^id20}
+  connect(throttle.y, vehicle.throttle) {^id21}
+  connect(brake.y, vehicle.brake) {^id22}
+  connect(steer.y, vehicle.steer) {^id23}
+  connect(world.frame_b, lateral_joint.frame_a) {^id24}
+  connect(lateral_joint.frame_b, longitudinal_joint.frame_a) {^id25}
+  connect(longitudinal_joint.frame_b, heave_joint.frame_a) {^id26}
+  connect(heave_joint.frame_b, roll_joint.frame_a) {^id27}
+  connect(roll_joint.frame_b, pitch_joint.frame_a) {^id28}
+  connect(pitch_joint.frame_b, yaw_joint.frame_a) {^id29}
+  connect(yaw_joint.axis, yaw_lock.spline) {^id30}
+  connect(yaw_joint.frame_b, vehicle.rig) {^id31}
 
 metadata {
   "Dyad": {
@@ -135,11 +151,20 @@ metadata {
   },
   "_links": {
     "world": {"Dyad": {"placement": {"diagram": {"x1": 0, "y1": 0, "x2": 100, "y2": 100}}}},
+    "throttle_on": {
+      "Dyad": {"placement": {"diagram": {"x1": 40, "x2": 140, "y1": 250, "y2": 350}}}
+    },
+    "throttle_off": {
+      "Dyad": {"placement": {"diagram": {"x1": 40, "x2": 140, "y1": 380, "y2": 480}}}
+    },
     "throttle": {
-      "Dyad": {"placement": {"diagram": {"x1": 40, "x2": 140, "y1": 330, "y2": 430}}}
+      "Dyad": {"placement": {"diagram": {"x1": 190, "x2": 290, "y1": 320, "y2": 420}}}
+    },
+    "brake": {
+      "Dyad": {"placement": {"diagram": {"x1": 40, "x2": 140, "y1": 530, "y2": 630}}}
     },
     "steer": {
-      "Dyad": {"placement": {"diagram": {"x1": 40, "x2": 140, "y1": 500, "y2": 600}}}
+      "Dyad": {"placement": {"diagram": {"x1": 40, "x2": 140, "y1": 690, "y2": 790}}}
     },
     "longitudinal_joint": {"Dyad": {"placement": {"diagram": {"x1": 260, "x2": 360, "y1": 0, "y2": 100}}}},
     "lateral_joint": {"Dyad": {"placement": {"diagram": {"x1": 130, "x2": 230, "y1": 0, "y2": 100}}}},
@@ -165,36 +190,55 @@ metadata {
     "post_4": {
       "Dyad": {"placement": {"diagram": {"x1": 510, "x2": 610, "y1": 900, "y2": 1000}}}
     },
-    "id16": {
+    "id19": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 240, "y": 380}, {"x": 240, "y": 457}], "E": 2}],
+        "edges": [{"S": 1, "M": [{"x": 160, "y": 300}, {"x": 160, "y": 340}], "E": 2}],
         "path": {}
       }
     },
-    "id17": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 240, "y": 550}, {"x": 240, "y": 473}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id18": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id19": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id20": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id21": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id22": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id23": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id24": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id25": {
+    "id20": {
       "Dyad": {
         "edges": [
           {
             "S": 1,
-            "M": [
-              {"x": 940, "y": 50},
-              {"x": 940, "y": 150},
-              {"x": 300, "y": 150},
-              {"x": 300, "y": 500}
-            ],
+            "M": [{"x": 158.33333333333334, "y": 430}, {"x": 158.33333333333334, "y": 400}],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id21": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 330, "y": 370}, {"x": 330, "y": 457}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id22": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 210, "y": 580}, {"x": 210, "y": 472}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id23": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 240, "y": 740}, {"x": 240, "y": 488}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id24": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id25": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id26": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id27": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id28": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id29": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id30": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id31": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [{"x": 940, "y": 50}, {"x": 940, "y": 620}, {"x": 500, "y": 620}],
             "E": 2
           }
         ],

@@ -130,6 +130,20 @@ end
     gear_ratio::Float64
 end
 
+"""
+Friction brakes.
+
+`max_torque` is the torque at one corner at full demand and an even split, so
+the total across the four corners is `4 * max_torque` whatever the bias.
+`bias` is the front share of that total: 0.5 is even, higher moves torque
+forward. There is no ABS, so whichever axle is over-braked for its
+instantaneous load locks.
+"""
+@kwdef struct Brakes
+    max_torque::Float64
+    bias::Float64
+end
+
 "Sprung mass and its inertia about the centre of gravity."
 @kwdef struct Body
     mass::Float64
@@ -350,6 +364,7 @@ end
     tires::TireMF61
     wheels::Wheels
     drivetrain::Drivetrain
+    brakes::Brakes
     body::Body
     aero::Aero
     control::Control

@@ -1,23 +1,28 @@
 component CornerAssembly
   """
-  Everything at one corner except the suspension links: upright, hub motor
-  and wheel assembly.
-
+  Everything at one corner except the suspension links: upright, hub motor,
+  brake and wheel assembly.
+  
   This component owns the non-rotating unsprung mass (the upright and the
   motor). Rim and tire mass/inertia live in the WheelAssembly.
-
+  
   Motor torque goes into the wheel and its reaction onto the wheel centre,
-  which is the same node as the upright. Upright and motor share a node and 
-  a CoG, so they merge into one body.
+  which is the same node as the upright. Upright and motor share a node and
+  a CoG, so they merge into one body. The brake acts on the same spline, in
+  the opposite.
   """
 
-  tau_cmd = RealInput(units = "N.m") {^tau_cmd}
+  motor_torque = RealInput(units = "N.m") {^motor_torque}
+  brake_demand = RealInput(units = "1") {^brake_demand}
 
   slip = RealOutput() {^slip}
 
   wheel_center = Dyad.Frame3D() {^wheel_center}
   wheel_assembly = VehicleComponents.WheelAssembly(is_left = is_left) {^wheel_assembly}
   motor = VehicleComponents.HubMotor() {^motor}
+  brake = VehicleComponents.Brake(
+    is_front = is_front
+  ) {^brake}
   upright = MultibodyComponents.Body(
     m = upright_mass,
     r_cm = [0, 0, 0],
@@ -28,6 +33,7 @@ component CornerAssembly
   ) {^upright}
 
   structural parameter is_left::Boolean
+  structural parameter is_front::Boolean
 
   parameter upright_mass::Mass
   parameter upright_I_11::Inertia
@@ -36,16 +42,22 @@ component CornerAssembly
 
 relations
 
-  connect(wheel_center, wheel_assembly.wheel_center) {^id7}
-  connect(wheel_center, upright.frame_a) {^id8}
-  connect(motor.wheel_center, wheel_center) {^id9}
-  connect(wheel_assembly.spline, motor.spline) {^id10}
-  connect(tau_cmd, motor.tau) {^id11}
-  connect(wheel_assembly.slip, slip) {^id12}
+  connect(wheel_center, wheel_assembly.wheel_center) {^id9}
+  connect(wheel_center, upright.frame_a) {^id10}
+  connect(motor.wheel_center, wheel_center) {^id11}
+  connect(wheel_assembly.spline, motor.spline) {^id12}
+  connect(motor_torque, motor.tau) {^id13}
+  connect(wheel_assembly.slip, slip) {^id14}
+  connect(wheel_assembly.spline, brake.spline) {^id15}
+  connect(brake_demand, brake.brake_demand) {^id16}
+  connect(brake.wheel_center, wheel_center) {^id17}
 
 metadata {
   "_links": {
-    "tau_cmd": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
+    "motor_torque": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
+    "brake_demand": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 190, "y2": 290}}}
+    },
     "slip": {
       "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 20, "y2": 120}}}
     },
@@ -58,37 +70,58 @@ metadata {
     "motor": {
       "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 310, "y2": 410}}}
     },
+    "brake": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 620, "y2": 720}}}
+    },
     "upright": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 190, "y2": 290}}}
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 130, "y2": 230}}}
     },
-    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id8": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 170, "y": 500}, {"x": 170, "y": 240}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id9": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 170, "y": 359}, {"x": 170, "y": 500}], "E": 2}],
-        "path": {}
-      }
-    },
+    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
     "id10": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 590, "y": 500}, {"x": 590, "y": 360}], "E": 2}],
+        "edges": [{"S": 1, "M": [{"x": 170, "y": 500}, {"x": 170, "y": 180}], "E": 2}],
         "path": {}
       }
     },
     "id11": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 250, "y": 70}, {"x": 250, "y": 317}], "E": 2}],
+        "edges": [{"S": 1, "M": [{"x": 170, "y": 359}, {"x": 170, "y": 500}], "E": 2}],
         "path": {}
       }
     },
     "id12": {
       "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 590, "y": 500}, {"x": 590, "y": 360}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id13": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 250, "y": 70}, {"x": 250, "y": 317}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id14": {
+      "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 760, "y": 457}, {"x": 760, "y": 70}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id15": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 590, "y": 500}, {"x": 590, "y": 670}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id16": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 210, "y": 240}, {"x": 210, "y": 627}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id17": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 170, "y": 669}, {"x": 170, "y": 500}], "E": 2}],
         "path": {}
       }
     }

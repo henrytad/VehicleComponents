@@ -484,6 +484,7 @@ const Vehicle = Vehicle(
     ),
     wheels=Wheels(rim_mass=3.0, rim_inertia=0.05),
     drivetrain=Drivetrain(gear_ratio=14.0),
+    brakes=Brakes(max_torque=250.0, bias=0.6),
     body=Body(
         mass=250.0,
         cg=[-0.7, 0.0, 0.2835],

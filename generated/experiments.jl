@@ -10,6 +10,7 @@ end
 
 
 include("AeroLoad_experiment.jl")
+include("Brake_experiment.jl")
 include("CornerAssembly_experiment.jl")
 include("DamperTestRig_experiment.jl")
 include("Damper_experiment.jl")

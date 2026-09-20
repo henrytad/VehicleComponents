@@ -138,6 +138,9 @@ import Moshi as __Ext__Moshi
   delete!(__pid_ics, __pid_y_min)
   __pid_k_ff = Symbolics.unwrap(__no_namespace_pid.k_ff)::Symbolics.SymbolicT
   delete!(__pid_ics, __pid_k_ff)
+  # Subcomponent gate of type BlockComponents.Math.Product
+  gate_overrides = __pop_subcomponent_overrides!(__overrides, "gate")
+  push!(__systems, @named gate = BlockComponents.Math.Product(; gate_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
@@ -150,11 +153,12 @@ import Moshi as __Ext__Moshi
   __assertions = []
 
   ### Equations
-  push!(__eqs, connect(throttle, slip_ref.u, torque_ff.u))
+  push!(__eqs, connect(throttle, slip_ref.u, torque_ff.u, gate.u2))
   push!(__eqs, connect(slip_ref.y, pid.u_s))
   push!(__eqs, connect(torque_ff.y, pid.u_ff))
   push!(__eqs, connect(slip, pid.u_m))
-  push!(__eqs, connect(pid.y, tau))
+  push!(__eqs, connect(pid.y, gate.u1))
+  push!(__eqs, connect(gate.y, tau))
 
   # Return completely constructed System
   return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

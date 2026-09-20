@@ -11,10 +11,12 @@ component HubMotor
 
   parameter gear_ratio::Real = VehicleComponents.params.drivetrain.gear_ratio
 
+  variable tau_motor::Torque
   variable tau_wheel::Torque
 
 relations
 
+  tau_motor = tau
   tau_wheel = tau * gear_ratio
   spline.tau = -tau_wheel
   wheel_center.f = [0, 0, 0]
