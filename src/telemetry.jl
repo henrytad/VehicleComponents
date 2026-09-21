@@ -52,6 +52,10 @@ function vehicle_channels(model, sol; rate::Int=100)
     add("r_brake", () -> car.brake, 100, "%")
     add("a_steer", () -> car.steer, DEG, "deg")
 
+    # Brake control
+    add("r_brake_abs", () -> car.control.brake_demand, 100, "%")
+    add("r_abs_intervention", () -> car.control.abs.intervention, 100, "%")
+
     # Aero
     add("f_aero_drag", () -> car.aero.drag, 1, "N")
     add("f_aero_downforce", () -> car.aero.downforce, 1, "N")

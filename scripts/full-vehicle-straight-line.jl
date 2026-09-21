@@ -2,9 +2,9 @@ using Revise
 using VehicleComponents
 using GLMakie, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
 
-# Settle, 3 s of full throttle, then 4 s on the brake
+# Settle, 4 s of full throttle, then 4 s on the brake
 t_drive = 1.5
-t_brake = t_drive + 3.0
+t_brake = t_drive + 4.0
 t_end = t_brake + 4.0
 brake_level = 1.0
 

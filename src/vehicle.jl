@@ -167,7 +167,7 @@ end
 end
 
 """
-Traction control settings.
+Traction and braking slip control settings.
 """
 @kwdef struct Control
     slip_target_front::Float64
@@ -176,6 +176,8 @@ Traction control settings.
     slip_loop_gain::Float64
     slip_loop_Ti::Float64
     slip_loop_Ni::Float64
+    abs_slip_target::Float64
+    abs_gain::Float64
 end
 
 "Magic Formula 6.1 coefficients, named as in the tire property file they came from."

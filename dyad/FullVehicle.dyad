@@ -190,7 +190,7 @@ component FullVehicle
     heave_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.rear.setup.heave.damper),
     roll_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.rear.setup.roll.damper)
   ) {^rear_suspension}
-  control = VehicleComponents.TorqueControlLaunch() {^control}
+  control = VehicleComponents.VehicleControl() {^control}
   aero = VehicleComponents.AeroLoad() {^aero}
   body_angles = MultibodyComponents.AbsoluteAngles(sequence = [3, 2, 1]) {^body_angles}
 
@@ -223,7 +223,7 @@ relations
   connect(rear_suspension.wheel_left, corner_rl.wheel_center) {^id20}
   connect(rear_suspension.wheel_right, corner_rr.wheel_center) {^id21}
 
-  # Torque control
+  # Vehicle control
   connect(corner_fl.slip, control.slip_fl) {^id22}
   connect(corner_fr.slip, control.slip_fr) {^id23}
   connect(corner_rl.slip, control.slip_rl) {^id24}
@@ -235,18 +235,19 @@ relations
   connect(throttle, control.throttle) {^id30}
 
   # Brakes
-  connect(brake, corner_fl.brake_demand) {^id31}
-  connect(brake, corner_fr.brake_demand) {^id32}
-  connect(brake, corner_rl.brake_demand) {^id33}
-  connect(brake, corner_rr.brake_demand) {^id34}
-  connect(rig, aero.chassis) {^id35}
+  connect(brake, control.brake) {^id31}
+  connect(control.brake_demand, corner_fl.brake_demand) {^id32}
+  connect(control.brake_demand, corner_fr.brake_demand) {^id33}
+  connect(control.brake_demand, corner_rl.brake_demand) {^id34}
+  connect(control.brake_demand, corner_rr.brake_demand) {^id35}
+  connect(rig, aero.chassis) {^id36}
 
   # Steering
   rear_suspension.steer = 0
-  connect(steer, front_suspension.steer) {^id36}
+  connect(steer, front_suspension.steer) {^id37}
 
   # Attitude sensor
-  connect(rig, body_angles.frame_a) {^id37}
+  connect(rig, body_angles.frame_a) {^id38}
 
 metadata {
   "_links": {
@@ -322,7 +323,7 @@ metadata {
     "id21": {},
     "id22": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 210, "y": 373}, {"x": 210, "y": 88}], "E": 2}],
+        "edges": [{"S": 1, "M": [{"x": 210, "y": 373}, {"x": 210, "y": 98}], "E": 2}],
         "path": {}
       }
     },
@@ -335,7 +336,7 @@ metadata {
               {"x": 820, "y": 373},
               {"x": 820, "y": 770},
               {"x": 190, "y": 770},
-              {"x": 190, "y": 103}
+              {"x": 190, "y": 113}
             ],
             "E": 2
           }
@@ -345,7 +346,7 @@ metadata {
     },
     "id24": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 170, "y": 617}, {"x": 170, "y": 117}], "E": 2}],
+        "edges": [{"S": 1, "M": [{"x": 170, "y": 617}, {"x": 170, "y": 128}], "E": 2}],
         "path": {}
       }
     },
@@ -358,7 +359,7 @@ metadata {
               {"x": 860, "y": 617},
               {"x": 860, "y": 810},
               {"x": 150, "y": 810},
-              {"x": 150, "y": 131}
+              {"x": 150, "y": 143}
             ],
             "E": 2
           }
@@ -442,35 +443,63 @@ metadata {
     },
     "id31": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 400, "y": 220}, {"x": 400, "y": 356}], "E": 2}],
+        "edges": [{"S": 1, "M": [{"x": 100, "y": 220}, {"x": 100, "y": 82}], "E": 2}],
         "path": {}
       }
     },
     "id32": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 590, "y": 220}, {"x": 590, "y": 356}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {"x": 570, "y": 151},
+              {"x": 570, "y": 220},
+              {"x": 400, "y": 220},
+              {"x": 400, "y": 356}
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
     "id33": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 400, "y": 220}, {"x": 400, "y": 634}], "E": 2}],
+        "edges": [{"S": 1, "M": [{"x": 570, "y": 151}, {"x": 570, "y": 356}], "E": 2}],
         "path": {}
       }
     },
     "id34": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 590, "y": 220}, {"x": 590, "y": 634}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {"x": 570, "y": 151},
+              {"x": 570, "y": 220},
+              {"x": 400, "y": 220},
+              {"x": 400, "y": 634}
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
     "id35": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 220, "y": 1000}, {"x": 220, "y": 470}], "E": 2}],
+        "edges": [{"S": 1, "M": [{"x": 570, "y": 151}, {"x": 570, "y": 634}], "E": 2}],
         "path": {}
       }
     },
     "id36": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 220, "y": 1000}, {"x": 220, "y": 470}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id37": {
       "Dyad": {
         "edges": [
           {
@@ -487,7 +516,7 @@ metadata {
         "path": {}
       }
     },
-    "id37": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 910}], "E": 2}], "path": {}}}
+    "id38": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 910}], "E": 2}], "path": {}}}
   }
 }
 end

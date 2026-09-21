@@ -203,6 +203,7 @@ component.
 end
 
 
+include("ABSControl_definition.jl")
 include("AeroLoad_definition.jl")
 include("Brake_definition.jl")
 include("CornerAssembly_definition.jl")
@@ -229,4 +230,5 @@ include("TireMF61_definition.jl")
 include("TireTestRig_definition.jl")
 include("TorqueControlLaunch_definition.jl")
 include("TorqueControlTC_definition.jl")
+include("VehicleControl_definition.jl")
 include("WheelAssembly_definition.jl")

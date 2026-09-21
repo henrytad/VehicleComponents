@@ -1,4 +1,9 @@
-const Vehicle = Vehicle(
+# If you update the VEHCILE, run the following line to update the REPL:
+# `VehicleComponents.params = VehicleComponents.Data.VEHICLE`
+#
+# You will still need to rebuild `model` and `ssys` to get new changes.
+
+VEHICLE = Vehicle(
     name="TestVehicle",
     units="SI",
     suspension=Suspension(
@@ -498,5 +503,7 @@ const Vehicle = Vehicle(
         slip_loop_gain=40.0 / 20.0,
         slip_loop_Ti=0.02,
         slip_loop_Ni=0.9,
+        abs_slip_target=0.15,
+        abs_gain=5.0,
     ),
 )
