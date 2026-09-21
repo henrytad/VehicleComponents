@@ -30,7 +30,11 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | Name         | Description                         | Units  | 
 | ------------ | ----------------------------------- | ------ |
 | `x_ref`         |                          | m  |
+| `y_ref`         |                          | m  |
+| `v_x`         |                          | m/s  |
+| `v_y`         |                          | m/s  |
 | `v`         |                          | m/s  |
+| `v_reg`         |                          | m/s  |
 | `q`         |                          | Pa  |
 | `drag`         |                          | N  |
 | `downforce`         |                          | N  |
@@ -73,6 +77,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__params, @parameters (sty_black[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_orange[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_purple[1:4]::Real), [misc = "final"])
+  append!(__params, @parameters (sty_green[1:4]::Real), [misc = "final"])
+  append!(__params, @parameters (sty_blue[1:4]::Real), [misc = "final"])
+  append!(__params, @parameters (sty_yellow[1:4]::Real), [misc = "final"])
+  append!(__params, @parameters (sty_red[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_grey_light[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_grey_medium[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_grey_dark[1:4]::Real), [misc = "final"])
@@ -107,6 +115,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings[sty_black] = [0.15, 0.15, 0.15, 1.0]
   __bindings[sty_orange] = [0.9921875, 0.3125, 0, 1]
   __bindings[sty_purple] = [0.4296875, 0.2734375, 0.78125, 1]
+  __bindings[sty_green] = [0.1328125, 0.6953125, 0.296875, 1]
+  __bindings[sty_blue] = [0.1171875, 0.53125, 0.8984375, 1]
+  __bindings[sty_yellow] = [0.9609375, 0.765625, 0.0859375, 1]
+  __bindings[sty_red] = [0.859375, 0.1953125, 0.20703125, 1]
   __bindings[sty_grey_light] = [0.546875, 0.578125, 0.609375, 0.5]
   __bindings[sty_grey_medium] = [0.328125, 0.3515625, 0.375, 1]
   __bindings[sty_grey_dark] = [0.1953125, 0.21484375, 0.234375, 1]
@@ -117,7 +129,11 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Variables (declarations)
   append!(__vars, @variables (x_ref(t)::Real))
+  append!(__vars, @variables (y_ref(t)::Real))
+  append!(__vars, @variables (v_x(t)::Real))
+  append!(__vars, @variables (v_y(t)::Real))
   append!(__vars, @variables (v(t)::Real))
+  append!(__vars, @variables (v_reg(t)::Real))
   append!(__vars, @variables (q(t)::Real))
   append!(__vars, @variables (drag(t)::Real))
   append!(__vars, @variables (downforce(t)::Real))
@@ -129,9 +145,21 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_x_ref = pop!(__overrides, "x_ref", nothing); isnothing(__ovr_x_ref) || push!(__eqs, x_ref ~ __ovr_x_ref)
   __ovr_x_ref__initial = pop!(__overrides, "x_ref__initial", nothing); isnothing(__ovr_x_ref__initial) || (__initial_conditions[x_ref] = __ovr_x_ref__initial)
   __ovr_x_ref__guess = pop!(__overrides, "x_ref__guess", nothing)
+  __ovr_y_ref = pop!(__overrides, "y_ref", nothing); isnothing(__ovr_y_ref) || push!(__eqs, y_ref ~ __ovr_y_ref)
+  __ovr_y_ref__initial = pop!(__overrides, "y_ref__initial", nothing); isnothing(__ovr_y_ref__initial) || (__initial_conditions[y_ref] = __ovr_y_ref__initial)
+  __ovr_y_ref__guess = pop!(__overrides, "y_ref__guess", nothing)
+  __ovr_v_x = pop!(__overrides, "v_x", nothing); isnothing(__ovr_v_x) || push!(__eqs, v_x ~ __ovr_v_x)
+  __ovr_v_x__initial = pop!(__overrides, "v_x__initial", nothing); isnothing(__ovr_v_x__initial) || (__initial_conditions[v_x] = __ovr_v_x__initial)
+  __ovr_v_x__guess = pop!(__overrides, "v_x__guess", nothing)
+  __ovr_v_y = pop!(__overrides, "v_y", nothing); isnothing(__ovr_v_y) || push!(__eqs, v_y ~ __ovr_v_y)
+  __ovr_v_y__initial = pop!(__overrides, "v_y__initial", nothing); isnothing(__ovr_v_y__initial) || (__initial_conditions[v_y] = __ovr_v_y__initial)
+  __ovr_v_y__guess = pop!(__overrides, "v_y__guess", nothing)
   __ovr_v = pop!(__overrides, "v", nothing); isnothing(__ovr_v) || push!(__eqs, v ~ __ovr_v)
   __ovr_v__initial = pop!(__overrides, "v__initial", nothing); isnothing(__ovr_v__initial) || (__initial_conditions[v] = __ovr_v__initial)
   __ovr_v__guess = pop!(__overrides, "v__guess", nothing)
+  __ovr_v_reg = pop!(__overrides, "v_reg", nothing); isnothing(__ovr_v_reg) || push!(__eqs, v_reg ~ __ovr_v_reg)
+  __ovr_v_reg__initial = pop!(__overrides, "v_reg__initial", nothing); isnothing(__ovr_v_reg__initial) || (__initial_conditions[v_reg] = __ovr_v_reg__initial)
+  __ovr_v_reg__guess = pop!(__overrides, "v_reg__guess", nothing)
   __ovr_q = pop!(__overrides, "q", nothing); isnothing(__ovr_q) || push!(__eqs, q ~ __ovr_q)
   __ovr_q__initial = pop!(__overrides, "q__initial", nothing); isnothing(__ovr_q__initial) || (__initial_conditions[q] = __ovr_q__initial)
   __ovr_q__guess = pop!(__overrides, "q__guess", nothing)
@@ -162,7 +190,11 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Guesses
   isnothing(__ovr_x_ref__guess) || (__guesses[x_ref] = __ovr_x_ref__guess)
+  isnothing(__ovr_y_ref__guess) || (__guesses[y_ref] = __ovr_y_ref__guess)
+  isnothing(__ovr_v_x__guess) || (__guesses[v_x] = __ovr_v_x__guess)
+  isnothing(__ovr_v_y__guess) || (__guesses[v_y] = __ovr_v_y__guess)
   isnothing(__ovr_v__guess) || (__guesses[v] = __ovr_v__guess)
+  isnothing(__ovr_v_reg__guess) || (__guesses[v_reg] = __ovr_v_reg__guess)
   isnothing(__ovr_q__guess) || (__guesses[q] = __ovr_q__guess)
   isnothing(__ovr_drag__guess) || (__guesses[drag] = __ovr_drag__guess)
   isnothing(__ovr_downforce__guess) || (__guesses[downforce] = __ovr_downforce__guess)
@@ -177,13 +209,17 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Equations
   push!(__eqs, x_ref ~ getindex(getproperty(chassis, :r_0), 1))
-  push!(__eqs, v ~ ModelingToolkit.D_nounits(x_ref))
-  push!(__eqs, q ~ 0.5 * rho * v ^ 2)
-  push!(__eqs, drag ~ CdA * q * tanh(v / v_min))
+  push!(__eqs, y_ref ~ getindex(getproperty(chassis, :r_0), 2))
+  push!(__eqs, v_x ~ ModelingToolkit.D_nounits(x_ref))
+  push!(__eqs, v_y ~ ModelingToolkit.D_nounits(y_ref))
+  push!(__eqs, v ~ sqrt(v_x ^ 2 + v_y ^ 2))
+  push!(__eqs, v_reg ~ sqrt(v ^ 2 + v_min ^ 2))
+  push!(__eqs, q ~ 0.5 * rho * (v_x ^ 2 + v_y ^ 2))
+  push!(__eqs, drag ~ CdA * q * v / v_reg)
   push!(__eqs, downforce ~ ClA * q)
   push!(__eqs, downforce_front ~ bal_f * downforce)
   push!(__eqs, downforce_rear ~ (1 - bal_f) * downforce)
-  push!(__eqs, f_cop ~ chassis.R * [-drag, 0, -downforce])
+  push!(__eqs, f_cop ~ chassis.R * [-CdA * q * v_x / v_reg, -CdA * q * v_y / v_reg, -downforce])
   push!(__eqs, chassis.f ~ -f_cop)
   push!(__eqs, chassis.tau ~ -LinearAlgebra.cross(cop, f_cop))
 

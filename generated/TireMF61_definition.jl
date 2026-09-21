@@ -325,6 +325,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__params, @parameters (sty_black[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_orange[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_purple[1:4]::Real), [misc = "final"])
+  append!(__params, @parameters (sty_green[1:4]::Real), [misc = "final"])
+  append!(__params, @parameters (sty_blue[1:4]::Real), [misc = "final"])
+  append!(__params, @parameters (sty_yellow[1:4]::Real), [misc = "final"])
+  append!(__params, @parameters (sty_red[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_grey_light[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_grey_medium[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_grey_dark[1:4]::Real), [misc = "final"])
@@ -778,6 +782,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings[sty_black] = [0.15, 0.15, 0.15, 1.0]
   __bindings[sty_orange] = [0.9921875, 0.3125, 0, 1]
   __bindings[sty_purple] = [0.4296875, 0.2734375, 0.78125, 1]
+  __bindings[sty_green] = [0.1328125, 0.6953125, 0.296875, 1]
+  __bindings[sty_blue] = [0.1171875, 0.53125, 0.8984375, 1]
+  __bindings[sty_yellow] = [0.9609375, 0.765625, 0.0859375, 1]
+  __bindings[sty_red] = [0.859375, 0.1953125, 0.20703125, 1]
   __bindings[sty_grey_light] = [0.546875, 0.578125, 0.609375, 0.5]
   __bindings[sty_grey_medium] = [0.328125, 0.3515625, 0.375, 1]
   __bindings[sty_grey_dark] = [0.1953125, 0.21484375, 0.234375, 1]
