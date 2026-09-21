@@ -7,7 +7,7 @@
 import Moshi as __Ext__Moshi
 
 @doc Markdown.doc"""
-   FullVehicleTestStraightLine(; name, drive_start_time, drive_duration, brake_level, brake_start_time, marker_spacing, marker_offset, marker_height, marker_diameter)
+   FullVehicleTestStraightLine(; name, drive_start_time, drive_duration, brake_level, brake_start_time)
 
 ## Parameters:
 
@@ -17,12 +17,8 @@ import Moshi as __Ext__Moshi
 | `drive_duration`         |                          | s  |   1.5 |
 | `brake_level`         |                          | --  |   0.0 |
 | `brake_start_time`         |                          | s  |   1.5 |
-| `marker_spacing`         |                          | m  |   25.0 |
-| `marker_offset`         |                          | m  |   1.5 |
-| `marker_height`         |                          | m  |   1.0 |
-| `marker_diameter`         |                          | m  |   0.1 |
 """
-@component function FullVehicleTestStraightLine(; name = nothing, drive_start_time=1.5, drive_duration=1.5, brake_level=Float64(0.0), brake_start_time=1.5, marker_spacing=Float64(25.0), marker_offset=1.5, marker_height=Float64(1.0), marker_diameter=0.1, kwargs...)
+@component function FullVehicleTestStraightLine(; name = nothing, drive_start_time=1.5, drive_duration=1.5, brake_level=Float64(0.0), brake_start_time=1.5, kwargs...)
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -49,17 +45,6 @@ import Moshi as __Ext__Moshi
   ### Path Parameters (non-final)
 
   ### Final Parameters (declarations)
-  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.
-  append!(__params, @parameters (sty_rod_radius::Real), [description = 
-  append!(__params, @parameters (sty_rod_radius::Real), [description = Defines global colors and geometry settings, such as rod radius,
-  append!(__params, @parameters (sty_rod_radius::Real), [description = used consistently across different linkage models.", misc = "final"])
-  append!(__params, @parameters (sty_body_radius::Real), [misc = "final"])
-  append!(__params, @parameters (sty_black[1:4]::Real), [misc = "final"])
-  append!(__params, @parameters (sty_orange[1:4]::Real), [misc = "final"])
-  append!(__params, @parameters (sty_purple[1:4]::Real), [misc = "final"])
-  append!(__params, @parameters (sty_grey_light[1:4]::Real), [misc = "final"])
-  append!(__params, @parameters (sty_grey_medium[1:4]::Real), [misc = "final"])
-  append!(__params, @parameters (sty_grey_dark[1:4]::Real), [misc = "final"])
 
   ### Deferred assignment (default values that depend on final parameters)
 
@@ -76,28 +61,8 @@ import Moshi as __Ext__Moshi
   __local__brake_start_time = brake_start_time
   append!(__params, @parameters (brake_start_time::Real))
   __initial_conditions[brake_start_time] = __local__brake_start_time
-  __local__marker_spacing = marker_spacing
-  append!(__params, @parameters (marker_spacing::Real))
-  __initial_conditions[marker_spacing] = __local__marker_spacing
-  __local__marker_offset = marker_offset
-  append!(__params, @parameters (marker_offset::Real))
-  __initial_conditions[marker_offset] = __local__marker_offset
-  __local__marker_height = marker_height
-  append!(__params, @parameters (marker_height::Real))
-  __initial_conditions[marker_height] = __local__marker_height
-  __local__marker_diameter = marker_diameter
-  append!(__params, @parameters (marker_diameter::Real))
-  __initial_conditions[marker_diameter] = __local__marker_diameter
 
   ### Final Parameters (assignments)
-  __bindings[sty_rod_radius] = 0.008
-  __bindings[sty_body_radius] = 0.02
-  __bindings[sty_black] = [0.15, 0.15, 0.15, 1.0]
-  __bindings[sty_orange] = [0.9921875, 0.3125, 0, 1]
-  __bindings[sty_purple] = [0.4296875, 0.2734375, 0.78125, 1]
-  __bindings[sty_grey_light] = [0.546875, 0.578125, 0.609375, 0.5]
-  __bindings[sty_grey_medium] = [0.328125, 0.3515625, 0.375, 1]
-  __bindings[sty_grey_dark] = [0.1953125, 0.21484375, 0.234375, 1]
 
   ### Final Path Parameters
 
@@ -151,18 +116,9 @@ import Moshi as __Ext__Moshi
   # Subcomponent vehicle of type VehicleComponents.FullVehicle
   vehicle_overrides = __pop_subcomponent_overrides!(__overrides, "vehicle")
   push!(__systems, @named vehicle = VehicleComponents.FullVehicle(; vehicle_overrides...))
-  # Subcomponent post_1 of type MultibodyComponents.CylinderShape
-  post_1_overrides = __pop_subcomponent_overrides!(__overrides, "post_1")
-  push!(__systems, @named post_1 = MultibodyComponents.CylinderShape(; color=sty_orange, r=[0, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_1_overrides...))
-  # Subcomponent post_2 of type MultibodyComponents.CylinderShape
-  post_2_overrides = __pop_subcomponent_overrides!(__overrides, "post_2")
-  push!(__systems, @named post_2 = MultibodyComponents.CylinderShape(; color=sty_orange, r=[marker_spacing, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_2_overrides...))
-  # Subcomponent post_3 of type MultibodyComponents.CylinderShape
-  post_3_overrides = __pop_subcomponent_overrides!(__overrides, "post_3")
-  push!(__systems, @named post_3 = MultibodyComponents.CylinderShape(; color=sty_orange, r=[2 * marker_spacing, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_3_overrides...))
-  # Subcomponent post_4 of type MultibodyComponents.CylinderShape
-  post_4_overrides = __pop_subcomponent_overrides!(__overrides, "post_4")
-  push!(__systems, @named post_4 = MultibodyComponents.CylinderShape(; color=sty_orange, r=[3 * marker_spacing, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_4_overrides...))
+  # Subcomponent track of type VehicleComponents.StraightLineTrack
+  track_overrides = __pop_subcomponent_overrides!(__overrides, "track")
+  push!(__systems, @named track = VehicleComponents.StraightLineTrack(; track_overrides...))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
