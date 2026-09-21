@@ -1,0 +1,170 @@
+component VehicleControl
+  "Combined traction and anti-lock brake control."
+
+  throttle = RealInput() {^throttle}
+  brake = RealInput(units = "1") {^brake}
+  slip_fl = RealInput() {^slip_fl}
+  slip_fr = RealInput() {^slip_fr}
+  slip_rl = RealInput() {^slip_rl}
+  slip_rr = RealInput() {^slip_rr}
+
+  demand_fl = RealOutput(units = "1") {^demand_fl}
+  demand_fr = RealOutput(units = "1") {^demand_fr}
+  demand_rl = RealOutput(units = "1") {^demand_rl}
+  demand_rr = RealOutput(units = "1") {^demand_rr}
+  brake_demand = RealOutput(units = "1") {^brake_demand}
+
+  tc = VehicleComponents.TorqueControlLaunch() {^tc}
+  abs = VehicleComponents.ABSControl() {^abs}
+
+relations
+
+  connect(tc.demand_fl, demand_fl) {^id14}
+  connect(tc.demand_fr, demand_fr) {^id15}
+  connect(tc.demand_rr, demand_rr) {^id16}
+  connect(tc.demand_rl, demand_rl) {^id17}
+  connect(throttle, tc.throttle) {^id18}
+  connect(brake, abs.brake) {^id19}
+  connect(slip_fl, tc.slip_fl) {^id20}
+  connect(slip_fr, tc.slip_fr) {^id21}
+  connect(slip_rl, tc.slip_rl) {^id22}
+  connect(slip_rr, tc.slip_rr) {^id23}
+  connect(slip_fl, abs.slip_fl) {^id24}
+  connect(slip_fr, abs.slip_fr) {^id25}
+  connect(slip_rl, abs.slip_rl) {^id26}
+  connect(slip_rr, abs.slip_rr) {^id27}
+  connect(abs.brake_demand, brake_demand) {^id28}
+
+metadata {
+  "Dyad": {"labels": [{"label": "$(instance)", "x": 500, "y": 1100, "rot": 0}]},
+  "_links": {
+    "throttle": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
+    "brake": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 170, "y2": 270}}}
+    },
+    "slip_fl": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 330, "y2": 430}}}
+    },
+    "slip_fr": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 480, "y2": 580}}}
+    },
+    "slip_rl": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 630, "y2": 730}}}
+    },
+    "slip_rr": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 780, "y2": 880}}}
+    },
+    "demand_fl": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 230, "y2": 330}}}
+    },
+    "demand_fr": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 380, "y2": 480}}}
+    },
+    "demand_rl": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 530, "y2": 630}}}
+    },
+    "demand_rr": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 680, "y2": 780}}}
+    },
+    "brake_demand": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 860, "y2": 960}}}
+    },
+    "tc": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 320, "y2": 420}}}
+    },
+    "abs": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 580, "y2": 680}}}
+    },
+    "id14": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 630, "y": 348}, {"x": 630, "y": 280}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id15": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 690, "y": 363}, {"x": 690, "y": 430}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id16": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 630, "y": 391}, {"x": 630, "y": 730}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id17": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 660, "y": 377}, {"x": 660, "y": 580}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id18": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 280, "y": 70}, {"x": 280, "y": 327}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id19": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 400, "y": 220}, {"x": 400, "y": 587}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id20": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 280, "y": 380}, {"x": 280, "y": 348}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id21": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 300, "y": 530}, {"x": 300, "y": 363}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id22": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 320, "y": 680}, {"x": 320, "y": 377}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id23": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 340, "y": 830}, {"x": 340, "y": 391}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id24": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 280, "y": 380}, {"x": 280, "y": 608}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id25": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 300, "y": 530}, {"x": 300, "y": 623}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id26": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 320, "y": 680}, {"x": 320, "y": 637}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id27": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 340, "y": 830}, {"x": 340, "y": 651}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id28": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 600, "y": 620}, {"x": 600, "y": 910}], "E": 2}],
+        "path": {}
+      }
+    }
+  }
+}
+end

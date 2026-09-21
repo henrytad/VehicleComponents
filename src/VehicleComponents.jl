@@ -10,7 +10,7 @@ include("telemetry.jl")
 include("road_surface.jl")
 
 "The car whose values the `.dyad` component defaults read."
-const params = Data.Vehicle
+params = Data.VEHICLE
 
 include("../generated/module.jl")
 

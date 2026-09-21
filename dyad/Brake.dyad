@@ -8,8 +8,7 @@ component Brake
   The torque tapers through tanh over `omega_eps` so that a brake held on at a
   standstill cannot drive the wheel backwards.
 
-  `brake_bias` splits the fixed total between the axles. There is no ABS, so
-  whichever axle is over-braked for its instantaneous load simply locks.
+  `brake_bias` splits the fixed total between the axles.
   """
 
   brake_demand = RealInput(units = "1") {^brake_demand}

@@ -18,6 +18,7 @@ end
 include("test_internals.jl")
 
 @testset "`VehicleComponents`" begin
+include("ABSControl_test.jl")
 include("AeroLoad_test.jl")
 include("Brake_test.jl")
 include("CornerAssembly_test.jl")
@@ -44,5 +45,6 @@ include("TireMF61_test.jl")
 include("TireTestRig_test.jl")
 include("TorqueControlLaunch_test.jl")
 include("TorqueControlTC_test.jl")
+include("VehicleControl_test.jl")
 include("WheelAssembly_test.jl")
 end

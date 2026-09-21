@@ -1,4 +1,4 @@
-const Vehicle = Vehicle(
+VEHICLE = Vehicle(
     name="TestVehicle",
     units="SI",
     suspension=Suspension(
@@ -498,5 +498,7 @@ const Vehicle = Vehicle(
         slip_loop_gain=40.0 / 20.0,
         slip_loop_Ti=0.02,
         slip_loop_Ni=0.9,
+        abs_slip_target=0.15,
+        abs_gain=5.0,
     ),
 )

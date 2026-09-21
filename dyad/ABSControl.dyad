@@ -1,0 +1,70 @@
+component ABSControl
+  """
+  Global ABS brake-pressure reduction from the most negative wheel slip.
+
+  `intervention` is the applied brake-release fraction: zero leaves the driver
+  request unchanged and one releases all requested brake pressure.
+  """
+
+  brake = RealInput(units = "1") {^brake}
+  slip_fl = RealInput() {^slip_fl}
+  slip_fr = RealInput() {^slip_fr}
+  slip_rl = RealInput() {^slip_rl}
+  slip_rr = RealInput() {^slip_rr}
+
+  brake_demand = RealOutput(units = "1") {^brake_demand}
+  intervention = RealOutput(units = "1") {^intervention}
+
+  parameter slip_target::Real = VehicleComponents.params.control.abs_slip_target
+  parameter k::Real = VehicleComponents.params.control.abs_gain
+
+  variable excess_fl::Real
+  variable excess_fr::Real
+  variable excess_rl::Real
+  variable excess_rr::Real
+  variable excess::Real
+  variable p_action::Real
+  variable brake_scale::Real
+
+relations
+
+  excess_fl = max(0, -slip_fl - slip_target)
+  excess_fr = max(0, -slip_fr - slip_target)
+  excess_rl = max(0, -slip_rl - slip_target)
+  excess_rr = max(0, -slip_rr - slip_target)
+  excess = max(max(excess_fl, excess_fr), max(excess_rl, excess_rr))
+  p_action = k * excess
+  brake_scale = max(0, 1 - p_action)
+  intervention = 1 - brake_scale
+  brake_demand = brake * brake_scale
+
+metadata {
+  "Dyad": {
+    "labels": [
+      {"label": "$(instance)", "x": 500, "y": 1100, "rot": 0},
+      {"label": "slip = -$(slip_target)", "x": 500, "y": 800, "rot": 0}
+    ]
+  },
+  "_links": {
+    "brake": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
+    "slip_fl": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 230, "y2": 330}}}
+    },
+    "slip_fr": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 380, "y2": 480}}}
+    },
+    "slip_rl": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 520, "y2": 620}}}
+    },
+    "slip_rr": {
+      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 660, "y2": 760}}}
+    },
+    "brake_demand": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 350, "y2": 450}}}
+    },
+    "intervention": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 550, "y2": 650}}}
+    }
+  }
+}
+end
