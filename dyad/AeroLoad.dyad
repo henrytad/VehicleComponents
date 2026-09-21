@@ -21,7 +21,11 @@ component AeroLoad
   final parameter cop::Position[3] = [-x_cop, 0, 0]
 
   variable x_ref::Length
+  variable y_ref::Length
+  variable v_x::Velocity
+  variable v_y::Velocity
   variable v::Velocity
+  variable v_reg::Velocity
   variable q::Pressure
   variable drag::Force
   variable downforce::Force
@@ -32,15 +36,20 @@ component AeroLoad
 relations
 
   x_ref = chassis.r_0[1]
-  v = der(x_ref)
-  q = 0.5 * rho * v ^ 2
+  y_ref = chassis.r_0[2]
+  v_x = der(x_ref)
+  v_y = der(y_ref)
 
-  drag = CdA * q * tanh(v / v_min)
+  v = sqrt(v_x ^ 2 + v_y ^ 2)
+  v_reg = sqrt(v ^ 2 + v_min ^ 2)
+  q = 0.5 * rho * (v_x ^ 2 + v_y ^ 2)
+
+  drag = CdA * q * v / v_reg
   downforce = ClA * q
   downforce_front = bal_f * downforce
   downforce_rear = (1 - bal_f) * downforce
 
-  f_cop = chassis.R * [-drag, 0, -downforce]
+  f_cop = chassis.R * [-CdA * q * v_x / v_reg, -CdA * q * v_y / v_reg, -downforce]
 
   chassis.f = -f_cop
   chassis.tau = -LinearAlgebra.cross(cop, f_cop)
