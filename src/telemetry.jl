@@ -11,11 +11,16 @@ speed, `p_` pressure, `r_` ratio, `s_` displacement, `tq_` torque, `v_` velocity
 module Telemetry
 
 using ..Motec
+using ..Data: VEHICLE
 
 const G = 9.80665
 const DEG = 180 / pi
 const KMH = 3.6
 const MM = 1000
+const METERS_TO_DEGREES = 9e-6
+const GPS_LATITUDE_ORIGIN = 1.0
+const GPS_LONGITUDE_ORIGIN = 1.0
+const GPS_RATE = 20
 
 corners(car) = (
     ("fl", car.corner_fl, car.front_suspension.linkage_left),
@@ -132,6 +137,35 @@ function vehicle_channels(model, sol; rate::Int=100)
 
     isempty(skipped) ||
         @warn "telemetry: $(length(skipped)) channels are not in the solution" skipped
+
+    # GPS coordinates in degrees, with a nonzero "pretend" origin.
+    body = sol.prob.f.sys.vehicle.body
+    function cg_world_component(i, sample_times)
+        sample_frame(signal) = Float64[sol(time, idxs=signal) for time in sample_times]
+        position = sample_frame(body.frame_a.r_0[i])
+        for j in 1:3
+            position .+= sample_frame(body.frame_a.R[i, j]) .* VEHICLE.body.cg[j]
+        end
+        return position
+    end
+
+    gps_times = range(0.0, sol.t[end], step=1 / GPS_RATE)
+    gps_x = cg_world_component(1, gps_times)
+    gps_y = cg_world_component(2, gps_times)
+    gps_step = hypot.(diff(gps_x), diff(gps_y))
+    gps_speed = vcat(0.0, gps_step .* GPS_RATE) .* KMH
+    lap_distance = vcat(0.0, cumsum(gps_step))
+    gps_latitude = GPS_LATITUDE_ORIGIN .+ gps_x .* METERS_TO_DEGREES
+    gps_longitude = GPS_LONGITUDE_ORIGIN .+ gps_y .* (METERS_TO_DEGREES / cosd(GPS_LATITUDE_ORIGIN))
+    for (name, values, unit) in (
+        ("GPS Latitude", gps_latitude, "deg"),
+        ("GPS Longitude", gps_longitude, "deg"),
+        ("GPS Speed", gps_speed, "km/h"),
+        ("Lap Distance", lap_distance, "m"),
+    )
+        push!(channels, Motec.Channel(name, values; freq=GPS_RATE, unit=unit))
+    end
+
     return channels
 end
 
