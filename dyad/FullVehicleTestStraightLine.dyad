@@ -6,8 +6,6 @@ test component FullVehicleTestStraightLine
   at zero so the car can only travel straight.
   """
 
-  extends Styles
-
   world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
 
   throttle_on = BlockComponents.Sources.Step(
@@ -38,52 +36,12 @@ test component FullVehicleTestStraightLine
   
   vehicle = VehicleComponents.FullVehicle() {^vehicle}
 
-  # Animations
-  post_1 = MultibodyComponents.CylinderShape(
-    color = sty_orange,
-    r = [0, marker_offset, 0],
-    length_direction = [0, 0, 1],
-    width_direction = [1, 0, 0],
-    length = marker_height,
-    width = marker_diameter,
-    height = marker_diameter
-  ) {^post_1}
-  post_2 = MultibodyComponents.CylinderShape(
-    color = sty_orange,
-    r = [marker_spacing, marker_offset, 0],
-    length_direction = [0, 0, 1],
-    width_direction = [1, 0, 0],
-    length = marker_height,
-    width = marker_diameter,
-    height = marker_diameter
-  ) {^post_2}
-  post_3 = MultibodyComponents.CylinderShape(
-    color = sty_orange,
-    r = [2 * marker_spacing, marker_offset, 0],
-    length_direction = [0, 0, 1],
-    width_direction = [1, 0, 0],
-    length = marker_height,
-    width = marker_diameter,
-    height = marker_diameter
-  ) {^post_3}
-  post_4 = MultibodyComponents.CylinderShape(
-    color = sty_orange,
-    r = [3 * marker_spacing, marker_offset, 0],
-    length_direction = [0, 0, 1],
-    width_direction = [1, 0, 0],
-    length = marker_height,
-    width = marker_diameter,
-    height = marker_diameter
-  ) {^post_4}
+  track = VehicleComponents.StraightLineTrack() {^track}
 
   parameter drive_start_time::Time = 1.5
   parameter drive_duration::Time = 1.5
   parameter brake_level::Real = 0.0
   parameter brake_start_time::Time = 1.5
-  parameter marker_spacing::Length = 25.0
-  parameter marker_offset::Length = 1.5
-  parameter marker_height::Length = 1.0
-  parameter marker_diameter::Length = 0.1
 
 relations
 
@@ -178,17 +136,8 @@ metadata {
     "vehicle": {
       "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 450, "y2": 550}}}
     },
-    "post_1": {
+    "track": {
       "Dyad": {"placement": {"diagram": {"x1": 0, "x2": 100, "y1": 900, "y2": 1000}}}
-    },
-    "post_2": {
-      "Dyad": {"placement": {"diagram": {"x1": 170, "x2": 270, "y1": 900, "y2": 1000}}}
-    },
-    "post_3": {
-      "Dyad": {"placement": {"diagram": {"x1": 340, "x2": 440, "y1": 900, "y2": 1000}}}
-    },
-    "post_4": {
-      "Dyad": {"placement": {"diagram": {"x1": 510, "x2": 610, "y1": 900, "y2": 1000}}}
     },
     "id19": {
       "Dyad": {

@@ -1,0 +1,94 @@
+component StraightLineTrack
+  """
+  Visual-only straight-line reference posts for vehicle animations.
+  """
+
+  extends Styles
+
+  post_0 = MultibodyComponents.CylinderShape(
+    color = sty_orange,
+    r = [0, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_0}
+  post_25 = MultibodyComponents.CylinderShape(
+    color = sty_orange,
+    r = [marker_spacing, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_25}
+  post_50 = MultibodyComponents.CylinderShape(
+    color = sty_orange,
+    r = [2 * marker_spacing, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_50}
+  post_75 = MultibodyComponents.CylinderShape(
+    color = sty_orange,
+    r = [3 * marker_spacing, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_75}
+  post_100 = MultibodyComponents.CylinderShape(
+    color = sty_purple,
+    r = [4 * marker_spacing, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_100}
+  post_125 = MultibodyComponents.CylinderShape(
+    color = sty_orange,
+    r = [5 * marker_spacing, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_125}
+  post_150 = MultibodyComponents.CylinderShape(
+    color = sty_orange,
+    r = [6 * marker_spacing, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_150}
+  post_175 = MultibodyComponents.CylinderShape(
+    color = sty_orange,
+    r = [7 * marker_spacing, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_175}
+  post_200 = MultibodyComponents.CylinderShape(
+    color = sty_orange,
+    r = [8 * marker_spacing, marker_offset, 0],
+    length_direction = [0, 0, 1],
+    width_direction = [1, 0, 0],
+    length = marker_height,
+    width = marker_diameter,
+    height = marker_diameter
+  ) {^post_200}
+
+  parameter marker_spacing::Length = 25.0
+  parameter marker_offset::Length = 1.5
+  parameter marker_height::Length = 1.0
+  parameter marker_diameter::Length = 0.1
+end
