@@ -46,6 +46,7 @@ const MAGIC_CHANNEL = 0x0303
 
 const DTYPE_FLOAT = 0x0007
 const DTYPE_SIZE = 0x0004
+const CHANNEL_ID_BASE = 12_000
 
 """
 One logged channel, sampled at a fixed rate. `unit` is the text i2 shows on the
@@ -159,7 +160,7 @@ function channel_record(channel::Channel, index, count, data_ptr)
     putle!(buf, 4, UInt32(index < count ? CHANNEL_TABLE_PTR + index * CHANNEL_SIZE : 0))
     putle!(buf, 8, UInt32(data_ptr))
     putle!(buf, 12, UInt32(length(channel.data)))
-    putle!(buf, 16, UInt16(index))
+    putle!(buf, 16, UInt16(CHANNEL_ID_BASE + index))
     putle!(buf, 18, UInt16(DTYPE_FLOAT))
     putle!(buf, 20, UInt16(DTYPE_SIZE))
     putle!(buf, 22, UInt16(channel.freq))
