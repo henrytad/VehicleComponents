@@ -1,3 +1,8 @@
+# If you update the VEHCILE, run the following line to update the REPL:
+# `VehicleComponents.params = VehicleComponents.Data.VEHICLE`
+#
+# You will still need to rebuild `model` and `ssys` to get new changes.
+
 VEHICLE = Vehicle(
     name="TestVehicle",
     units="SI",
