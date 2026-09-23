@@ -4,8 +4,6 @@
 ### Instead, update the Dyad source code and regenerate this file
 
 
-import Moshi as __Ext__Moshi
-
 @doc Markdown.doc"""
    Suspension(; name, heave_dataset, roll_dataset, wheel_center_left, wheel_center_right, pushrod_outer_left, pushrod_outer_right, tierod_inner_left, tierod_inner_right)
 

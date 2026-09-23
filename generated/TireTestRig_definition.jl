@@ -4,8 +4,6 @@
 ### Instead, update the Dyad source code and regenerate this file
 
 
-import Moshi as __Ext__Moshi
-
 @doc Markdown.doc"""
    TireTestRig(; name, unloaded_radius, stroke, freq, speed, static_deflection, kappa_start, kappa_end, slip_ramp_time, alpha_start, alpha_end, steer_ramp_time)
 

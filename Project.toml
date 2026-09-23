@@ -1,7 +1,9 @@
 name = "VehicleComponents"
 uuid = "370a68f5-2484-44f4-aeb0-2e1f7c5b03c6"
 version = "0.1.0"
-authors = [" <>"]
+authors = [
+  " <>"
+]
 
 [deps]
 BlockComponents = "1ef5d832-be8e-447f-9f2c-8b5d17d15fd3"
@@ -27,24 +29,24 @@ ThermalComponents = "084a29d9-4f48-4925-95b4-b7d4c79725f4"
 TranslationalComponents = "42acc370-819b-4877-bdd6-eb3294461f5d"
 
 [compat]
-BlockComponents = "4.5.1"
+BlockComponents = "=4.6.0"
 DyadData = "2.0.1"
-ElectricalComponents = "2.2.1"
+ElectricalComponents = "=2.2.2"
 GLMakie = "0.13.13"
-HydraulicComponents = "2.0.3"
+HydraulicComponents = "=2.0.4"
 JSON = "0.21, 1"
 JSON3 = "1.14.3"
 LinearAlgebra = "1.12.0"
 Markdown = "1"
 MultibodyComponents = "0.2.3"
-RotationalComponents = "2.5.4"
+RotationalComponents = "=2.5.5"
 StableRNGs = "1.0.4"
 TOML = "1"
-ThermalComponents = "2.0.5"
-TranslationalComponents = "2.5.0"
+ThermalComponents = "=2.0.6"
+TranslationalComponents = "=2.5.1"
 
 [dyad]
-kernel = "3.3.0"
+kernel = "3.4.0"
 
 [extras]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
@@ -54,4 +56,10 @@ Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["DyadEcosystemDependencies", "CSV", "DataFrames", "Plots", "Test"]
+test = [
+  "DyadEcosystemDependencies",
+  "CSV",
+  "DataFrames",
+  "Plots",
+  "Test"
+]
