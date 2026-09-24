@@ -4,8 +4,6 @@
 ### Instead, update the Dyad source code and regenerate this file
 
 
-import Moshi as __Ext__Moshi
-
 @doc Markdown.doc"""
    FullVehicleTestStep(; name, drive_start_time, brake_level, brake_start_time, steer_start_time, steer_angle)
 

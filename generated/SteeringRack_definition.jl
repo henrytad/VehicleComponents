@@ -4,8 +4,6 @@
 ### Instead, update the Dyad source code and regenerate this file
 
 
-import Moshi as __Ext__Moshi
-
 @doc Markdown.doc"""
    SteeringRack(; name, tierod_inner_left, tierod_inner_right, rack_axis, rack_ratio)
 
