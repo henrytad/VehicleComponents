@@ -6,6 +6,7 @@ authors = [
 ]
 
 [deps]
+ADTypes = "47edcb42-4c32-4615-8424-f2b9edc5f35b"
 BlockComponents = "1ef5d832-be8e-447f-9f2c-8b5d17d15fd3"
 DyadData = "cab12561-e36c-4498-ae70-c9a5e79fef2a"
 DyadInterface = "99806f68-afab-45ca-9d8c-ceff6bc61f54"
@@ -20,6 +21,7 @@ ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
 Moshi = "2e0e35c7-a2e4-4343-998d-7ef72827ed2d"
 MultibodyComponents = "01883e52-22cd-4538-b14d-b44f958a131d"
 OrdinaryDiffEqDefault = "50262376-6c5a-4cf5-baba-aaf4f84d72d7"
+OrdinaryDiffEqRosenbrock = "43230ef6-c299-4910-a778-202eb28ce4ce"
 PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 RotationalComponents = "824fa3ed-d7dc-4365-8bdf-ac77a1ac2011"
 RuntimeGeneratedFunctions = "7e49a35a-f44a-4d26-94aa-eba1b4ca6b47"

@@ -1,5 +1,6 @@
 using Revise
 using VehicleComponents
+using ADTypes: AutoFiniteDiff
 using GLMakie, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
 
 const DEG = 180 / π
@@ -8,7 +9,7 @@ const MM = 1000
 @named model = VehicleComponents.LinkageTestRig()
 ssys = multibody(model)
 prob = ODEProblem(ssys, [], (0.0, 2.0))
-sol = solve(prob)
+sol = solve(prob, Rodas5P(autodiff=AutoFiniteDiff()))
 
 plot_camber = Plots.plot(
     sol,

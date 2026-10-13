@@ -1,6 +1,7 @@
 using Revise
 using VehicleComponents
 using GLMakie, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
+using ADTypes: AutoFiniteDiff
 
 t_drive = 1.5
 t_steer = 1.5
@@ -9,6 +10,9 @@ t_end = 24.0
 
 @named model = VehicleComponents.FullVehicleTestStep()
 ssys = multibody(model)
+D = Differential(ModelingToolkit.get_iv(ssys))
+# TODO: Remove guesses once MTK avoids symbolic guess expansion for linear initialization:
+# https://github.com/SciML/ModelingToolkit.jl/issues/5272
 prob = ODEProblem(ssys, [
     ssys.steer_angle => steer_angle,
     ssys.throttle.height => 0.1,
@@ -17,8 +21,8 @@ prob = ODEProblem(ssys, [
     ssys.vehicle.corner_fr.motor.max_torque => 3,
     ssys.vehicle.corner_rl.motor.max_torque => 3,
     ssys.vehicle.corner_rr.motor.max_torque => 3,
-], (0.0, t_end))
-sol = solve(prob; tstops=[t_drive, t_steer])
+], (0.0, t_end); guesses=[D(D(ssys.vehicle.body.r_0[i])) => 0.0 for i in 1:3])
+sol = solve(prob, Rodas5P(autodiff=AutoFiniteDiff()); tstops=[t_drive, t_steer])
 
 # ===========================================================================
 # MoTeC export

@@ -2,7 +2,7 @@
 
 julia_version = "1.12.7-dyad"
 manifest_format = "2.0"
-project_hash = "39a1b40e8eb640d509056187cdb41556275e1a0d"
+project_hash = "99fad916274b85cb6632c2ff8ae6bbce51d4ba24"
 
 [[deps.ADTypes]]
 deps = ["PrecompileTools"]
@@ -2799,7 +2799,7 @@ version = "0.3.2"
     LLVM = "929cbde3-209d-540e-8aea-75f648917ca0"
 
 [[deps.VehicleComponents]]
-deps = ["BlockComponents", "DyadData", "DyadInterface", "ElectricalComponents", "GLMakie", "HydraulicComponents", "JSON", "JSON3", "LinearAlgebra", "Markdown", "ModelingToolkit", "Moshi", "MultibodyComponents", "OrdinaryDiffEqDefault", "PrecompileTools", "RotationalComponents", "RuntimeGeneratedFunctions", "StableRNGs", "TOML", "ThermalComponents", "TranslationalComponents"]
+deps = ["ADTypes", "BlockComponents", "DyadData", "DyadInterface", "ElectricalComponents", "GLMakie", "HydraulicComponents", "JSON", "JSON3", "LinearAlgebra", "Markdown", "ModelingToolkit", "Moshi", "MultibodyComponents", "OrdinaryDiffEqDefault", "OrdinaryDiffEqRosenbrock", "PrecompileTools", "RotationalComponents", "RuntimeGeneratedFunctions", "StableRNGs", "TOML", "ThermalComponents", "TranslationalComponents"]
 path = "."
 uuid = "370a68f5-2484-44f4-aeb0-2e1f7c5b03c6"
 version = "0.1.0"
