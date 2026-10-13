@@ -394,7 +394,7 @@ function wheelbase(vehicle::Vehicle)
     return front.geometry.linkages.left.wheel_center[1] - rear.geometry.linkages.left.wheel_center[1]
 end
 
-include("vehicles/MR25.jl")
-# include("vehicles/TestVehicle.jl")
+# include("vehicles/MR25.jl")
+include("vehicles/TestVehicle.jl")
 
 end # module Data
