@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 
-ARG DYAD_CHANNEL=dyad-3.3.0
+ARG DYAD_CHANNEL=dyad-3.4.0
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates curl xvfb \
