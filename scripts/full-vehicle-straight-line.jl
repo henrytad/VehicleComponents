@@ -1,6 +1,7 @@
 using Revise
 using VehicleComponents
 using GLMakie, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
+using ADTypes: AutoFiniteDiff
 
 # Settle, 4 s of full throttle, then 4 s on the brake
 t_drive = 1.5
@@ -10,13 +11,16 @@ brake_level = 1.0
 
 @named model = VehicleComponents.FullVehicleTestStraightLine()
 ssys = multibody(model)
+D = Differential(ModelingToolkit.get_iv(ssys))
+# TODO: Remove guesses once MTK avoids symbolic guess expansion for linear initialization:
+# https://github.com/SciML/ModelingToolkit.jl/issues/5272
 prob = ODEProblem(ssys, [
     ssys.drive_start_time => t_drive,
     ssys.drive_duration => t_brake - t_drive,
     ssys.brake_start_time => t_brake,
     ssys.brake_level => brake_level,
-], (0.0, t_end))
-sol = solve(prob; tstops=[t_drive, t_brake])
+], (0.0, t_end); guesses=[D(D(ssys.vehicle.body.r_0[i])) => 0.0 for i in 1:3])
+sol = solve(prob, Rodas5P(autodiff=AutoFiniteDiff()); tstops=[t_drive, t_brake])
 
 # ===========================================================================
 # MoTeC export

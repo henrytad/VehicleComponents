@@ -4,8 +4,6 @@
 ### Instead, update the Dyad source code and regenerate this file
 
 
-import Moshi as __Ext__Moshi
-
 @doc Markdown.doc"""
    Linkage(; name, lca_front, lca_outer, lca_rear, uca_front, uca_outer, uca_rear, tierod_inner, tierod_outer, wheel_center, pushrod_outer, static_camber, static_toe)
 

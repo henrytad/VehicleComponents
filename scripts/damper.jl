@@ -1,11 +1,12 @@
 using Revise
 using VehicleComponents
+using ADTypes: AutoFiniteDiff
 using ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
 
 @named model = VehicleComponents.DamperTestRig()
 ssys = multibody(model)
 prob = ODEProblem(ssys, [], (0.0, 0.4))
-sol = solve(prob)
+sol = solve(prob, Rodas5P(autodiff=AutoFiniteDiff()))
 
 selection = VehicleComponents.params.suspension.front.setup.heave.damper
 name = "front heave: $(selection.valve_code), compression $(selection.compression_position), extension $(selection.extension_position)"

@@ -1,11 +1,12 @@
 using Revise
 using VehicleComponents
+using ADTypes: AutoFiniteDiff
 using GLMakie, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
 
 @named model = VehicleComponents.FullVehicleTestStatic()
 ssys = multibody(model)
 prob = ODEProblem(ssys, [], (0.0, 2.0))
-sol = solve(prob)
+sol = solve(prob, Rodas5P(autodiff=AutoFiniteDiff()))
 
 # ===========================================================================
 # Animation

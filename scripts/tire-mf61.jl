@@ -1,5 +1,6 @@
 using Revise
 using VehicleComponents
+using ADTypes: AutoFiniteDiff
 using GLMakie, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, Plots
 
 const DEG = 180 / π
@@ -28,7 +29,7 @@ parameter_map = Dict([
 ])
 
 prob = ODEProblem(ssys, parameter_map, (0.0, stop))
-sol = solve(prob)
+sol = solve(prob, Rodas5P(autodiff=AutoFiniteDiff()))
 
 plot_slip_curve = Plots.plot(
     sol,
@@ -85,7 +86,8 @@ lateral_map(deflection) = Dict([
 ])
 
 lateral_sols = map(sweep_loads) do fz
-    solve(ODEProblem(ssys, lateral_map(fz / tires.VERTICAL_STIFFNESS), (0.0, stop)))
+    solve(ODEProblem(ssys, lateral_map(fz / tires.VERTICAL_STIFFNESS), (0.0, stop)),
+        Rodas5P(autodiff=AutoFiniteDiff()))
 end
 
 # Fy needs a few relaxation lengths to catch up with the commanded slip angle, so
@@ -136,7 +138,7 @@ Plots.plot(
 # Vertical sweep. Same rig with the carriage and spin drive parked, which is what
 # the `sweep` test exercises.
 prob_vertical = ODEProblem(ssys, [], (0.0, 2.0))
-sol_vertical = solve(prob_vertical)
+sol_vertical = solve(prob_vertical, Rodas5P(autodiff=AutoFiniteDiff()))
 
 plot_height = Plots.plot(
     sol_vertical,

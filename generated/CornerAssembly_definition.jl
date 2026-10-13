@@ -4,8 +4,6 @@
 ### Instead, update the Dyad source code and regenerate this file
 
 
-import Moshi as __Ext__Moshi
-
 @doc Markdown.doc"""
    CornerAssembly(; name, is_left, is_front, upright_mass, upright_I_11, upright_I_22, upright_I_33)
 

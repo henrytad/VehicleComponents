@@ -58,7 +58,7 @@ VEHICLE = Vehicle(
             ),
             setup=Setup(
                 heave=HeaveSetup(
-                    stiffness=35000.0,
+                    stiffness=50000.0,
                     s_unstretched=0.228,
                     perch_height=0.0,
                     damper=DamperSelection(valve_code="heave_VC03", compression_position=2, extension_position=2),
@@ -127,7 +127,7 @@ VEHICLE = Vehicle(
             ),
             setup=Setup(
                 heave=HeaveSetup(
-                    stiffness=40000.0,
+                    stiffness=55000.0,
                     s_unstretched=0.224,
                     perch_height=0.0,
                     damper=DamperSelection(valve_code="heave_VC01", compression_position=4, extension_position=4),
