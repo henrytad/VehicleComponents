@@ -10,12 +10,26 @@ brake_level = 1.0
 
 @named model = VehicleComponents.FullVehicleTestStraightLine()
 ssys = multibody(model)
+D = Differential(ModelingToolkit.get_iv(ssys))
 prob = ODEProblem(ssys, [
     ssys.drive_start_time => t_drive,
     ssys.drive_duration => t_brake - t_drive,
     ssys.brake_start_time => t_brake,
     ssys.brake_level => brake_level,
-], (0.0, t_end))
+], (0.0, t_end); guesses=[
+    D(D(ssys.longitudinal_joint.s)) => 0.0,
+    D(D(ssys.lateral_joint.s)) => 0.0,
+    D(D(ssys.heave_joint.s)) => 0.0,
+    D(D(ssys.roll_joint.phi)) => 0.0,
+    D(D(ssys.pitch_joint.phi)) => 0.0,
+    D(D(ssys.vehicle.front_suspension.linkage_left.lca_rev.phi)) => 0.0,
+    D(D(ssys.vehicle.front_suspension.linkage_right.lca_rev.phi)) => 0.0,
+    D(D(ssys.vehicle.rear_suspension.linkage_left.lca_rev.phi)) => 0.0,
+    D(D(ssys.vehicle.rear_suspension.linkage_right.lca_rev.phi)) => 0.0,
+    D(D(ssys.vehicle.body.r_0[1])) => 0.0,
+    D(D(ssys.vehicle.body.r_0[2])) => 0.0,
+    D(D(ssys.vehicle.body.r_0[3])) => 0.0
+])
 sol = solve(prob; tstops=[t_drive, t_brake])
 
 # ===========================================================================
