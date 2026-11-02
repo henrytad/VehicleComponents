@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   InboardTestRig(; name, pushrod_outer_left, pushrod_outer_right, heave_amplitude, roll_amplitude, heave_freq, roll_freq)
+   InboardTestRig(; name, pushrod_outer_left, pushrod_outer_right, heave_amplitude, roll_amplitude, heave_freq, roll_freq, __overrides)
 
 ## Parameters:
 
@@ -25,7 +25,7 @@
 | `heave_motion`         |                          | m  |
 | `roll_motion`         |                          | m  |
 """
-@component function InboardTestRig(; name = nothing, pushrod_outer_left=VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer, pushrod_outer_right=VehicleComponents.params.suspension.front.geometry.linkages.right.pushrod_outer, heave_amplitude=0.0254, roll_amplitude=0.0254, heave_freq=0.5, roll_freq=1.25, kwargs...)
+@component function InboardTestRig(; name = nothing, var"pushrod_outer_left"=VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer, var"pushrod_outer_right"=VehicleComponents.params.suspension.front.geometry.linkages.right.pushrod_outer, var"heave_amplitude"=0.0254, var"roll_amplitude"=0.0254, var"heave_freq"=0.5, var"roll_freq"=1.25, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -33,7 +33,7 @@
     @named model = InboardTestRig()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -42,6 +42,14 @@
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "pushrod_outer_left") && (pushrod_outer_left = pop!(__overrides, "pushrod_outer_left"))
+  haskey(__overrides, "pushrod_outer_right") && (pushrod_outer_right = pop!(__overrides, "pushrod_outer_right"))
+  haskey(__overrides, "heave_amplitude") && (heave_amplitude = pop!(__overrides, "heave_amplitude"))
+  haskey(__overrides, "roll_amplitude") && (roll_amplitude = pop!(__overrides, "roll_amplitude"))
+  haskey(__overrides, "heave_freq") && (heave_freq = pop!(__overrides, "heave_freq"))
+  haskey(__overrides, "roll_freq") && (roll_freq = pop!(__overrides, "roll_freq"))
 
   ### Structural Parameters (functions)
 
@@ -58,22 +66,22 @@
   ### Symbolic Parameters
   __local__pushrod_outer_left = pushrod_outer_left
   append!(__params, @parameters (pushrod_outer_left[1:3]::Real))
-  __initial_conditions[pushrod_outer_left] = __local__pushrod_outer_left
+  __dyad_seed_parameter!(__initial_conditions, __bindings, pushrod_outer_left, __local__pushrod_outer_left)
   __local__pushrod_outer_right = pushrod_outer_right
   append!(__params, @parameters (pushrod_outer_right[1:3]::Real))
-  __initial_conditions[pushrod_outer_right] = __local__pushrod_outer_right
+  __dyad_seed_parameter!(__initial_conditions, __bindings, pushrod_outer_right, __local__pushrod_outer_right)
   __local__heave_amplitude = heave_amplitude
   append!(__params, @parameters (heave_amplitude::Real))
-  __initial_conditions[heave_amplitude] = __local__heave_amplitude
+  __dyad_seed_parameter!(__initial_conditions, __bindings, heave_amplitude, __local__heave_amplitude)
   __local__roll_amplitude = roll_amplitude
   append!(__params, @parameters (roll_amplitude::Real))
-  __initial_conditions[roll_amplitude] = __local__roll_amplitude
+  __dyad_seed_parameter!(__initial_conditions, __bindings, roll_amplitude, __local__roll_amplitude)
   __local__heave_freq = heave_freq
   append!(__params, @parameters (heave_freq::Real))
-  __initial_conditions[heave_freq] = __local__heave_freq
+  __dyad_seed_parameter!(__initial_conditions, __bindings, heave_freq, __local__heave_freq)
   __local__roll_freq = roll_freq
   append!(__params, @parameters (roll_freq::Real))
-  __initial_conditions[roll_freq] = __local__roll_freq
+  __dyad_seed_parameter!(__initial_conditions, __bindings, roll_freq, __local__roll_freq)
 
   ### Final Parameters (assignments)
 
@@ -85,11 +93,11 @@
 
   ### Variables (assignments)
   __ovr_heave_motion = pop!(__overrides, "heave_motion", nothing); isnothing(__ovr_heave_motion) || push!(__eqs, heave_motion ~ __ovr_heave_motion)
-  __ovr_heave_motion__initial = pop!(__overrides, "heave_motion__initial", nothing); isnothing(__ovr_heave_motion__initial) || (__initial_conditions[heave_motion] = __ovr_heave_motion__initial)
-  __ovr_heave_motion__guess = pop!(__overrides, "heave_motion__guess", nothing)
+  __ovr_heave_motion__initial = pop!(__overrides, "heave_motion.initial", nothing); isnothing(__ovr_heave_motion__initial) || (__initial_conditions[heave_motion] = __ovr_heave_motion__initial)
+  __ovr_heave_motion__guess = pop!(__overrides, "heave_motion.guess", nothing)
   __ovr_roll_motion = pop!(__overrides, "roll_motion", nothing); isnothing(__ovr_roll_motion) || push!(__eqs, roll_motion ~ __ovr_roll_motion)
-  __ovr_roll_motion__initial = pop!(__overrides, "roll_motion__initial", nothing); isnothing(__ovr_roll_motion__initial) || (__initial_conditions[roll_motion] = __ovr_roll_motion__initial)
-  __ovr_roll_motion__guess = pop!(__overrides, "roll_motion__guess", nothing)
+  __ovr_roll_motion__initial = pop!(__overrides, "roll_motion.initial", nothing); isnothing(__ovr_roll_motion__initial) || (__initial_conditions[roll_motion] = __ovr_roll_motion__initial)
+  __ovr_roll_motion__guess = pop!(__overrides, "roll_motion.guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -97,31 +105,39 @@
   ### Components
   # Subcomponent world of type MultibodyComponents.World
   world_overrides = __pop_subcomponent_overrides!(__overrides, "world")
-  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
+  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, __symbol_overrides(world_overrides)...))
   # Subcomponent inboard of type VehicleComponents.Inboard
   inboard_overrides = __pop_subcomponent_overrides!(__overrides, "inboard")
-  push!(__systems, @named inboard = VehicleComponents.Inboard(; pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, rocker_pivot_left=VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.left, rocker_pivot_right=VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.right, pushrod_inner_left=VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.left, pushrod_inner_right=VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.right, heave_pickup_left=VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.left, heave_pickup_right=VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.right, roll_pickup_left=VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.left, roll_pickup_right=VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.right, heave_strut__spring__c=VehicleComponents.params.suspension.front.setup.heave.stiffness, heave_strut__spring__s_unstretched=VehicleComponents.params.suspension.front.setup.heave.s_unstretched, heave_strut__spring__perch_height=VehicleComponents.params.suspension.front.setup.heave.perch_height, roll_strut__spring__c=VehicleComponents.params.suspension.front.setup.roll.stiffness, roll_strut__spring__s_neutral=VehicleComponents.params.suspension.front.setup.roll.s_neutral, roll_strut__spring__preload_travel=VehicleComponents.params.suspension.front.setup.roll.preload_travel, heave_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper), roll_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.roll.damper), pushrod_adjust_left=VehicleComponents.params.suspension.front.setup.pushrod_adjust.left, pushrod_adjust_right=VehicleComponents.params.suspension.front.setup.pushrod_adjust.right, inboard_overrides...))
+  inboard_dict = Dict{String, Any}()
+  inboard_dict["heave_strut.spring.c"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.heave.stiffness)
+  inboard_dict["heave_strut.spring.s_unstretched"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.heave.s_unstretched)
+  inboard_dict["heave_strut.spring.perch_height"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.heave.perch_height)
+  inboard_dict["roll_strut.spring.c"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.roll.stiffness)
+  inboard_dict["roll_strut.spring.s_neutral"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.roll.s_neutral)
+  inboard_dict["roll_strut.spring.preload_travel"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.roll.preload_travel)
+  merge!(inboard_dict, inboard_overrides)
+  push!(__systems, @named inboard = VehicleComponents.Inboard(; pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, rocker_pivot_left=VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.left, rocker_pivot_right=VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.right, pushrod_inner_left=VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.left, pushrod_inner_right=VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.right, heave_pickup_left=VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.left, heave_pickup_right=VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.right, roll_pickup_left=VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.left, roll_pickup_right=VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.right, heave_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper), roll_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.roll.damper), pushrod_adjust_left=VehicleComponents.params.suspension.front.setup.pushrod_adjust.left, pushrod_adjust_right=VehicleComponents.params.suspension.front.setup.pushrod_adjust.right, __overrides = inboard_dict))
   # Subcomponent fixed_left of type MultibodyComponents.Fixed
   fixed_left_overrides = __pop_subcomponent_overrides!(__overrides, "fixed_left")
-  push!(__systems, @named fixed_left = MultibodyComponents.Fixed(; r=pushrod_outer_left, render=false, fixed_left_overrides...))
+  push!(__systems, @named fixed_left = MultibodyComponents.Fixed(; r=pushrod_outer_left, render=false, __overrides = fixed_left_overrides))
   # Subcomponent prismatic_left of type MultibodyComponents.Prismatic
   prismatic_left_overrides = __pop_subcomponent_overrides!(__overrides, "prismatic_left")
-  push!(__systems, @named prismatic_left = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, prismatic_left_overrides...))
+  push!(__systems, @named prismatic_left = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, __overrides = prismatic_left_overrides))
   # Subcomponent pushrod_position_left of type TranslationalComponents.Sources.Position
   pushrod_position_left_overrides = __pop_subcomponent_overrides!(__overrides, "pushrod_position_left")
-  push!(__systems, @named pushrod_position_left = TranslationalComponents.Sources.Position(; pushrod_position_left_overrides...))
+  push!(__systems, @named pushrod_position_left = TranslationalComponents.Sources.Position(; __overrides = pushrod_position_left_overrides))
   # Subcomponent fixed_right of type MultibodyComponents.Fixed
   fixed_right_overrides = __pop_subcomponent_overrides!(__overrides, "fixed_right")
-  push!(__systems, @named fixed_right = MultibodyComponents.Fixed(; r=pushrod_outer_right, render=false, fixed_right_overrides...))
+  push!(__systems, @named fixed_right = MultibodyComponents.Fixed(; r=pushrod_outer_right, render=false, __overrides = fixed_right_overrides))
   # Subcomponent prismatic_right of type MultibodyComponents.Prismatic
   prismatic_right_overrides = __pop_subcomponent_overrides!(__overrides, "prismatic_right")
-  push!(__systems, @named prismatic_right = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, prismatic_right_overrides...))
+  push!(__systems, @named prismatic_right = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, __overrides = prismatic_right_overrides))
   # Subcomponent pushrod_position_right of type TranslationalComponents.Sources.Position
   pushrod_position_right_overrides = __pop_subcomponent_overrides!(__overrides, "pushrod_position_right")
-  push!(__systems, @named pushrod_position_right = TranslationalComponents.Sources.Position(; pushrod_position_right_overrides...))
+  push!(__systems, @named pushrod_position_right = TranslationalComponents.Sources.Position(; __overrides = pushrod_position_right_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
   isnothing(__ovr_heave_motion__guess) || (__guesses[heave_motion] = __ovr_heave_motion__guess)
@@ -150,6 +166,6 @@
   push!(__eqs, connect(inboard.chassis, world.frame_b))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export InboardTestRig

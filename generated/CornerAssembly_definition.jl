@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   CornerAssembly(; name, is_left, is_front, upright_mass, upright_I_11, upright_I_22, upright_I_33)
+   CornerAssembly(; name, is_left, is_front, upright_mass, upright_I_11, upright_I_22, upright_I_33, __overrides)
 
 ## Parameters:
 
@@ -26,7 +26,7 @@
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function CornerAssembly(; name = nothing, is_left=nothing, is_front=nothing, upright_mass=nothing, upright_I_11=nothing, upright_I_22=nothing, upright_I_33=nothing, kwargs...)
+@component function CornerAssembly(; name = nothing, var"is_left"=nothing, var"is_front"=nothing, var"upright_mass"=nothing, var"upright_I_11"=nothing, var"upright_I_22"=nothing, var"upright_I_33"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -34,7 +34,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = CornerAssembly()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -43,6 +43,14 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "is_left") && (is_left = pop!(__overrides, "is_left"))
+  haskey(__overrides, "is_front") && (is_front = pop!(__overrides, "is_front"))
+  haskey(__overrides, "upright_mass") && (upright_mass = pop!(__overrides, "upright_mass"))
+  haskey(__overrides, "upright_I_11") && (upright_I_11 = pop!(__overrides, "upright_I_11"))
+  haskey(__overrides, "upright_I_22") && (upright_I_22 = pop!(__overrides, "upright_I_22"))
+  haskey(__overrides, "upright_I_33") && (upright_I_33 = pop!(__overrides, "upright_I_33"))
 
   ### Structural Parameters (functions)
 
@@ -59,16 +67,16 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__upright_mass = upright_mass
   append!(__params, @parameters (upright_mass::Real), [bounds = (0, Inf)])
-  __initial_conditions[upright_mass] = __local__upright_mass
+  __dyad_seed_parameter!(__initial_conditions, __bindings, upright_mass, __local__upright_mass)
   __local__upright_I_11 = upright_I_11
   append!(__params, @parameters (upright_I_11::Real))
-  __initial_conditions[upright_I_11] = __local__upright_I_11
+  __dyad_seed_parameter!(__initial_conditions, __bindings, upright_I_11, __local__upright_I_11)
   __local__upright_I_22 = upright_I_22
   append!(__params, @parameters (upright_I_22::Real))
-  __initial_conditions[upright_I_22] = __local__upright_I_22
+  __dyad_seed_parameter!(__initial_conditions, __bindings, upright_I_22, __local__upright_I_22)
   __local__upright_I_33 = upright_I_33
   append!(__params, @parameters (upright_I_33::Real))
-  __initial_conditions[upright_I_33] = __local__upright_I_33
+  __dyad_seed_parameter!(__initial_conditions, __bindings, upright_I_33, __local__upright_I_33)
 
   ### Final Parameters (assignments)
 
@@ -88,19 +96,19 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named wheel_center = __Dyad__Frame3D())
   # Subcomponent wheel_assembly of type VehicleComponents.WheelAssembly
   wheel_assembly_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_assembly")
-  push!(__systems, @named wheel_assembly = VehicleComponents.WheelAssembly(; is_left=is_left, wheel_assembly_overrides...))
+  push!(__systems, @named wheel_assembly = VehicleComponents.WheelAssembly(; is_left=is_left, __overrides = wheel_assembly_overrides))
   # Subcomponent motor of type VehicleComponents.HubMotor
   motor_overrides = __pop_subcomponent_overrides!(__overrides, "motor")
-  push!(__systems, @named motor = VehicleComponents.HubMotor(; motor_overrides...))
+  push!(__systems, @named motor = VehicleComponents.HubMotor(; __overrides = motor_overrides))
   # Subcomponent brake of type VehicleComponents.Brake
   brake_overrides = __pop_subcomponent_overrides!(__overrides, "brake")
-  push!(__systems, @named brake = VehicleComponents.Brake(; is_front=is_front, brake_overrides...))
+  push!(__systems, @named brake = VehicleComponents.Brake(; is_front=is_front, __overrides = brake_overrides))
   # Subcomponent upright of type MultibodyComponents.Body
   upright_overrides = __pop_subcomponent_overrides!(__overrides, "upright")
-  push!(__systems, @named upright = MultibodyComponents.Body(; m=upright_mass, r_cm=[Float64(0), Float64(0), Float64(0)], I_11=upright_I_11, I_22=upright_I_22, I_33=upright_I_33, cylinder_radius=Float64(0), upright_overrides...))
+  push!(__systems, @named upright = MultibodyComponents.Body(; m=upright_mass, r_cm=[Float64(0), Float64(0), Float64(0)], I_11=upright_I_11, I_22=upright_I_22, I_33=upright_I_33, cylinder_radius=Float64(0), __overrides = upright_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -121,6 +129,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(brake.wheel_center, wheel_center))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export CornerAssembly

@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   Inboard(; name, heave_dataset, roll_dataset, rocker_pivot_left, rocker_pivot_right, pushrod_inner_left, pushrod_inner_right, pushrod_outer_left, pushrod_outer_right, heave_pickup_left, heave_pickup_right, roll_pickup_left, roll_pickup_right, pushrod_adjust_left, pushrod_adjust_right)
+   Inboard(; name, heave_dataset, roll_dataset, rocker_pivot_left, rocker_pivot_right, pushrod_inner_left, pushrod_inner_right, pushrod_outer_left, pushrod_outer_right, heave_pickup_left, heave_pickup_right, roll_pickup_left, roll_pickup_right, pushrod_adjust_left, pushrod_adjust_right, __overrides)
 
 ## Parameters:
 
@@ -35,7 +35,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
  * `linkage_right` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function Inboard(; name = nothing, heave_dataset=nothing, roll_dataset=nothing, rocker_pivot_left=nothing, rocker_pivot_right=nothing, pushrod_inner_left=nothing, pushrod_inner_right=nothing, pushrod_outer_left=nothing, pushrod_outer_right=nothing, heave_pickup_left=nothing, heave_pickup_right=nothing, roll_pickup_left=nothing, roll_pickup_right=nothing, pushrod_adjust_left=nothing, pushrod_adjust_right=nothing, kwargs...)
+@component function Inboard(; name = nothing, var"heave_dataset"=nothing, var"roll_dataset"=nothing, var"rocker_pivot_left"=nothing, var"rocker_pivot_right"=nothing, var"pushrod_inner_left"=nothing, var"pushrod_inner_right"=nothing, var"pushrod_outer_left"=nothing, var"pushrod_outer_right"=nothing, var"heave_pickup_left"=nothing, var"heave_pickup_right"=nothing, var"roll_pickup_left"=nothing, var"roll_pickup_right"=nothing, var"pushrod_adjust_left"=nothing, var"pushrod_adjust_right"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -43,7 +43,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = Inboard()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -52,6 +52,22 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "heave_dataset") && (heave_dataset = pop!(__overrides, "heave_dataset"))
+  haskey(__overrides, "roll_dataset") && (roll_dataset = pop!(__overrides, "roll_dataset"))
+  haskey(__overrides, "rocker_pivot_left") && (rocker_pivot_left = pop!(__overrides, "rocker_pivot_left"))
+  haskey(__overrides, "rocker_pivot_right") && (rocker_pivot_right = pop!(__overrides, "rocker_pivot_right"))
+  haskey(__overrides, "pushrod_inner_left") && (pushrod_inner_left = pop!(__overrides, "pushrod_inner_left"))
+  haskey(__overrides, "pushrod_inner_right") && (pushrod_inner_right = pop!(__overrides, "pushrod_inner_right"))
+  haskey(__overrides, "pushrod_outer_left") && (pushrod_outer_left = pop!(__overrides, "pushrod_outer_left"))
+  haskey(__overrides, "pushrod_outer_right") && (pushrod_outer_right = pop!(__overrides, "pushrod_outer_right"))
+  haskey(__overrides, "heave_pickup_left") && (heave_pickup_left = pop!(__overrides, "heave_pickup_left"))
+  haskey(__overrides, "heave_pickup_right") && (heave_pickup_right = pop!(__overrides, "heave_pickup_right"))
+  haskey(__overrides, "roll_pickup_left") && (roll_pickup_left = pop!(__overrides, "roll_pickup_left"))
+  haskey(__overrides, "roll_pickup_right") && (roll_pickup_right = pop!(__overrides, "roll_pickup_right"))
+  haskey(__overrides, "pushrod_adjust_left") && (pushrod_adjust_left = pop!(__overrides, "pushrod_adjust_left"))
+  haskey(__overrides, "pushrod_adjust_right") && (pushrod_adjust_right = pop!(__overrides, "pushrod_adjust_right"))
 
   ### Structural Parameters (functions)
 
@@ -62,10 +78,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Path Parameters (non-final)
 
   ### Final Parameters (declarations)
-  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.
-  append!(__params, @parameters (sty_rod_radius::Real), [description = 
-  append!(__params, @parameters (sty_rod_radius::Real), [description = Defines global colors and geometry settings, such as rod radius,
-  append!(__params, @parameters (sty_rod_radius::Real), [description = used consistently across different linkage models.", misc = "final"])
+  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.\n\nDefines global colors and geometry settings, such as rod radius,\nused consistently across different linkage models.", misc = "final"])
   append!(__params, @parameters (sty_body_radius::Real), [misc = "final"])
   append!(__params, @parameters (sty_black[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_orange[1:4]::Real), [misc = "final"])
@@ -105,40 +118,40 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__rocker_pivot_left = rocker_pivot_left
   append!(__params, @parameters (rocker_pivot_left[1:3]::Real))
-  __initial_conditions[rocker_pivot_left] = __local__rocker_pivot_left
+  __dyad_seed_parameter!(__initial_conditions, __bindings, rocker_pivot_left, __local__rocker_pivot_left)
   __local__rocker_pivot_right = rocker_pivot_right
   append!(__params, @parameters (rocker_pivot_right[1:3]::Real))
-  __initial_conditions[rocker_pivot_right] = __local__rocker_pivot_right
+  __dyad_seed_parameter!(__initial_conditions, __bindings, rocker_pivot_right, __local__rocker_pivot_right)
   __local__pushrod_inner_left = pushrod_inner_left
   append!(__params, @parameters (pushrod_inner_left[1:3]::Real))
-  __initial_conditions[pushrod_inner_left] = __local__pushrod_inner_left
+  __dyad_seed_parameter!(__initial_conditions, __bindings, pushrod_inner_left, __local__pushrod_inner_left)
   __local__pushrod_inner_right = pushrod_inner_right
   append!(__params, @parameters (pushrod_inner_right[1:3]::Real))
-  __initial_conditions[pushrod_inner_right] = __local__pushrod_inner_right
+  __dyad_seed_parameter!(__initial_conditions, __bindings, pushrod_inner_right, __local__pushrod_inner_right)
   __local__pushrod_outer_left = pushrod_outer_left
   append!(__params, @parameters (pushrod_outer_left[1:3]::Real))
-  __initial_conditions[pushrod_outer_left] = __local__pushrod_outer_left
+  __dyad_seed_parameter!(__initial_conditions, __bindings, pushrod_outer_left, __local__pushrod_outer_left)
   __local__pushrod_outer_right = pushrod_outer_right
   append!(__params, @parameters (pushrod_outer_right[1:3]::Real))
-  __initial_conditions[pushrod_outer_right] = __local__pushrod_outer_right
+  __dyad_seed_parameter!(__initial_conditions, __bindings, pushrod_outer_right, __local__pushrod_outer_right)
   __local__heave_pickup_left = heave_pickup_left
   append!(__params, @parameters (heave_pickup_left[1:3]::Real))
-  __initial_conditions[heave_pickup_left] = __local__heave_pickup_left
+  __dyad_seed_parameter!(__initial_conditions, __bindings, heave_pickup_left, __local__heave_pickup_left)
   __local__heave_pickup_right = heave_pickup_right
   append!(__params, @parameters (heave_pickup_right[1:3]::Real))
-  __initial_conditions[heave_pickup_right] = __local__heave_pickup_right
+  __dyad_seed_parameter!(__initial_conditions, __bindings, heave_pickup_right, __local__heave_pickup_right)
   __local__roll_pickup_left = roll_pickup_left
   append!(__params, @parameters (roll_pickup_left[1:3]::Real))
-  __initial_conditions[roll_pickup_left] = __local__roll_pickup_left
+  __dyad_seed_parameter!(__initial_conditions, __bindings, roll_pickup_left, __local__roll_pickup_left)
   __local__roll_pickup_right = roll_pickup_right
   append!(__params, @parameters (roll_pickup_right[1:3]::Real))
-  __initial_conditions[roll_pickup_right] = __local__roll_pickup_right
+  __dyad_seed_parameter!(__initial_conditions, __bindings, roll_pickup_right, __local__roll_pickup_right)
   __local__pushrod_adjust_left = pushrod_adjust_left
   append!(__params, @parameters (pushrod_adjust_left::Real))
-  __initial_conditions[pushrod_adjust_left] = __local__pushrod_adjust_left
+  __dyad_seed_parameter!(__initial_conditions, __bindings, pushrod_adjust_left, __local__pushrod_adjust_left)
   __local__pushrod_adjust_right = pushrod_adjust_right
   append!(__params, @parameters (pushrod_adjust_right::Real))
-  __initial_conditions[pushrod_adjust_right] = __local__pushrod_adjust_right
+  __dyad_seed_parameter!(__initial_conditions, __bindings, pushrod_adjust_right, __local__pushrod_adjust_right)
 
   ### Final Parameters (assignments)
   __bindings[sty_rod_radius] = 0.008
@@ -191,37 +204,37 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named linkage_right = __Dyad__Frame3D())
   # Subcomponent mount_rocker_left of type MultibodyComponents.FixedTranslation
   mount_rocker_left_overrides = __pop_subcomponent_overrides!(__overrides, "mount_rocker_left")
-  push!(__systems, @named mount_rocker_left = MultibodyComponents.FixedTranslation(; r=rocker_pivot_left, render=false, mount_rocker_left_overrides...))
+  push!(__systems, @named mount_rocker_left = MultibodyComponents.FixedTranslation(; r=rocker_pivot_left, render=false, __overrides = mount_rocker_left_overrides))
   # Subcomponent mount_rocker_right of type MultibodyComponents.FixedTranslation
   mount_rocker_right_overrides = __pop_subcomponent_overrides!(__overrides, "mount_rocker_right")
-  push!(__systems, @named mount_rocker_right = MultibodyComponents.FixedTranslation(; r=rocker_pivot_right, render=false, mount_rocker_right_overrides...))
+  push!(__systems, @named mount_rocker_right = MultibodyComponents.FixedTranslation(; r=rocker_pivot_right, render=false, __overrides = mount_rocker_right_overrides))
   # Subcomponent rocker_left of type MultibodyComponents.JointUSR
   rocker_left_overrides = __pop_subcomponent_overrides!(__overrides, "rocker_left")
-  push!(__systems, @named rocker_left = MultibodyComponents.JointUSR(; rRod1_ia=pushrod_rod_left, rRod2_ib=rocker_arm_left, n_b=rocker_axis_left, n1_a=pushrod_n1a_left, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, rocker_left_overrides...))
+  push!(__systems, @named rocker_left = MultibodyComponents.JointUSR(; rRod1_ia=pushrod_rod_left, rRod2_ib=rocker_arm_left, n_b=rocker_axis_left, n1_a=pushrod_n1a_left, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, __overrides = rocker_left_overrides))
   # Subcomponent rocker_right of type MultibodyComponents.JointUSR
   rocker_right_overrides = __pop_subcomponent_overrides!(__overrides, "rocker_right")
-  push!(__systems, @named rocker_right = MultibodyComponents.JointUSR(; rRod1_ia=pushrod_rod_right, rRod2_ib=rocker_arm_right, n_b=rocker_axis_right, n1_a=pushrod_n1a_right, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, rocker_right_overrides...))
+  push!(__systems, @named rocker_right = MultibodyComponents.JointUSR(; rRod1_ia=pushrod_rod_right, rRod2_ib=rocker_arm_right, n_b=rocker_axis_right, n1_a=pushrod_n1a_right, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, __overrides = rocker_right_overrides))
   # Subcomponent heave_arm_left of type MultibodyComponents.FixedTranslation
   heave_arm_left_overrides = __pop_subcomponent_overrides!(__overrides, "heave_arm_left")
-  push!(__systems, @named heave_arm_left = MultibodyComponents.FixedTranslation(; r=heave_arm_vec_left, radius=sty_rod_radius, color=sty_grey_medium, heave_arm_left_overrides...))
+  push!(__systems, @named heave_arm_left = MultibodyComponents.FixedTranslation(; r=heave_arm_vec_left, radius=sty_rod_radius, color=sty_grey_medium, __overrides = heave_arm_left_overrides))
   # Subcomponent roll_arm_left of type MultibodyComponents.FixedTranslation
   roll_arm_left_overrides = __pop_subcomponent_overrides!(__overrides, "roll_arm_left")
-  push!(__systems, @named roll_arm_left = MultibodyComponents.FixedTranslation(; r=roll_arm_vec_left, radius=sty_rod_radius, color=sty_grey_medium, roll_arm_left_overrides...))
+  push!(__systems, @named roll_arm_left = MultibodyComponents.FixedTranslation(; r=roll_arm_vec_left, radius=sty_rod_radius, color=sty_grey_medium, __overrides = roll_arm_left_overrides))
   # Subcomponent heave_arm_right of type MultibodyComponents.FixedTranslation
   heave_arm_right_overrides = __pop_subcomponent_overrides!(__overrides, "heave_arm_right")
-  push!(__systems, @named heave_arm_right = MultibodyComponents.FixedTranslation(; r=heave_arm_vec_right, radius=sty_rod_radius, color=sty_grey_medium, heave_arm_right_overrides...))
+  push!(__systems, @named heave_arm_right = MultibodyComponents.FixedTranslation(; r=heave_arm_vec_right, radius=sty_rod_radius, color=sty_grey_medium, __overrides = heave_arm_right_overrides))
   # Subcomponent roll_arm_right of type MultibodyComponents.FixedTranslation
   roll_arm_right_overrides = __pop_subcomponent_overrides!(__overrides, "roll_arm_right")
-  push!(__systems, @named roll_arm_right = MultibodyComponents.FixedTranslation(; r=roll_arm_vec_right, radius=sty_rod_radius, color=sty_grey_medium, roll_arm_right_overrides...))
+  push!(__systems, @named roll_arm_right = MultibodyComponents.FixedTranslation(; r=roll_arm_vec_right, radius=sty_rod_radius, color=sty_grey_medium, __overrides = roll_arm_right_overrides))
   # Subcomponent heave_strut of type VehicleComponents.Strut
   heave_strut_overrides = __pop_subcomponent_overrides!(__overrides, "heave_strut")
-  push!(__systems, @named heave_strut = VehicleComponents.Strut(; color=sty_purple, dataset=heave_dataset, heave_strut_overrides...))
+  push!(__systems, @named heave_strut = VehicleComponents.Strut(; color=sty_purple, dataset=heave_dataset, __overrides = heave_strut_overrides))
   # Subcomponent roll_strut of type VehicleComponents.RollStrut
   roll_strut_overrides = __pop_subcomponent_overrides!(__overrides, "roll_strut")
-  push!(__systems, @named roll_strut = VehicleComponents.RollStrut(; color=sty_orange, dataset=roll_dataset, roll_strut_overrides...))
+  push!(__systems, @named roll_strut = VehicleComponents.RollStrut(; color=sty_orange, dataset=roll_dataset, __overrides = roll_strut_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -247,6 +260,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(roll_arm_right.frame_b, roll_strut.frame_b))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export Inboard

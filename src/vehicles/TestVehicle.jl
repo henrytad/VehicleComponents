@@ -58,13 +58,13 @@ VEHICLE = Vehicle(
             ),
             setup=Setup(
                 heave=HeaveSetup(
-                    stiffness=50000.0,
+                    stiffness=100000.0,
                     s_unstretched=0.228,
                     perch_height=0.0,
                     damper=DamperSelection(valve_code="heave_VC03", compression_position=2, extension_position=2),
                 ),
                 roll=RollSetup(
-                    stiffness=35000.0,
+                    stiffness=70000.0,
                     s_neutral=0.2283243,
                     preload_travel=0.0,
                     damper=DamperSelection(valve_code="roll_VC01", compression_position=3, extension_position=3),
@@ -127,13 +127,13 @@ VEHICLE = Vehicle(
             ),
             setup=Setup(
                 heave=HeaveSetup(
-                    stiffness=55000.0,
+                    stiffness=110000.0,
                     s_unstretched=0.224,
                     perch_height=0.0,
                     damper=DamperSelection(valve_code="heave_VC01", compression_position=4, extension_position=4),
                 ),
                 roll=RollSetup(
-                    stiffness=40000.0,
+                    stiffness=80000.0,
                     s_neutral=0.2238928,
                     preload_travel=0.0,
                     damper=DamperSelection(valve_code="roll_VC01", compression_position=5, extension_position=5),

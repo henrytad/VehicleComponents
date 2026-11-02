@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   WheelAssembly(; name, is_left, rim_mass, rim_inertia, tire_mass, tire_inertia)
+   WheelAssembly(; name, is_left, rim_mass, rim_inertia, tire_mass, tire_inertia, __overrides)
 
 ## Parameters:
 
@@ -24,7 +24,7 @@
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function WheelAssembly(; name = nothing, is_left=nothing, rim_mass=VehicleComponents.params.wheels.rim_mass, rim_inertia=VehicleComponents.params.wheels.rim_inertia, tire_mass=VehicleComponents.params.tires.MASS, tire_inertia=VehicleComponents.params.tires.IYY, kwargs...)
+@component function WheelAssembly(; name = nothing, var"is_left"=nothing, var"rim_mass"=VehicleComponents.params.wheels.rim_mass, var"rim_inertia"=VehicleComponents.params.wheels.rim_inertia, var"tire_mass"=VehicleComponents.params.tires.MASS, var"tire_inertia"=VehicleComponents.params.tires.IYY, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -32,7 +32,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = WheelAssembly()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -41,6 +41,13 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "is_left") && (is_left = pop!(__overrides, "is_left"))
+  haskey(__overrides, "rim_mass") && (rim_mass = pop!(__overrides, "rim_mass"))
+  haskey(__overrides, "rim_inertia") && (rim_inertia = pop!(__overrides, "rim_inertia"))
+  haskey(__overrides, "tire_mass") && (tire_mass = pop!(__overrides, "tire_mass"))
+  haskey(__overrides, "tire_inertia") && (tire_inertia = pop!(__overrides, "tire_inertia"))
 
   ### Structural Parameters (functions)
 
@@ -59,16 +66,16 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__rim_mass = rim_mass
   append!(__params, @parameters (rim_mass::Real), [bounds = (0, Inf)])
-  __initial_conditions[rim_mass] = __local__rim_mass
+  __dyad_seed_parameter!(__initial_conditions, __bindings, rim_mass, __local__rim_mass)
   __local__rim_inertia = rim_inertia
   append!(__params, @parameters (rim_inertia::Real))
-  __initial_conditions[rim_inertia] = __local__rim_inertia
+  __dyad_seed_parameter!(__initial_conditions, __bindings, rim_inertia, __local__rim_inertia)
   __local__tire_mass = tire_mass
   append!(__params, @parameters (tire_mass::Real), [bounds = (0, Inf)])
-  __initial_conditions[tire_mass] = __local__tire_mass
+  __dyad_seed_parameter!(__initial_conditions, __bindings, tire_mass, __local__tire_mass)
   __local__tire_inertia = tire_inertia
   append!(__params, @parameters (tire_inertia::Real))
-  __initial_conditions[tire_inertia] = __local__tire_inertia
+  __dyad_seed_parameter!(__initial_conditions, __bindings, tire_inertia, __local__tire_inertia)
 
   ### Final Parameters (assignments)
   __bindings[wheel_mass] = rim_mass + tire_mass
@@ -89,16 +96,16 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named wheel_center = __Dyad__Frame3D())
   # Subcomponent tire of type VehicleComponents.TireMF61
   tire_overrides = __pop_subcomponent_overrides!(__overrides, "tire")
-  push!(__systems, @named tire = VehicleComponents.TireMF61(; is_left=is_left, tire_overrides...))
+  push!(__systems, @named tire = VehicleComponents.TireMF61(; is_left=is_left, __overrides = tire_overrides))
   # Subcomponent spin of type RotationalComponents.Components.Inertia
   spin_overrides = __pop_subcomponent_overrides!(__overrides, "spin")
-  push!(__systems, @named spin = RotationalComponents.Components.Inertia(; J=spin_inertia, spin_overrides...))
+  push!(__systems, @named spin = RotationalComponents.Components.Inertia(; J=spin_inertia, __overrides = spin_overrides))
   # Subcomponent wheel_body of type MultibodyComponents.Body
   wheel_body_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_body")
-  push!(__systems, @named wheel_body = MultibodyComponents.Body(; m=wheel_mass, r_cm=[Float64(0), Float64(0), Float64(0)], I_11=Float64(0), I_22=Float64(0), I_33=Float64(0), cylinder_radius=Float64(0), wheel_body_overrides...))
+  push!(__systems, @named wheel_body = MultibodyComponents.Body(; m=wheel_mass, r_cm=[Float64(0), Float64(0), Float64(0)], I_11=Float64(0), I_22=Float64(0), I_33=Float64(0), cylinder_radius=Float64(0), __overrides = wheel_body_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -115,6 +122,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(tire.slip, slip))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export WheelAssembly

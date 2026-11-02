@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   Damper(; name, fixed_rotation_at_frame_a, fixed_rotation_at_frame_b, dataset, s_small)
+   Damper(; name, fixed_rotation_at_frame_a, fixed_rotation_at_frame_b, dataset, s_small, __overrides)
 
 ## Parameters:
 
@@ -36,7 +36,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `f`         | Scalar line force (positive = tension)                         | N  |
 | `v`         | Strut velocity seen by the damper, negative in compression                         | m/s  |
 """
-@component function Damper(; name = nothing, fixed_rotation_at_frame_a=false, fixed_rotation_at_frame_b=false, dataset=nothing, s_small=1e-10, kwargs...)
+@component function Damper(; name = nothing, var"fixed_rotation_at_frame_a"=false, var"fixed_rotation_at_frame_b"=false, var"dataset"=nothing, var"s_small"=1e-10, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -44,7 +44,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = Damper()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -53,6 +53,12 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "fixed_rotation_at_frame_a") && (fixed_rotation_at_frame_a = pop!(__overrides, "fixed_rotation_at_frame_a"))
+  haskey(__overrides, "fixed_rotation_at_frame_b") && (fixed_rotation_at_frame_b = pop!(__overrides, "fixed_rotation_at_frame_b"))
+  haskey(__overrides, "dataset") && (dataset = pop!(__overrides, "dataset"))
+  haskey(__overrides, "s_small") && (s_small = pop!(__overrides, "s_small"))
 
   ### Structural Parameters (functions)
 
@@ -69,7 +75,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__s_small = s_small
   append!(__params, @parameters (s_small::Real))
-  __initial_conditions[s_small] = __local__s_small
+  __dyad_seed_parameter!(__initial_conditions, __bindings, s_small, __local__s_small)
 
   ### Final Parameters (assignments)
 
@@ -87,29 +93,29 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Variables (assignments)
   __ovr_length = pop!(__overrides, "length", nothing); isnothing(__ovr_length) || push!(__eqs, length ~ __ovr_length)
-  __ovr_length__initial = pop!(__overrides, "length__initial", nothing); isnothing(__ovr_length__initial) || (__initial_conditions[length] = __ovr_length__initial)
-  __ovr_length__guess = pop!(__overrides, "length__guess", nothing)
+  __ovr_length__initial = pop!(__overrides, "length.initial", nothing); isnothing(__ovr_length__initial) || (__initial_conditions[length] = __ovr_length__initial)
+  __ovr_length__guess = pop!(__overrides, "length.guess", nothing)
   __ovr_s = pop!(__overrides, "s", nothing); isnothing(__ovr_s) || push!(__eqs, s ~ __ovr_s)
-  __ovr_s__initial = pop!(__overrides, "s__initial", nothing); isnothing(__ovr_s__initial) || (__initial_conditions[s] = __ovr_s__initial)
-  __ovr_s__guess = pop!(__overrides, "s__guess", nothing)
+  __ovr_s__initial = pop!(__overrides, "s.initial", nothing); isnothing(__ovr_s__initial) || (__initial_conditions[s] = __ovr_s__initial)
+  __ovr_s__guess = pop!(__overrides, "s.guess", nothing)
   __ovr_r_rel_0 = pop!(__overrides, "r_rel_0", nothing); isnothing(__ovr_r_rel_0) || push!(__eqs, r_rel_0 ~ __ovr_r_rel_0)
-  __ovr_r_rel_0__initial = pop!(__overrides, "r_rel_0__initial", nothing); isnothing(__ovr_r_rel_0__initial) || (__initial_conditions[r_rel_0] = __ovr_r_rel_0__initial)
-  __ovr_r_rel_0__guess = pop!(__overrides, "r_rel_0__guess", nothing)
+  __ovr_r_rel_0__initial = pop!(__overrides, "r_rel_0.initial", nothing); isnothing(__ovr_r_rel_0__initial) || (__initial_conditions[r_rel_0] = __ovr_r_rel_0__initial)
+  __ovr_r_rel_0__guess = pop!(__overrides, "r_rel_0.guess", nothing)
   __ovr_e_rel_0 = pop!(__overrides, "e_rel_0", nothing); isnothing(__ovr_e_rel_0) || push!(__eqs, e_rel_0 ~ __ovr_e_rel_0)
-  __ovr_e_rel_0__initial = pop!(__overrides, "e_rel_0__initial", nothing); isnothing(__ovr_e_rel_0__initial) || (__initial_conditions[e_rel_0] = __ovr_e_rel_0__initial)
-  __ovr_e_rel_0__guess = pop!(__overrides, "e_rel_0__guess", nothing)
+  __ovr_e_rel_0__initial = pop!(__overrides, "e_rel_0.initial", nothing); isnothing(__ovr_e_rel_0__initial) || (__initial_conditions[e_rel_0] = __ovr_e_rel_0__initial)
+  __ovr_e_rel_0__guess = pop!(__overrides, "e_rel_0.guess", nothing)
   __ovr_r_rel_a = pop!(__overrides, "r_rel_a", nothing); isnothing(__ovr_r_rel_a) || push!(__eqs, r_rel_a ~ __ovr_r_rel_a)
-  __ovr_r_rel_a__initial = pop!(__overrides, "r_rel_a__initial", nothing); isnothing(__ovr_r_rel_a__initial) || (__initial_conditions[r_rel_a] = __ovr_r_rel_a__initial)
-  __ovr_r_rel_a__guess = pop!(__overrides, "r_rel_a__guess", nothing)
+  __ovr_r_rel_a__initial = pop!(__overrides, "r_rel_a.initial", nothing); isnothing(__ovr_r_rel_a__initial) || (__initial_conditions[r_rel_a] = __ovr_r_rel_a__initial)
+  __ovr_r_rel_a__guess = pop!(__overrides, "r_rel_a.guess", nothing)
   __ovr_e_a = pop!(__overrides, "e_a", nothing); isnothing(__ovr_e_a) || push!(__eqs, e_a ~ __ovr_e_a)
-  __ovr_e_a__initial = pop!(__overrides, "e_a__initial", nothing); isnothing(__ovr_e_a__initial) || (__initial_conditions[e_a] = __ovr_e_a__initial)
-  __ovr_e_a__guess = pop!(__overrides, "e_a__guess", nothing)
+  __ovr_e_a__initial = pop!(__overrides, "e_a.initial", nothing); isnothing(__ovr_e_a__initial) || (__initial_conditions[e_a] = __ovr_e_a__initial)
+  __ovr_e_a__guess = pop!(__overrides, "e_a.guess", nothing)
   __ovr_f = pop!(__overrides, "f", nothing); isnothing(__ovr_f) || push!(__eqs, f ~ __ovr_f)
-  __ovr_f__initial = pop!(__overrides, "f__initial", nothing); isnothing(__ovr_f__initial) || (__initial_conditions[f] = __ovr_f__initial)
-  __ovr_f__guess = pop!(__overrides, "f__guess", nothing)
+  __ovr_f__initial = pop!(__overrides, "f.initial", nothing); isnothing(__ovr_f__initial) || (__initial_conditions[f] = __ovr_f__initial)
+  __ovr_f__guess = pop!(__overrides, "f.guess", nothing)
   __ovr_v = pop!(__overrides, "v", nothing); isnothing(__ovr_v) || push!(__eqs, v ~ __ovr_v)
-  __ovr_v__initial = pop!(__overrides, "v__initial", nothing); isnothing(__ovr_v__initial) || (__initial_conditions[v] = __ovr_v__initial)
-  __ovr_v__guess = pop!(__overrides, "v__guess", nothing)
+  __ovr_v__initial = pop!(__overrides, "v.initial", nothing); isnothing(__ovr_v__initial) || (__initial_conditions[v] = __ovr_v__initial)
+  __ovr_v__guess = pop!(__overrides, "v.guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -119,10 +125,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named frame_b = __Dyad__Frame3D())
   # Subcomponent force_map of type BlockComponents.Tables.ParameterizedInterpolation
   force_map_overrides = __pop_subcomponent_overrides!(__overrides, "force_map")
-  push!(__systems, @named force_map = BlockComponents.Tables.ParameterizedInterpolation(; interpolation_type=BlockComponents.InterpolationType.LinearInterpolation(), extrapolation_type=BlockComponents.ExtrapolationType.Linear(), dataset=dataset, force_map_overrides...))
+  push!(__systems, @named force_map = BlockComponents.Tables.ParameterizedInterpolation(; interpolation_type=BlockComponents.InterpolationType.LinearInterpolation(), extrapolation_type=BlockComponents.ExtrapolationType.Linear(), dataset=dataset, __symbol_overrides(force_map_overrides)...))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
   isnothing(__ovr_length__guess) || (__guesses[length] = __ovr_length__guess)
@@ -166,6 +172,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   end
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export Damper

@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   SteeringRack(; name, tierod_inner_left, tierod_inner_right, rack_axis, rack_ratio)
+   SteeringRack(; name, tierod_inner_left, tierod_inner_right, rack_axis, rack_ratio, __overrides)
 
 ## Parameters:
 
@@ -26,7 +26,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 connectors that can be connected together ([`Frame3D`](@ref))
  * `steer` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
 """
-@component function SteeringRack(; name = nothing, tierod_inner_left=nothing, tierod_inner_right=nothing, rack_axis=[Float64(0), Float64(1), Float64(0)], rack_ratio=0.01, kwargs...)
+@component function SteeringRack(; name = nothing, var"tierod_inner_left"=nothing, var"tierod_inner_right"=nothing, var"rack_axis"=[Float64(0), Float64(1), Float64(0)], var"rack_ratio"=0.01, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -34,7 +34,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = SteeringRack()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -43,6 +43,12 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "tierod_inner_left") && (tierod_inner_left = pop!(__overrides, "tierod_inner_left"))
+  haskey(__overrides, "tierod_inner_right") && (tierod_inner_right = pop!(__overrides, "tierod_inner_right"))
+  haskey(__overrides, "rack_axis") && (rack_axis = pop!(__overrides, "rack_axis"))
+  haskey(__overrides, "rack_ratio") && (rack_ratio = pop!(__overrides, "rack_ratio"))
 
   ### Structural Parameters (functions)
 
@@ -53,10 +59,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Path Parameters (non-final)
 
   ### Final Parameters (declarations)
-  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.
-  append!(__params, @parameters (sty_rod_radius::Real), [description = 
-  append!(__params, @parameters (sty_rod_radius::Real), [description = Defines global colors and geometry settings, such as rod radius,
-  append!(__params, @parameters (sty_rod_radius::Real), [description = used consistently across different linkage models.", misc = "final"])
+  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.\n\nDefines global colors and geometry settings, such as rod radius,\nused consistently across different linkage models.", misc = "final"])
   append!(__params, @parameters (sty_body_radius::Real), [misc = "final"])
   append!(__params, @parameters (sty_black[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_orange[1:4]::Real), [misc = "final"])
@@ -75,16 +78,16 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__tierod_inner_left = tierod_inner_left
   append!(__params, @parameters (tierod_inner_left[1:3]::Real))
-  __initial_conditions[tierod_inner_left] = __local__tierod_inner_left
+  __dyad_seed_parameter!(__initial_conditions, __bindings, tierod_inner_left, __local__tierod_inner_left)
   __local__tierod_inner_right = tierod_inner_right
   append!(__params, @parameters (tierod_inner_right[1:3]::Real))
-  __initial_conditions[tierod_inner_right] = __local__tierod_inner_right
+  __dyad_seed_parameter!(__initial_conditions, __bindings, tierod_inner_right, __local__tierod_inner_right)
   __local__rack_axis = rack_axis
   append!(__params, @parameters (rack_axis[1:3]::Real))
-  __initial_conditions[rack_axis] = __local__rack_axis
+  __dyad_seed_parameter!(__initial_conditions, __bindings, rack_axis, __local__rack_axis)
   __local__rack_ratio = rack_ratio
   append!(__params, @parameters (rack_ratio::Real))
-  __initial_conditions[rack_ratio] = __local__rack_ratio
+  __dyad_seed_parameter!(__initial_conditions, __bindings, rack_ratio, __local__rack_ratio)
 
   ### Final Parameters (assignments)
   __bindings[sty_rod_radius] = 0.008
@@ -117,19 +120,19 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named tie_rod_right = __Dyad__Frame3D())
   # Subcomponent rack_slide of type MultibodyComponents.Prismatic
   rack_slide_overrides = __pop_subcomponent_overrides!(__overrides, "rack_slide")
-  push!(__systems, @named rack_slide = MultibodyComponents.Prismatic(; n=rack_axis, render=false, rack_slide_overrides...))
+  push!(__systems, @named rack_slide = MultibodyComponents.Prismatic(; n=rack_axis, render=false, __overrides = rack_slide_overrides))
   # Subcomponent rack_drive of type TranslationalComponents.Sources.Position
   rack_drive_overrides = __pop_subcomponent_overrides!(__overrides, "rack_drive")
-  push!(__systems, @named rack_drive = TranslationalComponents.Sources.Position(; rack_drive_overrides...))
+  push!(__systems, @named rack_drive = TranslationalComponents.Sources.Position(; __overrides = rack_drive_overrides))
   # Subcomponent rack_offset of type MultibodyComponents.FixedTranslation
   rack_offset_overrides = __pop_subcomponent_overrides!(__overrides, "rack_offset")
-  push!(__systems, @named rack_offset = MultibodyComponents.FixedTranslation(; r=tierod_inner_right, render=false, rack_offset_overrides...))
+  push!(__systems, @named rack_offset = MultibodyComponents.FixedTranslation(; r=tierod_inner_right, render=false, __overrides = rack_offset_overrides))
   # Subcomponent rack_bar of type MultibodyComponents.FixedTranslation
   rack_bar_overrides = __pop_subcomponent_overrides!(__overrides, "rack_bar")
-  push!(__systems, @named rack_bar = MultibodyComponents.FixedTranslation(; r=rack_vec, radius=sty_rod_radius, color=sty_grey_dark, rack_bar_overrides...))
+  push!(__systems, @named rack_bar = MultibodyComponents.FixedTranslation(; r=rack_vec, radius=sty_rod_radius, color=sty_grey_dark, __overrides = rack_bar_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -149,6 +152,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(rack_bar.frame_b, tie_rod_left))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export SteeringRack

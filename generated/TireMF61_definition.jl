@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   TireMF61(; name, is_left, width, unloaded_radius, vertical_stiffness, vertical_damping, FNOMIN, BREFF, DREFF, FREFF, longitudinal_stiffness, lateral_stiffness, INFLPRES, NOMPRES, LONGVL, PCX1, PDX1, PDX2, PDX3, PEX1, PEX2, PEX3, PEX4, PKX1, PKX2, PKX3, PHX1, PHX2, PVX1, PVX2, PPX1, PPX2, PPX3, PPX4, RBX1, RBX2, RBX3, RCX1, REX1, REX2, RHX1, PCY1, PDY1, PDY2, PDY3, PEY1, PEY2, PEY3, PEY4, PEY5, PKY1, PKY2, PKY3, PKY4, PKY5, PKY6, PKY7, PHY1, PHY2, PVY1, PVY2, PVY3, PVY4, PPY1, PPY2, PPY3, PPY4, PPY5, RBY1, RBY2, RBY3, RBY4, RCY1, REY1, REY2, RHY1, RHY2, RVY1, RVY2, RVY3, RVY4, RVY5, RVY6, QBZ1, QBZ2, QBZ3, QBZ4, QBZ5, QBZ6, QBZ9, QBZ10, QCZ1, QDZ1, QDZ2, QDZ3, QDZ4, QDZ6, QDZ7, QDZ8, QDZ9, QDZ10, QDZ11, QEZ1, QEZ2, QEZ3, QEZ4, QEZ5, QHZ1, QHZ2, QHZ3, QHZ4, PPZ1, PPZ2, SSZ1, SSZ2, SSZ3, SSZ4, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LCY, LMUY, LEY, LKY, LHY, LVY, LKYC, LXAL, LYKA, LVYKA, LTR, LRES, LKZC, LS, LMUV, Au, eps_x, eps_y, eps_k, eps_gamma, eps_v, eps_vc, eps_sigma, damp_vlow)
+   TireMF61(; name, is_left, width, unloaded_radius, vertical_stiffness, vertical_damping, FNOMIN, BREFF, DREFF, FREFF, longitudinal_stiffness, lateral_stiffness, INFLPRES, NOMPRES, LONGVL, PCX1, PDX1, PDX2, PDX3, PEX1, PEX2, PEX3, PEX4, PKX1, PKX2, PKX3, PHX1, PHX2, PVX1, PVX2, PPX1, PPX2, PPX3, PPX4, RBX1, RBX2, RBX3, RCX1, REX1, REX2, RHX1, PCY1, PDY1, PDY2, PDY3, PEY1, PEY2, PEY3, PEY4, PEY5, PKY1, PKY2, PKY3, PKY4, PKY5, PKY6, PKY7, PHY1, PHY2, PVY1, PVY2, PVY3, PVY4, PPY1, PPY2, PPY3, PPY4, PPY5, RBY1, RBY2, RBY3, RBY4, RCY1, REY1, REY2, RHY1, RHY2, RVY1, RVY2, RVY3, RVY4, RVY5, RVY6, QBZ1, QBZ2, QBZ3, QBZ4, QBZ5, QBZ6, QBZ9, QBZ10, QCZ1, QDZ1, QDZ2, QDZ3, QDZ4, QDZ6, QDZ7, QDZ8, QDZ9, QDZ10, QDZ11, QEZ1, QEZ2, QEZ3, QEZ4, QEZ5, QHZ1, QHZ2, QHZ3, QHZ4, PPZ1, PPZ2, SSZ1, SSZ2, SSZ3, SSZ4, LFZO, LCX, LMUX, LEX, LKX, LHX, LVX, LCY, LMUY, LEY, LKY, LHY, LVY, LKYC, LXAL, LYKA, LVYKA, LTR, LRES, LKZC, LS, LMUV, Au, eps_x, eps_y, eps_k, eps_gamma, eps_v, eps_vc, eps_sigma, damp_vlow, __overrides)
 
 ## Parameters:
 
@@ -288,7 +288,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `tau_wy`         |                          | N.m  |
 | `tau_wz`         |                          | N.m  |
 """
-@component function TireMF61(; name = nothing, is_left=nothing, width=VehicleComponents.params.tires.WIDTH, unloaded_radius=VehicleComponents.params.tires.UNLOADED_RADIUS, vertical_stiffness=VehicleComponents.params.tires.VERTICAL_STIFFNESS, vertical_damping=VehicleComponents.params.tires.VERTICAL_DAMPING, FNOMIN=VehicleComponents.params.tires.FNOMIN, BREFF=VehicleComponents.params.tires.BREFF, DREFF=VehicleComponents.params.tires.DREFF, FREFF=VehicleComponents.params.tires.FREFF, longitudinal_stiffness=VehicleComponents.params.tires.LONGITUDINAL_STIFFNESS, lateral_stiffness=VehicleComponents.params.tires.LATERAL_STIFFNESS, INFLPRES=VehicleComponents.params.tires.INFLPRES, NOMPRES=VehicleComponents.params.tires.NOMPRES, LONGVL=VehicleComponents.params.tires.LONGVL, PCX1=VehicleComponents.params.tires.PCX1, PDX1=VehicleComponents.params.tires.PDX1, PDX2=VehicleComponents.params.tires.PDX2, PDX3=VehicleComponents.params.tires.PDX3, PEX1=VehicleComponents.params.tires.PEX1, PEX2=VehicleComponents.params.tires.PEX2, PEX3=VehicleComponents.params.tires.PEX3, PEX4=VehicleComponents.params.tires.PEX4, PKX1=VehicleComponents.params.tires.PKX1, PKX2=VehicleComponents.params.tires.PKX2, PKX3=VehicleComponents.params.tires.PKX3, PHX1=VehicleComponents.params.tires.PHX1, PHX2=VehicleComponents.params.tires.PHX2, PVX1=VehicleComponents.params.tires.PVX1, PVX2=VehicleComponents.params.tires.PVX2, PPX1=VehicleComponents.params.tires.PPX1, PPX2=VehicleComponents.params.tires.PPX2, PPX3=VehicleComponents.params.tires.PPX3, PPX4=VehicleComponents.params.tires.PPX4, RBX1=VehicleComponents.params.tires.RBX1, RBX2=VehicleComponents.params.tires.RBX2, RBX3=VehicleComponents.params.tires.RBX3, RCX1=VehicleComponents.params.tires.RCX1, REX1=VehicleComponents.params.tires.REX1, REX2=VehicleComponents.params.tires.REX2, RHX1=VehicleComponents.params.tires.RHX1, PCY1=VehicleComponents.params.tires.PCY1, PDY1=VehicleComponents.params.tires.PDY1, PDY2=VehicleComponents.params.tires.PDY2, PDY3=VehicleComponents.params.tires.PDY3, PEY1=VehicleComponents.params.tires.PEY1, PEY2=VehicleComponents.params.tires.PEY2, PEY3=VehicleComponents.params.tires.PEY3, PEY4=VehicleComponents.params.tires.PEY4, PEY5=VehicleComponents.params.tires.PEY5, PKY1=VehicleComponents.params.tires.PKY1, PKY2=VehicleComponents.params.tires.PKY2, PKY3=VehicleComponents.params.tires.PKY3, PKY4=VehicleComponents.params.tires.PKY4, PKY5=VehicleComponents.params.tires.PKY5, PKY6=VehicleComponents.params.tires.PKY6, PKY7=VehicleComponents.params.tires.PKY7, PHY1=VehicleComponents.params.tires.PHY1, PHY2=VehicleComponents.params.tires.PHY2, PVY1=VehicleComponents.params.tires.PVY1, PVY2=VehicleComponents.params.tires.PVY2, PVY3=VehicleComponents.params.tires.PVY3, PVY4=VehicleComponents.params.tires.PVY4, PPY1=VehicleComponents.params.tires.PPY1, PPY2=VehicleComponents.params.tires.PPY2, PPY3=VehicleComponents.params.tires.PPY3, PPY4=VehicleComponents.params.tires.PPY4, PPY5=VehicleComponents.params.tires.PPY5, RBY1=VehicleComponents.params.tires.RBY1, RBY2=VehicleComponents.params.tires.RBY2, RBY3=VehicleComponents.params.tires.RBY3, RBY4=VehicleComponents.params.tires.RBY4, RCY1=VehicleComponents.params.tires.RCY1, REY1=VehicleComponents.params.tires.REY1, REY2=VehicleComponents.params.tires.REY2, RHY1=VehicleComponents.params.tires.RHY1, RHY2=VehicleComponents.params.tires.RHY2, RVY1=VehicleComponents.params.tires.RVY1, RVY2=VehicleComponents.params.tires.RVY2, RVY3=VehicleComponents.params.tires.RVY3, RVY4=VehicleComponents.params.tires.RVY4, RVY5=VehicleComponents.params.tires.RVY5, RVY6=VehicleComponents.params.tires.RVY6, QBZ1=VehicleComponents.params.tires.QBZ1, QBZ2=VehicleComponents.params.tires.QBZ2, QBZ3=VehicleComponents.params.tires.QBZ3, QBZ4=VehicleComponents.params.tires.QBZ4, QBZ5=VehicleComponents.params.tires.QBZ5, QBZ6=VehicleComponents.params.tires.QBZ6, QBZ9=VehicleComponents.params.tires.QBZ9, QBZ10=VehicleComponents.params.tires.QBZ10, QCZ1=VehicleComponents.params.tires.QCZ1, QDZ1=VehicleComponents.params.tires.QDZ1, QDZ2=VehicleComponents.params.tires.QDZ2, QDZ3=VehicleComponents.params.tires.QDZ3, QDZ4=VehicleComponents.params.tires.QDZ4, QDZ6=VehicleComponents.params.tires.QDZ6, QDZ7=VehicleComponents.params.tires.QDZ7, QDZ8=VehicleComponents.params.tires.QDZ8, QDZ9=VehicleComponents.params.tires.QDZ9, QDZ10=VehicleComponents.params.tires.QDZ10, QDZ11=VehicleComponents.params.tires.QDZ11, QEZ1=VehicleComponents.params.tires.QEZ1, QEZ2=VehicleComponents.params.tires.QEZ2, QEZ3=VehicleComponents.params.tires.QEZ3, QEZ4=VehicleComponents.params.tires.QEZ4, QEZ5=VehicleComponents.params.tires.QEZ5, QHZ1=VehicleComponents.params.tires.QHZ1, QHZ2=VehicleComponents.params.tires.QHZ2, QHZ3=VehicleComponents.params.tires.QHZ3, QHZ4=VehicleComponents.params.tires.QHZ4, PPZ1=VehicleComponents.params.tires.PPZ1, PPZ2=VehicleComponents.params.tires.PPZ2, SSZ1=VehicleComponents.params.tires.SSZ1, SSZ2=VehicleComponents.params.tires.SSZ2, SSZ3=VehicleComponents.params.tires.SSZ3, SSZ4=VehicleComponents.params.tires.SSZ4, LFZO=VehicleComponents.params.tires.LFZO, LCX=VehicleComponents.params.tires.LCX, LMUX=VehicleComponents.params.tires.LMUX, LEX=VehicleComponents.params.tires.LEX, LKX=VehicleComponents.params.tires.LKX, LHX=VehicleComponents.params.tires.LHX, LVX=VehicleComponents.params.tires.LVX, LCY=VehicleComponents.params.tires.LCY, LMUY=VehicleComponents.params.tires.LMUY, LEY=VehicleComponents.params.tires.LEY, LKY=VehicleComponents.params.tires.LKY, LHY=VehicleComponents.params.tires.LHY, LVY=VehicleComponents.params.tires.LVY, LKYC=VehicleComponents.params.tires.LKYC, LXAL=VehicleComponents.params.tires.LXAL, LYKA=VehicleComponents.params.tires.LYKA, LVYKA=VehicleComponents.params.tires.LVYKA, LTR=VehicleComponents.params.tires.LTR, LRES=VehicleComponents.params.tires.LRES, LKZC=VehicleComponents.params.tires.LKZC, LS=VehicleComponents.params.tires.LS, LMUV=VehicleComponents.params.tires.LMUV, Au=Float64(10), eps_x=0.1, eps_y=0.1, eps_k=0.1, eps_gamma=0.01, eps_v=Float64(1.0), eps_vc=0.1, eps_sigma=0.001, damp_vlow=0.001, kwargs...)
+@component function TireMF61(; name = nothing, var"is_left"=nothing, var"width"=VehicleComponents.params.tires.WIDTH, var"unloaded_radius"=VehicleComponents.params.tires.UNLOADED_RADIUS, var"vertical_stiffness"=VehicleComponents.params.tires.VERTICAL_STIFFNESS, var"vertical_damping"=VehicleComponents.params.tires.VERTICAL_DAMPING, var"FNOMIN"=VehicleComponents.params.tires.FNOMIN, var"BREFF"=VehicleComponents.params.tires.BREFF, var"DREFF"=VehicleComponents.params.tires.DREFF, var"FREFF"=VehicleComponents.params.tires.FREFF, var"longitudinal_stiffness"=VehicleComponents.params.tires.LONGITUDINAL_STIFFNESS, var"lateral_stiffness"=VehicleComponents.params.tires.LATERAL_STIFFNESS, var"INFLPRES"=VehicleComponents.params.tires.INFLPRES, var"NOMPRES"=VehicleComponents.params.tires.NOMPRES, var"LONGVL"=VehicleComponents.params.tires.LONGVL, var"PCX1"=VehicleComponents.params.tires.PCX1, var"PDX1"=VehicleComponents.params.tires.PDX1, var"PDX2"=VehicleComponents.params.tires.PDX2, var"PDX3"=VehicleComponents.params.tires.PDX3, var"PEX1"=VehicleComponents.params.tires.PEX1, var"PEX2"=VehicleComponents.params.tires.PEX2, var"PEX3"=VehicleComponents.params.tires.PEX3, var"PEX4"=VehicleComponents.params.tires.PEX4, var"PKX1"=VehicleComponents.params.tires.PKX1, var"PKX2"=VehicleComponents.params.tires.PKX2, var"PKX3"=VehicleComponents.params.tires.PKX3, var"PHX1"=VehicleComponents.params.tires.PHX1, var"PHX2"=VehicleComponents.params.tires.PHX2, var"PVX1"=VehicleComponents.params.tires.PVX1, var"PVX2"=VehicleComponents.params.tires.PVX2, var"PPX1"=VehicleComponents.params.tires.PPX1, var"PPX2"=VehicleComponents.params.tires.PPX2, var"PPX3"=VehicleComponents.params.tires.PPX3, var"PPX4"=VehicleComponents.params.tires.PPX4, var"RBX1"=VehicleComponents.params.tires.RBX1, var"RBX2"=VehicleComponents.params.tires.RBX2, var"RBX3"=VehicleComponents.params.tires.RBX3, var"RCX1"=VehicleComponents.params.tires.RCX1, var"REX1"=VehicleComponents.params.tires.REX1, var"REX2"=VehicleComponents.params.tires.REX2, var"RHX1"=VehicleComponents.params.tires.RHX1, var"PCY1"=VehicleComponents.params.tires.PCY1, var"PDY1"=VehicleComponents.params.tires.PDY1, var"PDY2"=VehicleComponents.params.tires.PDY2, var"PDY3"=VehicleComponents.params.tires.PDY3, var"PEY1"=VehicleComponents.params.tires.PEY1, var"PEY2"=VehicleComponents.params.tires.PEY2, var"PEY3"=VehicleComponents.params.tires.PEY3, var"PEY4"=VehicleComponents.params.tires.PEY4, var"PEY5"=VehicleComponents.params.tires.PEY5, var"PKY1"=VehicleComponents.params.tires.PKY1, var"PKY2"=VehicleComponents.params.tires.PKY2, var"PKY3"=VehicleComponents.params.tires.PKY3, var"PKY4"=VehicleComponents.params.tires.PKY4, var"PKY5"=VehicleComponents.params.tires.PKY5, var"PKY6"=VehicleComponents.params.tires.PKY6, var"PKY7"=VehicleComponents.params.tires.PKY7, var"PHY1"=VehicleComponents.params.tires.PHY1, var"PHY2"=VehicleComponents.params.tires.PHY2, var"PVY1"=VehicleComponents.params.tires.PVY1, var"PVY2"=VehicleComponents.params.tires.PVY2, var"PVY3"=VehicleComponents.params.tires.PVY3, var"PVY4"=VehicleComponents.params.tires.PVY4, var"PPY1"=VehicleComponents.params.tires.PPY1, var"PPY2"=VehicleComponents.params.tires.PPY2, var"PPY3"=VehicleComponents.params.tires.PPY3, var"PPY4"=VehicleComponents.params.tires.PPY4, var"PPY5"=VehicleComponents.params.tires.PPY5, var"RBY1"=VehicleComponents.params.tires.RBY1, var"RBY2"=VehicleComponents.params.tires.RBY2, var"RBY3"=VehicleComponents.params.tires.RBY3, var"RBY4"=VehicleComponents.params.tires.RBY4, var"RCY1"=VehicleComponents.params.tires.RCY1, var"REY1"=VehicleComponents.params.tires.REY1, var"REY2"=VehicleComponents.params.tires.REY2, var"RHY1"=VehicleComponents.params.tires.RHY1, var"RHY2"=VehicleComponents.params.tires.RHY2, var"RVY1"=VehicleComponents.params.tires.RVY1, var"RVY2"=VehicleComponents.params.tires.RVY2, var"RVY3"=VehicleComponents.params.tires.RVY3, var"RVY4"=VehicleComponents.params.tires.RVY4, var"RVY5"=VehicleComponents.params.tires.RVY5, var"RVY6"=VehicleComponents.params.tires.RVY6, var"QBZ1"=VehicleComponents.params.tires.QBZ1, var"QBZ2"=VehicleComponents.params.tires.QBZ2, var"QBZ3"=VehicleComponents.params.tires.QBZ3, var"QBZ4"=VehicleComponents.params.tires.QBZ4, var"QBZ5"=VehicleComponents.params.tires.QBZ5, var"QBZ6"=VehicleComponents.params.tires.QBZ6, var"QBZ9"=VehicleComponents.params.tires.QBZ9, var"QBZ10"=VehicleComponents.params.tires.QBZ10, var"QCZ1"=VehicleComponents.params.tires.QCZ1, var"QDZ1"=VehicleComponents.params.tires.QDZ1, var"QDZ2"=VehicleComponents.params.tires.QDZ2, var"QDZ3"=VehicleComponents.params.tires.QDZ3, var"QDZ4"=VehicleComponents.params.tires.QDZ4, var"QDZ6"=VehicleComponents.params.tires.QDZ6, var"QDZ7"=VehicleComponents.params.tires.QDZ7, var"QDZ8"=VehicleComponents.params.tires.QDZ8, var"QDZ9"=VehicleComponents.params.tires.QDZ9, var"QDZ10"=VehicleComponents.params.tires.QDZ10, var"QDZ11"=VehicleComponents.params.tires.QDZ11, var"QEZ1"=VehicleComponents.params.tires.QEZ1, var"QEZ2"=VehicleComponents.params.tires.QEZ2, var"QEZ3"=VehicleComponents.params.tires.QEZ3, var"QEZ4"=VehicleComponents.params.tires.QEZ4, var"QEZ5"=VehicleComponents.params.tires.QEZ5, var"QHZ1"=VehicleComponents.params.tires.QHZ1, var"QHZ2"=VehicleComponents.params.tires.QHZ2, var"QHZ3"=VehicleComponents.params.tires.QHZ3, var"QHZ4"=VehicleComponents.params.tires.QHZ4, var"PPZ1"=VehicleComponents.params.tires.PPZ1, var"PPZ2"=VehicleComponents.params.tires.PPZ2, var"SSZ1"=VehicleComponents.params.tires.SSZ1, var"SSZ2"=VehicleComponents.params.tires.SSZ2, var"SSZ3"=VehicleComponents.params.tires.SSZ3, var"SSZ4"=VehicleComponents.params.tires.SSZ4, var"LFZO"=VehicleComponents.params.tires.LFZO, var"LCX"=VehicleComponents.params.tires.LCX, var"LMUX"=VehicleComponents.params.tires.LMUX, var"LEX"=VehicleComponents.params.tires.LEX, var"LKX"=VehicleComponents.params.tires.LKX, var"LHX"=VehicleComponents.params.tires.LHX, var"LVX"=VehicleComponents.params.tires.LVX, var"LCY"=VehicleComponents.params.tires.LCY, var"LMUY"=VehicleComponents.params.tires.LMUY, var"LEY"=VehicleComponents.params.tires.LEY, var"LKY"=VehicleComponents.params.tires.LKY, var"LHY"=VehicleComponents.params.tires.LHY, var"LVY"=VehicleComponents.params.tires.LVY, var"LKYC"=VehicleComponents.params.tires.LKYC, var"LXAL"=VehicleComponents.params.tires.LXAL, var"LYKA"=VehicleComponents.params.tires.LYKA, var"LVYKA"=VehicleComponents.params.tires.LVYKA, var"LTR"=VehicleComponents.params.tires.LTR, var"LRES"=VehicleComponents.params.tires.LRES, var"LKZC"=VehicleComponents.params.tires.LKZC, var"LS"=VehicleComponents.params.tires.LS, var"LMUV"=VehicleComponents.params.tires.LMUV, var"Au"=Float64(10), var"eps_x"=0.1, var"eps_y"=0.1, var"eps_k"=0.1, var"eps_gamma"=0.01, var"eps_v"=Float64(1.0), var"eps_vc"=0.1, var"eps_sigma"=0.001, var"damp_vlow"=0.001, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -296,7 +296,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = TireMF61()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -305,6 +305,155 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "is_left") && (is_left = pop!(__overrides, "is_left"))
+  haskey(__overrides, "width") && (width = pop!(__overrides, "width"))
+  haskey(__overrides, "unloaded_radius") && (unloaded_radius = pop!(__overrides, "unloaded_radius"))
+  haskey(__overrides, "vertical_stiffness") && (vertical_stiffness = pop!(__overrides, "vertical_stiffness"))
+  haskey(__overrides, "vertical_damping") && (vertical_damping = pop!(__overrides, "vertical_damping"))
+  haskey(__overrides, "FNOMIN") && (FNOMIN = pop!(__overrides, "FNOMIN"))
+  haskey(__overrides, "BREFF") && (BREFF = pop!(__overrides, "BREFF"))
+  haskey(__overrides, "DREFF") && (DREFF = pop!(__overrides, "DREFF"))
+  haskey(__overrides, "FREFF") && (FREFF = pop!(__overrides, "FREFF"))
+  haskey(__overrides, "longitudinal_stiffness") && (longitudinal_stiffness = pop!(__overrides, "longitudinal_stiffness"))
+  haskey(__overrides, "lateral_stiffness") && (lateral_stiffness = pop!(__overrides, "lateral_stiffness"))
+  haskey(__overrides, "INFLPRES") && (INFLPRES = pop!(__overrides, "INFLPRES"))
+  haskey(__overrides, "NOMPRES") && (NOMPRES = pop!(__overrides, "NOMPRES"))
+  haskey(__overrides, "LONGVL") && (LONGVL = pop!(__overrides, "LONGVL"))
+  haskey(__overrides, "PCX1") && (PCX1 = pop!(__overrides, "PCX1"))
+  haskey(__overrides, "PDX1") && (PDX1 = pop!(__overrides, "PDX1"))
+  haskey(__overrides, "PDX2") && (PDX2 = pop!(__overrides, "PDX2"))
+  haskey(__overrides, "PDX3") && (PDX3 = pop!(__overrides, "PDX3"))
+  haskey(__overrides, "PEX1") && (PEX1 = pop!(__overrides, "PEX1"))
+  haskey(__overrides, "PEX2") && (PEX2 = pop!(__overrides, "PEX2"))
+  haskey(__overrides, "PEX3") && (PEX3 = pop!(__overrides, "PEX3"))
+  haskey(__overrides, "PEX4") && (PEX4 = pop!(__overrides, "PEX4"))
+  haskey(__overrides, "PKX1") && (PKX1 = pop!(__overrides, "PKX1"))
+  haskey(__overrides, "PKX2") && (PKX2 = pop!(__overrides, "PKX2"))
+  haskey(__overrides, "PKX3") && (PKX3 = pop!(__overrides, "PKX3"))
+  haskey(__overrides, "PHX1") && (PHX1 = pop!(__overrides, "PHX1"))
+  haskey(__overrides, "PHX2") && (PHX2 = pop!(__overrides, "PHX2"))
+  haskey(__overrides, "PVX1") && (PVX1 = pop!(__overrides, "PVX1"))
+  haskey(__overrides, "PVX2") && (PVX2 = pop!(__overrides, "PVX2"))
+  haskey(__overrides, "PPX1") && (PPX1 = pop!(__overrides, "PPX1"))
+  haskey(__overrides, "PPX2") && (PPX2 = pop!(__overrides, "PPX2"))
+  haskey(__overrides, "PPX3") && (PPX3 = pop!(__overrides, "PPX3"))
+  haskey(__overrides, "PPX4") && (PPX4 = pop!(__overrides, "PPX4"))
+  haskey(__overrides, "RBX1") && (RBX1 = pop!(__overrides, "RBX1"))
+  haskey(__overrides, "RBX2") && (RBX2 = pop!(__overrides, "RBX2"))
+  haskey(__overrides, "RBX3") && (RBX3 = pop!(__overrides, "RBX3"))
+  haskey(__overrides, "RCX1") && (RCX1 = pop!(__overrides, "RCX1"))
+  haskey(__overrides, "REX1") && (REX1 = pop!(__overrides, "REX1"))
+  haskey(__overrides, "REX2") && (REX2 = pop!(__overrides, "REX2"))
+  haskey(__overrides, "RHX1") && (RHX1 = pop!(__overrides, "RHX1"))
+  haskey(__overrides, "PCY1") && (PCY1 = pop!(__overrides, "PCY1"))
+  haskey(__overrides, "PDY1") && (PDY1 = pop!(__overrides, "PDY1"))
+  haskey(__overrides, "PDY2") && (PDY2 = pop!(__overrides, "PDY2"))
+  haskey(__overrides, "PDY3") && (PDY3 = pop!(__overrides, "PDY3"))
+  haskey(__overrides, "PEY1") && (PEY1 = pop!(__overrides, "PEY1"))
+  haskey(__overrides, "PEY2") && (PEY2 = pop!(__overrides, "PEY2"))
+  haskey(__overrides, "PEY3") && (PEY3 = pop!(__overrides, "PEY3"))
+  haskey(__overrides, "PEY4") && (PEY4 = pop!(__overrides, "PEY4"))
+  haskey(__overrides, "PEY5") && (PEY5 = pop!(__overrides, "PEY5"))
+  haskey(__overrides, "PKY1") && (PKY1 = pop!(__overrides, "PKY1"))
+  haskey(__overrides, "PKY2") && (PKY2 = pop!(__overrides, "PKY2"))
+  haskey(__overrides, "PKY3") && (PKY3 = pop!(__overrides, "PKY3"))
+  haskey(__overrides, "PKY4") && (PKY4 = pop!(__overrides, "PKY4"))
+  haskey(__overrides, "PKY5") && (PKY5 = pop!(__overrides, "PKY5"))
+  haskey(__overrides, "PKY6") && (PKY6 = pop!(__overrides, "PKY6"))
+  haskey(__overrides, "PKY7") && (PKY7 = pop!(__overrides, "PKY7"))
+  haskey(__overrides, "PHY1") && (PHY1 = pop!(__overrides, "PHY1"))
+  haskey(__overrides, "PHY2") && (PHY2 = pop!(__overrides, "PHY2"))
+  haskey(__overrides, "PVY1") && (PVY1 = pop!(__overrides, "PVY1"))
+  haskey(__overrides, "PVY2") && (PVY2 = pop!(__overrides, "PVY2"))
+  haskey(__overrides, "PVY3") && (PVY3 = pop!(__overrides, "PVY3"))
+  haskey(__overrides, "PVY4") && (PVY4 = pop!(__overrides, "PVY4"))
+  haskey(__overrides, "PPY1") && (PPY1 = pop!(__overrides, "PPY1"))
+  haskey(__overrides, "PPY2") && (PPY2 = pop!(__overrides, "PPY2"))
+  haskey(__overrides, "PPY3") && (PPY3 = pop!(__overrides, "PPY3"))
+  haskey(__overrides, "PPY4") && (PPY4 = pop!(__overrides, "PPY4"))
+  haskey(__overrides, "PPY5") && (PPY5 = pop!(__overrides, "PPY5"))
+  haskey(__overrides, "RBY1") && (RBY1 = pop!(__overrides, "RBY1"))
+  haskey(__overrides, "RBY2") && (RBY2 = pop!(__overrides, "RBY2"))
+  haskey(__overrides, "RBY3") && (RBY3 = pop!(__overrides, "RBY3"))
+  haskey(__overrides, "RBY4") && (RBY4 = pop!(__overrides, "RBY4"))
+  haskey(__overrides, "RCY1") && (RCY1 = pop!(__overrides, "RCY1"))
+  haskey(__overrides, "REY1") && (REY1 = pop!(__overrides, "REY1"))
+  haskey(__overrides, "REY2") && (REY2 = pop!(__overrides, "REY2"))
+  haskey(__overrides, "RHY1") && (RHY1 = pop!(__overrides, "RHY1"))
+  haskey(__overrides, "RHY2") && (RHY2 = pop!(__overrides, "RHY2"))
+  haskey(__overrides, "RVY1") && (RVY1 = pop!(__overrides, "RVY1"))
+  haskey(__overrides, "RVY2") && (RVY2 = pop!(__overrides, "RVY2"))
+  haskey(__overrides, "RVY3") && (RVY3 = pop!(__overrides, "RVY3"))
+  haskey(__overrides, "RVY4") && (RVY4 = pop!(__overrides, "RVY4"))
+  haskey(__overrides, "RVY5") && (RVY5 = pop!(__overrides, "RVY5"))
+  haskey(__overrides, "RVY6") && (RVY6 = pop!(__overrides, "RVY6"))
+  haskey(__overrides, "QBZ1") && (QBZ1 = pop!(__overrides, "QBZ1"))
+  haskey(__overrides, "QBZ2") && (QBZ2 = pop!(__overrides, "QBZ2"))
+  haskey(__overrides, "QBZ3") && (QBZ3 = pop!(__overrides, "QBZ3"))
+  haskey(__overrides, "QBZ4") && (QBZ4 = pop!(__overrides, "QBZ4"))
+  haskey(__overrides, "QBZ5") && (QBZ5 = pop!(__overrides, "QBZ5"))
+  haskey(__overrides, "QBZ6") && (QBZ6 = pop!(__overrides, "QBZ6"))
+  haskey(__overrides, "QBZ9") && (QBZ9 = pop!(__overrides, "QBZ9"))
+  haskey(__overrides, "QBZ10") && (QBZ10 = pop!(__overrides, "QBZ10"))
+  haskey(__overrides, "QCZ1") && (QCZ1 = pop!(__overrides, "QCZ1"))
+  haskey(__overrides, "QDZ1") && (QDZ1 = pop!(__overrides, "QDZ1"))
+  haskey(__overrides, "QDZ2") && (QDZ2 = pop!(__overrides, "QDZ2"))
+  haskey(__overrides, "QDZ3") && (QDZ3 = pop!(__overrides, "QDZ3"))
+  haskey(__overrides, "QDZ4") && (QDZ4 = pop!(__overrides, "QDZ4"))
+  haskey(__overrides, "QDZ6") && (QDZ6 = pop!(__overrides, "QDZ6"))
+  haskey(__overrides, "QDZ7") && (QDZ7 = pop!(__overrides, "QDZ7"))
+  haskey(__overrides, "QDZ8") && (QDZ8 = pop!(__overrides, "QDZ8"))
+  haskey(__overrides, "QDZ9") && (QDZ9 = pop!(__overrides, "QDZ9"))
+  haskey(__overrides, "QDZ10") && (QDZ10 = pop!(__overrides, "QDZ10"))
+  haskey(__overrides, "QDZ11") && (QDZ11 = pop!(__overrides, "QDZ11"))
+  haskey(__overrides, "QEZ1") && (QEZ1 = pop!(__overrides, "QEZ1"))
+  haskey(__overrides, "QEZ2") && (QEZ2 = pop!(__overrides, "QEZ2"))
+  haskey(__overrides, "QEZ3") && (QEZ3 = pop!(__overrides, "QEZ3"))
+  haskey(__overrides, "QEZ4") && (QEZ4 = pop!(__overrides, "QEZ4"))
+  haskey(__overrides, "QEZ5") && (QEZ5 = pop!(__overrides, "QEZ5"))
+  haskey(__overrides, "QHZ1") && (QHZ1 = pop!(__overrides, "QHZ1"))
+  haskey(__overrides, "QHZ2") && (QHZ2 = pop!(__overrides, "QHZ2"))
+  haskey(__overrides, "QHZ3") && (QHZ3 = pop!(__overrides, "QHZ3"))
+  haskey(__overrides, "QHZ4") && (QHZ4 = pop!(__overrides, "QHZ4"))
+  haskey(__overrides, "PPZ1") && (PPZ1 = pop!(__overrides, "PPZ1"))
+  haskey(__overrides, "PPZ2") && (PPZ2 = pop!(__overrides, "PPZ2"))
+  haskey(__overrides, "SSZ1") && (SSZ1 = pop!(__overrides, "SSZ1"))
+  haskey(__overrides, "SSZ2") && (SSZ2 = pop!(__overrides, "SSZ2"))
+  haskey(__overrides, "SSZ3") && (SSZ3 = pop!(__overrides, "SSZ3"))
+  haskey(__overrides, "SSZ4") && (SSZ4 = pop!(__overrides, "SSZ4"))
+  haskey(__overrides, "LFZO") && (LFZO = pop!(__overrides, "LFZO"))
+  haskey(__overrides, "LCX") && (LCX = pop!(__overrides, "LCX"))
+  haskey(__overrides, "LMUX") && (LMUX = pop!(__overrides, "LMUX"))
+  haskey(__overrides, "LEX") && (LEX = pop!(__overrides, "LEX"))
+  haskey(__overrides, "LKX") && (LKX = pop!(__overrides, "LKX"))
+  haskey(__overrides, "LHX") && (LHX = pop!(__overrides, "LHX"))
+  haskey(__overrides, "LVX") && (LVX = pop!(__overrides, "LVX"))
+  haskey(__overrides, "LCY") && (LCY = pop!(__overrides, "LCY"))
+  haskey(__overrides, "LMUY") && (LMUY = pop!(__overrides, "LMUY"))
+  haskey(__overrides, "LEY") && (LEY = pop!(__overrides, "LEY"))
+  haskey(__overrides, "LKY") && (LKY = pop!(__overrides, "LKY"))
+  haskey(__overrides, "LHY") && (LHY = pop!(__overrides, "LHY"))
+  haskey(__overrides, "LVY") && (LVY = pop!(__overrides, "LVY"))
+  haskey(__overrides, "LKYC") && (LKYC = pop!(__overrides, "LKYC"))
+  haskey(__overrides, "LXAL") && (LXAL = pop!(__overrides, "LXAL"))
+  haskey(__overrides, "LYKA") && (LYKA = pop!(__overrides, "LYKA"))
+  haskey(__overrides, "LVYKA") && (LVYKA = pop!(__overrides, "LVYKA"))
+  haskey(__overrides, "LTR") && (LTR = pop!(__overrides, "LTR"))
+  haskey(__overrides, "LRES") && (LRES = pop!(__overrides, "LRES"))
+  haskey(__overrides, "LKZC") && (LKZC = pop!(__overrides, "LKZC"))
+  haskey(__overrides, "LS") && (LS = pop!(__overrides, "LS"))
+  haskey(__overrides, "LMUV") && (LMUV = pop!(__overrides, "LMUV"))
+  haskey(__overrides, "Au") && (Au = pop!(__overrides, "Au"))
+  haskey(__overrides, "eps_x") && (eps_x = pop!(__overrides, "eps_x"))
+  haskey(__overrides, "eps_y") && (eps_y = pop!(__overrides, "eps_y"))
+  haskey(__overrides, "eps_k") && (eps_k = pop!(__overrides, "eps_k"))
+  haskey(__overrides, "eps_gamma") && (eps_gamma = pop!(__overrides, "eps_gamma"))
+  haskey(__overrides, "eps_v") && (eps_v = pop!(__overrides, "eps_v"))
+  haskey(__overrides, "eps_vc") && (eps_vc = pop!(__overrides, "eps_vc"))
+  haskey(__overrides, "eps_sigma") && (eps_sigma = pop!(__overrides, "eps_sigma"))
+  haskey(__overrides, "damp_vlow") && (damp_vlow = pop!(__overrides, "damp_vlow"))
 
   ### Structural Parameters (functions)
 
@@ -315,10 +464,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Path Parameters (non-final)
 
   ### Final Parameters (declarations)
-  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.
-  append!(__params, @parameters (sty_rod_radius::Real), [description = 
-  append!(__params, @parameters (sty_rod_radius::Real), [description = Defines global colors and geometry settings, such as rod radius,
-  append!(__params, @parameters (sty_rod_radius::Real), [description = used consistently across different linkage models.", misc = "final"])
+  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.\n\nDefines global colors and geometry settings, such as rod radius,\nused consistently across different linkage models.", misc = "final"])
   append!(__params, @parameters (sty_body_radius::Real), [misc = "final"])
   append!(__params, @parameters (sty_black[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_orange[1:4]::Real), [misc = "final"])
@@ -337,442 +483,442 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__width = width
   append!(__params, @parameters (width::Real))
-  __initial_conditions[width] = __local__width
+  __dyad_seed_parameter!(__initial_conditions, __bindings, width, __local__width)
   __local__unloaded_radius = unloaded_radius
   append!(__params, @parameters (unloaded_radius::Real))
-  __initial_conditions[unloaded_radius] = __local__unloaded_radius
+  __dyad_seed_parameter!(__initial_conditions, __bindings, unloaded_radius, __local__unloaded_radius)
   __local__vertical_stiffness = vertical_stiffness
   append!(__params, @parameters (vertical_stiffness::Real))
-  __initial_conditions[vertical_stiffness] = __local__vertical_stiffness
+  __dyad_seed_parameter!(__initial_conditions, __bindings, vertical_stiffness, __local__vertical_stiffness)
   __local__vertical_damping = vertical_damping
   append!(__params, @parameters (vertical_damping::Real))
-  __initial_conditions[vertical_damping] = __local__vertical_damping
+  __dyad_seed_parameter!(__initial_conditions, __bindings, vertical_damping, __local__vertical_damping)
   __local__FNOMIN = FNOMIN
   append!(__params, @parameters (FNOMIN::Real))
-  __initial_conditions[FNOMIN] = __local__FNOMIN
+  __dyad_seed_parameter!(__initial_conditions, __bindings, FNOMIN, __local__FNOMIN)
   __local__BREFF = BREFF
   append!(__params, @parameters (BREFF::Real))
-  __initial_conditions[BREFF] = __local__BREFF
+  __dyad_seed_parameter!(__initial_conditions, __bindings, BREFF, __local__BREFF)
   __local__DREFF = DREFF
   append!(__params, @parameters (DREFF::Real))
-  __initial_conditions[DREFF] = __local__DREFF
+  __dyad_seed_parameter!(__initial_conditions, __bindings, DREFF, __local__DREFF)
   __local__FREFF = FREFF
   append!(__params, @parameters (FREFF::Real))
-  __initial_conditions[FREFF] = __local__FREFF
+  __dyad_seed_parameter!(__initial_conditions, __bindings, FREFF, __local__FREFF)
   __local__longitudinal_stiffness = longitudinal_stiffness
   append!(__params, @parameters (longitudinal_stiffness::Real), [description = "Tyre overall longitudinal stiffness. Sets the relaxation length."])
-  __initial_conditions[longitudinal_stiffness] = __local__longitudinal_stiffness
+  __dyad_seed_parameter!(__initial_conditions, __bindings, longitudinal_stiffness, __local__longitudinal_stiffness)
   __local__lateral_stiffness = lateral_stiffness
   append!(__params, @parameters (lateral_stiffness::Real), [description = "Tyre overall lateral stiffness. Sets the lateral relaxation length."])
-  __initial_conditions[lateral_stiffness] = __local__lateral_stiffness
+  __dyad_seed_parameter!(__initial_conditions, __bindings, lateral_stiffness, __local__lateral_stiffness)
   __local__INFLPRES = INFLPRES
   append!(__params, @parameters (INFLPRES::Real))
-  __initial_conditions[INFLPRES] = __local__INFLPRES
+  __dyad_seed_parameter!(__initial_conditions, __bindings, INFLPRES, __local__INFLPRES)
   __local__NOMPRES = NOMPRES
   append!(__params, @parameters (NOMPRES::Real))
-  __initial_conditions[NOMPRES] = __local__NOMPRES
+  __dyad_seed_parameter!(__initial_conditions, __bindings, NOMPRES, __local__NOMPRES)
   __local__LONGVL = LONGVL
   append!(__params, @parameters (LONGVL::Real))
-  __initial_conditions[LONGVL] = __local__LONGVL
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LONGVL, __local__LONGVL)
   __local__PCX1 = PCX1
   append!(__params, @parameters (PCX1::Real), [description = "Shape factor Cfx"])
-  __initial_conditions[PCX1] = __local__PCX1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PCX1, __local__PCX1)
   __local__PDX1 = PDX1
   append!(__params, @parameters (PDX1::Real), [description = "Longitudinal friction Mux at Fznom"])
-  __initial_conditions[PDX1] = __local__PDX1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PDX1, __local__PDX1)
   __local__PDX2 = PDX2
   append!(__params, @parameters (PDX2::Real), [description = "Variation of friction Mux with load"])
-  __initial_conditions[PDX2] = __local__PDX2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PDX2, __local__PDX2)
   __local__PDX3 = PDX3
   append!(__params, @parameters (PDX3::Real), [description = "Variation of friction Mux with camber squared"])
-  __initial_conditions[PDX3] = __local__PDX3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PDX3, __local__PDX3)
   __local__PEX1 = PEX1
   append!(__params, @parameters (PEX1::Real), [description = "Longitudinal curvature Efx at Fznom"])
-  __initial_conditions[PEX1] = __local__PEX1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PEX1, __local__PEX1)
   __local__PEX2 = PEX2
   append!(__params, @parameters (PEX2::Real), [description = "Variation of curvature Efx with load"])
-  __initial_conditions[PEX2] = __local__PEX2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PEX2, __local__PEX2)
   __local__PEX3 = PEX3
   append!(__params, @parameters (PEX3::Real), [description = "Variation of curvature Efx with load squared"])
-  __initial_conditions[PEX3] = __local__PEX3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PEX3, __local__PEX3)
   __local__PEX4 = PEX4
   append!(__params, @parameters (PEX4::Real), [description = "Factor in curvature Efx while driving"])
-  __initial_conditions[PEX4] = __local__PEX4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PEX4, __local__PEX4)
   __local__PKX1 = PKX1
   append!(__params, @parameters (PKX1::Real), [description = "Longitudinal slip stiffness Kfx/Fz at Fznom"])
-  __initial_conditions[PKX1] = __local__PKX1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PKX1, __local__PKX1)
   __local__PKX2 = PKX2
   append!(__params, @parameters (PKX2::Real), [description = "Variation of slip stiffness Kfx/Fz with load"])
-  __initial_conditions[PKX2] = __local__PKX2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PKX2, __local__PKX2)
   __local__PKX3 = PKX3
   append!(__params, @parameters (PKX3::Real), [description = "Exponent in slip stiffness Kfx/Fz with load"])
-  __initial_conditions[PKX3] = __local__PKX3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PKX3, __local__PKX3)
   __local__PHX1 = PHX1
   append!(__params, @parameters (PHX1::Real), [description = "Horizontal shift Shx at Fznom"])
-  __initial_conditions[PHX1] = __local__PHX1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PHX1, __local__PHX1)
   __local__PHX2 = PHX2
   append!(__params, @parameters (PHX2::Real), [description = "Variation of shift Shx with load"])
-  __initial_conditions[PHX2] = __local__PHX2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PHX2, __local__PHX2)
   __local__PVX1 = PVX1
   append!(__params, @parameters (PVX1::Real), [description = "Vertical shift Svx/Fz at Fznom"])
-  __initial_conditions[PVX1] = __local__PVX1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PVX1, __local__PVX1)
   __local__PVX2 = PVX2
   append!(__params, @parameters (PVX2::Real), [description = "Variation of shift Svx/Fz with load"])
-  __initial_conditions[PVX2] = __local__PVX2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PVX2, __local__PVX2)
   __local__PPX1 = PPX1
   append!(__params, @parameters (PPX1::Real), [description = "Linear influence of inflation pressure on longitudinal slip stiffness"])
-  __initial_conditions[PPX1] = __local__PPX1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PPX1, __local__PPX1)
   __local__PPX2 = PPX2
   append!(__params, @parameters (PPX2::Real), [description = "Quadratic influence of inflation pressure on longitudinal slip stiffness"])
-  __initial_conditions[PPX2] = __local__PPX2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PPX2, __local__PPX2)
   __local__PPX3 = PPX3
   append!(__params, @parameters (PPX3::Real), [description = "Linear influence of inflation pressure on peak longitudinal friction"])
-  __initial_conditions[PPX3] = __local__PPX3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PPX3, __local__PPX3)
   __local__PPX4 = PPX4
   append!(__params, @parameters (PPX4::Real), [description = "Quadratic influence of inflation pressure on peak longitudinal friction"])
-  __initial_conditions[PPX4] = __local__PPX4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PPX4, __local__PPX4)
   __local__RBX1 = RBX1
   append!(__params, @parameters (RBX1::Real), [description = "Slope factor for combined slip Fx reduction"])
-  __initial_conditions[RBX1] = __local__RBX1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RBX1, __local__RBX1)
   __local__RBX2 = RBX2
   append!(__params, @parameters (RBX2::Real), [description = "Variation of slope Fx reduction with kappa"])
-  __initial_conditions[RBX2] = __local__RBX2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RBX2, __local__RBX2)
   __local__RBX3 = RBX3
   append!(__params, @parameters (RBX3::Real), [description = "Influence of camber on stiffness for Fx combined"])
-  __initial_conditions[RBX3] = __local__RBX3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RBX3, __local__RBX3)
   __local__RCX1 = RCX1
   append!(__params, @parameters (RCX1::Real), [description = "Shape factor for combined slip Fx reduction"])
-  __initial_conditions[RCX1] = __local__RCX1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RCX1, __local__RCX1)
   __local__REX1 = REX1
   append!(__params, @parameters (REX1::Real), [description = "Curvature factor of combined Fx"])
-  __initial_conditions[REX1] = __local__REX1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, REX1, __local__REX1)
   __local__REX2 = REX2
   append!(__params, @parameters (REX2::Real), [description = "Curvature factor of combined Fx with load"])
-  __initial_conditions[REX2] = __local__REX2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, REX2, __local__REX2)
   __local__RHX1 = RHX1
   append!(__params, @parameters (RHX1::Real), [description = "Shift factor for combined slip Fx reduction"])
-  __initial_conditions[RHX1] = __local__RHX1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RHX1, __local__RHX1)
   __local__PCY1 = PCY1
   append!(__params, @parameters (PCY1::Real), [description = "Shape factor Cfy"])
-  __initial_conditions[PCY1] = __local__PCY1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PCY1, __local__PCY1)
   __local__PDY1 = PDY1
   append!(__params, @parameters (PDY1::Real), [description = "Lateral friction Muy at Fznom"])
-  __initial_conditions[PDY1] = __local__PDY1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PDY1, __local__PDY1)
   __local__PDY2 = PDY2
   append!(__params, @parameters (PDY2::Real), [description = "Variation of friction Muy with load"])
-  __initial_conditions[PDY2] = __local__PDY2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PDY2, __local__PDY2)
   __local__PDY3 = PDY3
   append!(__params, @parameters (PDY3::Real), [description = "Variation of friction Muy with camber squared"])
-  __initial_conditions[PDY3] = __local__PDY3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PDY3, __local__PDY3)
   __local__PEY1 = PEY1
   append!(__params, @parameters (PEY1::Real), [description = "Lateral curvature Efy at Fznom"])
-  __initial_conditions[PEY1] = __local__PEY1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PEY1, __local__PEY1)
   __local__PEY2 = PEY2
   append!(__params, @parameters (PEY2::Real), [description = "Variation of curvature Efy with load"])
-  __initial_conditions[PEY2] = __local__PEY2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PEY2, __local__PEY2)
   __local__PEY3 = PEY3
   append!(__params, @parameters (PEY3::Real), [description = "Zero order camber dependency of curvature Efy"])
-  __initial_conditions[PEY3] = __local__PEY3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PEY3, __local__PEY3)
   __local__PEY4 = PEY4
   append!(__params, @parameters (PEY4::Real), [description = "Variation of curvature Efy with camber"])
-  __initial_conditions[PEY4] = __local__PEY4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PEY4, __local__PEY4)
   __local__PEY5 = PEY5
   append!(__params, @parameters (PEY5::Real), [description = "Variation of curvature Efy with camber squared"])
-  __initial_conditions[PEY5] = __local__PEY5
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PEY5, __local__PEY5)
   __local__PKY1 = PKY1
   append!(__params, @parameters (PKY1::Real), [description = "Maximum value of stiffness Kfy/Fznom"])
-  __initial_conditions[PKY1] = __local__PKY1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PKY1, __local__PKY1)
   __local__PKY2 = PKY2
   append!(__params, @parameters (PKY2::Real), [description = "Load at which Kfy reaches maximum value, over Fznom"])
-  __initial_conditions[PKY2] = __local__PKY2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PKY2, __local__PKY2)
   __local__PKY3 = PKY3
   append!(__params, @parameters (PKY3::Real), [description = "Variation of Kfy/Fznom with camber"])
-  __initial_conditions[PKY3] = __local__PKY3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PKY3, __local__PKY3)
   __local__PKY4 = PKY4
   append!(__params, @parameters (PKY4::Real), [description = "Peak stiffness variation with camber squared"])
-  __initial_conditions[PKY4] = __local__PKY4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PKY4, __local__PKY4)
   __local__PKY5 = PKY5
   append!(__params, @parameters (PKY5::Real), [description = "Fz at which Kfy is maximum, variation with camber squared"])
-  __initial_conditions[PKY5] = __local__PKY5
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PKY5, __local__PKY5)
   __local__PKY6 = PKY6
   append!(__params, @parameters (PKY6::Real), [description = "Camber stiffness factor"])
-  __initial_conditions[PKY6] = __local__PKY6
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PKY6, __local__PKY6)
   __local__PKY7 = PKY7
   append!(__params, @parameters (PKY7::Real), [description = "Camber stiffness variation with load"])
-  __initial_conditions[PKY7] = __local__PKY7
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PKY7, __local__PKY7)
   __local__PHY1 = PHY1
   append!(__params, @parameters (PHY1::Real), [description = "Horizontal shift Shy at Fznom"])
-  __initial_conditions[PHY1] = __local__PHY1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PHY1, __local__PHY1)
   __local__PHY2 = PHY2
   append!(__params, @parameters (PHY2::Real), [description = "Variation of shift Shy with load"])
-  __initial_conditions[PHY2] = __local__PHY2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PHY2, __local__PHY2)
   __local__PVY1 = PVY1
   append!(__params, @parameters (PVY1::Real), [description = "Vertical shift in Svy/Fz at Fznom"])
-  __initial_conditions[PVY1] = __local__PVY1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PVY1, __local__PVY1)
   __local__PVY2 = PVY2
   append!(__params, @parameters (PVY2::Real), [description = "Variation of shift Svy/Fz with load"])
-  __initial_conditions[PVY2] = __local__PVY2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PVY2, __local__PVY2)
   __local__PVY3 = PVY3
   append!(__params, @parameters (PVY3::Real), [description = "Variation of shift Svy/Fz with camber"])
-  __initial_conditions[PVY3] = __local__PVY3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PVY3, __local__PVY3)
   __local__PVY4 = PVY4
   append!(__params, @parameters (PVY4::Real), [description = "Variation of shift Svy/Fz with camber and load"])
-  __initial_conditions[PVY4] = __local__PVY4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PVY4, __local__PVY4)
   __local__PPY1 = PPY1
   append!(__params, @parameters (PPY1::Real), [description = "Linear influence of inflation pressure on cornering stiffness"])
-  __initial_conditions[PPY1] = __local__PPY1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PPY1, __local__PPY1)
   __local__PPY2 = PPY2
   append!(__params, @parameters (PPY2::Real), [description = "Quadratic influence of inflation pressure on cornering stiffness"])
-  __initial_conditions[PPY2] = __local__PPY2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PPY2, __local__PPY2)
   __local__PPY3 = PPY3
   append!(__params, @parameters (PPY3::Real), [description = "Linear influence of inflation pressure on peak lateral friction"])
-  __initial_conditions[PPY3] = __local__PPY3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PPY3, __local__PPY3)
   __local__PPY4 = PPY4
   append!(__params, @parameters (PPY4::Real), [description = "Quadratic influence of inflation pressure on peak lateral friction"])
-  __initial_conditions[PPY4] = __local__PPY4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PPY4, __local__PPY4)
   __local__PPY5 = PPY5
   append!(__params, @parameters (PPY5::Real), [description = "Influence of inflation pressure on camber stiffness"])
-  __initial_conditions[PPY5] = __local__PPY5
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PPY5, __local__PPY5)
   __local__RBY1 = RBY1
   append!(__params, @parameters (RBY1::Real), [description = "Slope factor for combined Fy reduction"])
-  __initial_conditions[RBY1] = __local__RBY1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RBY1, __local__RBY1)
   __local__RBY2 = RBY2
   append!(__params, @parameters (RBY2::Real), [description = "Variation of slope Fy reduction with alpha"])
-  __initial_conditions[RBY2] = __local__RBY2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RBY2, __local__RBY2)
   __local__RBY3 = RBY3
   append!(__params, @parameters (RBY3::Real), [description = "Shift term for alpha in slope Fy reduction"])
-  __initial_conditions[RBY3] = __local__RBY3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RBY3, __local__RBY3)
   __local__RBY4 = RBY4
   append!(__params, @parameters (RBY4::Real), [description = "Influence of camber on stiffness of Fy combined"])
-  __initial_conditions[RBY4] = __local__RBY4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RBY4, __local__RBY4)
   __local__RCY1 = RCY1
   append!(__params, @parameters (RCY1::Real), [description = "Shape factor for combined Fy reduction"])
-  __initial_conditions[RCY1] = __local__RCY1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RCY1, __local__RCY1)
   __local__REY1 = REY1
   append!(__params, @parameters (REY1::Real), [description = "Curvature factor of combined Fy"])
-  __initial_conditions[REY1] = __local__REY1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, REY1, __local__REY1)
   __local__REY2 = REY2
   append!(__params, @parameters (REY2::Real), [description = "Curvature factor of combined Fy with load"])
-  __initial_conditions[REY2] = __local__REY2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, REY2, __local__REY2)
   __local__RHY1 = RHY1
   append!(__params, @parameters (RHY1::Real), [description = "Shift factor for combined Fy reduction"])
-  __initial_conditions[RHY1] = __local__RHY1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RHY1, __local__RHY1)
   __local__RHY2 = RHY2
   append!(__params, @parameters (RHY2::Real), [description = "Shift factor for combined Fy reduction with load"])
-  __initial_conditions[RHY2] = __local__RHY2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RHY2, __local__RHY2)
   __local__RVY1 = RVY1
   append!(__params, @parameters (RVY1::Real), [description = "Kappa induced side force Svyk/Muy*Fz at Fznom"])
-  __initial_conditions[RVY1] = __local__RVY1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RVY1, __local__RVY1)
   __local__RVY2 = RVY2
   append!(__params, @parameters (RVY2::Real), [description = "Variation of Svyk/Muy*Fz with load"])
-  __initial_conditions[RVY2] = __local__RVY2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RVY2, __local__RVY2)
   __local__RVY3 = RVY3
   append!(__params, @parameters (RVY3::Real), [description = "Variation of Svyk/Muy*Fz with camber"])
-  __initial_conditions[RVY3] = __local__RVY3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RVY3, __local__RVY3)
   __local__RVY4 = RVY4
   append!(__params, @parameters (RVY4::Real), [description = "Variation of Svyk/Muy*Fz with alpha"])
-  __initial_conditions[RVY4] = __local__RVY4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RVY4, __local__RVY4)
   __local__RVY5 = RVY5
   append!(__params, @parameters (RVY5::Real), [description = "Variation of Svyk/Muy*Fz with kappa"])
-  __initial_conditions[RVY5] = __local__RVY5
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RVY5, __local__RVY5)
   __local__RVY6 = RVY6
   append!(__params, @parameters (RVY6::Real), [description = "Variation of Svyk/Muy*Fz with atan(kappa)"])
-  __initial_conditions[RVY6] = __local__RVY6
+  __dyad_seed_parameter!(__initial_conditions, __bindings, RVY6, __local__RVY6)
   __local__QBZ1 = QBZ1
   append!(__params, @parameters (QBZ1::Real), [description = "Trail slope factor for trail Bpt at Fznom"])
-  __initial_conditions[QBZ1] = __local__QBZ1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QBZ1, __local__QBZ1)
   __local__QBZ2 = QBZ2
   append!(__params, @parameters (QBZ2::Real), [description = "Variation of slope Bpt with load"])
-  __initial_conditions[QBZ2] = __local__QBZ2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QBZ2, __local__QBZ2)
   __local__QBZ3 = QBZ3
   append!(__params, @parameters (QBZ3::Real), [description = "Variation of slope Bpt with load squared"])
-  __initial_conditions[QBZ3] = __local__QBZ3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QBZ3, __local__QBZ3)
   __local__QBZ4 = QBZ4
   append!(__params, @parameters (QBZ4::Real), [description = "Variation of slope Bpt with camber. PAC2002 only; 4.E40 has no term for it."])
-  __initial_conditions[QBZ4] = __local__QBZ4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QBZ4, __local__QBZ4)
   __local__QBZ5 = QBZ5
   append!(__params, @parameters (QBZ5::Real), [description = "Variation of slope Bpt with absolute camber"])
-  __initial_conditions[QBZ5] = __local__QBZ5
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QBZ5, __local__QBZ5)
   __local__QBZ6 = QBZ6
   append!(__params, @parameters (QBZ6::Real), [description = "Variation of slope Bpt with camber squared"])
-  __initial_conditions[QBZ6] = __local__QBZ6
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QBZ6, __local__QBZ6)
   __local__QBZ9 = QBZ9
   append!(__params, @parameters (QBZ9::Real), [description = "Slope factor Br of residual torque Mzr"])
-  __initial_conditions[QBZ9] = __local__QBZ9
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QBZ9, __local__QBZ9)
   __local__QBZ10 = QBZ10
   append!(__params, @parameters (QBZ10::Real), [description = "Slope factor Br of residual torque Mzr"])
-  __initial_conditions[QBZ10] = __local__QBZ10
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QBZ10, __local__QBZ10)
   __local__QCZ1 = QCZ1
   append!(__params, @parameters (QCZ1::Real), [description = "Shape factor Cpt for pneumatic trail"])
-  __initial_conditions[QCZ1] = __local__QCZ1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QCZ1, __local__QCZ1)
   __local__QDZ1 = QDZ1
   append!(__params, @parameters (QDZ1::Real), [description = "Peak trail Dpt = Dpt*(Fz/Fznom*R0)"])
-  __initial_conditions[QDZ1] = __local__QDZ1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QDZ1, __local__QDZ1)
   __local__QDZ2 = QDZ2
   append!(__params, @parameters (QDZ2::Real), [description = "Variation of peak Dpt with load"])
-  __initial_conditions[QDZ2] = __local__QDZ2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QDZ2, __local__QDZ2)
   __local__QDZ3 = QDZ3
   append!(__params, @parameters (QDZ3::Real), [description = "Variation of peak Dpt with camber"])
-  __initial_conditions[QDZ3] = __local__QDZ3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QDZ3, __local__QDZ3)
   __local__QDZ4 = QDZ4
   append!(__params, @parameters (QDZ4::Real), [description = "Variation of peak Dpt with camber squared"])
-  __initial_conditions[QDZ4] = __local__QDZ4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QDZ4, __local__QDZ4)
   __local__QDZ6 = QDZ6
   append!(__params, @parameters (QDZ6::Real), [description = "Peak residual torque Dmr = Dmr/(Fz*R0)"])
-  __initial_conditions[QDZ6] = __local__QDZ6
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QDZ6, __local__QDZ6)
   __local__QDZ7 = QDZ7
   append!(__params, @parameters (QDZ7::Real), [description = "Variation of peak factor Dmr with load"])
-  __initial_conditions[QDZ7] = __local__QDZ7
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QDZ7, __local__QDZ7)
   __local__QDZ8 = QDZ8
   append!(__params, @parameters (QDZ8::Real), [description = "Variation of peak factor Dmr with camber"])
-  __initial_conditions[QDZ8] = __local__QDZ8
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QDZ8, __local__QDZ8)
   __local__QDZ9 = QDZ9
   append!(__params, @parameters (QDZ9::Real), [description = "Variation of peak factor Dmr with camber and load"])
-  __initial_conditions[QDZ9] = __local__QDZ9
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QDZ9, __local__QDZ9)
   __local__QDZ10 = QDZ10
   append!(__params, @parameters (QDZ10::Real), [description = "Variation of peak factor Dmr with camber squared"])
-  __initial_conditions[QDZ10] = __local__QDZ10
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QDZ10, __local__QDZ10)
   __local__QDZ11 = QDZ11
   append!(__params, @parameters (QDZ11::Real), [description = "Variation of peak factor Dmr with camber squared and load"])
-  __initial_conditions[QDZ11] = __local__QDZ11
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QDZ11, __local__QDZ11)
   __local__QEZ1 = QEZ1
   append!(__params, @parameters (QEZ1::Real), [description = "Trail curvature Ept at Fznom"])
-  __initial_conditions[QEZ1] = __local__QEZ1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QEZ1, __local__QEZ1)
   __local__QEZ2 = QEZ2
   append!(__params, @parameters (QEZ2::Real), [description = "Variation of curvature Ept with load"])
-  __initial_conditions[QEZ2] = __local__QEZ2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QEZ2, __local__QEZ2)
   __local__QEZ3 = QEZ3
   append!(__params, @parameters (QEZ3::Real), [description = "Variation of curvature Ept with load squared"])
-  __initial_conditions[QEZ3] = __local__QEZ3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QEZ3, __local__QEZ3)
   __local__QEZ4 = QEZ4
   append!(__params, @parameters (QEZ4::Real), [description = "Variation of curvature Ept with sign of alpha-t"])
-  __initial_conditions[QEZ4] = __local__QEZ4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QEZ4, __local__QEZ4)
   __local__QEZ5 = QEZ5
   append!(__params, @parameters (QEZ5::Real), [description = "Variation of Ept with camber and sign of alpha-t"])
-  __initial_conditions[QEZ5] = __local__QEZ5
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QEZ5, __local__QEZ5)
   __local__QHZ1 = QHZ1
   append!(__params, @parameters (QHZ1::Real), [description = "Trail horizontal shift Sht at Fznom"])
-  __initial_conditions[QHZ1] = __local__QHZ1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QHZ1, __local__QHZ1)
   __local__QHZ2 = QHZ2
   append!(__params, @parameters (QHZ2::Real), [description = "Variation of shift Sht with load"])
-  __initial_conditions[QHZ2] = __local__QHZ2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QHZ2, __local__QHZ2)
   __local__QHZ3 = QHZ3
   append!(__params, @parameters (QHZ3::Real), [description = "Variation of shift Sht with camber"])
-  __initial_conditions[QHZ3] = __local__QHZ3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QHZ3, __local__QHZ3)
   __local__QHZ4 = QHZ4
   append!(__params, @parameters (QHZ4::Real), [description = "Variation of shift Sht with camber and load"])
-  __initial_conditions[QHZ4] = __local__QHZ4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, QHZ4, __local__QHZ4)
   __local__PPZ1 = PPZ1
   append!(__params, @parameters (PPZ1::Real), [description = "Linear influence of inflation pressure on pneumatic trail"])
-  __initial_conditions[PPZ1] = __local__PPZ1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PPZ1, __local__PPZ1)
   __local__PPZ2 = PPZ2
   append!(__params, @parameters (PPZ2::Real), [description = "Influence of inflation pressure on residual aligning torque"])
-  __initial_conditions[PPZ2] = __local__PPZ2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, PPZ2, __local__PPZ2)
   __local__SSZ1 = SSZ1
   append!(__params, @parameters (SSZ1::Real), [description = "Nominal value of s/R0: effect of Fx on Mz"])
-  __initial_conditions[SSZ1] = __local__SSZ1
+  __dyad_seed_parameter!(__initial_conditions, __bindings, SSZ1, __local__SSZ1)
   __local__SSZ2 = SSZ2
   append!(__params, @parameters (SSZ2::Real), [description = "Variation of distance s/R0 with Fy/Fznom"])
-  __initial_conditions[SSZ2] = __local__SSZ2
+  __dyad_seed_parameter!(__initial_conditions, __bindings, SSZ2, __local__SSZ2)
   __local__SSZ3 = SSZ3
   append!(__params, @parameters (SSZ3::Real), [description = "Variation of distance s/R0 with camber"])
-  __initial_conditions[SSZ3] = __local__SSZ3
+  __dyad_seed_parameter!(__initial_conditions, __bindings, SSZ3, __local__SSZ3)
   __local__SSZ4 = SSZ4
   append!(__params, @parameters (SSZ4::Real), [description = "Variation of distance s/R0 with load and camber"])
-  __initial_conditions[SSZ4] = __local__SSZ4
+  __dyad_seed_parameter!(__initial_conditions, __bindings, SSZ4, __local__SSZ4)
   __local__LFZO = LFZO
   append!(__params, @parameters (LFZO::Real))
-  __initial_conditions[LFZO] = __local__LFZO
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LFZO, __local__LFZO)
   __local__LCX = LCX
   append!(__params, @parameters (LCX::Real))
-  __initial_conditions[LCX] = __local__LCX
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LCX, __local__LCX)
   __local__LMUX = LMUX
   append!(__params, @parameters (LMUX::Real))
-  __initial_conditions[LMUX] = __local__LMUX
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LMUX, __local__LMUX)
   __local__LEX = LEX
   append!(__params, @parameters (LEX::Real))
-  __initial_conditions[LEX] = __local__LEX
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LEX, __local__LEX)
   __local__LKX = LKX
   append!(__params, @parameters (LKX::Real))
-  __initial_conditions[LKX] = __local__LKX
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LKX, __local__LKX)
   __local__LHX = LHX
   append!(__params, @parameters (LHX::Real))
-  __initial_conditions[LHX] = __local__LHX
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LHX, __local__LHX)
   __local__LVX = LVX
   append!(__params, @parameters (LVX::Real))
-  __initial_conditions[LVX] = __local__LVX
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LVX, __local__LVX)
   __local__LCY = LCY
   append!(__params, @parameters (LCY::Real))
-  __initial_conditions[LCY] = __local__LCY
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LCY, __local__LCY)
   __local__LMUY = LMUY
   append!(__params, @parameters (LMUY::Real))
-  __initial_conditions[LMUY] = __local__LMUY
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LMUY, __local__LMUY)
   __local__LEY = LEY
   append!(__params, @parameters (LEY::Real))
-  __initial_conditions[LEY] = __local__LEY
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LEY, __local__LEY)
   __local__LKY = LKY
   append!(__params, @parameters (LKY::Real))
-  __initial_conditions[LKY] = __local__LKY
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LKY, __local__LKY)
   __local__LHY = LHY
   append!(__params, @parameters (LHY::Real))
-  __initial_conditions[LHY] = __local__LHY
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LHY, __local__LHY)
   __local__LVY = LVY
   append!(__params, @parameters (LVY::Real))
-  __initial_conditions[LVY] = __local__LVY
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LVY, __local__LVY)
   __local__LKYC = LKYC
   append!(__params, @parameters (LKYC::Real))
-  __initial_conditions[LKYC] = __local__LKYC
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LKYC, __local__LKYC)
   __local__LXAL = LXAL
   append!(__params, @parameters (LXAL::Real))
-  __initial_conditions[LXAL] = __local__LXAL
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LXAL, __local__LXAL)
   __local__LYKA = LYKA
   append!(__params, @parameters (LYKA::Real))
-  __initial_conditions[LYKA] = __local__LYKA
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LYKA, __local__LYKA)
   __local__LVYKA = LVYKA
   append!(__params, @parameters (LVYKA::Real))
-  __initial_conditions[LVYKA] = __local__LVYKA
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LVYKA, __local__LVYKA)
   __local__LTR = LTR
   append!(__params, @parameters (LTR::Real))
-  __initial_conditions[LTR] = __local__LTR
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LTR, __local__LTR)
   __local__LRES = LRES
   append!(__params, @parameters (LRES::Real))
-  __initial_conditions[LRES] = __local__LRES
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LRES, __local__LRES)
   __local__LKZC = LKZC
   append!(__params, @parameters (LKZC::Real))
-  __initial_conditions[LKZC] = __local__LKZC
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LKZC, __local__LKZC)
   __local__LS = LS
   append!(__params, @parameters (LS::Real))
-  __initial_conditions[LS] = __local__LS
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LS, __local__LS)
   __local__LMUV = LMUV
   append!(__params, @parameters (LMUV::Real), [description = "Slip-speed friction decay. Leave at 0 unless modelling a wet surface."])
-  __initial_conditions[LMUV] = __local__LMUV
+  __dyad_seed_parameter!(__initial_conditions, __bindings, LMUV, __local__LMUV)
   __local__Au = Au
   append!(__params, @parameters (Au::Real), [description = "Digressive friction factor Au (4.E8), suggested 10"])
-  __initial_conditions[Au] = __local__Au
+  __dyad_seed_parameter!(__initial_conditions, __bindings, Au, __local__Au)
   __local__eps_x = eps_x
   append!(__params, @parameters (eps_x::Real), [description = "Singularity guard on Bx (4.E16). Only bites below Fz ~ eps_x / (PCX1 * PDX1)."])
-  __initial_conditions[eps_x] = __local__eps_x
+  __dyad_seed_parameter!(__initial_conditions, __bindings, eps_x, __local__eps_x)
   __local__eps_y = eps_y
   append!(__params, @parameters (eps_y::Real), [description = "Singularity guard on By (4.E26)."])
-  __initial_conditions[eps_y] = __local__eps_y
+  __dyad_seed_parameter!(__initial_conditions, __bindings, eps_y, __local__eps_y)
   __local__eps_k = eps_k
   append!(__params, @parameters (eps_k::Real), [description = "Singularity guard on Kya (4.E39)."])
-  __initial_conditions[eps_k] = __local__eps_k
+  __dyad_seed_parameter!(__initial_conditions, __bindings, eps_k, __local__eps_k)
   __local__eps_gamma = eps_gamma
   append!(__params, @parameters (eps_gamma::Real), [description = "Floor on cos(camber), so the contact frame stays defined at extreme camber."])
-  __initial_conditions[eps_gamma] = __local__eps_gamma
+  __dyad_seed_parameter!(__initial_conditions, __bindings, eps_gamma, __local__eps_gamma)
   __local__eps_v = eps_v
   append!(__params, @parameters (eps_v::Real), [description = "Low-speed threshold (TIR VXLOW). Floors the slip denominators."])
-  __initial_conditions[eps_v] = __local__eps_v
+  __dyad_seed_parameter!(__initial_conditions, __bindings, eps_v, __local__eps_v)
   __local__eps_vc = eps_vc
   append!(__params, @parameters (eps_vc::Real), [description = "Guard on Vc' in (4.E6a)."])
-  __initial_conditions[eps_vc] = __local__eps_vc
+  __dyad_seed_parameter!(__initial_conditions, __bindings, eps_vc, __local__eps_vc)
   __local__eps_sigma = eps_sigma
   append!(__params, @parameters (eps_sigma::Real), [description = "Floor on the relaxation length, which falls with Fz."])
-  __initial_conditions[eps_sigma] = __local__eps_sigma
+  __dyad_seed_parameter!(__initial_conditions, __bindings, eps_sigma, __local__eps_sigma)
   __local__damp_vlow = damp_vlow
   append!(__params, @parameters (damp_vlow::Real), [description = "Low-speed damping coefficient k_Vlow of (7.26) over the carcass stiffness (TIR DAMP_VLOW)."])
-  __initial_conditions[damp_vlow] = __local__damp_vlow
+  __dyad_seed_parameter!(__initial_conditions, __bindings, damp_vlow, __local__damp_vlow)
 
   ### Final Parameters (assignments)
   __bindings[sty_rod_radius] = 0.008
@@ -913,356 +1059,356 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Variables (assignments)
   __ovr_z_w = pop!(__overrides, "z_w", nothing); isnothing(__ovr_z_w) || push!(__eqs, z_w ~ __ovr_z_w)
-  __ovr_z_w__initial = pop!(__overrides, "z_w__initial", nothing); isnothing(__ovr_z_w__initial) || (__initial_conditions[z_w] = __ovr_z_w__initial)
-  __ovr_z_w__guess = pop!(__overrides, "z_w__guess", nothing)
+  __ovr_z_w__initial = pop!(__overrides, "z_w.initial", nothing); isnothing(__ovr_z_w__initial) || (__initial_conditions[z_w] = __ovr_z_w__initial)
+  __ovr_z_w__guess = pop!(__overrides, "z_w.guess", nothing)
   __ovr_v_z = pop!(__overrides, "v_z", nothing); isnothing(__ovr_v_z) || push!(__eqs, v_z ~ __ovr_v_z)
-  __ovr_v_z__initial = pop!(__overrides, "v_z__initial", nothing); isnothing(__ovr_v_z__initial) || (__initial_conditions[v_z] = __ovr_v_z__initial)
-  __ovr_v_z__guess = pop!(__overrides, "v_z__guess", nothing)
+  __ovr_v_z__initial = pop!(__overrides, "v_z.initial", nothing); isnothing(__ovr_v_z__initial) || (__initial_conditions[v_z] = __ovr_v_z__initial)
+  __ovr_v_z__guess = pop!(__overrides, "v_z.guess", nothing)
   __ovr_z_bottom = pop!(__overrides, "z_bottom", nothing); isnothing(__ovr_z_bottom) || push!(__eqs, z_bottom ~ __ovr_z_bottom)
-  __ovr_z_bottom__initial = pop!(__overrides, "z_bottom__initial", nothing); isnothing(__ovr_z_bottom__initial) || (__initial_conditions[z_bottom] = __ovr_z_bottom__initial)
-  __ovr_z_bottom__guess = pop!(__overrides, "z_bottom__guess", nothing)
+  __ovr_z_bottom__initial = pop!(__overrides, "z_bottom.initial", nothing); isnothing(__ovr_z_bottom__initial) || (__initial_conditions[z_bottom] = __ovr_z_bottom__initial)
+  __ovr_z_bottom__guess = pop!(__overrides, "z_bottom.guess", nothing)
   __ovr_rho = pop!(__overrides, "rho", nothing); isnothing(__ovr_rho) || push!(__eqs, rho ~ __ovr_rho)
-  __ovr_rho__initial = pop!(__overrides, "rho__initial", nothing); isnothing(__ovr_rho__initial) || (__initial_conditions[rho] = __ovr_rho__initial)
-  __ovr_rho__guess = pop!(__overrides, "rho__guess", nothing)
+  __ovr_rho__initial = pop!(__overrides, "rho.initial", nothing); isnothing(__ovr_rho__initial) || (__initial_conditions[rho] = __ovr_rho__initial)
+  __ovr_rho__guess = pop!(__overrides, "rho.guess", nothing)
   __ovr_loaded_radius = pop!(__overrides, "loaded_radius", nothing); isnothing(__ovr_loaded_radius) || push!(__eqs, loaded_radius ~ __ovr_loaded_radius)
-  __ovr_loaded_radius__initial = pop!(__overrides, "loaded_radius__initial", nothing); isnothing(__ovr_loaded_radius__initial) || (__initial_conditions[loaded_radius] = __ovr_loaded_radius__initial)
-  __ovr_loaded_radius__guess = pop!(__overrides, "loaded_radius__guess", nothing)
+  __ovr_loaded_radius__initial = pop!(__overrides, "loaded_radius.initial", nothing); isnothing(__ovr_loaded_radius__initial) || (__initial_conditions[loaded_radius] = __ovr_loaded_radius__initial)
+  __ovr_loaded_radius__guess = pop!(__overrides, "loaded_radius.guess", nothing)
   __ovr_Re = pop!(__overrides, "Re", nothing); isnothing(__ovr_Re) || push!(__eqs, Re ~ __ovr_Re)
-  __ovr_Re__initial = pop!(__overrides, "Re__initial", nothing); isnothing(__ovr_Re__initial) || (__initial_conditions[Re] = __ovr_Re__initial)
-  __ovr_Re__guess = pop!(__overrides, "Re__guess", nothing)
+  __ovr_Re__initial = pop!(__overrides, "Re.initial", nothing); isnothing(__ovr_Re__initial) || (__initial_conditions[Re] = __ovr_Re__initial)
+  __ovr_Re__guess = pop!(__overrides, "Re.guess", nothing)
   __ovr_rho_Fz0 = pop!(__overrides, "rho_Fz0", nothing); isnothing(__ovr_rho_Fz0) || push!(__eqs, rho_Fz0 ~ __ovr_rho_Fz0)
-  __ovr_rho_Fz0__initial = pop!(__overrides, "rho_Fz0__initial", nothing); isnothing(__ovr_rho_Fz0__initial) || (__initial_conditions[rho_Fz0] = __ovr_rho_Fz0__initial)
-  __ovr_rho_Fz0__guess = pop!(__overrides, "rho_Fz0__guess", nothing)
+  __ovr_rho_Fz0__initial = pop!(__overrides, "rho_Fz0.initial", nothing); isnothing(__ovr_rho_Fz0__initial) || (__initial_conditions[rho_Fz0] = __ovr_rho_Fz0__initial)
+  __ovr_rho_Fz0__guess = pop!(__overrides, "rho_Fz0.guess", nothing)
   __ovr_Fz_raw = pop!(__overrides, "Fz_raw", nothing); isnothing(__ovr_Fz_raw) || push!(__eqs, Fz_raw ~ __ovr_Fz_raw)
-  __ovr_Fz_raw__initial = pop!(__overrides, "Fz_raw__initial", nothing); isnothing(__ovr_Fz_raw__initial) || (__initial_conditions[Fz_raw] = __ovr_Fz_raw__initial)
-  __ovr_Fz_raw__guess = pop!(__overrides, "Fz_raw__guess", nothing)
+  __ovr_Fz_raw__initial = pop!(__overrides, "Fz_raw.initial", nothing); isnothing(__ovr_Fz_raw__initial) || (__initial_conditions[Fz_raw] = __ovr_Fz_raw__initial)
+  __ovr_Fz_raw__guess = pop!(__overrides, "Fz_raw.guess", nothing)
   __ovr_Fz = pop!(__overrides, "Fz", nothing); isnothing(__ovr_Fz) || push!(__eqs, Fz ~ __ovr_Fz)
-  __ovr_Fz__initial = pop!(__overrides, "Fz__initial", nothing); isnothing(__ovr_Fz__initial) || (__initial_conditions[Fz] = __ovr_Fz__initial)
-  __ovr_Fz__guess = pop!(__overrides, "Fz__guess", nothing)
+  __ovr_Fz__initial = pop!(__overrides, "Fz.initial", nothing); isnothing(__ovr_Fz__initial) || (__initial_conditions[Fz] = __ovr_Fz__initial)
+  __ovr_Fz__guess = pop!(__overrides, "Fz.guess", nothing)
   __ovr_x_w = pop!(__overrides, "x_w", nothing); isnothing(__ovr_x_w) || push!(__eqs, x_w ~ __ovr_x_w)
-  __ovr_x_w__initial = pop!(__overrides, "x_w__initial", nothing); isnothing(__ovr_x_w__initial) || (__initial_conditions[x_w] = __ovr_x_w__initial)
-  __ovr_x_w__guess = pop!(__overrides, "x_w__guess", nothing)
+  __ovr_x_w__initial = pop!(__overrides, "x_w.initial", nothing); isnothing(__ovr_x_w__initial) || (__initial_conditions[x_w] = __ovr_x_w__initial)
+  __ovr_x_w__guess = pop!(__overrides, "x_w.guess", nothing)
   __ovr_y_w = pop!(__overrides, "y_w", nothing); isnothing(__ovr_y_w) || push!(__eqs, y_w ~ __ovr_y_w)
-  __ovr_y_w__initial = pop!(__overrides, "y_w__initial", nothing); isnothing(__ovr_y_w__initial) || (__initial_conditions[y_w] = __ovr_y_w__initial)
-  __ovr_y_w__guess = pop!(__overrides, "y_w__guess", nothing)
+  __ovr_y_w__initial = pop!(__overrides, "y_w.initial", nothing); isnothing(__ovr_y_w__initial) || (__initial_conditions[y_w] = __ovr_y_w__initial)
+  __ovr_y_w__guess = pop!(__overrides, "y_w.guess", nothing)
   __ovr_v_wx = pop!(__overrides, "v_wx", nothing); isnothing(__ovr_v_wx) || push!(__eqs, v_wx ~ __ovr_v_wx)
-  __ovr_v_wx__initial = pop!(__overrides, "v_wx__initial", nothing); isnothing(__ovr_v_wx__initial) || (__initial_conditions[v_wx] = __ovr_v_wx__initial)
-  __ovr_v_wx__guess = pop!(__overrides, "v_wx__guess", nothing)
+  __ovr_v_wx__initial = pop!(__overrides, "v_wx.initial", nothing); isnothing(__ovr_v_wx__initial) || (__initial_conditions[v_wx] = __ovr_v_wx__initial)
+  __ovr_v_wx__guess = pop!(__overrides, "v_wx.guess", nothing)
   __ovr_v_wy = pop!(__overrides, "v_wy", nothing); isnothing(__ovr_v_wy) || push!(__eqs, v_wy ~ __ovr_v_wy)
-  __ovr_v_wy__initial = pop!(__overrides, "v_wy__initial", nothing); isnothing(__ovr_v_wy__initial) || (__initial_conditions[v_wy] = __ovr_v_wy__initial)
-  __ovr_v_wy__guess = pop!(__overrides, "v_wy__guess", nothing)
+  __ovr_v_wy__initial = pop!(__overrides, "v_wy.initial", nothing); isnothing(__ovr_v_wy__initial) || (__initial_conditions[v_wy] = __ovr_v_wy__initial)
+  __ovr_v_wy__guess = pop!(__overrides, "v_wy.guess", nothing)
   __ovr_cos_gamma = pop!(__overrides, "cos_gamma", nothing); isnothing(__ovr_cos_gamma) || push!(__eqs, cos_gamma ~ __ovr_cos_gamma)
-  __ovr_cos_gamma__initial = pop!(__overrides, "cos_gamma__initial", nothing); isnothing(__ovr_cos_gamma__initial) || (__initial_conditions[cos_gamma] = __ovr_cos_gamma__initial)
-  __ovr_cos_gamma__guess = pop!(__overrides, "cos_gamma__guess", nothing)
+  __ovr_cos_gamma__initial = pop!(__overrides, "cos_gamma.initial", nothing); isnothing(__ovr_cos_gamma__initial) || (__initial_conditions[cos_gamma] = __ovr_cos_gamma__initial)
+  __ovr_cos_gamma__guess = pop!(__overrides, "cos_gamma.guess", nothing)
   __ovr_V_x = pop!(__overrides, "V_x", nothing); isnothing(__ovr_V_x) || push!(__eqs, V_x ~ __ovr_V_x)
-  __ovr_V_x__initial = pop!(__overrides, "V_x__initial", nothing); isnothing(__ovr_V_x__initial) || (__initial_conditions[V_x] = __ovr_V_x__initial)
-  __ovr_V_x__guess = pop!(__overrides, "V_x__guess", nothing)
+  __ovr_V_x__initial = pop!(__overrides, "V_x.initial", nothing); isnothing(__ovr_V_x__initial) || (__initial_conditions[V_x] = __ovr_V_x__initial)
+  __ovr_V_x__guess = pop!(__overrides, "V_x.guess", nothing)
   __ovr_omega = pop!(__overrides, "omega", nothing); isnothing(__ovr_omega) || push!(__eqs, omega ~ __ovr_omega)
-  __ovr_omega__initial = pop!(__overrides, "omega__initial", nothing); isnothing(__ovr_omega__initial) || (__initial_conditions[omega] = __ovr_omega__initial)
-  __ovr_omega__guess = pop!(__overrides, "omega__guess", nothing)
+  __ovr_omega__initial = pop!(__overrides, "omega.initial", nothing); isnothing(__ovr_omega__initial) || (__initial_conditions[omega] = __ovr_omega__initial)
+  __ovr_omega__guess = pop!(__overrides, "omega.guess", nothing)
   __ovr_V_sx = pop!(__overrides, "V_sx", nothing); isnothing(__ovr_V_sx) || push!(__eqs, V_sx ~ __ovr_V_sx)
-  __ovr_V_sx__initial = pop!(__overrides, "V_sx__initial", nothing); isnothing(__ovr_V_sx__initial) || (__initial_conditions[V_sx] = __ovr_V_sx__initial)
-  __ovr_V_sx__guess = pop!(__overrides, "V_sx__guess", nothing)
+  __ovr_V_sx__initial = pop!(__overrides, "V_sx.initial", nothing); isnothing(__ovr_V_sx__initial) || (__initial_conditions[V_sx] = __ovr_V_sx__initial)
+  __ovr_V_sx__guess = pop!(__overrides, "V_sx.guess", nothing)
   __ovr_V_s = pop!(__overrides, "V_s", nothing); isnothing(__ovr_V_s) || push!(__eqs, V_s ~ __ovr_V_s)
-  __ovr_V_s__initial = pop!(__overrides, "V_s__initial", nothing); isnothing(__ovr_V_s__initial) || (__initial_conditions[V_s] = __ovr_V_s__initial)
-  __ovr_V_s__guess = pop!(__overrides, "V_s__guess", nothing)
+  __ovr_V_s__initial = pop!(__overrides, "V_s.initial", nothing); isnothing(__ovr_V_s__initial) || (__initial_conditions[V_s] = __ovr_V_s__initial)
+  __ovr_V_s__guess = pop!(__overrides, "V_s.guess", nothing)
   __ovr_kappa = pop!(__overrides, "kappa", nothing); isnothing(__ovr_kappa) || push!(__eqs, kappa ~ __ovr_kappa)
-  __ovr_kappa__initial = pop!(__overrides, "kappa__initial", nothing); isnothing(__ovr_kappa__initial) || (__initial_conditions[kappa] = __ovr_kappa__initial)
-  __ovr_kappa__guess = pop!(__overrides, "kappa__guess", nothing)
+  __ovr_kappa__initial = pop!(__overrides, "kappa.initial", nothing); isnothing(__ovr_kappa__initial) || (__initial_conditions[kappa] = __ovr_kappa__initial)
+  __ovr_kappa__guess = pop!(__overrides, "kappa.guess", nothing)
   __ovr_u_x = pop!(__overrides, "u_x", nothing); isnothing(__ovr_u_x) || push!(__eqs, u_x ~ __ovr_u_x)
-  __ovr_u_x__initial = pop!(__overrides, "u_x__initial", nothing); isnothing(__ovr_u_x__initial) || (__initial_conditions[u_x] = __ovr_u_x__initial)
-  __ovr_u_x__guess = pop!(__overrides, "u_x__guess", nothing)
+  __ovr_u_x__initial = pop!(__overrides, "u_x.initial", nothing); isnothing(__ovr_u_x__initial) || (__initial_conditions[u_x] = __ovr_u_x__initial)
+  __ovr_u_x__guess = pop!(__overrides, "u_x.guess", nothing)
   __ovr_u_dot_free = pop!(__overrides, "u_dot_free", nothing); isnothing(__ovr_u_dot_free) || push!(__eqs, u_dot_free ~ __ovr_u_dot_free)
-  __ovr_u_dot_free__initial = pop!(__overrides, "u_dot_free__initial", nothing); isnothing(__ovr_u_dot_free__initial) || (__initial_conditions[u_dot_free] = __ovr_u_dot_free__initial)
-  __ovr_u_dot_free__guess = pop!(__overrides, "u_dot_free__guess", nothing)
+  __ovr_u_dot_free__initial = pop!(__overrides, "u_dot_free.initial", nothing); isnothing(__ovr_u_dot_free__initial) || (__initial_conditions[u_dot_free] = __ovr_u_dot_free__initial)
+  __ovr_u_dot_free__guess = pop!(__overrides, "u_dot_free.guess", nothing)
   __ovr_kappa_prime = pop!(__overrides, "kappa_prime", nothing); isnothing(__ovr_kappa_prime) || push!(__eqs, kappa_prime ~ __ovr_kappa_prime)
-  __ovr_kappa_prime__initial = pop!(__overrides, "kappa_prime__initial", nothing); isnothing(__ovr_kappa_prime__initial) || (__initial_conditions[kappa_prime] = __ovr_kappa_prime__initial)
-  __ovr_kappa_prime__guess = pop!(__overrides, "kappa_prime__guess", nothing)
+  __ovr_kappa_prime__initial = pop!(__overrides, "kappa_prime.initial", nothing); isnothing(__ovr_kappa_prime__initial) || (__initial_conditions[kappa_prime] = __ovr_kappa_prime__initial)
+  __ovr_kappa_prime__guess = pop!(__overrides, "kappa_prime.guess", nothing)
   __ovr_sigma_kappa = pop!(__overrides, "sigma_kappa", nothing); isnothing(__ovr_sigma_kappa) || push!(__eqs, sigma_kappa ~ __ovr_sigma_kappa)
-  __ovr_sigma_kappa__initial = pop!(__overrides, "sigma_kappa__initial", nothing); isnothing(__ovr_sigma_kappa__initial) || (__initial_conditions[sigma_kappa] = __ovr_sigma_kappa__initial)
-  __ovr_sigma_kappa__guess = pop!(__overrides, "sigma_kappa__guess", nothing)
+  __ovr_sigma_kappa__initial = pop!(__overrides, "sigma_kappa.initial", nothing); isnothing(__ovr_sigma_kappa__initial) || (__initial_conditions[sigma_kappa] = __ovr_sigma_kappa__initial)
+  __ovr_sigma_kappa__guess = pop!(__overrides, "sigma_kappa.guess", nothing)
   __ovr_V_y = pop!(__overrides, "V_y", nothing); isnothing(__ovr_V_y) || push!(__eqs, V_y ~ __ovr_V_y)
-  __ovr_V_y__initial = pop!(__overrides, "V_y__initial", nothing); isnothing(__ovr_V_y__initial) || (__initial_conditions[V_y] = __ovr_V_y__initial)
-  __ovr_V_y__guess = pop!(__overrides, "V_y__guess", nothing)
+  __ovr_V_y__initial = pop!(__overrides, "V_y.initial", nothing); isnothing(__ovr_V_y__initial) || (__initial_conditions[V_y] = __ovr_V_y__initial)
+  __ovr_V_y__guess = pop!(__overrides, "V_y.guess", nothing)
   __ovr_V_y_mf = pop!(__overrides, "V_y_mf", nothing); isnothing(__ovr_V_y_mf) || push!(__eqs, V_y_mf ~ __ovr_V_y_mf)
-  __ovr_V_y_mf__initial = pop!(__overrides, "V_y_mf__initial", nothing); isnothing(__ovr_V_y_mf__initial) || (__initial_conditions[V_y_mf] = __ovr_V_y_mf__initial)
-  __ovr_V_y_mf__guess = pop!(__overrides, "V_y_mf__guess", nothing)
+  __ovr_V_y_mf__initial = pop!(__overrides, "V_y_mf.initial", nothing); isnothing(__ovr_V_y_mf__initial) || (__initial_conditions[V_y_mf] = __ovr_V_y_mf__initial)
+  __ovr_V_y_mf__guess = pop!(__overrides, "V_y_mf.guess", nothing)
   __ovr_alpha = pop!(__overrides, "alpha", nothing); isnothing(__ovr_alpha) || push!(__eqs, alpha ~ __ovr_alpha)
-  __ovr_alpha__initial = pop!(__overrides, "alpha__initial", nothing); isnothing(__ovr_alpha__initial) || (__initial_conditions[alpha] = __ovr_alpha__initial)
-  __ovr_alpha__guess = pop!(__overrides, "alpha__guess", nothing)
+  __ovr_alpha__initial = pop!(__overrides, "alpha.initial", nothing); isnothing(__ovr_alpha__initial) || (__initial_conditions[alpha] = __ovr_alpha__initial)
+  __ovr_alpha__guess = pop!(__overrides, "alpha.guess", nothing)
   __ovr_V_c = pop!(__overrides, "V_c", nothing); isnothing(__ovr_V_c) || push!(__eqs, V_c ~ __ovr_V_c)
-  __ovr_V_c__initial = pop!(__overrides, "V_c__initial", nothing); isnothing(__ovr_V_c__initial) || (__initial_conditions[V_c] = __ovr_V_c__initial)
-  __ovr_V_c__guess = pop!(__overrides, "V_c__guess", nothing)
+  __ovr_V_c__initial = pop!(__overrides, "V_c.initial", nothing); isnothing(__ovr_V_c__initial) || (__initial_conditions[V_c] = __ovr_V_c__initial)
+  __ovr_V_c__guess = pop!(__overrides, "V_c.guess", nothing)
   __ovr_cos_alpha = pop!(__overrides, "cos_alpha", nothing); isnothing(__ovr_cos_alpha) || push!(__eqs, cos_alpha ~ __ovr_cos_alpha)
-  __ovr_cos_alpha__initial = pop!(__overrides, "cos_alpha__initial", nothing); isnothing(__ovr_cos_alpha__initial) || (__initial_conditions[cos_alpha] = __ovr_cos_alpha__initial)
-  __ovr_cos_alpha__guess = pop!(__overrides, "cos_alpha__guess", nothing)
+  __ovr_cos_alpha__initial = pop!(__overrides, "cos_alpha.initial", nothing); isnothing(__ovr_cos_alpha__initial) || (__initial_conditions[cos_alpha] = __ovr_cos_alpha__initial)
+  __ovr_cos_alpha__guess = pop!(__overrides, "cos_alpha.guess", nothing)
   __ovr_sgn_Vx = pop!(__overrides, "sgn_Vx", nothing); isnothing(__ovr_sgn_Vx) || push!(__eqs, sgn_Vx ~ __ovr_sgn_Vx)
-  __ovr_sgn_Vx__initial = pop!(__overrides, "sgn_Vx__initial", nothing); isnothing(__ovr_sgn_Vx__initial) || (__initial_conditions[sgn_Vx] = __ovr_sgn_Vx__initial)
-  __ovr_sgn_Vx__guess = pop!(__overrides, "sgn_Vx__guess", nothing)
+  __ovr_sgn_Vx__initial = pop!(__overrides, "sgn_Vx.initial", nothing); isnothing(__ovr_sgn_Vx__initial) || (__initial_conditions[sgn_Vx] = __ovr_sgn_Vx__initial)
+  __ovr_sgn_Vx__guess = pop!(__overrides, "sgn_Vx.guess", nothing)
   __ovr_v_y = pop!(__overrides, "v_y", nothing); isnothing(__ovr_v_y) || push!(__eqs, v_y ~ __ovr_v_y)
-  __ovr_v_y__initial = pop!(__overrides, "v_y__initial", nothing); isnothing(__ovr_v_y__initial) || (__initial_conditions[v_y] = __ovr_v_y__initial)
-  __ovr_v_y__guess = pop!(__overrides, "v_y__guess", nothing)
+  __ovr_v_y__initial = pop!(__overrides, "v_y.initial", nothing); isnothing(__ovr_v_y__initial) || (__initial_conditions[v_y] = __ovr_v_y__initial)
+  __ovr_v_y__guess = pop!(__overrides, "v_y.guess", nothing)
   __ovr_v_dot_free = pop!(__overrides, "v_dot_free", nothing); isnothing(__ovr_v_dot_free) || push!(__eqs, v_dot_free ~ __ovr_v_dot_free)
-  __ovr_v_dot_free__initial = pop!(__overrides, "v_dot_free__initial", nothing); isnothing(__ovr_v_dot_free__initial) || (__initial_conditions[v_dot_free] = __ovr_v_dot_free__initial)
-  __ovr_v_dot_free__guess = pop!(__overrides, "v_dot_free__guess", nothing)
+  __ovr_v_dot_free__initial = pop!(__overrides, "v_dot_free.initial", nothing); isnothing(__ovr_v_dot_free__initial) || (__initial_conditions[v_dot_free] = __ovr_v_dot_free__initial)
+  __ovr_v_dot_free__guess = pop!(__overrides, "v_dot_free.guess", nothing)
   __ovr_alpha_sl = pop!(__overrides, "alpha_sl", nothing); isnothing(__ovr_alpha_sl) || push!(__eqs, alpha_sl ~ __ovr_alpha_sl)
-  __ovr_alpha_sl__initial = pop!(__overrides, "alpha_sl__initial", nothing); isnothing(__ovr_alpha_sl__initial) || (__initial_conditions[alpha_sl] = __ovr_alpha_sl__initial)
-  __ovr_alpha_sl__guess = pop!(__overrides, "alpha_sl__guess", nothing)
+  __ovr_alpha_sl__initial = pop!(__overrides, "alpha_sl.initial", nothing); isnothing(__ovr_alpha_sl__initial) || (__initial_conditions[alpha_sl] = __ovr_alpha_sl__initial)
+  __ovr_alpha_sl__guess = pop!(__overrides, "alpha_sl.guess", nothing)
   __ovr_alpha_prime = pop!(__overrides, "alpha_prime", nothing); isnothing(__ovr_alpha_prime) || push!(__eqs, alpha_prime ~ __ovr_alpha_prime)
-  __ovr_alpha_prime__initial = pop!(__overrides, "alpha_prime__initial", nothing); isnothing(__ovr_alpha_prime__initial) || (__initial_conditions[alpha_prime] = __ovr_alpha_prime__initial)
-  __ovr_alpha_prime__guess = pop!(__overrides, "alpha_prime__guess", nothing)
+  __ovr_alpha_prime__initial = pop!(__overrides, "alpha_prime.initial", nothing); isnothing(__ovr_alpha_prime__initial) || (__initial_conditions[alpha_prime] = __ovr_alpha_prime__initial)
+  __ovr_alpha_prime__guess = pop!(__overrides, "alpha_prime.guess", nothing)
   __ovr_sigma_alpha = pop!(__overrides, "sigma_alpha", nothing); isnothing(__ovr_sigma_alpha) || push!(__eqs, sigma_alpha ~ __ovr_sigma_alpha)
-  __ovr_sigma_alpha__initial = pop!(__overrides, "sigma_alpha__initial", nothing); isnothing(__ovr_sigma_alpha__initial) || (__initial_conditions[sigma_alpha] = __ovr_sigma_alpha__initial)
-  __ovr_sigma_alpha__guess = pop!(__overrides, "sigma_alpha__guess", nothing)
+  __ovr_sigma_alpha__initial = pop!(__overrides, "sigma_alpha.initial", nothing); isnothing(__ovr_sigma_alpha__initial) || (__initial_conditions[sigma_alpha] = __ovr_sigma_alpha__initial)
+  __ovr_sigma_alpha__guess = pop!(__overrides, "sigma_alpha.guess", nothing)
   __ovr_Fz0_prime = pop!(__overrides, "Fz0_prime", nothing); isnothing(__ovr_Fz0_prime) || push!(__eqs, Fz0_prime ~ __ovr_Fz0_prime)
-  __ovr_Fz0_prime__initial = pop!(__overrides, "Fz0_prime__initial", nothing); isnothing(__ovr_Fz0_prime__initial) || (__initial_conditions[Fz0_prime] = __ovr_Fz0_prime__initial)
-  __ovr_Fz0_prime__guess = pop!(__overrides, "Fz0_prime__guess", nothing)
+  __ovr_Fz0_prime__initial = pop!(__overrides, "Fz0_prime.initial", nothing); isnothing(__ovr_Fz0_prime__initial) || (__initial_conditions[Fz0_prime] = __ovr_Fz0_prime__initial)
+  __ovr_Fz0_prime__guess = pop!(__overrides, "Fz0_prime.guess", nothing)
   __ovr_dfz = pop!(__overrides, "dfz", nothing); isnothing(__ovr_dfz) || push!(__eqs, dfz ~ __ovr_dfz)
-  __ovr_dfz__initial = pop!(__overrides, "dfz__initial", nothing); isnothing(__ovr_dfz__initial) || (__initial_conditions[dfz] = __ovr_dfz__initial)
-  __ovr_dfz__guess = pop!(__overrides, "dfz__guess", nothing)
+  __ovr_dfz__initial = pop!(__overrides, "dfz.initial", nothing); isnothing(__ovr_dfz__initial) || (__initial_conditions[dfz] = __ovr_dfz__initial)
+  __ovr_dfz__guess = pop!(__overrides, "dfz.guess", nothing)
   __ovr_dpi = pop!(__overrides, "dpi", nothing); isnothing(__ovr_dpi) || push!(__eqs, dpi ~ __ovr_dpi)
-  __ovr_dpi__initial = pop!(__overrides, "dpi__initial", nothing); isnothing(__ovr_dpi__initial) || (__initial_conditions[dpi] = __ovr_dpi__initial)
-  __ovr_dpi__guess = pop!(__overrides, "dpi__guess", nothing)
+  __ovr_dpi__initial = pop!(__overrides, "dpi.initial", nothing); isnothing(__ovr_dpi__initial) || (__initial_conditions[dpi] = __ovr_dpi__initial)
+  __ovr_dpi__guess = pop!(__overrides, "dpi.guess", nothing)
   __ovr_gamma_star = pop!(__overrides, "gamma_star", nothing); isnothing(__ovr_gamma_star) || push!(__eqs, gamma_star ~ __ovr_gamma_star)
-  __ovr_gamma_star__initial = pop!(__overrides, "gamma_star__initial", nothing); isnothing(__ovr_gamma_star__initial) || (__initial_conditions[gamma_star] = __ovr_gamma_star__initial)
-  __ovr_gamma_star__guess = pop!(__overrides, "gamma_star__guess", nothing)
+  __ovr_gamma_star__initial = pop!(__overrides, "gamma_star.initial", nothing); isnothing(__ovr_gamma_star__initial) || (__initial_conditions[gamma_star] = __ovr_gamma_star__initial)
+  __ovr_gamma_star__guess = pop!(__overrides, "gamma_star.guess", nothing)
   __ovr_lam_mux_star = pop!(__overrides, "lam_mux_star", nothing); isnothing(__ovr_lam_mux_star) || push!(__eqs, lam_mux_star ~ __ovr_lam_mux_star)
-  __ovr_lam_mux_star__initial = pop!(__overrides, "lam_mux_star__initial", nothing); isnothing(__ovr_lam_mux_star__initial) || (__initial_conditions[lam_mux_star] = __ovr_lam_mux_star__initial)
-  __ovr_lam_mux_star__guess = pop!(__overrides, "lam_mux_star__guess", nothing)
+  __ovr_lam_mux_star__initial = pop!(__overrides, "lam_mux_star.initial", nothing); isnothing(__ovr_lam_mux_star__initial) || (__initial_conditions[lam_mux_star] = __ovr_lam_mux_star__initial)
+  __ovr_lam_mux_star__guess = pop!(__overrides, "lam_mux_star.guess", nothing)
   __ovr_lam_mux_prime = pop!(__overrides, "lam_mux_prime", nothing); isnothing(__ovr_lam_mux_prime) || push!(__eqs, lam_mux_prime ~ __ovr_lam_mux_prime)
-  __ovr_lam_mux_prime__initial = pop!(__overrides, "lam_mux_prime__initial", nothing); isnothing(__ovr_lam_mux_prime__initial) || (__initial_conditions[lam_mux_prime] = __ovr_lam_mux_prime__initial)
-  __ovr_lam_mux_prime__guess = pop!(__overrides, "lam_mux_prime__guess", nothing)
+  __ovr_lam_mux_prime__initial = pop!(__overrides, "lam_mux_prime.initial", nothing); isnothing(__ovr_lam_mux_prime__initial) || (__initial_conditions[lam_mux_prime] = __ovr_lam_mux_prime__initial)
+  __ovr_lam_mux_prime__guess = pop!(__overrides, "lam_mux_prime.guess", nothing)
   __ovr_lam_muy_star = pop!(__overrides, "lam_muy_star", nothing); isnothing(__ovr_lam_muy_star) || push!(__eqs, lam_muy_star ~ __ovr_lam_muy_star)
-  __ovr_lam_muy_star__initial = pop!(__overrides, "lam_muy_star__initial", nothing); isnothing(__ovr_lam_muy_star__initial) || (__initial_conditions[lam_muy_star] = __ovr_lam_muy_star__initial)
-  __ovr_lam_muy_star__guess = pop!(__overrides, "lam_muy_star__guess", nothing)
+  __ovr_lam_muy_star__initial = pop!(__overrides, "lam_muy_star.initial", nothing); isnothing(__ovr_lam_muy_star__initial) || (__initial_conditions[lam_muy_star] = __ovr_lam_muy_star__initial)
+  __ovr_lam_muy_star__guess = pop!(__overrides, "lam_muy_star.guess", nothing)
   __ovr_lam_muy_prime = pop!(__overrides, "lam_muy_prime", nothing); isnothing(__ovr_lam_muy_prime) || push!(__eqs, lam_muy_prime ~ __ovr_lam_muy_prime)
-  __ovr_lam_muy_prime__initial = pop!(__overrides, "lam_muy_prime__initial", nothing); isnothing(__ovr_lam_muy_prime__initial) || (__initial_conditions[lam_muy_prime] = __ovr_lam_muy_prime__initial)
-  __ovr_lam_muy_prime__guess = pop!(__overrides, "lam_muy_prime__guess", nothing)
+  __ovr_lam_muy_prime__initial = pop!(__overrides, "lam_muy_prime.initial", nothing); isnothing(__ovr_lam_muy_prime__initial) || (__initial_conditions[lam_muy_prime] = __ovr_lam_muy_prime__initial)
+  __ovr_lam_muy_prime__guess = pop!(__overrides, "lam_muy_prime.guess", nothing)
   __ovr_lam_low = pop!(__overrides, "lam_low", nothing); isnothing(__ovr_lam_low) || push!(__eqs, lam_low ~ __ovr_lam_low)
-  __ovr_lam_low__initial = pop!(__overrides, "lam_low__initial", nothing); isnothing(__ovr_lam_low__initial) || (__initial_conditions[lam_low] = __ovr_lam_low__initial)
-  __ovr_lam_low__guess = pop!(__overrides, "lam_low__guess", nothing)
+  __ovr_lam_low__initial = pop!(__overrides, "lam_low.initial", nothing); isnothing(__ovr_lam_low__initial) || (__initial_conditions[lam_low] = __ovr_lam_low__initial)
+  __ovr_lam_low__guess = pop!(__overrides, "lam_low.guess", nothing)
   __ovr_mu_x = pop!(__overrides, "mu_x", nothing); isnothing(__ovr_mu_x) || push!(__eqs, mu_x ~ __ovr_mu_x)
-  __ovr_mu_x__initial = pop!(__overrides, "mu_x__initial", nothing); isnothing(__ovr_mu_x__initial) || (__initial_conditions[mu_x] = __ovr_mu_x__initial)
-  __ovr_mu_x__guess = pop!(__overrides, "mu_x__guess", nothing)
+  __ovr_mu_x__initial = pop!(__overrides, "mu_x.initial", nothing); isnothing(__ovr_mu_x__initial) || (__initial_conditions[mu_x] = __ovr_mu_x__initial)
+  __ovr_mu_x__guess = pop!(__overrides, "mu_x.guess", nothing)
   __ovr_Kxk_norm = pop!(__overrides, "Kxk_norm", nothing); isnothing(__ovr_Kxk_norm) || push!(__eqs, Kxk_norm ~ __ovr_Kxk_norm)
-  __ovr_Kxk_norm__initial = pop!(__overrides, "Kxk_norm__initial", nothing); isnothing(__ovr_Kxk_norm__initial) || (__initial_conditions[Kxk_norm] = __ovr_Kxk_norm__initial)
-  __ovr_Kxk_norm__guess = pop!(__overrides, "Kxk_norm__guess", nothing)
+  __ovr_Kxk_norm__initial = pop!(__overrides, "Kxk_norm.initial", nothing); isnothing(__ovr_Kxk_norm__initial) || (__initial_conditions[Kxk_norm] = __ovr_Kxk_norm__initial)
+  __ovr_Kxk_norm__guess = pop!(__overrides, "Kxk_norm.guess", nothing)
   __ovr_Kxk = pop!(__overrides, "Kxk", nothing); isnothing(__ovr_Kxk) || push!(__eqs, Kxk ~ __ovr_Kxk)
-  __ovr_Kxk__initial = pop!(__overrides, "Kxk__initial", nothing); isnothing(__ovr_Kxk__initial) || (__initial_conditions[Kxk] = __ovr_Kxk__initial)
-  __ovr_Kxk__guess = pop!(__overrides, "Kxk__guess", nothing)
+  __ovr_Kxk__initial = pop!(__overrides, "Kxk.initial", nothing); isnothing(__ovr_Kxk__initial) || (__initial_conditions[Kxk] = __ovr_Kxk__initial)
+  __ovr_Kxk__guess = pop!(__overrides, "Kxk.guess", nothing)
   __ovr_Cx = pop!(__overrides, "Cx", nothing); isnothing(__ovr_Cx) || push!(__eqs, Cx ~ __ovr_Cx)
-  __ovr_Cx__initial = pop!(__overrides, "Cx__initial", nothing); isnothing(__ovr_Cx__initial) || (__initial_conditions[Cx] = __ovr_Cx__initial)
-  __ovr_Cx__guess = pop!(__overrides, "Cx__guess", nothing)
+  __ovr_Cx__initial = pop!(__overrides, "Cx.initial", nothing); isnothing(__ovr_Cx__initial) || (__initial_conditions[Cx] = __ovr_Cx__initial)
+  __ovr_Cx__guess = pop!(__overrides, "Cx.guess", nothing)
   __ovr_Dx = pop!(__overrides, "Dx", nothing); isnothing(__ovr_Dx) || push!(__eqs, Dx ~ __ovr_Dx)
-  __ovr_Dx__initial = pop!(__overrides, "Dx__initial", nothing); isnothing(__ovr_Dx__initial) || (__initial_conditions[Dx] = __ovr_Dx__initial)
-  __ovr_Dx__guess = pop!(__overrides, "Dx__guess", nothing)
+  __ovr_Dx__initial = pop!(__overrides, "Dx.initial", nothing); isnothing(__ovr_Dx__initial) || (__initial_conditions[Dx] = __ovr_Dx__initial)
+  __ovr_Dx__guess = pop!(__overrides, "Dx.guess", nothing)
   __ovr_Bx = pop!(__overrides, "Bx", nothing); isnothing(__ovr_Bx) || push!(__eqs, Bx ~ __ovr_Bx)
-  __ovr_Bx__initial = pop!(__overrides, "Bx__initial", nothing); isnothing(__ovr_Bx__initial) || (__initial_conditions[Bx] = __ovr_Bx__initial)
-  __ovr_Bx__guess = pop!(__overrides, "Bx__guess", nothing)
+  __ovr_Bx__initial = pop!(__overrides, "Bx.initial", nothing); isnothing(__ovr_Bx__initial) || (__initial_conditions[Bx] = __ovr_Bx__initial)
+  __ovr_Bx__guess = pop!(__overrides, "Bx.guess", nothing)
   __ovr_Ex_raw = pop!(__overrides, "Ex_raw", nothing); isnothing(__ovr_Ex_raw) || push!(__eqs, Ex_raw ~ __ovr_Ex_raw)
-  __ovr_Ex_raw__initial = pop!(__overrides, "Ex_raw__initial", nothing); isnothing(__ovr_Ex_raw__initial) || (__initial_conditions[Ex_raw] = __ovr_Ex_raw__initial)
-  __ovr_Ex_raw__guess = pop!(__overrides, "Ex_raw__guess", nothing)
+  __ovr_Ex_raw__initial = pop!(__overrides, "Ex_raw.initial", nothing); isnothing(__ovr_Ex_raw__initial) || (__initial_conditions[Ex_raw] = __ovr_Ex_raw__initial)
+  __ovr_Ex_raw__guess = pop!(__overrides, "Ex_raw.guess", nothing)
   __ovr_Ex = pop!(__overrides, "Ex", nothing); isnothing(__ovr_Ex) || push!(__eqs, Ex ~ __ovr_Ex)
-  __ovr_Ex__initial = pop!(__overrides, "Ex__initial", nothing); isnothing(__ovr_Ex__initial) || (__initial_conditions[Ex] = __ovr_Ex__initial)
-  __ovr_Ex__guess = pop!(__overrides, "Ex__guess", nothing)
+  __ovr_Ex__initial = pop!(__overrides, "Ex.initial", nothing); isnothing(__ovr_Ex__initial) || (__initial_conditions[Ex] = __ovr_Ex__initial)
+  __ovr_Ex__guess = pop!(__overrides, "Ex.guess", nothing)
   __ovr_SHx = pop!(__overrides, "SHx", nothing); isnothing(__ovr_SHx) || push!(__eqs, SHx ~ __ovr_SHx)
-  __ovr_SHx__initial = pop!(__overrides, "SHx__initial", nothing); isnothing(__ovr_SHx__initial) || (__initial_conditions[SHx] = __ovr_SHx__initial)
-  __ovr_SHx__guess = pop!(__overrides, "SHx__guess", nothing)
+  __ovr_SHx__initial = pop!(__overrides, "SHx.initial", nothing); isnothing(__ovr_SHx__initial) || (__initial_conditions[SHx] = __ovr_SHx__initial)
+  __ovr_SHx__guess = pop!(__overrides, "SHx.guess", nothing)
   __ovr_SVx = pop!(__overrides, "SVx", nothing); isnothing(__ovr_SVx) || push!(__eqs, SVx ~ __ovr_SVx)
-  __ovr_SVx__initial = pop!(__overrides, "SVx__initial", nothing); isnothing(__ovr_SVx__initial) || (__initial_conditions[SVx] = __ovr_SVx__initial)
-  __ovr_SVx__guess = pop!(__overrides, "SVx__guess", nothing)
+  __ovr_SVx__initial = pop!(__overrides, "SVx.initial", nothing); isnothing(__ovr_SVx__initial) || (__initial_conditions[SVx] = __ovr_SVx__initial)
+  __ovr_SVx__guess = pop!(__overrides, "SVx.guess", nothing)
   __ovr_kappa_x = pop!(__overrides, "kappa_x", nothing); isnothing(__ovr_kappa_x) || push!(__eqs, kappa_x ~ __ovr_kappa_x)
-  __ovr_kappa_x__initial = pop!(__overrides, "kappa_x__initial", nothing); isnothing(__ovr_kappa_x__initial) || (__initial_conditions[kappa_x] = __ovr_kappa_x__initial)
-  __ovr_kappa_x__guess = pop!(__overrides, "kappa_x__guess", nothing)
+  __ovr_kappa_x__initial = pop!(__overrides, "kappa_x.initial", nothing); isnothing(__ovr_kappa_x__initial) || (__initial_conditions[kappa_x] = __ovr_kappa_x__initial)
+  __ovr_kappa_x__guess = pop!(__overrides, "kappa_x.guess", nothing)
   __ovr_Fx0 = pop!(__overrides, "Fx0", nothing); isnothing(__ovr_Fx0) || push!(__eqs, Fx0 ~ __ovr_Fx0)
-  __ovr_Fx0__initial = pop!(__overrides, "Fx0__initial", nothing); isnothing(__ovr_Fx0__initial) || (__initial_conditions[Fx0] = __ovr_Fx0__initial)
-  __ovr_Fx0__guess = pop!(__overrides, "Fx0__guess", nothing)
+  __ovr_Fx0__initial = pop!(__overrides, "Fx0.initial", nothing); isnothing(__ovr_Fx0__initial) || (__initial_conditions[Fx0] = __ovr_Fx0__initial)
+  __ovr_Fx0__guess = pop!(__overrides, "Fx0.guess", nothing)
   __ovr_SHxa = pop!(__overrides, "SHxa", nothing); isnothing(__ovr_SHxa) || push!(__eqs, SHxa ~ __ovr_SHxa)
-  __ovr_SHxa__initial = pop!(__overrides, "SHxa__initial", nothing); isnothing(__ovr_SHxa__initial) || (__initial_conditions[SHxa] = __ovr_SHxa__initial)
-  __ovr_SHxa__guess = pop!(__overrides, "SHxa__guess", nothing)
+  __ovr_SHxa__initial = pop!(__overrides, "SHxa.initial", nothing); isnothing(__ovr_SHxa__initial) || (__initial_conditions[SHxa] = __ovr_SHxa__initial)
+  __ovr_SHxa__guess = pop!(__overrides, "SHxa.guess", nothing)
   __ovr_Cxa = pop!(__overrides, "Cxa", nothing); isnothing(__ovr_Cxa) || push!(__eqs, Cxa ~ __ovr_Cxa)
-  __ovr_Cxa__initial = pop!(__overrides, "Cxa__initial", nothing); isnothing(__ovr_Cxa__initial) || (__initial_conditions[Cxa] = __ovr_Cxa__initial)
-  __ovr_Cxa__guess = pop!(__overrides, "Cxa__guess", nothing)
+  __ovr_Cxa__initial = pop!(__overrides, "Cxa.initial", nothing); isnothing(__ovr_Cxa__initial) || (__initial_conditions[Cxa] = __ovr_Cxa__initial)
+  __ovr_Cxa__guess = pop!(__overrides, "Cxa.guess", nothing)
   __ovr_Bxa = pop!(__overrides, "Bxa", nothing); isnothing(__ovr_Bxa) || push!(__eqs, Bxa ~ __ovr_Bxa)
-  __ovr_Bxa__initial = pop!(__overrides, "Bxa__initial", nothing); isnothing(__ovr_Bxa__initial) || (__initial_conditions[Bxa] = __ovr_Bxa__initial)
-  __ovr_Bxa__guess = pop!(__overrides, "Bxa__guess", nothing)
+  __ovr_Bxa__initial = pop!(__overrides, "Bxa.initial", nothing); isnothing(__ovr_Bxa__initial) || (__initial_conditions[Bxa] = __ovr_Bxa__initial)
+  __ovr_Bxa__guess = pop!(__overrides, "Bxa.guess", nothing)
   __ovr_Exa_raw = pop!(__overrides, "Exa_raw", nothing); isnothing(__ovr_Exa_raw) || push!(__eqs, Exa_raw ~ __ovr_Exa_raw)
-  __ovr_Exa_raw__initial = pop!(__overrides, "Exa_raw__initial", nothing); isnothing(__ovr_Exa_raw__initial) || (__initial_conditions[Exa_raw] = __ovr_Exa_raw__initial)
-  __ovr_Exa_raw__guess = pop!(__overrides, "Exa_raw__guess", nothing)
+  __ovr_Exa_raw__initial = pop!(__overrides, "Exa_raw.initial", nothing); isnothing(__ovr_Exa_raw__initial) || (__initial_conditions[Exa_raw] = __ovr_Exa_raw__initial)
+  __ovr_Exa_raw__guess = pop!(__overrides, "Exa_raw.guess", nothing)
   __ovr_Exa = pop!(__overrides, "Exa", nothing); isnothing(__ovr_Exa) || push!(__eqs, Exa ~ __ovr_Exa)
-  __ovr_Exa__initial = pop!(__overrides, "Exa__initial", nothing); isnothing(__ovr_Exa__initial) || (__initial_conditions[Exa] = __ovr_Exa__initial)
-  __ovr_Exa__guess = pop!(__overrides, "Exa__guess", nothing)
+  __ovr_Exa__initial = pop!(__overrides, "Exa.initial", nothing); isnothing(__ovr_Exa__initial) || (__initial_conditions[Exa] = __ovr_Exa__initial)
+  __ovr_Exa__guess = pop!(__overrides, "Exa.guess", nothing)
   __ovr_alpha_s = pop!(__overrides, "alpha_s", nothing); isnothing(__ovr_alpha_s) || push!(__eqs, alpha_s ~ __ovr_alpha_s)
-  __ovr_alpha_s__initial = pop!(__overrides, "alpha_s__initial", nothing); isnothing(__ovr_alpha_s__initial) || (__initial_conditions[alpha_s] = __ovr_alpha_s__initial)
-  __ovr_alpha_s__guess = pop!(__overrides, "alpha_s__guess", nothing)
+  __ovr_alpha_s__initial = pop!(__overrides, "alpha_s.initial", nothing); isnothing(__ovr_alpha_s__initial) || (__initial_conditions[alpha_s] = __ovr_alpha_s__initial)
+  __ovr_alpha_s__guess = pop!(__overrides, "alpha_s.guess", nothing)
   __ovr_Gxa0 = pop!(__overrides, "Gxa0", nothing); isnothing(__ovr_Gxa0) || push!(__eqs, Gxa0 ~ __ovr_Gxa0)
-  __ovr_Gxa0__initial = pop!(__overrides, "Gxa0__initial", nothing); isnothing(__ovr_Gxa0__initial) || (__initial_conditions[Gxa0] = __ovr_Gxa0__initial)
-  __ovr_Gxa0__guess = pop!(__overrides, "Gxa0__guess", nothing)
+  __ovr_Gxa0__initial = pop!(__overrides, "Gxa0.initial", nothing); isnothing(__ovr_Gxa0__initial) || (__initial_conditions[Gxa0] = __ovr_Gxa0__initial)
+  __ovr_Gxa0__guess = pop!(__overrides, "Gxa0.guess", nothing)
   __ovr_Gxa = pop!(__overrides, "Gxa", nothing); isnothing(__ovr_Gxa) || push!(__eqs, Gxa ~ __ovr_Gxa)
-  __ovr_Gxa__initial = pop!(__overrides, "Gxa__initial", nothing); isnothing(__ovr_Gxa__initial) || (__initial_conditions[Gxa] = __ovr_Gxa__initial)
-  __ovr_Gxa__guess = pop!(__overrides, "Gxa__guess", nothing)
+  __ovr_Gxa__initial = pop!(__overrides, "Gxa.initial", nothing); isnothing(__ovr_Gxa__initial) || (__initial_conditions[Gxa] = __ovr_Gxa__initial)
+  __ovr_Gxa__guess = pop!(__overrides, "Gxa.guess", nothing)
   __ovr_Fx = pop!(__overrides, "Fx", nothing); isnothing(__ovr_Fx) || push!(__eqs, Fx ~ __ovr_Fx)
-  __ovr_Fx__initial = pop!(__overrides, "Fx__initial", nothing); isnothing(__ovr_Fx__initial) || (__initial_conditions[Fx] = __ovr_Fx__initial)
-  __ovr_Fx__guess = pop!(__overrides, "Fx__guess", nothing)
+  __ovr_Fx__initial = pop!(__overrides, "Fx.initial", nothing); isnothing(__ovr_Fx__initial) || (__initial_conditions[Fx] = __ovr_Fx__initial)
+  __ovr_Fx__guess = pop!(__overrides, "Fx.guess", nothing)
   __ovr_mu_y = pop!(__overrides, "mu_y", nothing); isnothing(__ovr_mu_y) || push!(__eqs, mu_y ~ __ovr_mu_y)
-  __ovr_mu_y__initial = pop!(__overrides, "mu_y__initial", nothing); isnothing(__ovr_mu_y__initial) || (__initial_conditions[mu_y] = __ovr_mu_y__initial)
-  __ovr_mu_y__guess = pop!(__overrides, "mu_y__guess", nothing)
+  __ovr_mu_y__initial = pop!(__overrides, "mu_y.initial", nothing); isnothing(__ovr_mu_y__initial) || (__initial_conditions[mu_y] = __ovr_mu_y__initial)
+  __ovr_mu_y__guess = pop!(__overrides, "mu_y.guess", nothing)
   __ovr_Cy = pop!(__overrides, "Cy", nothing); isnothing(__ovr_Cy) || push!(__eqs, Cy ~ __ovr_Cy)
-  __ovr_Cy__initial = pop!(__overrides, "Cy__initial", nothing); isnothing(__ovr_Cy__initial) || (__initial_conditions[Cy] = __ovr_Cy__initial)
-  __ovr_Cy__guess = pop!(__overrides, "Cy__guess", nothing)
+  __ovr_Cy__initial = pop!(__overrides, "Cy.initial", nothing); isnothing(__ovr_Cy__initial) || (__initial_conditions[Cy] = __ovr_Cy__initial)
+  __ovr_Cy__guess = pop!(__overrides, "Cy.guess", nothing)
   __ovr_Dy = pop!(__overrides, "Dy", nothing); isnothing(__ovr_Dy) || push!(__eqs, Dy ~ __ovr_Dy)
-  __ovr_Dy__initial = pop!(__overrides, "Dy__initial", nothing); isnothing(__ovr_Dy__initial) || (__initial_conditions[Dy] = __ovr_Dy__initial)
-  __ovr_Dy__guess = pop!(__overrides, "Dy__guess", nothing)
+  __ovr_Dy__initial = pop!(__overrides, "Dy.initial", nothing); isnothing(__ovr_Dy__initial) || (__initial_conditions[Dy] = __ovr_Dy__initial)
+  __ovr_Dy__guess = pop!(__overrides, "Dy.guess", nothing)
   __ovr_Kya = pop!(__overrides, "Kya", nothing); isnothing(__ovr_Kya) || push!(__eqs, Kya ~ __ovr_Kya)
-  __ovr_Kya__initial = pop!(__overrides, "Kya__initial", nothing); isnothing(__ovr_Kya__initial) || (__initial_conditions[Kya] = __ovr_Kya__initial)
-  __ovr_Kya__guess = pop!(__overrides, "Kya__guess", nothing)
+  __ovr_Kya__initial = pop!(__overrides, "Kya.initial", nothing); isnothing(__ovr_Kya__initial) || (__initial_conditions[Kya] = __ovr_Kya__initial)
+  __ovr_Kya__guess = pop!(__overrides, "Kya.guess", nothing)
   __ovr_Kya_prime = pop!(__overrides, "Kya_prime", nothing); isnothing(__ovr_Kya_prime) || push!(__eqs, Kya_prime ~ __ovr_Kya_prime)
-  __ovr_Kya_prime__initial = pop!(__overrides, "Kya_prime__initial", nothing); isnothing(__ovr_Kya_prime__initial) || (__initial_conditions[Kya_prime] = __ovr_Kya_prime__initial)
-  __ovr_Kya_prime__guess = pop!(__overrides, "Kya_prime__guess", nothing)
+  __ovr_Kya_prime__initial = pop!(__overrides, "Kya_prime.initial", nothing); isnothing(__ovr_Kya_prime__initial) || (__initial_conditions[Kya_prime] = __ovr_Kya_prime__initial)
+  __ovr_Kya_prime__guess = pop!(__overrides, "Kya_prime.guess", nothing)
   __ovr_Kyg0 = pop!(__overrides, "Kyg0", nothing); isnothing(__ovr_Kyg0) || push!(__eqs, Kyg0 ~ __ovr_Kyg0)
-  __ovr_Kyg0__initial = pop!(__overrides, "Kyg0__initial", nothing); isnothing(__ovr_Kyg0__initial) || (__initial_conditions[Kyg0] = __ovr_Kyg0__initial)
-  __ovr_Kyg0__guess = pop!(__overrides, "Kyg0__guess", nothing)
+  __ovr_Kyg0__initial = pop!(__overrides, "Kyg0.initial", nothing); isnothing(__ovr_Kyg0__initial) || (__initial_conditions[Kyg0] = __ovr_Kyg0__initial)
+  __ovr_Kyg0__guess = pop!(__overrides, "Kyg0.guess", nothing)
   __ovr_SVyg = pop!(__overrides, "SVyg", nothing); isnothing(__ovr_SVyg) || push!(__eqs, SVyg ~ __ovr_SVyg)
-  __ovr_SVyg__initial = pop!(__overrides, "SVyg__initial", nothing); isnothing(__ovr_SVyg__initial) || (__initial_conditions[SVyg] = __ovr_SVyg__initial)
-  __ovr_SVyg__guess = pop!(__overrides, "SVyg__guess", nothing)
+  __ovr_SVyg__initial = pop!(__overrides, "SVyg.initial", nothing); isnothing(__ovr_SVyg__initial) || (__initial_conditions[SVyg] = __ovr_SVyg__initial)
+  __ovr_SVyg__guess = pop!(__overrides, "SVyg.guess", nothing)
   __ovr_By = pop!(__overrides, "By", nothing); isnothing(__ovr_By) || push!(__eqs, By ~ __ovr_By)
-  __ovr_By__initial = pop!(__overrides, "By__initial", nothing); isnothing(__ovr_By__initial) || (__initial_conditions[By] = __ovr_By__initial)
-  __ovr_By__guess = pop!(__overrides, "By__guess", nothing)
+  __ovr_By__initial = pop!(__overrides, "By.initial", nothing); isnothing(__ovr_By__initial) || (__initial_conditions[By] = __ovr_By__initial)
+  __ovr_By__guess = pop!(__overrides, "By.guess", nothing)
   __ovr_Ey_raw = pop!(__overrides, "Ey_raw", nothing); isnothing(__ovr_Ey_raw) || push!(__eqs, Ey_raw ~ __ovr_Ey_raw)
-  __ovr_Ey_raw__initial = pop!(__overrides, "Ey_raw__initial", nothing); isnothing(__ovr_Ey_raw__initial) || (__initial_conditions[Ey_raw] = __ovr_Ey_raw__initial)
-  __ovr_Ey_raw__guess = pop!(__overrides, "Ey_raw__guess", nothing)
+  __ovr_Ey_raw__initial = pop!(__overrides, "Ey_raw.initial", nothing); isnothing(__ovr_Ey_raw__initial) || (__initial_conditions[Ey_raw] = __ovr_Ey_raw__initial)
+  __ovr_Ey_raw__guess = pop!(__overrides, "Ey_raw.guess", nothing)
   __ovr_Ey = pop!(__overrides, "Ey", nothing); isnothing(__ovr_Ey) || push!(__eqs, Ey ~ __ovr_Ey)
-  __ovr_Ey__initial = pop!(__overrides, "Ey__initial", nothing); isnothing(__ovr_Ey__initial) || (__initial_conditions[Ey] = __ovr_Ey__initial)
-  __ovr_Ey__guess = pop!(__overrides, "Ey__guess", nothing)
+  __ovr_Ey__initial = pop!(__overrides, "Ey.initial", nothing); isnothing(__ovr_Ey__initial) || (__initial_conditions[Ey] = __ovr_Ey__initial)
+  __ovr_Ey__guess = pop!(__overrides, "Ey.guess", nothing)
   __ovr_SHy = pop!(__overrides, "SHy", nothing); isnothing(__ovr_SHy) || push!(__eqs, SHy ~ __ovr_SHy)
-  __ovr_SHy__initial = pop!(__overrides, "SHy__initial", nothing); isnothing(__ovr_SHy__initial) || (__initial_conditions[SHy] = __ovr_SHy__initial)
-  __ovr_SHy__guess = pop!(__overrides, "SHy__guess", nothing)
+  __ovr_SHy__initial = pop!(__overrides, "SHy.initial", nothing); isnothing(__ovr_SHy__initial) || (__initial_conditions[SHy] = __ovr_SHy__initial)
+  __ovr_SHy__guess = pop!(__overrides, "SHy.guess", nothing)
   __ovr_SVy = pop!(__overrides, "SVy", nothing); isnothing(__ovr_SVy) || push!(__eqs, SVy ~ __ovr_SVy)
-  __ovr_SVy__initial = pop!(__overrides, "SVy__initial", nothing); isnothing(__ovr_SVy__initial) || (__initial_conditions[SVy] = __ovr_SVy__initial)
-  __ovr_SVy__guess = pop!(__overrides, "SVy__guess", nothing)
+  __ovr_SVy__initial = pop!(__overrides, "SVy.initial", nothing); isnothing(__ovr_SVy__initial) || (__initial_conditions[SVy] = __ovr_SVy__initial)
+  __ovr_SVy__guess = pop!(__overrides, "SVy.guess", nothing)
   __ovr_alpha_y = pop!(__overrides, "alpha_y", nothing); isnothing(__ovr_alpha_y) || push!(__eqs, alpha_y ~ __ovr_alpha_y)
-  __ovr_alpha_y__initial = pop!(__overrides, "alpha_y__initial", nothing); isnothing(__ovr_alpha_y__initial) || (__initial_conditions[alpha_y] = __ovr_alpha_y__initial)
-  __ovr_alpha_y__guess = pop!(__overrides, "alpha_y__guess", nothing)
+  __ovr_alpha_y__initial = pop!(__overrides, "alpha_y.initial", nothing); isnothing(__ovr_alpha_y__initial) || (__initial_conditions[alpha_y] = __ovr_alpha_y__initial)
+  __ovr_alpha_y__guess = pop!(__overrides, "alpha_y.guess", nothing)
   __ovr_Fy0 = pop!(__overrides, "Fy0", nothing); isnothing(__ovr_Fy0) || push!(__eqs, Fy0 ~ __ovr_Fy0)
-  __ovr_Fy0__initial = pop!(__overrides, "Fy0__initial", nothing); isnothing(__ovr_Fy0__initial) || (__initial_conditions[Fy0] = __ovr_Fy0__initial)
-  __ovr_Fy0__guess = pop!(__overrides, "Fy0__guess", nothing)
+  __ovr_Fy0__initial = pop!(__overrides, "Fy0.initial", nothing); isnothing(__ovr_Fy0__initial) || (__initial_conditions[Fy0] = __ovr_Fy0__initial)
+  __ovr_Fy0__guess = pop!(__overrides, "Fy0.guess", nothing)
   __ovr_SHyk = pop!(__overrides, "SHyk", nothing); isnothing(__ovr_SHyk) || push!(__eqs, SHyk ~ __ovr_SHyk)
-  __ovr_SHyk__initial = pop!(__overrides, "SHyk__initial", nothing); isnothing(__ovr_SHyk__initial) || (__initial_conditions[SHyk] = __ovr_SHyk__initial)
-  __ovr_SHyk__guess = pop!(__overrides, "SHyk__guess", nothing)
+  __ovr_SHyk__initial = pop!(__overrides, "SHyk.initial", nothing); isnothing(__ovr_SHyk__initial) || (__initial_conditions[SHyk] = __ovr_SHyk__initial)
+  __ovr_SHyk__guess = pop!(__overrides, "SHyk.guess", nothing)
   __ovr_Cyk = pop!(__overrides, "Cyk", nothing); isnothing(__ovr_Cyk) || push!(__eqs, Cyk ~ __ovr_Cyk)
-  __ovr_Cyk__initial = pop!(__overrides, "Cyk__initial", nothing); isnothing(__ovr_Cyk__initial) || (__initial_conditions[Cyk] = __ovr_Cyk__initial)
-  __ovr_Cyk__guess = pop!(__overrides, "Cyk__guess", nothing)
+  __ovr_Cyk__initial = pop!(__overrides, "Cyk.initial", nothing); isnothing(__ovr_Cyk__initial) || (__initial_conditions[Cyk] = __ovr_Cyk__initial)
+  __ovr_Cyk__guess = pop!(__overrides, "Cyk.guess", nothing)
   __ovr_Byk = pop!(__overrides, "Byk", nothing); isnothing(__ovr_Byk) || push!(__eqs, Byk ~ __ovr_Byk)
-  __ovr_Byk__initial = pop!(__overrides, "Byk__initial", nothing); isnothing(__ovr_Byk__initial) || (__initial_conditions[Byk] = __ovr_Byk__initial)
-  __ovr_Byk__guess = pop!(__overrides, "Byk__guess", nothing)
+  __ovr_Byk__initial = pop!(__overrides, "Byk.initial", nothing); isnothing(__ovr_Byk__initial) || (__initial_conditions[Byk] = __ovr_Byk__initial)
+  __ovr_Byk__guess = pop!(__overrides, "Byk.guess", nothing)
   __ovr_Eyk_raw = pop!(__overrides, "Eyk_raw", nothing); isnothing(__ovr_Eyk_raw) || push!(__eqs, Eyk_raw ~ __ovr_Eyk_raw)
-  __ovr_Eyk_raw__initial = pop!(__overrides, "Eyk_raw__initial", nothing); isnothing(__ovr_Eyk_raw__initial) || (__initial_conditions[Eyk_raw] = __ovr_Eyk_raw__initial)
-  __ovr_Eyk_raw__guess = pop!(__overrides, "Eyk_raw__guess", nothing)
+  __ovr_Eyk_raw__initial = pop!(__overrides, "Eyk_raw.initial", nothing); isnothing(__ovr_Eyk_raw__initial) || (__initial_conditions[Eyk_raw] = __ovr_Eyk_raw__initial)
+  __ovr_Eyk_raw__guess = pop!(__overrides, "Eyk_raw.guess", nothing)
   __ovr_Eyk = pop!(__overrides, "Eyk", nothing); isnothing(__ovr_Eyk) || push!(__eqs, Eyk ~ __ovr_Eyk)
-  __ovr_Eyk__initial = pop!(__overrides, "Eyk__initial", nothing); isnothing(__ovr_Eyk__initial) || (__initial_conditions[Eyk] = __ovr_Eyk__initial)
-  __ovr_Eyk__guess = pop!(__overrides, "Eyk__guess", nothing)
+  __ovr_Eyk__initial = pop!(__overrides, "Eyk.initial", nothing); isnothing(__ovr_Eyk__initial) || (__initial_conditions[Eyk] = __ovr_Eyk__initial)
+  __ovr_Eyk__guess = pop!(__overrides, "Eyk.guess", nothing)
   __ovr_kappa_s = pop!(__overrides, "kappa_s", nothing); isnothing(__ovr_kappa_s) || push!(__eqs, kappa_s ~ __ovr_kappa_s)
-  __ovr_kappa_s__initial = pop!(__overrides, "kappa_s__initial", nothing); isnothing(__ovr_kappa_s__initial) || (__initial_conditions[kappa_s] = __ovr_kappa_s__initial)
-  __ovr_kappa_s__guess = pop!(__overrides, "kappa_s__guess", nothing)
+  __ovr_kappa_s__initial = pop!(__overrides, "kappa_s.initial", nothing); isnothing(__ovr_kappa_s__initial) || (__initial_conditions[kappa_s] = __ovr_kappa_s__initial)
+  __ovr_kappa_s__guess = pop!(__overrides, "kappa_s.guess", nothing)
   __ovr_Gyk0 = pop!(__overrides, "Gyk0", nothing); isnothing(__ovr_Gyk0) || push!(__eqs, Gyk0 ~ __ovr_Gyk0)
-  __ovr_Gyk0__initial = pop!(__overrides, "Gyk0__initial", nothing); isnothing(__ovr_Gyk0__initial) || (__initial_conditions[Gyk0] = __ovr_Gyk0__initial)
-  __ovr_Gyk0__guess = pop!(__overrides, "Gyk0__guess", nothing)
+  __ovr_Gyk0__initial = pop!(__overrides, "Gyk0.initial", nothing); isnothing(__ovr_Gyk0__initial) || (__initial_conditions[Gyk0] = __ovr_Gyk0__initial)
+  __ovr_Gyk0__guess = pop!(__overrides, "Gyk0.guess", nothing)
   __ovr_Gyk = pop!(__overrides, "Gyk", nothing); isnothing(__ovr_Gyk) || push!(__eqs, Gyk ~ __ovr_Gyk)
-  __ovr_Gyk__initial = pop!(__overrides, "Gyk__initial", nothing); isnothing(__ovr_Gyk__initial) || (__initial_conditions[Gyk] = __ovr_Gyk__initial)
-  __ovr_Gyk__guess = pop!(__overrides, "Gyk__guess", nothing)
+  __ovr_Gyk__initial = pop!(__overrides, "Gyk.initial", nothing); isnothing(__ovr_Gyk__initial) || (__initial_conditions[Gyk] = __ovr_Gyk__initial)
+  __ovr_Gyk__guess = pop!(__overrides, "Gyk.guess", nothing)
   __ovr_Dvyk = pop!(__overrides, "Dvyk", nothing); isnothing(__ovr_Dvyk) || push!(__eqs, Dvyk ~ __ovr_Dvyk)
-  __ovr_Dvyk__initial = pop!(__overrides, "Dvyk__initial", nothing); isnothing(__ovr_Dvyk__initial) || (__initial_conditions[Dvyk] = __ovr_Dvyk__initial)
-  __ovr_Dvyk__guess = pop!(__overrides, "Dvyk__guess", nothing)
+  __ovr_Dvyk__initial = pop!(__overrides, "Dvyk.initial", nothing); isnothing(__ovr_Dvyk__initial) || (__initial_conditions[Dvyk] = __ovr_Dvyk__initial)
+  __ovr_Dvyk__guess = pop!(__overrides, "Dvyk.guess", nothing)
   __ovr_SVyk = pop!(__overrides, "SVyk", nothing); isnothing(__ovr_SVyk) || push!(__eqs, SVyk ~ __ovr_SVyk)
-  __ovr_SVyk__initial = pop!(__overrides, "SVyk__initial", nothing); isnothing(__ovr_SVyk__initial) || (__initial_conditions[SVyk] = __ovr_SVyk__initial)
-  __ovr_SVyk__guess = pop!(__overrides, "SVyk__guess", nothing)
+  __ovr_SVyk__initial = pop!(__overrides, "SVyk.initial", nothing); isnothing(__ovr_SVyk__initial) || (__initial_conditions[SVyk] = __ovr_SVyk__initial)
+  __ovr_SVyk__guess = pop!(__overrides, "SVyk.guess", nothing)
   __ovr_Fy = pop!(__overrides, "Fy", nothing); isnothing(__ovr_Fy) || push!(__eqs, Fy ~ __ovr_Fy)
-  __ovr_Fy__initial = pop!(__overrides, "Fy__initial", nothing); isnothing(__ovr_Fy__initial) || (__initial_conditions[Fy] = __ovr_Fy__initial)
-  __ovr_Fy__guess = pop!(__overrides, "Fy__guess", nothing)
+  __ovr_Fy__initial = pop!(__overrides, "Fy.initial", nothing); isnothing(__ovr_Fy__initial) || (__initial_conditions[Fy] = __ovr_Fy__initial)
+  __ovr_Fy__guess = pop!(__overrides, "Fy.guess", nothing)
   __ovr_Fy_prime = pop!(__overrides, "Fy_prime", nothing); isnothing(__ovr_Fy_prime) || push!(__eqs, Fy_prime ~ __ovr_Fy_prime)
-  __ovr_Fy_prime__initial = pop!(__overrides, "Fy_prime__initial", nothing); isnothing(__ovr_Fy_prime__initial) || (__initial_conditions[Fy_prime] = __ovr_Fy_prime__initial)
-  __ovr_Fy_prime__guess = pop!(__overrides, "Fy_prime__guess", nothing)
+  __ovr_Fy_prime__initial = pop!(__overrides, "Fy_prime.initial", nothing); isnothing(__ovr_Fy_prime__initial) || (__initial_conditions[Fy_prime] = __ovr_Fy_prime__initial)
+  __ovr_Fy_prime__guess = pop!(__overrides, "Fy_prime.guess", nothing)
   __ovr_SHt = pop!(__overrides, "SHt", nothing); isnothing(__ovr_SHt) || push!(__eqs, SHt ~ __ovr_SHt)
-  __ovr_SHt__initial = pop!(__overrides, "SHt__initial", nothing); isnothing(__ovr_SHt__initial) || (__initial_conditions[SHt] = __ovr_SHt__initial)
-  __ovr_SHt__guess = pop!(__overrides, "SHt__guess", nothing)
+  __ovr_SHt__initial = pop!(__overrides, "SHt.initial", nothing); isnothing(__ovr_SHt__initial) || (__initial_conditions[SHt] = __ovr_SHt__initial)
+  __ovr_SHt__guess = pop!(__overrides, "SHt.guess", nothing)
   __ovr_alpha_t = pop!(__overrides, "alpha_t", nothing); isnothing(__ovr_alpha_t) || push!(__eqs, alpha_t ~ __ovr_alpha_t)
-  __ovr_alpha_t__initial = pop!(__overrides, "alpha_t__initial", nothing); isnothing(__ovr_alpha_t__initial) || (__initial_conditions[alpha_t] = __ovr_alpha_t__initial)
-  __ovr_alpha_t__guess = pop!(__overrides, "alpha_t__guess", nothing)
+  __ovr_alpha_t__initial = pop!(__overrides, "alpha_t.initial", nothing); isnothing(__ovr_alpha_t__initial) || (__initial_conditions[alpha_t] = __ovr_alpha_t__initial)
+  __ovr_alpha_t__guess = pop!(__overrides, "alpha_t.guess", nothing)
   __ovr_Bt = pop!(__overrides, "Bt", nothing); isnothing(__ovr_Bt) || push!(__eqs, Bt ~ __ovr_Bt)
-  __ovr_Bt__initial = pop!(__overrides, "Bt__initial", nothing); isnothing(__ovr_Bt__initial) || (__initial_conditions[Bt] = __ovr_Bt__initial)
-  __ovr_Bt__guess = pop!(__overrides, "Bt__guess", nothing)
+  __ovr_Bt__initial = pop!(__overrides, "Bt.initial", nothing); isnothing(__ovr_Bt__initial) || (__initial_conditions[Bt] = __ovr_Bt__initial)
+  __ovr_Bt__guess = pop!(__overrides, "Bt.guess", nothing)
   __ovr_Ct = pop!(__overrides, "Ct", nothing); isnothing(__ovr_Ct) || push!(__eqs, Ct ~ __ovr_Ct)
-  __ovr_Ct__initial = pop!(__overrides, "Ct__initial", nothing); isnothing(__ovr_Ct__initial) || (__initial_conditions[Ct] = __ovr_Ct__initial)
-  __ovr_Ct__guess = pop!(__overrides, "Ct__guess", nothing)
+  __ovr_Ct__initial = pop!(__overrides, "Ct.initial", nothing); isnothing(__ovr_Ct__initial) || (__initial_conditions[Ct] = __ovr_Ct__initial)
+  __ovr_Ct__guess = pop!(__overrides, "Ct.guess", nothing)
   __ovr_Dt0 = pop!(__overrides, "Dt0", nothing); isnothing(__ovr_Dt0) || push!(__eqs, Dt0 ~ __ovr_Dt0)
-  __ovr_Dt0__initial = pop!(__overrides, "Dt0__initial", nothing); isnothing(__ovr_Dt0__initial) || (__initial_conditions[Dt0] = __ovr_Dt0__initial)
-  __ovr_Dt0__guess = pop!(__overrides, "Dt0__guess", nothing)
+  __ovr_Dt0__initial = pop!(__overrides, "Dt0.initial", nothing); isnothing(__ovr_Dt0__initial) || (__initial_conditions[Dt0] = __ovr_Dt0__initial)
+  __ovr_Dt0__guess = pop!(__overrides, "Dt0.guess", nothing)
   __ovr_Dt = pop!(__overrides, "Dt", nothing); isnothing(__ovr_Dt) || push!(__eqs, Dt ~ __ovr_Dt)
-  __ovr_Dt__initial = pop!(__overrides, "Dt__initial", nothing); isnothing(__ovr_Dt__initial) || (__initial_conditions[Dt] = __ovr_Dt__initial)
-  __ovr_Dt__guess = pop!(__overrides, "Dt__guess", nothing)
+  __ovr_Dt__initial = pop!(__overrides, "Dt.initial", nothing); isnothing(__ovr_Dt__initial) || (__initial_conditions[Dt] = __ovr_Dt__initial)
+  __ovr_Dt__guess = pop!(__overrides, "Dt.guess", nothing)
   __ovr_Et_raw = pop!(__overrides, "Et_raw", nothing); isnothing(__ovr_Et_raw) || push!(__eqs, Et_raw ~ __ovr_Et_raw)
-  __ovr_Et_raw__initial = pop!(__overrides, "Et_raw__initial", nothing); isnothing(__ovr_Et_raw__initial) || (__initial_conditions[Et_raw] = __ovr_Et_raw__initial)
-  __ovr_Et_raw__guess = pop!(__overrides, "Et_raw__guess", nothing)
+  __ovr_Et_raw__initial = pop!(__overrides, "Et_raw.initial", nothing); isnothing(__ovr_Et_raw__initial) || (__initial_conditions[Et_raw] = __ovr_Et_raw__initial)
+  __ovr_Et_raw__guess = pop!(__overrides, "Et_raw.guess", nothing)
   __ovr_Et = pop!(__overrides, "Et", nothing); isnothing(__ovr_Et) || push!(__eqs, Et ~ __ovr_Et)
-  __ovr_Et__initial = pop!(__overrides, "Et__initial", nothing); isnothing(__ovr_Et__initial) || (__initial_conditions[Et] = __ovr_Et__initial)
-  __ovr_Et__guess = pop!(__overrides, "Et__guess", nothing)
+  __ovr_Et__initial = pop!(__overrides, "Et.initial", nothing); isnothing(__ovr_Et__initial) || (__initial_conditions[Et] = __ovr_Et__initial)
+  __ovr_Et__guess = pop!(__overrides, "Et.guess", nothing)
   __ovr_SHf = pop!(__overrides, "SHf", nothing); isnothing(__ovr_SHf) || push!(__eqs, SHf ~ __ovr_SHf)
-  __ovr_SHf__initial = pop!(__overrides, "SHf__initial", nothing); isnothing(__ovr_SHf__initial) || (__initial_conditions[SHf] = __ovr_SHf__initial)
-  __ovr_SHf__guess = pop!(__overrides, "SHf__guess", nothing)
+  __ovr_SHf__initial = pop!(__overrides, "SHf.initial", nothing); isnothing(__ovr_SHf__initial) || (__initial_conditions[SHf] = __ovr_SHf__initial)
+  __ovr_SHf__guess = pop!(__overrides, "SHf.guess", nothing)
   __ovr_alpha_r = pop!(__overrides, "alpha_r", nothing); isnothing(__ovr_alpha_r) || push!(__eqs, alpha_r ~ __ovr_alpha_r)
-  __ovr_alpha_r__initial = pop!(__overrides, "alpha_r__initial", nothing); isnothing(__ovr_alpha_r__initial) || (__initial_conditions[alpha_r] = __ovr_alpha_r__initial)
-  __ovr_alpha_r__guess = pop!(__overrides, "alpha_r__guess", nothing)
+  __ovr_alpha_r__initial = pop!(__overrides, "alpha_r.initial", nothing); isnothing(__ovr_alpha_r__initial) || (__initial_conditions[alpha_r] = __ovr_alpha_r__initial)
+  __ovr_alpha_r__guess = pop!(__overrides, "alpha_r.guess", nothing)
   __ovr_Br = pop!(__overrides, "Br", nothing); isnothing(__ovr_Br) || push!(__eqs, Br ~ __ovr_Br)
-  __ovr_Br__initial = pop!(__overrides, "Br__initial", nothing); isnothing(__ovr_Br__initial) || (__initial_conditions[Br] = __ovr_Br__initial)
-  __ovr_Br__guess = pop!(__overrides, "Br__guess", nothing)
+  __ovr_Br__initial = pop!(__overrides, "Br.initial", nothing); isnothing(__ovr_Br__initial) || (__initial_conditions[Br] = __ovr_Br__initial)
+  __ovr_Br__guess = pop!(__overrides, "Br.guess", nothing)
   __ovr_Cr = pop!(__overrides, "Cr", nothing); isnothing(__ovr_Cr) || push!(__eqs, Cr ~ __ovr_Cr)
-  __ovr_Cr__initial = pop!(__overrides, "Cr__initial", nothing); isnothing(__ovr_Cr__initial) || (__initial_conditions[Cr] = __ovr_Cr__initial)
-  __ovr_Cr__guess = pop!(__overrides, "Cr__guess", nothing)
+  __ovr_Cr__initial = pop!(__overrides, "Cr.initial", nothing); isnothing(__ovr_Cr__initial) || (__initial_conditions[Cr] = __ovr_Cr__initial)
+  __ovr_Cr__guess = pop!(__overrides, "Cr.guess", nothing)
   __ovr_Dr = pop!(__overrides, "Dr", nothing); isnothing(__ovr_Dr) || push!(__eqs, Dr ~ __ovr_Dr)
-  __ovr_Dr__initial = pop!(__overrides, "Dr__initial", nothing); isnothing(__ovr_Dr__initial) || (__initial_conditions[Dr] = __ovr_Dr__initial)
-  __ovr_Dr__guess = pop!(__overrides, "Dr__guess", nothing)
+  __ovr_Dr__initial = pop!(__overrides, "Dr.initial", nothing); isnothing(__ovr_Dr__initial) || (__initial_conditions[Dr] = __ovr_Dr__initial)
+  __ovr_Dr__guess = pop!(__overrides, "Dr.guess", nothing)
   __ovr_alpha_t_eq = pop!(__overrides, "alpha_t_eq", nothing); isnothing(__ovr_alpha_t_eq) || push!(__eqs, alpha_t_eq ~ __ovr_alpha_t_eq)
-  __ovr_alpha_t_eq__initial = pop!(__overrides, "alpha_t_eq__initial", nothing); isnothing(__ovr_alpha_t_eq__initial) || (__initial_conditions[alpha_t_eq] = __ovr_alpha_t_eq__initial)
-  __ovr_alpha_t_eq__guess = pop!(__overrides, "alpha_t_eq__guess", nothing)
+  __ovr_alpha_t_eq__initial = pop!(__overrides, "alpha_t_eq.initial", nothing); isnothing(__ovr_alpha_t_eq__initial) || (__initial_conditions[alpha_t_eq] = __ovr_alpha_t_eq__initial)
+  __ovr_alpha_t_eq__guess = pop!(__overrides, "alpha_t_eq.guess", nothing)
   __ovr_alpha_r_eq = pop!(__overrides, "alpha_r_eq", nothing); isnothing(__ovr_alpha_r_eq) || push!(__eqs, alpha_r_eq ~ __ovr_alpha_r_eq)
-  __ovr_alpha_r_eq__initial = pop!(__overrides, "alpha_r_eq__initial", nothing); isnothing(__ovr_alpha_r_eq__initial) || (__initial_conditions[alpha_r_eq] = __ovr_alpha_r_eq__initial)
-  __ovr_alpha_r_eq__guess = pop!(__overrides, "alpha_r_eq__guess", nothing)
+  __ovr_alpha_r_eq__initial = pop!(__overrides, "alpha_r_eq.initial", nothing); isnothing(__ovr_alpha_r_eq__initial) || (__initial_conditions[alpha_r_eq] = __ovr_alpha_r_eq__initial)
+  __ovr_alpha_r_eq__guess = pop!(__overrides, "alpha_r_eq.guess", nothing)
   __ovr_t_pneu = pop!(__overrides, "t_pneu", nothing); isnothing(__ovr_t_pneu) || push!(__eqs, t_pneu ~ __ovr_t_pneu)
-  __ovr_t_pneu__initial = pop!(__overrides, "t_pneu__initial", nothing); isnothing(__ovr_t_pneu__initial) || (__initial_conditions[t_pneu] = __ovr_t_pneu__initial)
-  __ovr_t_pneu__guess = pop!(__overrides, "t_pneu__guess", nothing)
+  __ovr_t_pneu__initial = pop!(__overrides, "t_pneu.initial", nothing); isnothing(__ovr_t_pneu__initial) || (__initial_conditions[t_pneu] = __ovr_t_pneu__initial)
+  __ovr_t_pneu__guess = pop!(__overrides, "t_pneu.guess", nothing)
   __ovr_s_arm = pop!(__overrides, "s_arm", nothing); isnothing(__ovr_s_arm) || push!(__eqs, s_arm ~ __ovr_s_arm)
-  __ovr_s_arm__initial = pop!(__overrides, "s_arm__initial", nothing); isnothing(__ovr_s_arm__initial) || (__initial_conditions[s_arm] = __ovr_s_arm__initial)
-  __ovr_s_arm__guess = pop!(__overrides, "s_arm__guess", nothing)
+  __ovr_s_arm__initial = pop!(__overrides, "s_arm.initial", nothing); isnothing(__ovr_s_arm__initial) || (__initial_conditions[s_arm] = __ovr_s_arm__initial)
+  __ovr_s_arm__guess = pop!(__overrides, "s_arm.guess", nothing)
   __ovr_Mz_prime = pop!(__overrides, "Mz_prime", nothing); isnothing(__ovr_Mz_prime) || push!(__eqs, Mz_prime ~ __ovr_Mz_prime)
-  __ovr_Mz_prime__initial = pop!(__overrides, "Mz_prime__initial", nothing); isnothing(__ovr_Mz_prime__initial) || (__initial_conditions[Mz_prime] = __ovr_Mz_prime__initial)
-  __ovr_Mz_prime__guess = pop!(__overrides, "Mz_prime__guess", nothing)
+  __ovr_Mz_prime__initial = pop!(__overrides, "Mz_prime.initial", nothing); isnothing(__ovr_Mz_prime__initial) || (__initial_conditions[Mz_prime] = __ovr_Mz_prime__initial)
+  __ovr_Mz_prime__guess = pop!(__overrides, "Mz_prime.guess", nothing)
   __ovr_Mzr = pop!(__overrides, "Mzr", nothing); isnothing(__ovr_Mzr) || push!(__eqs, Mzr ~ __ovr_Mzr)
-  __ovr_Mzr__initial = pop!(__overrides, "Mzr__initial", nothing); isnothing(__ovr_Mzr__initial) || (__initial_conditions[Mzr] = __ovr_Mzr__initial)
-  __ovr_Mzr__guess = pop!(__overrides, "Mzr__guess", nothing)
+  __ovr_Mzr__initial = pop!(__overrides, "Mzr.initial", nothing); isnothing(__ovr_Mzr__initial) || (__initial_conditions[Mzr] = __ovr_Mzr__initial)
+  __ovr_Mzr__guess = pop!(__overrides, "Mzr.guess", nothing)
   __ovr_Mz = pop!(__overrides, "Mz", nothing); isnothing(__ovr_Mz) || push!(__eqs, Mz ~ __ovr_Mz)
-  __ovr_Mz__initial = pop!(__overrides, "Mz__initial", nothing); isnothing(__ovr_Mz__initial) || (__initial_conditions[Mz] = __ovr_Mz__initial)
-  __ovr_Mz__guess = pop!(__overrides, "Mz__guess", nothing)
+  __ovr_Mz__initial = pop!(__overrides, "Mz.initial", nothing); isnothing(__ovr_Mz__initial) || (__initial_conditions[Mz] = __ovr_Mz__initial)
+  __ovr_Mz__guess = pop!(__overrides, "Mz.guess", nothing)
   __ovr_Fy_c = pop!(__overrides, "Fy_c", nothing); isnothing(__ovr_Fy_c) || push!(__eqs, Fy_c ~ __ovr_Fy_c)
-  __ovr_Fy_c__initial = pop!(__overrides, "Fy_c__initial", nothing); isnothing(__ovr_Fy_c__initial) || (__initial_conditions[Fy_c] = __ovr_Fy_c__initial)
-  __ovr_Fy_c__guess = pop!(__overrides, "Fy_c__guess", nothing)
+  __ovr_Fy_c__initial = pop!(__overrides, "Fy_c.initial", nothing); isnothing(__ovr_Fy_c__initial) || (__initial_conditions[Fy_c] = __ovr_Fy_c__initial)
+  __ovr_Fy_c__guess = pop!(__overrides, "Fy_c.guess", nothing)
   __ovr_Mz_c = pop!(__overrides, "Mz_c", nothing); isnothing(__ovr_Mz_c) || push!(__eqs, Mz_c ~ __ovr_Mz_c)
-  __ovr_Mz_c__initial = pop!(__overrides, "Mz_c__initial", nothing); isnothing(__ovr_Mz_c__initial) || (__initial_conditions[Mz_c] = __ovr_Mz_c__initial)
-  __ovr_Mz_c__guess = pop!(__overrides, "Mz_c__guess", nothing)
+  __ovr_Mz_c__initial = pop!(__overrides, "Mz_c.initial", nothing); isnothing(__ovr_Mz_c__initial) || (__initial_conditions[Mz_c] = __ovr_Mz_c__initial)
+  __ovr_Mz_c__guess = pop!(__overrides, "Mz_c.guess", nothing)
   __ovr_f_wx = pop!(__overrides, "f_wx", nothing); isnothing(__ovr_f_wx) || push!(__eqs, f_wx ~ __ovr_f_wx)
-  __ovr_f_wx__initial = pop!(__overrides, "f_wx__initial", nothing); isnothing(__ovr_f_wx__initial) || (__initial_conditions[f_wx] = __ovr_f_wx__initial)
-  __ovr_f_wx__guess = pop!(__overrides, "f_wx__guess", nothing)
+  __ovr_f_wx__initial = pop!(__overrides, "f_wx.initial", nothing); isnothing(__ovr_f_wx__initial) || (__initial_conditions[f_wx] = __ovr_f_wx__initial)
+  __ovr_f_wx__guess = pop!(__overrides, "f_wx.guess", nothing)
   __ovr_f_wy = pop!(__overrides, "f_wy", nothing); isnothing(__ovr_f_wy) || push!(__eqs, f_wy ~ __ovr_f_wy)
-  __ovr_f_wy__initial = pop!(__overrides, "f_wy__initial", nothing); isnothing(__ovr_f_wy__initial) || (__initial_conditions[f_wy] = __ovr_f_wy__initial)
-  __ovr_f_wy__guess = pop!(__overrides, "f_wy__guess", nothing)
+  __ovr_f_wy__initial = pop!(__overrides, "f_wy.initial", nothing); isnothing(__ovr_f_wy__initial) || (__initial_conditions[f_wy] = __ovr_f_wy__initial)
+  __ovr_f_wy__guess = pop!(__overrides, "f_wy.guess", nothing)
   __ovr_tau_wx = pop!(__overrides, "tau_wx", nothing); isnothing(__ovr_tau_wx) || push!(__eqs, tau_wx ~ __ovr_tau_wx)
-  __ovr_tau_wx__initial = pop!(__overrides, "tau_wx__initial", nothing); isnothing(__ovr_tau_wx__initial) || (__initial_conditions[tau_wx] = __ovr_tau_wx__initial)
-  __ovr_tau_wx__guess = pop!(__overrides, "tau_wx__guess", nothing)
+  __ovr_tau_wx__initial = pop!(__overrides, "tau_wx.initial", nothing); isnothing(__ovr_tau_wx__initial) || (__initial_conditions[tau_wx] = __ovr_tau_wx__initial)
+  __ovr_tau_wx__guess = pop!(__overrides, "tau_wx.guess", nothing)
   __ovr_tau_wy = pop!(__overrides, "tau_wy", nothing); isnothing(__ovr_tau_wy) || push!(__eqs, tau_wy ~ __ovr_tau_wy)
-  __ovr_tau_wy__initial = pop!(__overrides, "tau_wy__initial", nothing); isnothing(__ovr_tau_wy__initial) || (__initial_conditions[tau_wy] = __ovr_tau_wy__initial)
-  __ovr_tau_wy__guess = pop!(__overrides, "tau_wy__guess", nothing)
+  __ovr_tau_wy__initial = pop!(__overrides, "tau_wy.initial", nothing); isnothing(__ovr_tau_wy__initial) || (__initial_conditions[tau_wy] = __ovr_tau_wy__initial)
+  __ovr_tau_wy__guess = pop!(__overrides, "tau_wy.guess", nothing)
   __ovr_tau_wz = pop!(__overrides, "tau_wz", nothing); isnothing(__ovr_tau_wz) || push!(__eqs, tau_wz ~ __ovr_tau_wz)
-  __ovr_tau_wz__initial = pop!(__overrides, "tau_wz__initial", nothing); isnothing(__ovr_tau_wz__initial) || (__initial_conditions[tau_wz] = __ovr_tau_wz__initial)
-  __ovr_tau_wz__guess = pop!(__overrides, "tau_wz__guess", nothing)
+  __ovr_tau_wz__initial = pop!(__overrides, "tau_wz.initial", nothing); isnothing(__ovr_tau_wz__initial) || (__initial_conditions[tau_wz] = __ovr_tau_wz__initial)
+  __ovr_tau_wz__guess = pop!(__overrides, "tau_wz.guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -1272,13 +1418,23 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named wheel_center = __Dyad__Frame3D())
   # Subcomponent road of type VehicleComponents.RoadSurface
   road_overrides = __pop_subcomponent_overrides!(__overrides, "road")
-  push!(__systems, @named road = VehicleComponents.RoadSurface(; road_overrides...))
+  push!(__systems, @named road = VehicleComponents.RoadSurface(; __overrides = road_overrides))
   # Subcomponent visual of type MultibodyComponents.CylinderShape
   visual_overrides = __pop_subcomponent_overrides!(__overrides, "visual")
-  push!(__systems, @named visual = MultibodyComponents.CylinderShape(; color=sty_black, r=wheel_center.r_0, R=transpose(wheel_center.R), r_shape=[0, -width / 2, 0], length_direction=[0, 1, 0], width_direction=[1, 0, 0], length=width, width=2 * unloaded_radius, height=2 * unloaded_radius, visual_overrides...))
+  visual_dict = Dict{String, Any}()
+  visual_dict["r"] = ModelingToolkit.default_to_parentscope(wheel_center.r_0)
+  visual_dict["R"] = ModelingToolkit.default_to_parentscope(transpose(wheel_center.R))
+  visual_dict["r_shape"] = ModelingToolkit.default_to_parentscope([0, -width / 2, 0])
+  visual_dict["length_direction"] = ModelingToolkit.default_to_parentscope([0, 1, 0])
+  visual_dict["width_direction"] = ModelingToolkit.default_to_parentscope([1, 0, 0])
+  visual_dict["length"] = ModelingToolkit.default_to_parentscope(width)
+  visual_dict["width"] = ModelingToolkit.default_to_parentscope(2 * unloaded_radius)
+  visual_dict["height"] = ModelingToolkit.default_to_parentscope(2 * unloaded_radius)
+  merge!(visual_dict, visual_overrides)
+  push!(__systems, @named visual = MultibodyComponents.CylinderShape(; color=sty_black, __overrides = visual_dict))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
   isnothing(__ovr_z_w__guess) || (__guesses[z_w] = __ovr_z_w__guess)
@@ -1532,6 +1688,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, slip ~ kappa)
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export TireMF61

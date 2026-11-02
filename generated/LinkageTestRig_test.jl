@@ -15,7 +15,7 @@ __dyad_run_test_case!(
   abstol=1e-6,
   reltol=1e-6,
   solver=ODEAlg.Auto(),
-  params=(;),
+  params=Dict{String, Any}(),
   initial_conditions=Tuple[],
   expected_initial=Tuple[
     (m -> m.linkage.camber, "linkage.camber", 0, 0.00001, 1e-5),

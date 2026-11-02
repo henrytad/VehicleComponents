@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   ABSControl(; name, slip_target, k)
+   ABSControl(; name, slip_target, k, __overrides)
 
 ## Parameters:
 
@@ -36,7 +36,7 @@
 | `p_action`         |                          | --  |
 | `brake_scale`         |                          | --  |
 """
-@component function ABSControl(; name = nothing, slip_target=VehicleComponents.params.control.abs_slip_target, k=VehicleComponents.params.control.abs_gain, kwargs...)
+@component function ABSControl(; name = nothing, var"slip_target"=VehicleComponents.params.control.abs_slip_target, var"k"=VehicleComponents.params.control.abs_gain, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -44,7 +44,7 @@
     @named model = ABSControl()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -53,6 +53,10 @@
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "slip_target") && (slip_target = pop!(__overrides, "slip_target"))
+  haskey(__overrides, "k") && (k = pop!(__overrides, "k"))
 
   ### Structural Parameters (functions)
 
@@ -69,10 +73,10 @@
   ### Symbolic Parameters
   __local__slip_target = slip_target
   append!(__params, @parameters (slip_target::Real))
-  __initial_conditions[slip_target] = __local__slip_target
+  __dyad_seed_parameter!(__initial_conditions, __bindings, slip_target, __local__slip_target)
   __local__k = k
   append!(__params, @parameters (k::Real))
-  __initial_conditions[k] = __local__k
+  __dyad_seed_parameter!(__initial_conditions, __bindings, k, __local__k)
 
   ### Final Parameters (assignments)
 
@@ -96,26 +100,26 @@
 
   ### Variables (assignments)
   __ovr_excess_fl = pop!(__overrides, "excess_fl", nothing); isnothing(__ovr_excess_fl) || push!(__eqs, excess_fl ~ __ovr_excess_fl)
-  __ovr_excess_fl__initial = pop!(__overrides, "excess_fl__initial", nothing); isnothing(__ovr_excess_fl__initial) || (__initial_conditions[excess_fl] = __ovr_excess_fl__initial)
-  __ovr_excess_fl__guess = pop!(__overrides, "excess_fl__guess", nothing)
+  __ovr_excess_fl__initial = pop!(__overrides, "excess_fl.initial", nothing); isnothing(__ovr_excess_fl__initial) || (__initial_conditions[excess_fl] = __ovr_excess_fl__initial)
+  __ovr_excess_fl__guess = pop!(__overrides, "excess_fl.guess", nothing)
   __ovr_excess_fr = pop!(__overrides, "excess_fr", nothing); isnothing(__ovr_excess_fr) || push!(__eqs, excess_fr ~ __ovr_excess_fr)
-  __ovr_excess_fr__initial = pop!(__overrides, "excess_fr__initial", nothing); isnothing(__ovr_excess_fr__initial) || (__initial_conditions[excess_fr] = __ovr_excess_fr__initial)
-  __ovr_excess_fr__guess = pop!(__overrides, "excess_fr__guess", nothing)
+  __ovr_excess_fr__initial = pop!(__overrides, "excess_fr.initial", nothing); isnothing(__ovr_excess_fr__initial) || (__initial_conditions[excess_fr] = __ovr_excess_fr__initial)
+  __ovr_excess_fr__guess = pop!(__overrides, "excess_fr.guess", nothing)
   __ovr_excess_rl = pop!(__overrides, "excess_rl", nothing); isnothing(__ovr_excess_rl) || push!(__eqs, excess_rl ~ __ovr_excess_rl)
-  __ovr_excess_rl__initial = pop!(__overrides, "excess_rl__initial", nothing); isnothing(__ovr_excess_rl__initial) || (__initial_conditions[excess_rl] = __ovr_excess_rl__initial)
-  __ovr_excess_rl__guess = pop!(__overrides, "excess_rl__guess", nothing)
+  __ovr_excess_rl__initial = pop!(__overrides, "excess_rl.initial", nothing); isnothing(__ovr_excess_rl__initial) || (__initial_conditions[excess_rl] = __ovr_excess_rl__initial)
+  __ovr_excess_rl__guess = pop!(__overrides, "excess_rl.guess", nothing)
   __ovr_excess_rr = pop!(__overrides, "excess_rr", nothing); isnothing(__ovr_excess_rr) || push!(__eqs, excess_rr ~ __ovr_excess_rr)
-  __ovr_excess_rr__initial = pop!(__overrides, "excess_rr__initial", nothing); isnothing(__ovr_excess_rr__initial) || (__initial_conditions[excess_rr] = __ovr_excess_rr__initial)
-  __ovr_excess_rr__guess = pop!(__overrides, "excess_rr__guess", nothing)
+  __ovr_excess_rr__initial = pop!(__overrides, "excess_rr.initial", nothing); isnothing(__ovr_excess_rr__initial) || (__initial_conditions[excess_rr] = __ovr_excess_rr__initial)
+  __ovr_excess_rr__guess = pop!(__overrides, "excess_rr.guess", nothing)
   __ovr_excess = pop!(__overrides, "excess", nothing); isnothing(__ovr_excess) || push!(__eqs, excess ~ __ovr_excess)
-  __ovr_excess__initial = pop!(__overrides, "excess__initial", nothing); isnothing(__ovr_excess__initial) || (__initial_conditions[excess] = __ovr_excess__initial)
-  __ovr_excess__guess = pop!(__overrides, "excess__guess", nothing)
+  __ovr_excess__initial = pop!(__overrides, "excess.initial", nothing); isnothing(__ovr_excess__initial) || (__initial_conditions[excess] = __ovr_excess__initial)
+  __ovr_excess__guess = pop!(__overrides, "excess.guess", nothing)
   __ovr_p_action = pop!(__overrides, "p_action", nothing); isnothing(__ovr_p_action) || push!(__eqs, p_action ~ __ovr_p_action)
-  __ovr_p_action__initial = pop!(__overrides, "p_action__initial", nothing); isnothing(__ovr_p_action__initial) || (__initial_conditions[p_action] = __ovr_p_action__initial)
-  __ovr_p_action__guess = pop!(__overrides, "p_action__guess", nothing)
+  __ovr_p_action__initial = pop!(__overrides, "p_action.initial", nothing); isnothing(__ovr_p_action__initial) || (__initial_conditions[p_action] = __ovr_p_action__initial)
+  __ovr_p_action__guess = pop!(__overrides, "p_action.guess", nothing)
   __ovr_brake_scale = pop!(__overrides, "brake_scale", nothing); isnothing(__ovr_brake_scale) || push!(__eqs, brake_scale ~ __ovr_brake_scale)
-  __ovr_brake_scale__initial = pop!(__overrides, "brake_scale__initial", nothing); isnothing(__ovr_brake_scale__initial) || (__initial_conditions[brake_scale] = __ovr_brake_scale__initial)
-  __ovr_brake_scale__guess = pop!(__overrides, "brake_scale__guess", nothing)
+  __ovr_brake_scale__initial = pop!(__overrides, "brake_scale.initial", nothing); isnothing(__ovr_brake_scale__initial) || (__initial_conditions[brake_scale] = __ovr_brake_scale__initial)
+  __ovr_brake_scale__guess = pop!(__overrides, "brake_scale.guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -123,7 +127,7 @@
   ### Components
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
   isnothing(__ovr_excess_fl__guess) || (__guesses[excess_fl] = __ovr_excess_fl__guess)
@@ -151,6 +155,6 @@
   push!(__eqs, brake_demand ~ brake * brake_scale)
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export ABSControl
