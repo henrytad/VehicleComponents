@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   AeroLoad(; name, rho, CdA, ClA, bal_f, wheelbase, v_min)
+   AeroLoad(; name, rho, CdA, ClA, bal_f, wheelbase, v_min, __overrides)
 
 ## Parameters:
 
@@ -40,7 +40,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `downforce_rear`         |                          | N  |
 | `f_cop`         |                          | N  |
 """
-@component function AeroLoad(; name = nothing, rho=VehicleComponents.params.aero.rho, CdA=VehicleComponents.params.aero.CdA, ClA=VehicleComponents.params.aero.ClA, bal_f=VehicleComponents.params.aero.balance_front, wheelbase=VehicleComponents.Data.wheelbase(VehicleComponents.params), v_min=0.5, kwargs...)
+@component function AeroLoad(; name = nothing, var"rho"=VehicleComponents.params.aero.rho, var"CdA"=VehicleComponents.params.aero.CdA, var"ClA"=VehicleComponents.params.aero.ClA, var"bal_f"=VehicleComponents.params.aero.balance_front, var"wheelbase"=VehicleComponents.Data.wheelbase(VehicleComponents.params), var"v_min"=0.5, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -48,7 +48,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = AeroLoad()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -57,6 +57,14 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "rho") && (rho = pop!(__overrides, "rho"))
+  haskey(__overrides, "CdA") && (CdA = pop!(__overrides, "CdA"))
+  haskey(__overrides, "ClA") && (ClA = pop!(__overrides, "ClA"))
+  haskey(__overrides, "bal_f") && (bal_f = pop!(__overrides, "bal_f"))
+  haskey(__overrides, "wheelbase") && (wheelbase = pop!(__overrides, "wheelbase"))
+  haskey(__overrides, "v_min") && (v_min = pop!(__overrides, "v_min"))
 
   ### Structural Parameters (functions)
 
@@ -67,10 +75,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Path Parameters (non-final)
 
   ### Final Parameters (declarations)
-  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.
-  append!(__params, @parameters (sty_rod_radius::Real), [description = 
-  append!(__params, @parameters (sty_rod_radius::Real), [description = Defines global colors and geometry settings, such as rod radius,
-  append!(__params, @parameters (sty_rod_radius::Real), [description = used consistently across different linkage models.", misc = "final"])
+  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.\n\nDefines global colors and geometry settings, such as rod radius,\nused consistently across different linkage models.", misc = "final"])
   append!(__params, @parameters (sty_body_radius::Real), [misc = "final"])
   append!(__params, @parameters (sty_black[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_orange[1:4]::Real), [misc = "final"])
@@ -90,22 +95,22 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__rho = rho
   append!(__params, @parameters (rho::Real), [bounds = (0, Inf)])
-  __initial_conditions[rho] = __local__rho
+  __dyad_seed_parameter!(__initial_conditions, __bindings, rho, __local__rho)
   __local__CdA = CdA
   append!(__params, @parameters (CdA::Real))
-  __initial_conditions[CdA] = __local__CdA
+  __dyad_seed_parameter!(__initial_conditions, __bindings, CdA, __local__CdA)
   __local__ClA = ClA
   append!(__params, @parameters (ClA::Real))
-  __initial_conditions[ClA] = __local__ClA
+  __dyad_seed_parameter!(__initial_conditions, __bindings, ClA, __local__ClA)
   __local__bal_f = bal_f
   append!(__params, @parameters (bal_f::Real))
-  __initial_conditions[bal_f] = __local__bal_f
+  __dyad_seed_parameter!(__initial_conditions, __bindings, bal_f, __local__bal_f)
   __local__wheelbase = wheelbase
   append!(__params, @parameters (wheelbase::Real))
-  __initial_conditions[wheelbase] = __local__wheelbase
+  __dyad_seed_parameter!(__initial_conditions, __bindings, wheelbase, __local__wheelbase)
   __local__v_min = v_min
   append!(__params, @parameters (v_min::Real))
-  __initial_conditions[v_min] = __local__v_min
+  __dyad_seed_parameter!(__initial_conditions, __bindings, v_min, __local__v_min)
 
   ### Final Parameters (assignments)
   __bindings[sty_rod_radius] = 0.008
@@ -141,41 +146,41 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Variables (assignments)
   __ovr_x_ref = pop!(__overrides, "x_ref", nothing); isnothing(__ovr_x_ref) || push!(__eqs, x_ref ~ __ovr_x_ref)
-  __ovr_x_ref__initial = pop!(__overrides, "x_ref__initial", nothing); isnothing(__ovr_x_ref__initial) || (__initial_conditions[x_ref] = __ovr_x_ref__initial)
-  __ovr_x_ref__guess = pop!(__overrides, "x_ref__guess", nothing)
+  __ovr_x_ref__initial = pop!(__overrides, "x_ref.initial", nothing); isnothing(__ovr_x_ref__initial) || (__initial_conditions[x_ref] = __ovr_x_ref__initial)
+  __ovr_x_ref__guess = pop!(__overrides, "x_ref.guess", nothing)
   __ovr_y_ref = pop!(__overrides, "y_ref", nothing); isnothing(__ovr_y_ref) || push!(__eqs, y_ref ~ __ovr_y_ref)
-  __ovr_y_ref__initial = pop!(__overrides, "y_ref__initial", nothing); isnothing(__ovr_y_ref__initial) || (__initial_conditions[y_ref] = __ovr_y_ref__initial)
-  __ovr_y_ref__guess = pop!(__overrides, "y_ref__guess", nothing)
+  __ovr_y_ref__initial = pop!(__overrides, "y_ref.initial", nothing); isnothing(__ovr_y_ref__initial) || (__initial_conditions[y_ref] = __ovr_y_ref__initial)
+  __ovr_y_ref__guess = pop!(__overrides, "y_ref.guess", nothing)
   __ovr_v_x = pop!(__overrides, "v_x", nothing); isnothing(__ovr_v_x) || push!(__eqs, v_x ~ __ovr_v_x)
-  __ovr_v_x__initial = pop!(__overrides, "v_x__initial", nothing); isnothing(__ovr_v_x__initial) || (__initial_conditions[v_x] = __ovr_v_x__initial)
-  __ovr_v_x__guess = pop!(__overrides, "v_x__guess", nothing)
+  __ovr_v_x__initial = pop!(__overrides, "v_x.initial", nothing); isnothing(__ovr_v_x__initial) || (__initial_conditions[v_x] = __ovr_v_x__initial)
+  __ovr_v_x__guess = pop!(__overrides, "v_x.guess", nothing)
   __ovr_v_y = pop!(__overrides, "v_y", nothing); isnothing(__ovr_v_y) || push!(__eqs, v_y ~ __ovr_v_y)
-  __ovr_v_y__initial = pop!(__overrides, "v_y__initial", nothing); isnothing(__ovr_v_y__initial) || (__initial_conditions[v_y] = __ovr_v_y__initial)
-  __ovr_v_y__guess = pop!(__overrides, "v_y__guess", nothing)
+  __ovr_v_y__initial = pop!(__overrides, "v_y.initial", nothing); isnothing(__ovr_v_y__initial) || (__initial_conditions[v_y] = __ovr_v_y__initial)
+  __ovr_v_y__guess = pop!(__overrides, "v_y.guess", nothing)
   __ovr_v = pop!(__overrides, "v", nothing); isnothing(__ovr_v) || push!(__eqs, v ~ __ovr_v)
-  __ovr_v__initial = pop!(__overrides, "v__initial", nothing); isnothing(__ovr_v__initial) || (__initial_conditions[v] = __ovr_v__initial)
-  __ovr_v__guess = pop!(__overrides, "v__guess", nothing)
+  __ovr_v__initial = pop!(__overrides, "v.initial", nothing); isnothing(__ovr_v__initial) || (__initial_conditions[v] = __ovr_v__initial)
+  __ovr_v__guess = pop!(__overrides, "v.guess", nothing)
   __ovr_v_reg = pop!(__overrides, "v_reg", nothing); isnothing(__ovr_v_reg) || push!(__eqs, v_reg ~ __ovr_v_reg)
-  __ovr_v_reg__initial = pop!(__overrides, "v_reg__initial", nothing); isnothing(__ovr_v_reg__initial) || (__initial_conditions[v_reg] = __ovr_v_reg__initial)
-  __ovr_v_reg__guess = pop!(__overrides, "v_reg__guess", nothing)
+  __ovr_v_reg__initial = pop!(__overrides, "v_reg.initial", nothing); isnothing(__ovr_v_reg__initial) || (__initial_conditions[v_reg] = __ovr_v_reg__initial)
+  __ovr_v_reg__guess = pop!(__overrides, "v_reg.guess", nothing)
   __ovr_q = pop!(__overrides, "q", nothing); isnothing(__ovr_q) || push!(__eqs, q ~ __ovr_q)
-  __ovr_q__initial = pop!(__overrides, "q__initial", nothing); isnothing(__ovr_q__initial) || (__initial_conditions[q] = __ovr_q__initial)
-  __ovr_q__guess = pop!(__overrides, "q__guess", nothing)
+  __ovr_q__initial = pop!(__overrides, "q.initial", nothing); isnothing(__ovr_q__initial) || (__initial_conditions[q] = __ovr_q__initial)
+  __ovr_q__guess = pop!(__overrides, "q.guess", nothing)
   __ovr_drag = pop!(__overrides, "drag", nothing); isnothing(__ovr_drag) || push!(__eqs, drag ~ __ovr_drag)
-  __ovr_drag__initial = pop!(__overrides, "drag__initial", nothing); isnothing(__ovr_drag__initial) || (__initial_conditions[drag] = __ovr_drag__initial)
-  __ovr_drag__guess = pop!(__overrides, "drag__guess", nothing)
+  __ovr_drag__initial = pop!(__overrides, "drag.initial", nothing); isnothing(__ovr_drag__initial) || (__initial_conditions[drag] = __ovr_drag__initial)
+  __ovr_drag__guess = pop!(__overrides, "drag.guess", nothing)
   __ovr_downforce = pop!(__overrides, "downforce", nothing); isnothing(__ovr_downforce) || push!(__eqs, downforce ~ __ovr_downforce)
-  __ovr_downforce__initial = pop!(__overrides, "downforce__initial", nothing); isnothing(__ovr_downforce__initial) || (__initial_conditions[downforce] = __ovr_downforce__initial)
-  __ovr_downforce__guess = pop!(__overrides, "downforce__guess", nothing)
+  __ovr_downforce__initial = pop!(__overrides, "downforce.initial", nothing); isnothing(__ovr_downforce__initial) || (__initial_conditions[downforce] = __ovr_downforce__initial)
+  __ovr_downforce__guess = pop!(__overrides, "downforce.guess", nothing)
   __ovr_downforce_front = pop!(__overrides, "downforce_front", nothing); isnothing(__ovr_downforce_front) || push!(__eqs, downforce_front ~ __ovr_downforce_front)
-  __ovr_downforce_front__initial = pop!(__overrides, "downforce_front__initial", nothing); isnothing(__ovr_downforce_front__initial) || (__initial_conditions[downforce_front] = __ovr_downforce_front__initial)
-  __ovr_downforce_front__guess = pop!(__overrides, "downforce_front__guess", nothing)
+  __ovr_downforce_front__initial = pop!(__overrides, "downforce_front.initial", nothing); isnothing(__ovr_downforce_front__initial) || (__initial_conditions[downforce_front] = __ovr_downforce_front__initial)
+  __ovr_downforce_front__guess = pop!(__overrides, "downforce_front.guess", nothing)
   __ovr_downforce_rear = pop!(__overrides, "downforce_rear", nothing); isnothing(__ovr_downforce_rear) || push!(__eqs, downforce_rear ~ __ovr_downforce_rear)
-  __ovr_downforce_rear__initial = pop!(__overrides, "downforce_rear__initial", nothing); isnothing(__ovr_downforce_rear__initial) || (__initial_conditions[downforce_rear] = __ovr_downforce_rear__initial)
-  __ovr_downforce_rear__guess = pop!(__overrides, "downforce_rear__guess", nothing)
+  __ovr_downforce_rear__initial = pop!(__overrides, "downforce_rear.initial", nothing); isnothing(__ovr_downforce_rear__initial) || (__initial_conditions[downforce_rear] = __ovr_downforce_rear__initial)
+  __ovr_downforce_rear__guess = pop!(__overrides, "downforce_rear.guess", nothing)
   __ovr_f_cop = pop!(__overrides, "f_cop", nothing); isnothing(__ovr_f_cop) || push!(__eqs, f_cop ~ __ovr_f_cop)
-  __ovr_f_cop__initial = pop!(__overrides, "f_cop__initial", nothing); isnothing(__ovr_f_cop__initial) || (__initial_conditions[f_cop] = __ovr_f_cop__initial)
-  __ovr_f_cop__guess = pop!(__overrides, "f_cop__guess", nothing)
+  __ovr_f_cop__initial = pop!(__overrides, "f_cop.initial", nothing); isnothing(__ovr_f_cop__initial) || (__initial_conditions[f_cop] = __ovr_f_cop__initial)
+  __ovr_f_cop__guess = pop!(__overrides, "f_cop.guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -184,7 +189,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named chassis = __Dyad__Frame3D())
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
   isnothing(__ovr_x_ref__guess) || (__guesses[x_ref] = __ovr_x_ref__guess)
@@ -222,6 +227,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, chassis.tau ~ -LinearAlgebra.cross(cop, f_cop))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export AeroLoad

@@ -5,9 +5,9 @@
 
 
 @doc Markdown.doc"""
-   FullVehicleTestStatic(; name)
+   FullVehicleTestStatic(; name, __overrides)
 """
-@component function FullVehicleTestStatic(; name = nothing, kwargs...)
+@component function FullVehicleTestStatic(; name = nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -15,7 +15,7 @@
     @named model = FullVehicleTestStatic()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -53,31 +53,31 @@
   ### Components
   # Subcomponent world of type MultibodyComponents.World
   world_overrides = __pop_subcomponent_overrides!(__overrides, "world")
-  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
+  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, __symbol_overrides(world_overrides)...))
   # Subcomponent throttle of type BlockComponents.Sources.Constant
   throttle_overrides = __pop_subcomponent_overrides!(__overrides, "throttle")
-  push!(__systems, @named throttle = BlockComponents.Sources.Constant(; k=Float64(0.0), throttle_overrides...))
+  push!(__systems, @named throttle = BlockComponents.Sources.Constant(; k=Float64(0.0), __overrides = throttle_overrides))
   # Subcomponent brake of type BlockComponents.Sources.Constant
   brake_overrides = __pop_subcomponent_overrides!(__overrides, "brake")
-  push!(__systems, @named brake = BlockComponents.Sources.Constant(; k=Float64(0.0), brake_overrides...))
+  push!(__systems, @named brake = BlockComponents.Sources.Constant(; k=Float64(0.0), __overrides = brake_overrides))
   # Subcomponent steer of type BlockComponents.Sources.Constant
   steer_overrides = __pop_subcomponent_overrides!(__overrides, "steer")
-  push!(__systems, @named steer = BlockComponents.Sources.Constant(; k=Float64(0.0), steer_overrides...))
+  push!(__systems, @named steer = BlockComponents.Sources.Constant(; k=Float64(0.0), __overrides = steer_overrides))
   # Subcomponent heave_joint of type MultibodyComponents.Prismatic
   heave_joint_overrides = __pop_subcomponent_overrides!(__overrides, "heave_joint")
-  push!(__systems, @named heave_joint = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, heave_joint_overrides...))
+  push!(__systems, @named heave_joint = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, __overrides = heave_joint_overrides))
   # Subcomponent roll_joint of type MultibodyComponents.Revolute
   roll_joint_overrides = __pop_subcomponent_overrides!(__overrides, "roll_joint")
-  push!(__systems, @named roll_joint = MultibodyComponents.Revolute(; n=[Float64(1), Float64(0), Float64(0)], render=false, roll_joint_overrides...))
+  push!(__systems, @named roll_joint = MultibodyComponents.Revolute(; n=[Float64(1), Float64(0), Float64(0)], render=false, __overrides = roll_joint_overrides))
   # Subcomponent pitch_joint of type MultibodyComponents.Revolute
   pitch_joint_overrides = __pop_subcomponent_overrides!(__overrides, "pitch_joint")
-  push!(__systems, @named pitch_joint = MultibodyComponents.Revolute(; n=[Float64(0), Float64(1), Float64(0)], render=false, pitch_joint_overrides...))
+  push!(__systems, @named pitch_joint = MultibodyComponents.Revolute(; n=[Float64(0), Float64(1), Float64(0)], render=false, __overrides = pitch_joint_overrides))
   # Subcomponent vehicle of type VehicleComponents.FullVehicle
   vehicle_overrides = __pop_subcomponent_overrides!(__overrides, "vehicle")
-  push!(__systems, @named vehicle = VehicleComponents.FullVehicle(; vehicle_overrides...))
+  push!(__systems, @named vehicle = VehicleComponents.FullVehicle(; __overrides = vehicle_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -120,6 +120,6 @@
   push!(__eqs, connect(pitch_joint.frame_b, vehicle.rig))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export FullVehicleTestStatic

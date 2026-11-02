@@ -15,7 +15,7 @@ __dyad_run_test_case!(
   abstol=1e-6,
   reltol=1e-6,
   solver=ODEAlg.Auto(),
-  params=(;),
+  params=Dict{String, Any}(),
   initial_conditions=Tuple[],
   expected_initial=Tuple[
     (m -> m.tire.rho, "tire.rho", 0, 0.000001, 1e-5),
@@ -41,7 +41,7 @@ __dyad_run_test_case!(
   abstol=1e-6,
   reltol=1e-6,
   solver=ODEAlg.Auto(),
-  params=(; speed=10, static_deflection=0.005, stroke=0, kappa_start=-0.2, kappa_end=0.2, slip_ramp_time=2),
+  params=Dict{String, Any}("speed" => 10, "static_deflection" => 0.005, "stroke" => 0, "kappa_start" => -0.2, "kappa_end" => 0.2, "slip_ramp_time" => 2),
   initial_conditions=Tuple[],
   expected_initial=Tuple[
     (m -> m.tire.rho, "tire.rho", 0.005, 0.000001, 1e-5),
@@ -66,7 +66,7 @@ __dyad_run_test_case!(
   abstol=1e-6,
   reltol=1e-6,
   solver=ODEAlg.Auto(),
-  params=(; speed=10, static_deflection=0.005, stroke=0, alpha_start=-0.2, alpha_end=0.2, steer_ramp_time=2),
+  params=Dict{String, Any}("speed" => 10, "static_deflection" => 0.005, "stroke" => 0, "alpha_start" => -0.2, "alpha_end" => 0.2, "steer_ramp_time" => 2),
   initial_conditions=Tuple[],
   expected_initial=Tuple[
     (m -> m.tire.rho, "tire.rho", 0.005, 1e-5, 1e-5),

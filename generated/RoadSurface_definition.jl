@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   RoadSurface(; name, N, seed, n_min, n_max, roughness)
+   RoadSurface(; name, N, seed, n_min, n_max, roughness, __overrides)
 
 ## Parameters:
 
@@ -23,7 +23,7 @@
  * `y` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `z` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
 """
-@component function RoadSurface(; name = nothing, N=64, seed=1, n_min=0.02, n_max=Float64(3.0), roughness=VehicleComponents.params.road.roughness, kwargs...)
+@component function RoadSurface(; name = nothing, var"N"=64, var"seed"=1, var"n_min"=0.02, var"n_max"=Float64(3.0), var"roughness"=VehicleComponents.params.road.roughness, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -31,7 +31,7 @@
     @named model = RoadSurface()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -40,6 +40,13 @@
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "N") && (N = pop!(__overrides, "N"))
+  haskey(__overrides, "seed") && (seed = pop!(__overrides, "seed"))
+  haskey(__overrides, "n_min") && (n_min = pop!(__overrides, "n_min"))
+  haskey(__overrides, "n_max") && (n_max = pop!(__overrides, "n_max"))
+  haskey(__overrides, "roughness") && (roughness = pop!(__overrides, "roughness"))
 
   ### Structural Parameters (functions)
 
@@ -60,7 +67,7 @@
   ### Symbolic Parameters
   __local__roughness = roughness
   append!(__params, @parameters (roughness::Real), [description = "Road roughness coefficient. 0 is a smooth road"])
-  __initial_conditions[roughness] = __local__roughness
+  __dyad_seed_parameter!(__initial_conditions, __bindings, roughness, __local__roughness)
 
   ### Final Parameters (assignments)
   __bindings[amplitude] = VehicleComponents.road_wave_amplitude(N, seed, n_min, n_max)
@@ -83,7 +90,7 @@
   ### Components
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -96,6 +103,6 @@
   push!(__eqs, z ~ VehicleComponents.road_height(amplitude, kx, ky, phase, roughness, x, y))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export RoadSurface

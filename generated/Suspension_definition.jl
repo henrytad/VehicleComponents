@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   Suspension(; name, heave_dataset, roll_dataset, wheel_center_left, wheel_center_right, pushrod_outer_left, pushrod_outer_right, tierod_inner_left, tierod_inner_right)
+   Suspension(; name, heave_dataset, roll_dataset, wheel_center_left, wheel_center_right, pushrod_outer_left, pushrod_outer_right, tierod_inner_left, tierod_inner_right, __overrides)
 
 ## Parameters:
 
@@ -37,7 +37,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `wc_heave`         |                          | m  |
 | `wc_roll`         |                          | m  |
 """
-@component function Suspension(; name = nothing, heave_dataset=nothing, roll_dataset=nothing, wheel_center_left=nothing, wheel_center_right=nothing, pushrod_outer_left=nothing, pushrod_outer_right=nothing, tierod_inner_left=nothing, tierod_inner_right=nothing, kwargs...)
+@component function Suspension(; name = nothing, var"heave_dataset"=nothing, var"roll_dataset"=nothing, var"wheel_center_left"=nothing, var"wheel_center_right"=nothing, var"pushrod_outer_left"=nothing, var"pushrod_outer_right"=nothing, var"tierod_inner_left"=nothing, var"tierod_inner_right"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -45,7 +45,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = Suspension()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -54,6 +54,16 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "heave_dataset") && (heave_dataset = pop!(__overrides, "heave_dataset"))
+  haskey(__overrides, "roll_dataset") && (roll_dataset = pop!(__overrides, "roll_dataset"))
+  haskey(__overrides, "wheel_center_left") && (wheel_center_left = pop!(__overrides, "wheel_center_left"))
+  haskey(__overrides, "wheel_center_right") && (wheel_center_right = pop!(__overrides, "wheel_center_right"))
+  haskey(__overrides, "pushrod_outer_left") && (pushrod_outer_left = pop!(__overrides, "pushrod_outer_left"))
+  haskey(__overrides, "pushrod_outer_right") && (pushrod_outer_right = pop!(__overrides, "pushrod_outer_right"))
+  haskey(__overrides, "tierod_inner_left") && (tierod_inner_left = pop!(__overrides, "tierod_inner_left"))
+  haskey(__overrides, "tierod_inner_right") && (tierod_inner_right = pop!(__overrides, "tierod_inner_right"))
 
   ### Structural Parameters (functions)
 
@@ -70,22 +80,22 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__wheel_center_left = wheel_center_left
   append!(__params, @parameters (wheel_center_left[1:3]::Real))
-  __initial_conditions[wheel_center_left] = __local__wheel_center_left
+  __dyad_seed_parameter!(__initial_conditions, __bindings, wheel_center_left, __local__wheel_center_left)
   __local__wheel_center_right = wheel_center_right
   append!(__params, @parameters (wheel_center_right[1:3]::Real))
-  __initial_conditions[wheel_center_right] = __local__wheel_center_right
+  __dyad_seed_parameter!(__initial_conditions, __bindings, wheel_center_right, __local__wheel_center_right)
   __local__pushrod_outer_left = pushrod_outer_left
   append!(__params, @parameters (pushrod_outer_left[1:3]::Real))
-  __initial_conditions[pushrod_outer_left] = __local__pushrod_outer_left
+  __dyad_seed_parameter!(__initial_conditions, __bindings, pushrod_outer_left, __local__pushrod_outer_left)
   __local__pushrod_outer_right = pushrod_outer_right
   append!(__params, @parameters (pushrod_outer_right[1:3]::Real))
-  __initial_conditions[pushrod_outer_right] = __local__pushrod_outer_right
+  __dyad_seed_parameter!(__initial_conditions, __bindings, pushrod_outer_right, __local__pushrod_outer_right)
   __local__tierod_inner_left = tierod_inner_left
   append!(__params, @parameters (tierod_inner_left[1:3]::Real))
-  __initial_conditions[tierod_inner_left] = __local__tierod_inner_left
+  __dyad_seed_parameter!(__initial_conditions, __bindings, tierod_inner_left, __local__tierod_inner_left)
   __local__tierod_inner_right = tierod_inner_right
   append!(__params, @parameters (tierod_inner_right[1:3]::Real))
-  __initial_conditions[tierod_inner_right] = __local__tierod_inner_right
+  __dyad_seed_parameter!(__initial_conditions, __bindings, tierod_inner_right, __local__tierod_inner_right)
 
   ### Final Parameters (assignments)
 
@@ -98,11 +108,11 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Variables (assignments)
   __ovr_wc_heave = pop!(__overrides, "wc_heave", nothing); isnothing(__ovr_wc_heave) || push!(__eqs, wc_heave ~ __ovr_wc_heave)
-  __ovr_wc_heave__initial = pop!(__overrides, "wc_heave__initial", nothing); isnothing(__ovr_wc_heave__initial) || (__initial_conditions[wc_heave] = __ovr_wc_heave__initial)
-  __ovr_wc_heave__guess = pop!(__overrides, "wc_heave__guess", nothing)
+  __ovr_wc_heave__initial = pop!(__overrides, "wc_heave.initial", nothing); isnothing(__ovr_wc_heave__initial) || (__initial_conditions[wc_heave] = __ovr_wc_heave__initial)
+  __ovr_wc_heave__guess = pop!(__overrides, "wc_heave.guess", nothing)
   __ovr_wc_roll = pop!(__overrides, "wc_roll", nothing); isnothing(__ovr_wc_roll) || push!(__eqs, wc_roll ~ __ovr_wc_roll)
-  __ovr_wc_roll__initial = pop!(__overrides, "wc_roll__initial", nothing); isnothing(__ovr_wc_roll__initial) || (__initial_conditions[wc_roll] = __ovr_wc_roll__initial)
-  __ovr_wc_roll__guess = pop!(__overrides, "wc_roll__guess", nothing)
+  __ovr_wc_roll__initial = pop!(__overrides, "wc_roll.initial", nothing); isnothing(__ovr_wc_roll__initial) || (__initial_conditions[wc_roll] = __ovr_wc_roll__initial)
+  __ovr_wc_roll__guess = pop!(__overrides, "wc_roll.guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -113,19 +123,19 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named wheel_right = __Dyad__Frame3D())
   # Subcomponent inboard of type VehicleComponents.Inboard
   inboard_overrides = __pop_subcomponent_overrides!(__overrides, "inboard")
-  push!(__systems, @named inboard = VehicleComponents.Inboard(; pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, heave_dataset=heave_dataset, roll_dataset=roll_dataset, inboard_overrides...))
+  push!(__systems, @named inboard = VehicleComponents.Inboard(; pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, heave_dataset=heave_dataset, roll_dataset=roll_dataset, __overrides = inboard_overrides))
   # Subcomponent linkage_left of type VehicleComponents.Linkage
   linkage_left_overrides = __pop_subcomponent_overrides!(__overrides, "linkage_left")
-  push!(__systems, @named linkage_left = VehicleComponents.Linkage(; wheel_center=wheel_center_left, pushrod_outer=pushrod_outer_left, linkage_left_overrides...))
+  push!(__systems, @named linkage_left = VehicleComponents.Linkage(; wheel_center=wheel_center_left, pushrod_outer=pushrod_outer_left, __overrides = linkage_left_overrides))
   # Subcomponent linkage_right of type VehicleComponents.Linkage
   linkage_right_overrides = __pop_subcomponent_overrides!(__overrides, "linkage_right")
-  push!(__systems, @named linkage_right = VehicleComponents.Linkage(; wheel_center=wheel_center_right, pushrod_outer=pushrod_outer_right, linkage_right_overrides...))
+  push!(__systems, @named linkage_right = VehicleComponents.Linkage(; wheel_center=wheel_center_right, pushrod_outer=pushrod_outer_right, __overrides = linkage_right_overrides))
   # Subcomponent steering_rack of type VehicleComponents.SteeringRack
   steering_rack_overrides = __pop_subcomponent_overrides!(__overrides, "steering_rack")
-  push!(__systems, @named steering_rack = VehicleComponents.SteeringRack(; tierod_inner_left=tierod_inner_left, tierod_inner_right=tierod_inner_right, steering_rack_overrides...))
+  push!(__systems, @named steering_rack = VehicleComponents.SteeringRack(; tierod_inner_left=tierod_inner_left, tierod_inner_right=tierod_inner_right, __overrides = steering_rack_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
   isnothing(__ovr_wc_heave__guess) || (__guesses[wc_heave] = __ovr_wc_heave__guess)
@@ -152,6 +162,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(steer, steering_rack.steer))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export Suspension

@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   FullVehicleTestConstantSteer(; name, steer_angle, steer_start_time, v_max, ramp_duration, ramp_start_time, k_speed, Ti_speed, Ni_speed)
+   FullVehicleTestConstantSteer(; name, steer_angle, steer_start_time, v_max, ramp_duration, ramp_start_time, k_speed, Ti_speed, Ni_speed, __overrides)
 
 ## Parameters:
 
@@ -20,7 +20,7 @@
 | `Ti_speed`         |                          | s  |   2.0 |
 | `Ni_speed`         |                          | --  |   0.9 |
 """
-@component function FullVehicleTestConstantSteer(; name = nothing, steer_angle=0.05, steer_start_time=Float64(2.0), v_max=55.5556, ramp_duration=Float64(240.0), ramp_start_time=Float64(5.0), k_speed=0.2, Ti_speed=Float64(2.0), Ni_speed=0.9, kwargs...)
+@component function FullVehicleTestConstantSteer(; name = nothing, var"steer_angle"=0.05, var"steer_start_time"=Float64(2.0), var"v_max"=55.5556, var"ramp_duration"=Float64(240.0), var"ramp_start_time"=Float64(5.0), var"k_speed"=0.2, var"Ti_speed"=Float64(2.0), var"Ni_speed"=0.9, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -28,7 +28,7 @@
     @named model = FullVehicleTestConstantSteer()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -37,6 +37,16 @@
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "steer_angle") && (steer_angle = pop!(__overrides, "steer_angle"))
+  haskey(__overrides, "steer_start_time") && (steer_start_time = pop!(__overrides, "steer_start_time"))
+  haskey(__overrides, "v_max") && (v_max = pop!(__overrides, "v_max"))
+  haskey(__overrides, "ramp_duration") && (ramp_duration = pop!(__overrides, "ramp_duration"))
+  haskey(__overrides, "ramp_start_time") && (ramp_start_time = pop!(__overrides, "ramp_start_time"))
+  haskey(__overrides, "k_speed") && (k_speed = pop!(__overrides, "k_speed"))
+  haskey(__overrides, "Ti_speed") && (Ti_speed = pop!(__overrides, "Ti_speed"))
+  haskey(__overrides, "Ni_speed") && (Ni_speed = pop!(__overrides, "Ni_speed"))
 
   ### Structural Parameters (functions)
 
@@ -53,28 +63,28 @@
   ### Symbolic Parameters
   __local__steer_angle = steer_angle
   append!(__params, @parameters (steer_angle::Real))
-  __initial_conditions[steer_angle] = __local__steer_angle
+  __dyad_seed_parameter!(__initial_conditions, __bindings, steer_angle, __local__steer_angle)
   __local__steer_start_time = steer_start_time
   append!(__params, @parameters (steer_start_time::Real))
-  __initial_conditions[steer_start_time] = __local__steer_start_time
+  __dyad_seed_parameter!(__initial_conditions, __bindings, steer_start_time, __local__steer_start_time)
   __local__v_max = v_max
   append!(__params, @parameters (v_max::Real))
-  __initial_conditions[v_max] = __local__v_max
+  __dyad_seed_parameter!(__initial_conditions, __bindings, v_max, __local__v_max)
   __local__ramp_duration = ramp_duration
   append!(__params, @parameters (ramp_duration::Real))
-  __initial_conditions[ramp_duration] = __local__ramp_duration
+  __dyad_seed_parameter!(__initial_conditions, __bindings, ramp_duration, __local__ramp_duration)
   __local__ramp_start_time = ramp_start_time
   append!(__params, @parameters (ramp_start_time::Real))
-  __initial_conditions[ramp_start_time] = __local__ramp_start_time
+  __dyad_seed_parameter!(__initial_conditions, __bindings, ramp_start_time, __local__ramp_start_time)
   __local__k_speed = k_speed
   append!(__params, @parameters (k_speed::Real))
-  __initial_conditions[k_speed] = __local__k_speed
+  __dyad_seed_parameter!(__initial_conditions, __bindings, k_speed, __local__k_speed)
   __local__Ti_speed = Ti_speed
   append!(__params, @parameters (Ti_speed::Real))
-  __initial_conditions[Ti_speed] = __local__Ti_speed
+  __dyad_seed_parameter!(__initial_conditions, __bindings, Ti_speed, __local__Ti_speed)
   __local__Ni_speed = Ni_speed
   append!(__params, @parameters (Ni_speed::Real))
-  __initial_conditions[Ni_speed] = __local__Ni_speed
+  __dyad_seed_parameter!(__initial_conditions, __bindings, Ni_speed, __local__Ni_speed)
 
   ### Final Parameters (assignments)
 
@@ -90,70 +100,53 @@
   ### Components
   # Subcomponent world of type MultibodyComponents.World
   world_overrides = __pop_subcomponent_overrides!(__overrides, "world")
-  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
+  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, __symbol_overrides(world_overrides)...))
   # Subcomponent steer of type BlockComponents.Sources.Step
   steer_overrides = __pop_subcomponent_overrides!(__overrides, "steer")
-  push!(__systems, @named steer = BlockComponents.Sources.Step(; height=steer_angle, offset=Float64(0.0), start_time=steer_start_time, steer_overrides...))
+  push!(__systems, @named steer = BlockComponents.Sources.Step(; height=steer_angle, offset=Float64(0.0), start_time=steer_start_time, __overrides = steer_overrides))
   # Subcomponent brake of type BlockComponents.Sources.Constant
   brake_overrides = __pop_subcomponent_overrides!(__overrides, "brake")
-  push!(__systems, @named brake = BlockComponents.Sources.Constant(; k=Float64(0.0), brake_overrides...))
+  push!(__systems, @named brake = BlockComponents.Sources.Constant(; k=Float64(0.0), __overrides = brake_overrides))
   # Subcomponent speed_ref of type BlockComponents.Sources.Ramp
   speed_ref_overrides = __pop_subcomponent_overrides!(__overrides, "speed_ref")
-  push!(__systems, @named speed_ref = BlockComponents.Sources.Ramp(; duration=ramp_duration, height=v_max, offset=Float64(0.0), start_time=ramp_start_time, speed_ref_overrides...))
+  push!(__systems, @named speed_ref = BlockComponents.Sources.Ramp(; duration=ramp_duration, height=v_max, offset=Float64(0.0), start_time=ramp_start_time, __overrides = speed_ref_overrides))
   # Subcomponent speed_ff of type BlockComponents.Sources.Constant
   speed_ff_overrides = __pop_subcomponent_overrides!(__overrides, "speed_ff")
-  push!(__systems, @named speed_ff = BlockComponents.Sources.Constant(; k=Float64(0.0), speed_ff_overrides...))
+  push!(__systems, @named speed_ff = BlockComponents.Sources.Constant(; k=Float64(0.0), __overrides = speed_ff_overrides))
   # Subcomponent speed_pid of type BlockComponents.Continuous.LimPID
   speed_pid_overrides = __pop_subcomponent_overrides!(__overrides, "speed_pid")
-  push!(__systems, @named speed_pid = BlockComponents.Continuous.LimPID(; with_D=false, speed_pid_overrides...))
-  __bindings[speed_pid.k] = k_speed
-  __bindings[speed_pid.Ti] = Ti_speed
-  __bindings[speed_pid.Ni] = Ni_speed
-  __bindings[speed_pid.wp] = Float64(1)
-  __bindings[speed_pid.y_max] = Float64(1)
-  __bindings[speed_pid.y_min] = Float64(0)
-  __bindings[speed_pid.k_ff] = Float64(0)
-  # Now remove initial conditions in speed_pid that correspond to the bindings just added
-  __speed_pid_ics = ModelingToolkit.get_initial_conditions(speed_pid)
-  __no_namespace_speed_pid = ModelingToolkit.toggle_namespacing(speed_pid, false)
-  __speed_pid_k = Symbolics.unwrap(__no_namespace_speed_pid.k)::Symbolics.SymbolicT
-  delete!(__speed_pid_ics, __speed_pid_k)
-  __speed_pid_Ti = Symbolics.unwrap(__no_namespace_speed_pid.Ti)::Symbolics.SymbolicT
-  delete!(__speed_pid_ics, __speed_pid_Ti)
-  __speed_pid_Ni = Symbolics.unwrap(__no_namespace_speed_pid.Ni)::Symbolics.SymbolicT
-  delete!(__speed_pid_ics, __speed_pid_Ni)
-  __speed_pid_wp = Symbolics.unwrap(__no_namespace_speed_pid.wp)::Symbolics.SymbolicT
-  delete!(__speed_pid_ics, __speed_pid_wp)
-  __speed_pid_y_max = Symbolics.unwrap(__no_namespace_speed_pid.y_max)::Symbolics.SymbolicT
-  delete!(__speed_pid_ics, __speed_pid_y_max)
-  __speed_pid_y_min = Symbolics.unwrap(__no_namespace_speed_pid.y_min)::Symbolics.SymbolicT
-  delete!(__speed_pid_ics, __speed_pid_y_min)
-  __speed_pid_k_ff = Symbolics.unwrap(__no_namespace_speed_pid.k_ff)::Symbolics.SymbolicT
-  delete!(__speed_pid_ics, __speed_pid_k_ff)
+  push!(__systems, @named speed_pid = BlockComponents.Continuous.LimPID(; with_D=false, k=k_speed, Ti=Ti_speed, Ni=Ni_speed, wp=Float64(1), y_max=Float64(1), y_min=Float64(0), k_ff=Float64(0), __overrides = speed_pid_overrides))
+  __dyad_bind_final!(__bindings, speed_pid, Symbol[], :k, k_speed)
+  __dyad_bind_final!(__bindings, speed_pid, Symbol[], :Ti, Ti_speed)
+  __dyad_bind_final!(__bindings, speed_pid, Symbol[], :Ni, Ni_speed)
+  __dyad_bind_final!(__bindings, speed_pid, Symbol[], :wp, Float64(1))
+  __dyad_bind_final!(__bindings, speed_pid, Symbol[], :y_max, Float64(1))
+  __dyad_bind_final!(__bindings, speed_pid, Symbol[], :y_min, Float64(0))
+  __dyad_bind_final!(__bindings, speed_pid, Symbol[], :k_ff, Float64(0))
   # Subcomponent longitudinal_joint of type MultibodyComponents.Prismatic
   longitudinal_joint_overrides = __pop_subcomponent_overrides!(__overrides, "longitudinal_joint")
-  push!(__systems, @named longitudinal_joint = MultibodyComponents.Prismatic(; n=[Float64(1), Float64(0), Float64(0)], render=false, longitudinal_joint_overrides...))
+  push!(__systems, @named longitudinal_joint = MultibodyComponents.Prismatic(; n=[Float64(1), Float64(0), Float64(0)], render=false, __overrides = longitudinal_joint_overrides))
   # Subcomponent lateral_joint of type MultibodyComponents.Prismatic
   lateral_joint_overrides = __pop_subcomponent_overrides!(__overrides, "lateral_joint")
-  push!(__systems, @named lateral_joint = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(1), Float64(0)], render=false, lateral_joint_overrides...))
+  push!(__systems, @named lateral_joint = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(1), Float64(0)], render=false, __overrides = lateral_joint_overrides))
   # Subcomponent heave_joint of type MultibodyComponents.Prismatic
   heave_joint_overrides = __pop_subcomponent_overrides!(__overrides, "heave_joint")
-  push!(__systems, @named heave_joint = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, heave_joint_overrides...))
+  push!(__systems, @named heave_joint = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, __overrides = heave_joint_overrides))
   # Subcomponent roll_joint of type MultibodyComponents.Revolute
   roll_joint_overrides = __pop_subcomponent_overrides!(__overrides, "roll_joint")
-  push!(__systems, @named roll_joint = MultibodyComponents.Revolute(; n=[Float64(1), Float64(0), Float64(0)], render=false, roll_joint_overrides...))
+  push!(__systems, @named roll_joint = MultibodyComponents.Revolute(; n=[Float64(1), Float64(0), Float64(0)], render=false, __overrides = roll_joint_overrides))
   # Subcomponent pitch_joint of type MultibodyComponents.Revolute
   pitch_joint_overrides = __pop_subcomponent_overrides!(__overrides, "pitch_joint")
-  push!(__systems, @named pitch_joint = MultibodyComponents.Revolute(; n=[Float64(0), Float64(1), Float64(0)], render=false, pitch_joint_overrides...))
+  push!(__systems, @named pitch_joint = MultibodyComponents.Revolute(; n=[Float64(0), Float64(1), Float64(0)], render=false, __overrides = pitch_joint_overrides))
   # Subcomponent yaw_joint of type MultibodyComponents.Revolute
   yaw_joint_overrides = __pop_subcomponent_overrides!(__overrides, "yaw_joint")
-  push!(__systems, @named yaw_joint = MultibodyComponents.Revolute(; n=[Float64(0), Float64(0), Float64(1)], render=false, yaw_joint_overrides...))
+  push!(__systems, @named yaw_joint = MultibodyComponents.Revolute(; n=[Float64(0), Float64(0), Float64(1)], render=false, __overrides = yaw_joint_overrides))
   # Subcomponent vehicle of type VehicleComponents.FullVehicle
   vehicle_overrides = __pop_subcomponent_overrides!(__overrides, "vehicle")
-  push!(__systems, @named vehicle = VehicleComponents.FullVehicle(; vehicle_overrides...))
+  push!(__systems, @named vehicle = VehicleComponents.FullVehicle(; __overrides = vehicle_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -208,6 +201,6 @@
   push!(__eqs, connect(speed_ref.y, speed_pid.u_s))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export FullVehicleTestConstantSteer

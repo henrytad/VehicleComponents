@@ -15,7 +15,7 @@ __dyad_run_test_case!(
   abstol=1e-6,
   reltol=1e-6,
   solver=ODEAlg.Auto(),
-  params=(; heave_amplitude=0.0254, roll_amplitude=0),
+  params=Dict{String, Any}("heave_amplitude" => 0.0254, "roll_amplitude" => 0.0),
   initial_conditions=Tuple[],
   expected_initial=Tuple[
     (m -> m.suspension.wc_heave, "suspension.wc_heave", 0, 0.00001, 1e-5),
@@ -48,7 +48,7 @@ __dyad_run_test_case!(
   abstol=1e-6,
   reltol=1e-6,
   solver=ODEAlg.Auto(),
-  params=(; heave_amplitude=0, roll_amplitude=0.0254),
+  params=Dict{String, Any}("heave_amplitude" => 0.0, "roll_amplitude" => 0.0254),
   initial_conditions=Tuple[],
   expected_initial=Tuple[
     (m -> m.suspension.wc_heave, "suspension.wc_heave", 0, 0.00001, 1e-5),

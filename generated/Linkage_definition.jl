@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   Linkage(; name, lca_front, lca_outer, lca_rear, uca_front, uca_outer, uca_rear, tierod_inner, tierod_outer, wheel_center, pushrod_outer, static_camber, static_toe)
+   Linkage(; name, lca_front, lca_outer, lca_rear, uca_front, uca_outer, uca_rear, tierod_inner, tierod_outer, wheel_center, pushrod_outer, static_camber, static_toe, __overrides)
 
 ## Parameters:
 
@@ -47,7 +47,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `f_push`         |                          | N  |
 | `f_uca_ball`         |                          | N  |
 """
-@component function Linkage(; name = nothing, lca_front=nothing, lca_outer=nothing, lca_rear=nothing, uca_front=nothing, uca_outer=nothing, uca_rear=nothing, tierod_inner=nothing, tierod_outer=nothing, wheel_center=nothing, pushrod_outer=nothing, static_camber=nothing, static_toe=nothing, kwargs...)
+@component function Linkage(; name = nothing, var"lca_front"=nothing, var"lca_outer"=nothing, var"lca_rear"=nothing, var"uca_front"=nothing, var"uca_outer"=nothing, var"uca_rear"=nothing, var"tierod_inner"=nothing, var"tierod_outer"=nothing, var"wheel_center"=nothing, var"pushrod_outer"=nothing, var"static_camber"=nothing, var"static_toe"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -55,7 +55,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = Linkage()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -64,6 +64,20 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "lca_front") && (lca_front = pop!(__overrides, "lca_front"))
+  haskey(__overrides, "lca_outer") && (lca_outer = pop!(__overrides, "lca_outer"))
+  haskey(__overrides, "lca_rear") && (lca_rear = pop!(__overrides, "lca_rear"))
+  haskey(__overrides, "uca_front") && (uca_front = pop!(__overrides, "uca_front"))
+  haskey(__overrides, "uca_outer") && (uca_outer = pop!(__overrides, "uca_outer"))
+  haskey(__overrides, "uca_rear") && (uca_rear = pop!(__overrides, "uca_rear"))
+  haskey(__overrides, "tierod_inner") && (tierod_inner = pop!(__overrides, "tierod_inner"))
+  haskey(__overrides, "tierod_outer") && (tierod_outer = pop!(__overrides, "tierod_outer"))
+  haskey(__overrides, "wheel_center") && (wheel_center = pop!(__overrides, "wheel_center"))
+  haskey(__overrides, "pushrod_outer") && (pushrod_outer = pop!(__overrides, "pushrod_outer"))
+  haskey(__overrides, "static_camber") && (static_camber = pop!(__overrides, "static_camber"))
+  haskey(__overrides, "static_toe") && (static_toe = pop!(__overrides, "static_toe"))
 
   ### Structural Parameters (functions)
 
@@ -74,10 +88,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Path Parameters (non-final)
 
   ### Final Parameters (declarations)
-  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.
-  append!(__params, @parameters (sty_rod_radius::Real), [description = 
-  append!(__params, @parameters (sty_rod_radius::Real), [description = Defines global colors and geometry settings, such as rod radius,
-  append!(__params, @parameters (sty_rod_radius::Real), [description = used consistently across different linkage models.", misc = "final"])
+  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.\n\nDefines global colors and geometry settings, such as rod radius,\nused consistently across different linkage models.", misc = "final"])
   append!(__params, @parameters (sty_body_radius::Real), [misc = "final"])
   append!(__params, @parameters (sty_black[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_orange[1:4]::Real), [misc = "final"])
@@ -106,40 +117,40 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__lca_front = lca_front
   append!(__params, @parameters (lca_front[1:3]::Real))
-  __initial_conditions[lca_front] = __local__lca_front
+  __dyad_seed_parameter!(__initial_conditions, __bindings, lca_front, __local__lca_front)
   __local__lca_outer = lca_outer
   append!(__params, @parameters (lca_outer[1:3]::Real))
-  __initial_conditions[lca_outer] = __local__lca_outer
+  __dyad_seed_parameter!(__initial_conditions, __bindings, lca_outer, __local__lca_outer)
   __local__lca_rear = lca_rear
   append!(__params, @parameters (lca_rear[1:3]::Real))
-  __initial_conditions[lca_rear] = __local__lca_rear
+  __dyad_seed_parameter!(__initial_conditions, __bindings, lca_rear, __local__lca_rear)
   __local__uca_front = uca_front
   append!(__params, @parameters (uca_front[1:3]::Real))
-  __initial_conditions[uca_front] = __local__uca_front
+  __dyad_seed_parameter!(__initial_conditions, __bindings, uca_front, __local__uca_front)
   __local__uca_outer = uca_outer
   append!(__params, @parameters (uca_outer[1:3]::Real))
-  __initial_conditions[uca_outer] = __local__uca_outer
+  __dyad_seed_parameter!(__initial_conditions, __bindings, uca_outer, __local__uca_outer)
   __local__uca_rear = uca_rear
   append!(__params, @parameters (uca_rear[1:3]::Real))
-  __initial_conditions[uca_rear] = __local__uca_rear
+  __dyad_seed_parameter!(__initial_conditions, __bindings, uca_rear, __local__uca_rear)
   __local__tierod_inner = tierod_inner
   append!(__params, @parameters (tierod_inner[1:3]::Real))
-  __initial_conditions[tierod_inner] = __local__tierod_inner
+  __dyad_seed_parameter!(__initial_conditions, __bindings, tierod_inner, __local__tierod_inner)
   __local__tierod_outer = tierod_outer
   append!(__params, @parameters (tierod_outer[1:3]::Real))
-  __initial_conditions[tierod_outer] = __local__tierod_outer
+  __dyad_seed_parameter!(__initial_conditions, __bindings, tierod_outer, __local__tierod_outer)
   __local__wheel_center = wheel_center
   append!(__params, @parameters (wheel_center[1:3]::Real))
-  __initial_conditions[wheel_center] = __local__wheel_center
+  __dyad_seed_parameter!(__initial_conditions, __bindings, wheel_center, __local__wheel_center)
   __local__pushrod_outer = pushrod_outer
   append!(__params, @parameters (pushrod_outer[1:3]::Real))
-  __initial_conditions[pushrod_outer] = __local__pushrod_outer
+  __dyad_seed_parameter!(__initial_conditions, __bindings, pushrod_outer, __local__pushrod_outer)
   __local__static_camber = static_camber
   append!(__params, @parameters (static_camber::Real))
-  __initial_conditions[static_camber] = __local__static_camber
+  __dyad_seed_parameter!(__initial_conditions, __bindings, static_camber, __local__static_camber)
   __local__static_toe = static_toe
   append!(__params, @parameters (static_toe::Real))
-  __initial_conditions[static_toe] = __local__static_toe
+  __dyad_seed_parameter!(__initial_conditions, __bindings, static_toe, __local__static_toe)
 
   ### Final Parameters (assignments)
   __bindings[sty_rod_radius] = 0.008
@@ -179,26 +190,26 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Variables (assignments)
   __ovr_toe = pop!(__overrides, "toe", nothing); isnothing(__ovr_toe) || push!(__eqs, toe ~ __ovr_toe)
-  __ovr_toe__initial = pop!(__overrides, "toe__initial", nothing); isnothing(__ovr_toe__initial) || (__initial_conditions[toe] = __ovr_toe__initial)
-  __ovr_toe__guess = pop!(__overrides, "toe__guess", nothing)
+  __ovr_toe__initial = pop!(__overrides, "toe.initial", nothing); isnothing(__ovr_toe__initial) || (__initial_conditions[toe] = __ovr_toe__initial)
+  __ovr_toe__guess = pop!(__overrides, "toe.guess", nothing)
   __ovr_camber = pop!(__overrides, "camber", nothing); isnothing(__ovr_camber) || push!(__eqs, camber ~ __ovr_camber)
-  __ovr_camber__initial = pop!(__overrides, "camber__initial", nothing); isnothing(__ovr_camber__initial) || (__initial_conditions[camber] = __ovr_camber__initial)
-  __ovr_camber__guess = pop!(__overrides, "camber__guess", nothing)
+  __ovr_camber__initial = pop!(__overrides, "camber.initial", nothing); isnothing(__ovr_camber__initial) || (__initial_conditions[camber] = __ovr_camber__initial)
+  __ovr_camber__guess = pop!(__overrides, "camber.guess", nothing)
   __ovr_wc_height = pop!(__overrides, "wc_height", nothing); isnothing(__ovr_wc_height) || push!(__eqs, wc_height ~ __ovr_wc_height)
-  __ovr_wc_height__initial = pop!(__overrides, "wc_height__initial", nothing); isnothing(__ovr_wc_height__initial) || (__initial_conditions[wc_height] = __ovr_wc_height__initial)
-  __ovr_wc_height__guess = pop!(__overrides, "wc_height__guess", nothing)
+  __ovr_wc_height__initial = pop!(__overrides, "wc_height.initial", nothing); isnothing(__ovr_wc_height__initial) || (__initial_conditions[wc_height] = __ovr_wc_height__initial)
+  __ovr_wc_height__guess = pop!(__overrides, "wc_height.guess", nothing)
   __ovr_f_lca = pop!(__overrides, "f_lca", nothing); isnothing(__ovr_f_lca) || push!(__eqs, f_lca ~ __ovr_f_lca)
-  __ovr_f_lca__initial = pop!(__overrides, "f_lca__initial", nothing); isnothing(__ovr_f_lca__initial) || (__initial_conditions[f_lca] = __ovr_f_lca__initial)
-  __ovr_f_lca__guess = pop!(__overrides, "f_lca__guess", nothing)
+  __ovr_f_lca__initial = pop!(__overrides, "f_lca.initial", nothing); isnothing(__ovr_f_lca__initial) || (__initial_conditions[f_lca] = __ovr_f_lca__initial)
+  __ovr_f_lca__guess = pop!(__overrides, "f_lca.guess", nothing)
   __ovr_f_uca = pop!(__overrides, "f_uca", nothing); isnothing(__ovr_f_uca) || push!(__eqs, f_uca ~ __ovr_f_uca)
-  __ovr_f_uca__initial = pop!(__overrides, "f_uca__initial", nothing); isnothing(__ovr_f_uca__initial) || (__initial_conditions[f_uca] = __ovr_f_uca__initial)
-  __ovr_f_uca__guess = pop!(__overrides, "f_uca__guess", nothing)
+  __ovr_f_uca__initial = pop!(__overrides, "f_uca.initial", nothing); isnothing(__ovr_f_uca__initial) || (__initial_conditions[f_uca] = __ovr_f_uca__initial)
+  __ovr_f_uca__guess = pop!(__overrides, "f_uca.guess", nothing)
   __ovr_f_push = pop!(__overrides, "f_push", nothing); isnothing(__ovr_f_push) || push!(__eqs, f_push ~ __ovr_f_push)
-  __ovr_f_push__initial = pop!(__overrides, "f_push__initial", nothing); isnothing(__ovr_f_push__initial) || (__initial_conditions[f_push] = __ovr_f_push__initial)
-  __ovr_f_push__guess = pop!(__overrides, "f_push__guess", nothing)
+  __ovr_f_push__initial = pop!(__overrides, "f_push.initial", nothing); isnothing(__ovr_f_push__initial) || (__initial_conditions[f_push] = __ovr_f_push__initial)
+  __ovr_f_push__guess = pop!(__overrides, "f_push.guess", nothing)
   __ovr_f_uca_ball = pop!(__overrides, "f_uca_ball", nothing); isnothing(__ovr_f_uca_ball) || push!(__eqs, f_uca_ball ~ __ovr_f_uca_ball)
-  __ovr_f_uca_ball__initial = pop!(__overrides, "f_uca_ball__initial", nothing); isnothing(__ovr_f_uca_ball__initial) || (__initial_conditions[f_uca_ball] = __ovr_f_uca_ball__initial)
-  __ovr_f_uca_ball__guess = pop!(__overrides, "f_uca_ball__guess", nothing)
+  __ovr_f_uca_ball__initial = pop!(__overrides, "f_uca_ball.initial", nothing); isnothing(__ovr_f_uca_ball__initial) || (__initial_conditions[f_uca_ball] = __ovr_f_uca_ball__initial)
+  __ovr_f_uca_ball__guess = pop!(__overrides, "f_uca_ball.guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -210,55 +221,55 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named steering_rack = __Dyad__Frame3D())
   # Subcomponent mount_uca_front of type MultibodyComponents.FixedTranslation
   mount_uca_front_overrides = __pop_subcomponent_overrides!(__overrides, "mount_uca_front")
-  push!(__systems, @named mount_uca_front = MultibodyComponents.FixedTranslation(; r=uca_front, render=false, mount_uca_front_overrides...))
+  push!(__systems, @named mount_uca_front = MultibodyComponents.FixedTranslation(; r=uca_front, render=false, __overrides = mount_uca_front_overrides))
   # Subcomponent mount_lca_front of type MultibodyComponents.FixedTranslation
   mount_lca_front_overrides = __pop_subcomponent_overrides!(__overrides, "mount_lca_front")
-  push!(__systems, @named mount_lca_front = MultibodyComponents.FixedTranslation(; r=lca_front, render=false, mount_lca_front_overrides...))
+  push!(__systems, @named mount_lca_front = MultibodyComponents.FixedTranslation(; r=lca_front, render=false, __overrides = mount_lca_front_overrides))
   # Subcomponent lca_rev of type MultibodyComponents.Revolute
   lca_rev_overrides = __pop_subcomponent_overrides!(__overrides, "lca_rev")
-  push!(__systems, @named lca_rev = MultibodyComponents.Revolute(; n=lca_axis, render=false, lca_rev_overrides...))
+  push!(__systems, @named lca_rev = MultibodyComponents.Revolute(; n=lca_axis, render=false, __overrides = lca_rev_overrides))
   # Subcomponent lca_rod_front of type MultibodyComponents.FixedTranslation
   lca_rod_front_overrides = __pop_subcomponent_overrides!(__overrides, "lca_rod_front")
-  push!(__systems, @named lca_rod_front = MultibodyComponents.FixedTranslation(; r=lca_outer - lca_front, radius=sty_rod_radius, color=sty_grey_medium, lca_rod_front_overrides...))
+  push!(__systems, @named lca_rod_front = MultibodyComponents.FixedTranslation(; r=lca_outer - lca_front, radius=sty_rod_radius, color=sty_grey_medium, __overrides = lca_rod_front_overrides))
   # Subcomponent lca_rod_rear of type MultibodyComponents.FixedTranslation
   lca_rod_rear_overrides = __pop_subcomponent_overrides!(__overrides, "lca_rod_rear")
-  push!(__systems, @named lca_rod_rear = MultibodyComponents.FixedTranslation(; r=lca_outer - lca_rear, radius=sty_rod_radius, color=sty_grey_medium, lca_rod_rear_overrides...))
+  push!(__systems, @named lca_rod_rear = MultibodyComponents.FixedTranslation(; r=lca_outer - lca_rear, radius=sty_rod_radius, color=sty_grey_medium, __overrides = lca_rod_rear_overrides))
   # Subcomponent uca_rod_front of type MultibodyComponents.JointUSR
   uca_rod_front_overrides = __pop_subcomponent_overrides!(__overrides, "uca_rod_front")
-  push!(__systems, @named uca_rod_front = MultibodyComponents.JointUSR(; n1_a=uca_n1_a, rRod1_ia=kingpin_vec, rRod2_ib=uca_outer - uca_front, n_b=uca_axis, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, uca_rod_front_overrides...))
+  push!(__systems, @named uca_rod_front = MultibodyComponents.JointUSR(; n1_a=uca_n1_a, rRod1_ia=kingpin_vec, rRod2_ib=uca_outer - uca_front, n_b=uca_axis, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, __overrides = uca_rod_front_overrides))
   # Subcomponent uca_rod_rear of type MultibodyComponents.FixedTranslation
   uca_rod_rear_overrides = __pop_subcomponent_overrides!(__overrides, "uca_rod_rear")
-  push!(__systems, @named uca_rod_rear = MultibodyComponents.FixedTranslation(; r=uca_outer - uca_rear, radius=sty_rod_radius, color=sty_grey_medium, uca_rod_rear_overrides...))
+  push!(__systems, @named uca_rod_rear = MultibodyComponents.FixedTranslation(; r=uca_outer - uca_rear, radius=sty_rod_radius, color=sty_grey_medium, __overrides = uca_rod_rear_overrides))
   # Subcomponent tie_rod of type MultibodyComponents.JointUSR
   tie_rod_overrides = __pop_subcomponent_overrides!(__overrides, "tie_rod")
-  push!(__systems, @named tie_rod = MultibodyComponents.JointUSR(; n1_a=tie_n1_a, rRod1_ia=tierod_vec, rRod2_ib=tierod_outer - lca_outer, n_b=kingpin_axis, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, tie_rod_overrides...))
+  push!(__systems, @named tie_rod = MultibodyComponents.JointUSR(; n1_a=tie_n1_a, rRod1_ia=tierod_vec, rRod2_ib=tierod_outer - lca_outer, n_b=kingpin_axis, rod_radius=sty_rod_radius, rod_color=sty_grey_medium, __overrides = tie_rod_overrides))
   # Subcomponent lca_to_wc of type MultibodyComponents.FixedTranslation
   lca_to_wc_overrides = __pop_subcomponent_overrides!(__overrides, "lca_to_wc")
-  push!(__systems, @named lca_to_wc = MultibodyComponents.FixedTranslation(; r=wheel_center - lca_outer, radius=sty_rod_radius, color=sty_grey_light, lca_to_wc_overrides...))
+  push!(__systems, @named lca_to_wc = MultibodyComponents.FixedTranslation(; r=wheel_center - lca_outer, radius=sty_rod_radius, color=sty_grey_light, __overrides = lca_to_wc_overrides))
   # Subcomponent camber_rot of type MultibodyComponents.FixedRotation
   camber_rot_overrides = __pop_subcomponent_overrides!(__overrides, "camber_rot")
-  push!(__systems, @named camber_rot = MultibodyComponents.FixedRotation(; n=[Float64(1), Float64(0), Float64(0)], angle=-side * static_camber, render=false, camber_rot_overrides...))
+  push!(__systems, @named camber_rot = MultibodyComponents.FixedRotation(; n=[Float64(1), Float64(0), Float64(0)], angle=-side * static_camber, render=false, __overrides = camber_rot_overrides))
   # Subcomponent toe_rot of type MultibodyComponents.FixedRotation
   toe_rot_overrides = __pop_subcomponent_overrides!(__overrides, "toe_rot")
-  push!(__systems, @named toe_rot = MultibodyComponents.FixedRotation(; n=[Float64(0), Float64(0), Float64(1)], angle=-side * static_toe, render=false, toe_rot_overrides...))
+  push!(__systems, @named toe_rot = MultibodyComponents.FixedRotation(; n=[Float64(0), Float64(0), Float64(1)], angle=-side * static_toe, render=false, __overrides = toe_rot_overrides))
   # Subcomponent wheel_angles of type MultibodyComponents.RelativeAngles
   wheel_angles_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_angles")
-  push!(__systems, @named wheel_angles = MultibodyComponents.RelativeAngles(; sequence=[1, 2, 3], wheel_angles_overrides...))
+  push!(__systems, @named wheel_angles = MultibodyComponents.RelativeAngles(; sequence=[1, 2, 3], __overrides = wheel_angles_overrides))
   # Subcomponent lca_ball of type MultibodyComponents.CutForceAndTorque
   lca_ball_overrides = __pop_subcomponent_overrides!(__overrides, "lca_ball")
-  push!(__systems, @named lca_ball = MultibodyComponents.CutForceAndTorque(; resolve_in_frame=MultibodyComponents.ResolveInFrame.FrameResolve(), lca_ball_overrides...))
+  push!(__systems, @named lca_ball = MultibodyComponents.CutForceAndTorque(; resolve_in_frame=MultibodyComponents.ResolveInFrame.FrameResolve(), __overrides = lca_ball_overrides))
   # Subcomponent uca_mount of type MultibodyComponents.CutForceAndTorque
   uca_mount_overrides = __pop_subcomponent_overrides!(__overrides, "uca_mount")
-  push!(__systems, @named uca_mount = MultibodyComponents.CutForceAndTorque(; resolve_in_frame=MultibodyComponents.ResolveInFrame.FrameResolve(), uca_mount_overrides...))
+  push!(__systems, @named uca_mount = MultibodyComponents.CutForceAndTorque(; resolve_in_frame=MultibodyComponents.ResolveInFrame.FrameResolve(), __overrides = uca_mount_overrides))
   # Subcomponent push_load of type MultibodyComponents.CutForceAndTorque
   push_load_overrides = __pop_subcomponent_overrides!(__overrides, "push_load")
-  push!(__systems, @named push_load = MultibodyComponents.CutForceAndTorque(; resolve_in_frame=MultibodyComponents.ResolveInFrame.FrameResolve(), push_load_overrides...))
+  push!(__systems, @named push_load = MultibodyComponents.CutForceAndTorque(; resolve_in_frame=MultibodyComponents.ResolveInFrame.FrameResolve(), __overrides = push_load_overrides))
   # Subcomponent pushrod_to_uca of type MultibodyComponents.FixedTranslation
   pushrod_to_uca_overrides = __pop_subcomponent_overrides!(__overrides, "pushrod_to_uca")
-  push!(__systems, @named pushrod_to_uca = MultibodyComponents.FixedTranslation(; r=uca_outer - pushrod_outer, radius=sty_rod_radius, color=sty_grey_light, pushrod_to_uca_overrides...))
+  push!(__systems, @named pushrod_to_uca = MultibodyComponents.FixedTranslation(; r=uca_outer - pushrod_outer, radius=sty_rod_radius, color=sty_grey_light, __overrides = pushrod_to_uca_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
   isnothing(__ovr_toe__guess) || (__guesses[toe] = __ovr_toe__guess)
@@ -308,6 +319,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(tie_rod.frame_a, steering_rack))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export Linkage

@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   Brake(; name, is_front, max_torque, brake_bias, omega_eps)
+   Brake(; name, is_front, max_torque, brake_bias, omega_eps, __overrides)
 
 ## Parameters:
 
@@ -30,7 +30,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `omega`         |                          | rad/s  |
 | `tau_brake`         |                          | N.m  |
 """
-@component function Brake(; name = nothing, is_front=nothing, max_torque=nothing, brake_bias=nothing, omega_eps=0.5, kwargs...)
+@component function Brake(; name = nothing, var"is_front"=nothing, var"max_torque"=nothing, var"brake_bias"=nothing, var"omega_eps"=0.5, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -38,7 +38,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = Brake()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -47,6 +47,12 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "is_front") && (is_front = pop!(__overrides, "is_front"))
+  haskey(__overrides, "max_torque") && (max_torque = pop!(__overrides, "max_torque"))
+  haskey(__overrides, "brake_bias") && (brake_bias = pop!(__overrides, "brake_bias"))
+  haskey(__overrides, "omega_eps") && (omega_eps = pop!(__overrides, "omega_eps"))
 
   ### Structural Parameters (functions)
 
@@ -64,13 +70,13 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__max_torque = max_torque
   append!(__params, @parameters (max_torque::Real))
-  __initial_conditions[max_torque] = __local__max_torque
+  __dyad_seed_parameter!(__initial_conditions, __bindings, max_torque, __local__max_torque)
   __local__brake_bias = brake_bias
   append!(__params, @parameters (brake_bias::Real))
-  __initial_conditions[brake_bias] = __local__brake_bias
+  __dyad_seed_parameter!(__initial_conditions, __bindings, brake_bias, __local__brake_bias)
   __local__omega_eps = omega_eps
   append!(__params, @parameters (omega_eps::Real))
-  __initial_conditions[omega_eps] = __local__omega_eps
+  __dyad_seed_parameter!(__initial_conditions, __bindings, omega_eps, __local__omega_eps)
 
   ### Final Parameters (assignments)
   __bindings[bias_factor] = ifelse(is_front, 2 * brake_bias, 2 * (1 - brake_bias))
@@ -84,11 +90,11 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Variables (assignments)
   __ovr_omega = pop!(__overrides, "omega", nothing); isnothing(__ovr_omega) || push!(__eqs, omega ~ __ovr_omega)
-  __ovr_omega__initial = pop!(__overrides, "omega__initial", nothing); isnothing(__ovr_omega__initial) || (__initial_conditions[omega] = __ovr_omega__initial)
-  __ovr_omega__guess = pop!(__overrides, "omega__guess", nothing)
+  __ovr_omega__initial = pop!(__overrides, "omega.initial", nothing); isnothing(__ovr_omega__initial) || (__initial_conditions[omega] = __ovr_omega__initial)
+  __ovr_omega__guess = pop!(__overrides, "omega.guess", nothing)
   __ovr_tau_brake = pop!(__overrides, "tau_brake", nothing); isnothing(__ovr_tau_brake) || push!(__eqs, tau_brake ~ __ovr_tau_brake)
-  __ovr_tau_brake__initial = pop!(__overrides, "tau_brake__initial", nothing); isnothing(__ovr_tau_brake__initial) || (__initial_conditions[tau_brake] = __ovr_tau_brake__initial)
-  __ovr_tau_brake__guess = pop!(__overrides, "tau_brake__guess", nothing)
+  __ovr_tau_brake__initial = pop!(__overrides, "tau_brake.initial", nothing); isnothing(__ovr_tau_brake__initial) || (__initial_conditions[tau_brake] = __ovr_tau_brake__initial)
+  __ovr_tau_brake__guess = pop!(__overrides, "tau_brake.guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -98,7 +104,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named spline = __Dyad__Spline())
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
   isnothing(__ovr_omega__guess) || (__guesses[omega] = __ovr_omega__guess)
@@ -117,6 +123,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, wheel_center.tau ~ [0, 1, 0] * (-tau_brake))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export Brake

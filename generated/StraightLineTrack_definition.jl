@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   StraightLineTrack(; name, marker_spacing, marker_offset, marker_height, marker_diameter)
+   StraightLineTrack(; name, marker_spacing, marker_offset, marker_height, marker_diameter, __overrides)
 
 ## Parameters:
 
@@ -16,7 +16,7 @@
 | `marker_height`         |                          | m  |   1.0 |
 | `marker_diameter`         |                          | m  |   0.1 |
 """
-@component function StraightLineTrack(; name = nothing, marker_spacing=Float64(25.0), marker_offset=1.5, marker_height=Float64(1.0), marker_diameter=0.1, kwargs...)
+@component function StraightLineTrack(; name = nothing, var"marker_spacing"=Float64(25.0), var"marker_offset"=1.5, var"marker_height"=Float64(1.0), var"marker_diameter"=0.1, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -24,7 +24,7 @@
     @named model = StraightLineTrack()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -33,6 +33,12 @@
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "marker_spacing") && (marker_spacing = pop!(__overrides, "marker_spacing"))
+  haskey(__overrides, "marker_offset") && (marker_offset = pop!(__overrides, "marker_offset"))
+  haskey(__overrides, "marker_height") && (marker_height = pop!(__overrides, "marker_height"))
+  haskey(__overrides, "marker_diameter") && (marker_diameter = pop!(__overrides, "marker_diameter"))
 
   ### Structural Parameters (functions)
 
@@ -43,10 +49,7 @@
   ### Path Parameters (non-final)
 
   ### Final Parameters (declarations)
-  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.
-  append!(__params, @parameters (sty_rod_radius::Real), [description = 
-  append!(__params, @parameters (sty_rod_radius::Real), [description = Defines global colors and geometry settings, such as rod radius,
-  append!(__params, @parameters (sty_rod_radius::Real), [description = used consistently across different linkage models.", misc = "final"])
+  append!(__params, @parameters (sty_rod_radius::Real), [description = "Shared visual style parameters for vehicle linkages.\n\nDefines global colors and geometry settings, such as rod radius,\nused consistently across different linkage models.", misc = "final"])
   append!(__params, @parameters (sty_body_radius::Real), [misc = "final"])
   append!(__params, @parameters (sty_black[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_orange[1:4]::Real), [misc = "final"])
@@ -64,16 +67,16 @@
   ### Symbolic Parameters
   __local__marker_spacing = marker_spacing
   append!(__params, @parameters (marker_spacing::Real))
-  __initial_conditions[marker_spacing] = __local__marker_spacing
+  __dyad_seed_parameter!(__initial_conditions, __bindings, marker_spacing, __local__marker_spacing)
   __local__marker_offset = marker_offset
   append!(__params, @parameters (marker_offset::Real))
-  __initial_conditions[marker_offset] = __local__marker_offset
+  __dyad_seed_parameter!(__initial_conditions, __bindings, marker_offset, __local__marker_offset)
   __local__marker_height = marker_height
   append!(__params, @parameters (marker_height::Real))
-  __initial_conditions[marker_height] = __local__marker_height
+  __dyad_seed_parameter!(__initial_conditions, __bindings, marker_height, __local__marker_height)
   __local__marker_diameter = marker_diameter
   append!(__params, @parameters (marker_diameter::Real))
-  __initial_conditions[marker_diameter] = __local__marker_diameter
+  __dyad_seed_parameter!(__initial_conditions, __bindings, marker_diameter, __local__marker_diameter)
 
   ### Final Parameters (assignments)
   __bindings[sty_rod_radius] = 0.008
@@ -101,34 +104,106 @@
   ### Components
   # Subcomponent post_0 of type MultibodyComponents.CylinderShape
   post_0_overrides = __pop_subcomponent_overrides!(__overrides, "post_0")
-  push!(__systems, @named post_0 = MultibodyComponents.CylinderShape(; color=sty_orange, r=[0, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_0_overrides...))
+  post_0_dict = Dict{String, Any}()
+  post_0_dict["r"] = ModelingToolkit.default_to_parentscope([0, marker_offset, 0])
+  post_0_dict["length_direction"] = ModelingToolkit.default_to_parentscope([0, 0, 1])
+  post_0_dict["width_direction"] = ModelingToolkit.default_to_parentscope([1, 0, 0])
+  post_0_dict["length"] = ModelingToolkit.default_to_parentscope(marker_height)
+  post_0_dict["width"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  post_0_dict["height"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  merge!(post_0_dict, post_0_overrides)
+  push!(__systems, @named post_0 = MultibodyComponents.CylinderShape(; color=sty_orange, __overrides = post_0_dict))
   # Subcomponent post_25 of type MultibodyComponents.CylinderShape
   post_25_overrides = __pop_subcomponent_overrides!(__overrides, "post_25")
-  push!(__systems, @named post_25 = MultibodyComponents.CylinderShape(; color=sty_orange, r=[marker_spacing, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_25_overrides...))
+  post_25_dict = Dict{String, Any}()
+  post_25_dict["r"] = ModelingToolkit.default_to_parentscope([marker_spacing, marker_offset, 0])
+  post_25_dict["length_direction"] = ModelingToolkit.default_to_parentscope([0, 0, 1])
+  post_25_dict["width_direction"] = ModelingToolkit.default_to_parentscope([1, 0, 0])
+  post_25_dict["length"] = ModelingToolkit.default_to_parentscope(marker_height)
+  post_25_dict["width"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  post_25_dict["height"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  merge!(post_25_dict, post_25_overrides)
+  push!(__systems, @named post_25 = MultibodyComponents.CylinderShape(; color=sty_orange, __overrides = post_25_dict))
   # Subcomponent post_50 of type MultibodyComponents.CylinderShape
   post_50_overrides = __pop_subcomponent_overrides!(__overrides, "post_50")
-  push!(__systems, @named post_50 = MultibodyComponents.CylinderShape(; color=sty_orange, r=[2 * marker_spacing, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_50_overrides...))
+  post_50_dict = Dict{String, Any}()
+  post_50_dict["r"] = ModelingToolkit.default_to_parentscope([2 * marker_spacing, marker_offset, 0])
+  post_50_dict["length_direction"] = ModelingToolkit.default_to_parentscope([0, 0, 1])
+  post_50_dict["width_direction"] = ModelingToolkit.default_to_parentscope([1, 0, 0])
+  post_50_dict["length"] = ModelingToolkit.default_to_parentscope(marker_height)
+  post_50_dict["width"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  post_50_dict["height"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  merge!(post_50_dict, post_50_overrides)
+  push!(__systems, @named post_50 = MultibodyComponents.CylinderShape(; color=sty_orange, __overrides = post_50_dict))
   # Subcomponent post_75 of type MultibodyComponents.CylinderShape
   post_75_overrides = __pop_subcomponent_overrides!(__overrides, "post_75")
-  push!(__systems, @named post_75 = MultibodyComponents.CylinderShape(; color=sty_orange, r=[3 * marker_spacing, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_75_overrides...))
+  post_75_dict = Dict{String, Any}()
+  post_75_dict["r"] = ModelingToolkit.default_to_parentscope([3 * marker_spacing, marker_offset, 0])
+  post_75_dict["length_direction"] = ModelingToolkit.default_to_parentscope([0, 0, 1])
+  post_75_dict["width_direction"] = ModelingToolkit.default_to_parentscope([1, 0, 0])
+  post_75_dict["length"] = ModelingToolkit.default_to_parentscope(marker_height)
+  post_75_dict["width"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  post_75_dict["height"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  merge!(post_75_dict, post_75_overrides)
+  push!(__systems, @named post_75 = MultibodyComponents.CylinderShape(; color=sty_orange, __overrides = post_75_dict))
   # Subcomponent post_100 of type MultibodyComponents.CylinderShape
   post_100_overrides = __pop_subcomponent_overrides!(__overrides, "post_100")
-  push!(__systems, @named post_100 = MultibodyComponents.CylinderShape(; color=sty_purple, r=[4 * marker_spacing, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_100_overrides...))
+  post_100_dict = Dict{String, Any}()
+  post_100_dict["r"] = ModelingToolkit.default_to_parentscope([4 * marker_spacing, marker_offset, 0])
+  post_100_dict["length_direction"] = ModelingToolkit.default_to_parentscope([0, 0, 1])
+  post_100_dict["width_direction"] = ModelingToolkit.default_to_parentscope([1, 0, 0])
+  post_100_dict["length"] = ModelingToolkit.default_to_parentscope(marker_height)
+  post_100_dict["width"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  post_100_dict["height"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  merge!(post_100_dict, post_100_overrides)
+  push!(__systems, @named post_100 = MultibodyComponents.CylinderShape(; color=sty_purple, __overrides = post_100_dict))
   # Subcomponent post_125 of type MultibodyComponents.CylinderShape
   post_125_overrides = __pop_subcomponent_overrides!(__overrides, "post_125")
-  push!(__systems, @named post_125 = MultibodyComponents.CylinderShape(; color=sty_orange, r=[5 * marker_spacing, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_125_overrides...))
+  post_125_dict = Dict{String, Any}()
+  post_125_dict["r"] = ModelingToolkit.default_to_parentscope([5 * marker_spacing, marker_offset, 0])
+  post_125_dict["length_direction"] = ModelingToolkit.default_to_parentscope([0, 0, 1])
+  post_125_dict["width_direction"] = ModelingToolkit.default_to_parentscope([1, 0, 0])
+  post_125_dict["length"] = ModelingToolkit.default_to_parentscope(marker_height)
+  post_125_dict["width"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  post_125_dict["height"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  merge!(post_125_dict, post_125_overrides)
+  push!(__systems, @named post_125 = MultibodyComponents.CylinderShape(; color=sty_orange, __overrides = post_125_dict))
   # Subcomponent post_150 of type MultibodyComponents.CylinderShape
   post_150_overrides = __pop_subcomponent_overrides!(__overrides, "post_150")
-  push!(__systems, @named post_150 = MultibodyComponents.CylinderShape(; color=sty_orange, r=[6 * marker_spacing, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_150_overrides...))
+  post_150_dict = Dict{String, Any}()
+  post_150_dict["r"] = ModelingToolkit.default_to_parentscope([6 * marker_spacing, marker_offset, 0])
+  post_150_dict["length_direction"] = ModelingToolkit.default_to_parentscope([0, 0, 1])
+  post_150_dict["width_direction"] = ModelingToolkit.default_to_parentscope([1, 0, 0])
+  post_150_dict["length"] = ModelingToolkit.default_to_parentscope(marker_height)
+  post_150_dict["width"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  post_150_dict["height"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  merge!(post_150_dict, post_150_overrides)
+  push!(__systems, @named post_150 = MultibodyComponents.CylinderShape(; color=sty_orange, __overrides = post_150_dict))
   # Subcomponent post_175 of type MultibodyComponents.CylinderShape
   post_175_overrides = __pop_subcomponent_overrides!(__overrides, "post_175")
-  push!(__systems, @named post_175 = MultibodyComponents.CylinderShape(; color=sty_orange, r=[7 * marker_spacing, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_175_overrides...))
+  post_175_dict = Dict{String, Any}()
+  post_175_dict["r"] = ModelingToolkit.default_to_parentscope([7 * marker_spacing, marker_offset, 0])
+  post_175_dict["length_direction"] = ModelingToolkit.default_to_parentscope([0, 0, 1])
+  post_175_dict["width_direction"] = ModelingToolkit.default_to_parentscope([1, 0, 0])
+  post_175_dict["length"] = ModelingToolkit.default_to_parentscope(marker_height)
+  post_175_dict["width"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  post_175_dict["height"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  merge!(post_175_dict, post_175_overrides)
+  push!(__systems, @named post_175 = MultibodyComponents.CylinderShape(; color=sty_orange, __overrides = post_175_dict))
   # Subcomponent post_200 of type MultibodyComponents.CylinderShape
   post_200_overrides = __pop_subcomponent_overrides!(__overrides, "post_200")
-  push!(__systems, @named post_200 = MultibodyComponents.CylinderShape(; color=sty_orange, r=[8 * marker_spacing, marker_offset, 0], length_direction=[0, 0, 1], width_direction=[1, 0, 0], length=marker_height, width=marker_diameter, height=marker_diameter, post_200_overrides...))
+  post_200_dict = Dict{String, Any}()
+  post_200_dict["r"] = ModelingToolkit.default_to_parentscope([8 * marker_spacing, marker_offset, 0])
+  post_200_dict["length_direction"] = ModelingToolkit.default_to_parentscope([0, 0, 1])
+  post_200_dict["width_direction"] = ModelingToolkit.default_to_parentscope([1, 0, 0])
+  post_200_dict["length"] = ModelingToolkit.default_to_parentscope(marker_height)
+  post_200_dict["width"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  post_200_dict["height"] = ModelingToolkit.default_to_parentscope(marker_diameter)
+  merge!(post_200_dict, post_200_overrides)
+  push!(__systems, @named post_200 = MultibodyComponents.CylinderShape(; color=sty_orange, __overrides = post_200_dict))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -140,6 +215,6 @@
   ### Equations
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export StraightLineTrack

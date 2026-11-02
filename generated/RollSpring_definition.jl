@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   RollSpring(; name, fixed_rotation_at_frame_a, fixed_rotation_at_frame_b, s_small, render, color, specular_coefficient, c, s_neutral, preload_travel, radius, num_windings, N, end_ratio)
+   RollSpring(; name, fixed_rotation_at_frame_a, fixed_rotation_at_frame_b, s_small, render, color, specular_coefficient, c, s_neutral, preload_travel, radius, num_windings, N, end_ratio, __overrides)
 
 ## Parameters:
 
@@ -45,7 +45,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `f`         | Scalar line force (positive = tension)                         | N  |
 | `x`         | Deflection from the neutral length, positive in extension                         | m  |
 """
-@component function RollSpring(; name = nothing, fixed_rotation_at_frame_a=false, fixed_rotation_at_frame_b=false, s_small=1e-10, render=true, color=[0.5, 0.5, 0.5, Float64(1.0)], specular_coefficient=1.5, c=Float64(1.0), s_neutral=Float64(0), preload_travel=Float64(0), radius=0.02, num_windings=Float64(15), N=600, end_ratio=0.1, kwargs...)
+@component function RollSpring(; name = nothing, var"fixed_rotation_at_frame_a"=false, var"fixed_rotation_at_frame_b"=false, var"s_small"=1e-10, var"render"=true, var"color"=[0.5, 0.5, 0.5, Float64(1.0)], var"specular_coefficient"=1.5, var"c"=Float64(1.0), var"s_neutral"=Float64(0), var"preload_travel"=Float64(0), var"radius"=0.02, var"num_windings"=Float64(15), var"N"=600, var"end_ratio"=0.1, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -53,7 +53,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = RollSpring()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -62,6 +62,21 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "fixed_rotation_at_frame_a") && (fixed_rotation_at_frame_a = pop!(__overrides, "fixed_rotation_at_frame_a"))
+  haskey(__overrides, "fixed_rotation_at_frame_b") && (fixed_rotation_at_frame_b = pop!(__overrides, "fixed_rotation_at_frame_b"))
+  haskey(__overrides, "s_small") && (s_small = pop!(__overrides, "s_small"))
+  haskey(__overrides, "render") && (render = pop!(__overrides, "render"))
+  haskey(__overrides, "color") && (color = pop!(__overrides, "color"))
+  haskey(__overrides, "specular_coefficient") && (specular_coefficient = pop!(__overrides, "specular_coefficient"))
+  haskey(__overrides, "c") && (c = pop!(__overrides, "c"))
+  haskey(__overrides, "s_neutral") && (s_neutral = pop!(__overrides, "s_neutral"))
+  haskey(__overrides, "preload_travel") && (preload_travel = pop!(__overrides, "preload_travel"))
+  haskey(__overrides, "radius") && (radius = pop!(__overrides, "radius"))
+  haskey(__overrides, "num_windings") && (num_windings = pop!(__overrides, "num_windings"))
+  haskey(__overrides, "N") && (N = pop!(__overrides, "N"))
+  haskey(__overrides, "end_ratio") && (end_ratio = pop!(__overrides, "end_ratio"))
 
   ### Structural Parameters (functions)
 
@@ -78,37 +93,37 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__s_small = s_small
   append!(__params, @parameters (s_small::Real))
-  __initial_conditions[s_small] = __local__s_small
+  __dyad_seed_parameter!(__initial_conditions, __bindings, s_small, __local__s_small)
   __local__render = render
   append!(__params, @parameters (render::Bool))
-  __initial_conditions[render] = __local__render
+  __dyad_seed_parameter!(__initial_conditions, __bindings, render, __local__render)
   __local__color = color
   append!(__params, @parameters (color[1:4]::Real))
-  __initial_conditions[color] = __local__color
+  __dyad_seed_parameter!(__initial_conditions, __bindings, color, __local__color)
   __local__specular_coefficient = specular_coefficient
   append!(__params, @parameters (specular_coefficient::Real))
-  __initial_conditions[specular_coefficient] = __local__specular_coefficient
+  __dyad_seed_parameter!(__initial_conditions, __bindings, specular_coefficient, __local__specular_coefficient)
   __local__c = c
   append!(__params, @parameters (c::Real), [description = "Rate of each bump spring"])
-  __initial_conditions[c] = __local__c
+  __dyad_seed_parameter!(__initial_conditions, __bindings, c, __local__c)
   __local__s_neutral = s_neutral
   append!(__params, @parameters (s_neutral::Real), [description = "Length at zero roll, where the pack carries no load"])
-  __initial_conditions[s_neutral] = __local__s_neutral
+  __dyad_seed_parameter!(__initial_conditions, __bindings, s_neutral, __local__s_neutral)
   __local__preload_travel = preload_travel
   append!(__params, @parameters (preload_travel::Real), [description = "Shim preload per spring, as travel. 0 means the springs just touch"])
-  __initial_conditions[preload_travel] = __local__preload_travel
+  __dyad_seed_parameter!(__initial_conditions, __bindings, preload_travel, __local__preload_travel)
   __local__radius = radius
   append!(__params, @parameters (radius::Real), [description = "Radius in animations"])
-  __initial_conditions[radius] = __local__radius
+  __dyad_seed_parameter!(__initial_conditions, __bindings, radius, __local__radius)
   __local__num_windings = num_windings
   append!(__params, @parameters (num_windings::Real), [description = "Number of windings in animations"])
-  __initial_conditions[num_windings] = __local__num_windings
+  __dyad_seed_parameter!(__initial_conditions, __bindings, num_windings, __local__num_windings)
   __local__N = N
   append!(__params, @parameters (N::Int), [description = "Number of points used to render each winding"])
-  __initial_conditions[N] = __local__N
+  __dyad_seed_parameter!(__initial_conditions, __bindings, N, __local__N)
   __local__end_ratio = end_ratio
   append!(__params, @parameters (end_ratio::Real), [description = "Fraction of total length used for the tapered ends"])
-  __initial_conditions[end_ratio] = __local__end_ratio
+  __dyad_seed_parameter!(__initial_conditions, __bindings, end_ratio, __local__end_ratio)
 
   ### Final Parameters (assignments)
 
@@ -126,29 +141,29 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Variables (assignments)
   __ovr_length = pop!(__overrides, "length", nothing); isnothing(__ovr_length) || push!(__eqs, length ~ __ovr_length)
-  __ovr_length__initial = pop!(__overrides, "length__initial", nothing); isnothing(__ovr_length__initial) || (__initial_conditions[length] = __ovr_length__initial)
-  __ovr_length__guess = pop!(__overrides, "length__guess", nothing)
+  __ovr_length__initial = pop!(__overrides, "length.initial", nothing); isnothing(__ovr_length__initial) || (__initial_conditions[length] = __ovr_length__initial)
+  __ovr_length__guess = pop!(__overrides, "length.guess", nothing)
   __ovr_s = pop!(__overrides, "s", nothing); isnothing(__ovr_s) || push!(__eqs, s ~ __ovr_s)
-  __ovr_s__initial = pop!(__overrides, "s__initial", nothing); isnothing(__ovr_s__initial) || (__initial_conditions[s] = __ovr_s__initial)
-  __ovr_s__guess = pop!(__overrides, "s__guess", nothing)
+  __ovr_s__initial = pop!(__overrides, "s.initial", nothing); isnothing(__ovr_s__initial) || (__initial_conditions[s] = __ovr_s__initial)
+  __ovr_s__guess = pop!(__overrides, "s.guess", nothing)
   __ovr_r_rel_0 = pop!(__overrides, "r_rel_0", nothing); isnothing(__ovr_r_rel_0) || push!(__eqs, r_rel_0 ~ __ovr_r_rel_0)
-  __ovr_r_rel_0__initial = pop!(__overrides, "r_rel_0__initial", nothing); isnothing(__ovr_r_rel_0__initial) || (__initial_conditions[r_rel_0] = __ovr_r_rel_0__initial)
-  __ovr_r_rel_0__guess = pop!(__overrides, "r_rel_0__guess", nothing)
+  __ovr_r_rel_0__initial = pop!(__overrides, "r_rel_0.initial", nothing); isnothing(__ovr_r_rel_0__initial) || (__initial_conditions[r_rel_0] = __ovr_r_rel_0__initial)
+  __ovr_r_rel_0__guess = pop!(__overrides, "r_rel_0.guess", nothing)
   __ovr_e_rel_0 = pop!(__overrides, "e_rel_0", nothing); isnothing(__ovr_e_rel_0) || push!(__eqs, e_rel_0 ~ __ovr_e_rel_0)
-  __ovr_e_rel_0__initial = pop!(__overrides, "e_rel_0__initial", nothing); isnothing(__ovr_e_rel_0__initial) || (__initial_conditions[e_rel_0] = __ovr_e_rel_0__initial)
-  __ovr_e_rel_0__guess = pop!(__overrides, "e_rel_0__guess", nothing)
+  __ovr_e_rel_0__initial = pop!(__overrides, "e_rel_0.initial", nothing); isnothing(__ovr_e_rel_0__initial) || (__initial_conditions[e_rel_0] = __ovr_e_rel_0__initial)
+  __ovr_e_rel_0__guess = pop!(__overrides, "e_rel_0.guess", nothing)
   __ovr_r_rel_a = pop!(__overrides, "r_rel_a", nothing); isnothing(__ovr_r_rel_a) || push!(__eqs, r_rel_a ~ __ovr_r_rel_a)
-  __ovr_r_rel_a__initial = pop!(__overrides, "r_rel_a__initial", nothing); isnothing(__ovr_r_rel_a__initial) || (__initial_conditions[r_rel_a] = __ovr_r_rel_a__initial)
-  __ovr_r_rel_a__guess = pop!(__overrides, "r_rel_a__guess", nothing)
+  __ovr_r_rel_a__initial = pop!(__overrides, "r_rel_a.initial", nothing); isnothing(__ovr_r_rel_a__initial) || (__initial_conditions[r_rel_a] = __ovr_r_rel_a__initial)
+  __ovr_r_rel_a__guess = pop!(__overrides, "r_rel_a.guess", nothing)
   __ovr_e_a = pop!(__overrides, "e_a", nothing); isnothing(__ovr_e_a) || push!(__eqs, e_a ~ __ovr_e_a)
-  __ovr_e_a__initial = pop!(__overrides, "e_a__initial", nothing); isnothing(__ovr_e_a__initial) || (__initial_conditions[e_a] = __ovr_e_a__initial)
-  __ovr_e_a__guess = pop!(__overrides, "e_a__guess", nothing)
+  __ovr_e_a__initial = pop!(__overrides, "e_a.initial", nothing); isnothing(__ovr_e_a__initial) || (__initial_conditions[e_a] = __ovr_e_a__initial)
+  __ovr_e_a__guess = pop!(__overrides, "e_a.guess", nothing)
   __ovr_f = pop!(__overrides, "f", nothing); isnothing(__ovr_f) || push!(__eqs, f ~ __ovr_f)
-  __ovr_f__initial = pop!(__overrides, "f__initial", nothing); isnothing(__ovr_f__initial) || (__initial_conditions[f] = __ovr_f__initial)
-  __ovr_f__guess = pop!(__overrides, "f__guess", nothing)
+  __ovr_f__initial = pop!(__overrides, "f.initial", nothing); isnothing(__ovr_f__initial) || (__initial_conditions[f] = __ovr_f__initial)
+  __ovr_f__guess = pop!(__overrides, "f.guess", nothing)
   __ovr_x = pop!(__overrides, "x", nothing); isnothing(__ovr_x) || push!(__eqs, x ~ __ovr_x)
-  __ovr_x__initial = pop!(__overrides, "x__initial", nothing); isnothing(__ovr_x__initial) || (__initial_conditions[x] = __ovr_x__initial)
-  __ovr_x__guess = pop!(__overrides, "x__guess", nothing)
+  __ovr_x__initial = pop!(__overrides, "x.initial", nothing); isnothing(__ovr_x__initial) || (__initial_conditions[x] = __ovr_x__initial)
+  __ovr_x__guess = pop!(__overrides, "x.guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -158,10 +173,16 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named frame_b = __Dyad__Frame3D())
   # Subcomponent spring_shape of type MultibodyComponents.SpringShape
   spring_shape_overrides = __pop_subcomponent_overrides!(__overrides, "spring_shape")
-  push!(__systems, @named spring_shape = MultibodyComponents.SpringShape(; render=render, color=color, num_windings=num_windings, N=N, end_ratio=end_ratio, r=frame_a.r_0, length_direction=r_rel_0, length=s, width=radius, spring_shape_overrides...))
+  spring_shape_dict = Dict{String, Any}()
+  spring_shape_dict["r"] = ModelingToolkit.default_to_parentscope(frame_a.r_0)
+  spring_shape_dict["length_direction"] = ModelingToolkit.default_to_parentscope(r_rel_0)
+  spring_shape_dict["length"] = ModelingToolkit.default_to_parentscope(s)
+  spring_shape_dict["width"] = ModelingToolkit.default_to_parentscope(radius)
+  merge!(spring_shape_dict, spring_shape_overrides)
+  push!(__systems, @named spring_shape = MultibodyComponents.SpringShape(; render=render, color=color, num_windings=num_windings, N=N, end_ratio=end_ratio, __overrides = spring_shape_dict))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
   isnothing(__ovr_length__guess) || (__guesses[length] = __ovr_length__guess)
@@ -204,6 +225,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   end
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export RollSpring

@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   DamperTestRig(; name, damper_length, amplitude, freq)
+   DamperTestRig(; name, damper_length, amplitude, freq, __overrides)
 
 ## Parameters:
 
@@ -15,7 +15,7 @@
 | `amplitude`         |                          | m  |   0.02 |
 | `freq`         |                          | Hz  |   5.0 |
 """
-@component function DamperTestRig(; name = nothing, damper_length=0.25, amplitude=0.02, freq=Float64(5.0), kwargs...)
+@component function DamperTestRig(; name = nothing, var"damper_length"=0.25, var"amplitude"=0.02, var"freq"=Float64(5.0), __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -23,7 +23,7 @@
     @named model = DamperTestRig()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -32,6 +32,11 @@
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "damper_length") && (damper_length = pop!(__overrides, "damper_length"))
+  haskey(__overrides, "amplitude") && (amplitude = pop!(__overrides, "amplitude"))
+  haskey(__overrides, "freq") && (freq = pop!(__overrides, "freq"))
 
   ### Structural Parameters (functions)
 
@@ -48,13 +53,13 @@
   ### Symbolic Parameters
   __local__damper_length = damper_length
   append!(__params, @parameters (damper_length::Real))
-  __initial_conditions[damper_length] = __local__damper_length
+  __dyad_seed_parameter!(__initial_conditions, __bindings, damper_length, __local__damper_length)
   __local__amplitude = amplitude
   append!(__params, @parameters (amplitude::Real))
-  __initial_conditions[amplitude] = __local__amplitude
+  __dyad_seed_parameter!(__initial_conditions, __bindings, amplitude, __local__amplitude)
   __local__freq = freq
   append!(__params, @parameters (freq::Real))
-  __initial_conditions[freq] = __local__freq
+  __dyad_seed_parameter!(__initial_conditions, __bindings, freq, __local__freq)
 
   ### Final Parameters (assignments)
 
@@ -70,25 +75,25 @@
   ### Components
   # Subcomponent world of type MultibodyComponents.World
   world_overrides = __pop_subcomponent_overrides!(__overrides, "world")
-  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
+  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, __symbol_overrides(world_overrides)...))
   # Subcomponent top of type MultibodyComponents.Fixed
   top_overrides = __pop_subcomponent_overrides!(__overrides, "top")
-  push!(__systems, @named top = MultibodyComponents.Fixed(; r=[Float64(0), Float64(0), damper_length], render=false, top_overrides...))
+  push!(__systems, @named top = MultibodyComponents.Fixed(; r=[Float64(0), Float64(0), damper_length], render=false, __overrides = top_overrides))
   # Subcomponent damper of type VehicleComponents.Damper
   damper_overrides = __pop_subcomponent_overrides!(__overrides, "damper")
-  push!(__systems, @named damper = VehicleComponents.Damper(; dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper), damper_overrides...))
+  push!(__systems, @named damper = VehicleComponents.Damper(; dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper), __overrides = damper_overrides))
   # Subcomponent base of type MultibodyComponents.Fixed
   base_overrides = __pop_subcomponent_overrides!(__overrides, "base")
-  push!(__systems, @named base = MultibodyComponents.Fixed(; r=[Float64(0), Float64(0), Float64(0)], render=false, base_overrides...))
+  push!(__systems, @named base = MultibodyComponents.Fixed(; r=[Float64(0), Float64(0), Float64(0)], render=false, __overrides = base_overrides))
   # Subcomponent jack of type MultibodyComponents.Prismatic
   jack_overrides = __pop_subcomponent_overrides!(__overrides, "jack")
-  push!(__systems, @named jack = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, jack_overrides...))
+  push!(__systems, @named jack = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, __overrides = jack_overrides))
   # Subcomponent jack_position of type TranslationalComponents.Sources.Position
   jack_position_overrides = __pop_subcomponent_overrides!(__overrides, "jack_position")
-  push!(__systems, @named jack_position = TranslationalComponents.Sources.Position(; jack_position_overrides...))
+  push!(__systems, @named jack_position = TranslationalComponents.Sources.Position(; __overrides = jack_position_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -107,6 +112,6 @@
   push!(__eqs, connect(jack_position.flange, jack.axis))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export DamperTestRig

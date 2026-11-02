@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   TorqueControlLaunch(; name, slip_target_front, slip_target_rear, launch_torque, k, Ti, Ni)
+   TorqueControlLaunch(; name, slip_target_front, slip_target_rear, launch_torque, k, Ti, Ni, __overrides)
 
 ## Parameters:
 
@@ -30,7 +30,7 @@
  * `demand_rl` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
  * `demand_rr` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
 """
-@component function TorqueControlLaunch(; name = nothing, slip_target_front=VehicleComponents.params.control.slip_target_front, slip_target_rear=VehicleComponents.params.control.slip_target_rear, launch_torque=VehicleComponents.params.control.launch_torque, k=VehicleComponents.params.control.slip_loop_gain, Ti=VehicleComponents.params.control.slip_loop_Ti, Ni=VehicleComponents.params.control.slip_loop_Ni, kwargs...)
+@component function TorqueControlLaunch(; name = nothing, var"slip_target_front"=VehicleComponents.params.control.slip_target_front, var"slip_target_rear"=VehicleComponents.params.control.slip_target_rear, var"launch_torque"=VehicleComponents.params.control.launch_torque, var"k"=VehicleComponents.params.control.slip_loop_gain, var"Ti"=VehicleComponents.params.control.slip_loop_Ti, var"Ni"=VehicleComponents.params.control.slip_loop_Ni, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -38,7 +38,7 @@
     @named model = TorqueControlLaunch()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -47,6 +47,14 @@
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "slip_target_front") && (slip_target_front = pop!(__overrides, "slip_target_front"))
+  haskey(__overrides, "slip_target_rear") && (slip_target_rear = pop!(__overrides, "slip_target_rear"))
+  haskey(__overrides, "launch_torque") && (launch_torque = pop!(__overrides, "launch_torque"))
+  haskey(__overrides, "k") && (k = pop!(__overrides, "k"))
+  haskey(__overrides, "Ti") && (Ti = pop!(__overrides, "Ti"))
+  haskey(__overrides, "Ni") && (Ni = pop!(__overrides, "Ni"))
 
   ### Structural Parameters (functions)
 
@@ -63,22 +71,22 @@
   ### Symbolic Parameters
   __local__slip_target_front = slip_target_front
   append!(__params, @parameters (slip_target_front::Real))
-  __initial_conditions[slip_target_front] = __local__slip_target_front
+  __dyad_seed_parameter!(__initial_conditions, __bindings, slip_target_front, __local__slip_target_front)
   __local__slip_target_rear = slip_target_rear
   append!(__params, @parameters (slip_target_rear::Real))
-  __initial_conditions[slip_target_rear] = __local__slip_target_rear
+  __dyad_seed_parameter!(__initial_conditions, __bindings, slip_target_rear, __local__slip_target_rear)
   __local__launch_torque = launch_torque
   append!(__params, @parameters (launch_torque::Real))
-  __initial_conditions[launch_torque] = __local__launch_torque
+  __dyad_seed_parameter!(__initial_conditions, __bindings, launch_torque, __local__launch_torque)
   __local__k = k
   append!(__params, @parameters (k::Real))
-  __initial_conditions[k] = __local__k
+  __dyad_seed_parameter!(__initial_conditions, __bindings, k, __local__k)
   __local__Ti = Ti
   append!(__params, @parameters (Ti::Real))
-  __initial_conditions[Ti] = __local__Ti
+  __dyad_seed_parameter!(__initial_conditions, __bindings, Ti, __local__Ti)
   __local__Ni = Ni
   append!(__params, @parameters (Ni::Real))
-  __initial_conditions[Ni] = __local__Ni
+  __dyad_seed_parameter!(__initial_conditions, __bindings, Ni, __local__Ni)
 
   ### Final Parameters (assignments)
 
@@ -103,91 +111,39 @@
   ### Components
   # Subcomponent control_fl of type VehicleComponents.TorqueControlTC
   control_fl_overrides = __pop_subcomponent_overrides!(__overrides, "control_fl")
-  push!(__systems, @named control_fl = VehicleComponents.TorqueControlTC(; control_fl_overrides...))
-  __bindings[control_fl.slip_target] = slip_target_front
-  __bindings[control_fl.launch_torque] = launch_torque
-  __bindings[control_fl.k] = k
-  __bindings[control_fl.Ti] = Ti
-  __bindings[control_fl.Ni] = Ni
-  # Now remove initial conditions in control_fl that correspond to the bindings just added
-  __control_fl_ics = ModelingToolkit.get_initial_conditions(control_fl)
-  __no_namespace_control_fl = ModelingToolkit.toggle_namespacing(control_fl, false)
-  __control_fl_slip_target = Symbolics.unwrap(__no_namespace_control_fl.slip_target)::Symbolics.SymbolicT
-  delete!(__control_fl_ics, __control_fl_slip_target)
-  __control_fl_launch_torque = Symbolics.unwrap(__no_namespace_control_fl.launch_torque)::Symbolics.SymbolicT
-  delete!(__control_fl_ics, __control_fl_launch_torque)
-  __control_fl_k = Symbolics.unwrap(__no_namespace_control_fl.k)::Symbolics.SymbolicT
-  delete!(__control_fl_ics, __control_fl_k)
-  __control_fl_Ti = Symbolics.unwrap(__no_namespace_control_fl.Ti)::Symbolics.SymbolicT
-  delete!(__control_fl_ics, __control_fl_Ti)
-  __control_fl_Ni = Symbolics.unwrap(__no_namespace_control_fl.Ni)::Symbolics.SymbolicT
-  delete!(__control_fl_ics, __control_fl_Ni)
+  push!(__systems, @named control_fl = VehicleComponents.TorqueControlTC(; slip_target=slip_target_front, launch_torque=launch_torque, k=k, Ti=Ti, Ni=Ni, __overrides = control_fl_overrides))
+  __dyad_bind_final!(__bindings, control_fl, Symbol[], :slip_target, slip_target_front)
+  __dyad_bind_final!(__bindings, control_fl, Symbol[], :launch_torque, launch_torque)
+  __dyad_bind_final!(__bindings, control_fl, Symbol[], :k, k)
+  __dyad_bind_final!(__bindings, control_fl, Symbol[], :Ti, Ti)
+  __dyad_bind_final!(__bindings, control_fl, Symbol[], :Ni, Ni)
   # Subcomponent control_fr of type VehicleComponents.TorqueControlTC
   control_fr_overrides = __pop_subcomponent_overrides!(__overrides, "control_fr")
-  push!(__systems, @named control_fr = VehicleComponents.TorqueControlTC(; control_fr_overrides...))
-  __bindings[control_fr.slip_target] = slip_target_front
-  __bindings[control_fr.launch_torque] = launch_torque
-  __bindings[control_fr.k] = k
-  __bindings[control_fr.Ti] = Ti
-  __bindings[control_fr.Ni] = Ni
-  # Now remove initial conditions in control_fr that correspond to the bindings just added
-  __control_fr_ics = ModelingToolkit.get_initial_conditions(control_fr)
-  __no_namespace_control_fr = ModelingToolkit.toggle_namespacing(control_fr, false)
-  __control_fr_slip_target = Symbolics.unwrap(__no_namespace_control_fr.slip_target)::Symbolics.SymbolicT
-  delete!(__control_fr_ics, __control_fr_slip_target)
-  __control_fr_launch_torque = Symbolics.unwrap(__no_namespace_control_fr.launch_torque)::Symbolics.SymbolicT
-  delete!(__control_fr_ics, __control_fr_launch_torque)
-  __control_fr_k = Symbolics.unwrap(__no_namespace_control_fr.k)::Symbolics.SymbolicT
-  delete!(__control_fr_ics, __control_fr_k)
-  __control_fr_Ti = Symbolics.unwrap(__no_namespace_control_fr.Ti)::Symbolics.SymbolicT
-  delete!(__control_fr_ics, __control_fr_Ti)
-  __control_fr_Ni = Symbolics.unwrap(__no_namespace_control_fr.Ni)::Symbolics.SymbolicT
-  delete!(__control_fr_ics, __control_fr_Ni)
+  push!(__systems, @named control_fr = VehicleComponents.TorqueControlTC(; slip_target=slip_target_front, launch_torque=launch_torque, k=k, Ti=Ti, Ni=Ni, __overrides = control_fr_overrides))
+  __dyad_bind_final!(__bindings, control_fr, Symbol[], :slip_target, slip_target_front)
+  __dyad_bind_final!(__bindings, control_fr, Symbol[], :launch_torque, launch_torque)
+  __dyad_bind_final!(__bindings, control_fr, Symbol[], :k, k)
+  __dyad_bind_final!(__bindings, control_fr, Symbol[], :Ti, Ti)
+  __dyad_bind_final!(__bindings, control_fr, Symbol[], :Ni, Ni)
   # Subcomponent control_rl of type VehicleComponents.TorqueControlTC
   control_rl_overrides = __pop_subcomponent_overrides!(__overrides, "control_rl")
-  push!(__systems, @named control_rl = VehicleComponents.TorqueControlTC(; control_rl_overrides...))
-  __bindings[control_rl.slip_target] = slip_target_rear
-  __bindings[control_rl.launch_torque] = launch_torque
-  __bindings[control_rl.k] = k
-  __bindings[control_rl.Ti] = Ti
-  __bindings[control_rl.Ni] = Ni
-  # Now remove initial conditions in control_rl that correspond to the bindings just added
-  __control_rl_ics = ModelingToolkit.get_initial_conditions(control_rl)
-  __no_namespace_control_rl = ModelingToolkit.toggle_namespacing(control_rl, false)
-  __control_rl_slip_target = Symbolics.unwrap(__no_namespace_control_rl.slip_target)::Symbolics.SymbolicT
-  delete!(__control_rl_ics, __control_rl_slip_target)
-  __control_rl_launch_torque = Symbolics.unwrap(__no_namespace_control_rl.launch_torque)::Symbolics.SymbolicT
-  delete!(__control_rl_ics, __control_rl_launch_torque)
-  __control_rl_k = Symbolics.unwrap(__no_namespace_control_rl.k)::Symbolics.SymbolicT
-  delete!(__control_rl_ics, __control_rl_k)
-  __control_rl_Ti = Symbolics.unwrap(__no_namespace_control_rl.Ti)::Symbolics.SymbolicT
-  delete!(__control_rl_ics, __control_rl_Ti)
-  __control_rl_Ni = Symbolics.unwrap(__no_namespace_control_rl.Ni)::Symbolics.SymbolicT
-  delete!(__control_rl_ics, __control_rl_Ni)
+  push!(__systems, @named control_rl = VehicleComponents.TorqueControlTC(; slip_target=slip_target_rear, launch_torque=launch_torque, k=k, Ti=Ti, Ni=Ni, __overrides = control_rl_overrides))
+  __dyad_bind_final!(__bindings, control_rl, Symbol[], :slip_target, slip_target_rear)
+  __dyad_bind_final!(__bindings, control_rl, Symbol[], :launch_torque, launch_torque)
+  __dyad_bind_final!(__bindings, control_rl, Symbol[], :k, k)
+  __dyad_bind_final!(__bindings, control_rl, Symbol[], :Ti, Ti)
+  __dyad_bind_final!(__bindings, control_rl, Symbol[], :Ni, Ni)
   # Subcomponent control_rr of type VehicleComponents.TorqueControlTC
   control_rr_overrides = __pop_subcomponent_overrides!(__overrides, "control_rr")
-  push!(__systems, @named control_rr = VehicleComponents.TorqueControlTC(; control_rr_overrides...))
-  __bindings[control_rr.slip_target] = slip_target_rear
-  __bindings[control_rr.launch_torque] = launch_torque
-  __bindings[control_rr.k] = k
-  __bindings[control_rr.Ti] = Ti
-  __bindings[control_rr.Ni] = Ni
-  # Now remove initial conditions in control_rr that correspond to the bindings just added
-  __control_rr_ics = ModelingToolkit.get_initial_conditions(control_rr)
-  __no_namespace_control_rr = ModelingToolkit.toggle_namespacing(control_rr, false)
-  __control_rr_slip_target = Symbolics.unwrap(__no_namespace_control_rr.slip_target)::Symbolics.SymbolicT
-  delete!(__control_rr_ics, __control_rr_slip_target)
-  __control_rr_launch_torque = Symbolics.unwrap(__no_namespace_control_rr.launch_torque)::Symbolics.SymbolicT
-  delete!(__control_rr_ics, __control_rr_launch_torque)
-  __control_rr_k = Symbolics.unwrap(__no_namespace_control_rr.k)::Symbolics.SymbolicT
-  delete!(__control_rr_ics, __control_rr_k)
-  __control_rr_Ti = Symbolics.unwrap(__no_namespace_control_rr.Ti)::Symbolics.SymbolicT
-  delete!(__control_rr_ics, __control_rr_Ti)
-  __control_rr_Ni = Symbolics.unwrap(__no_namespace_control_rr.Ni)::Symbolics.SymbolicT
-  delete!(__control_rr_ics, __control_rr_Ni)
+  push!(__systems, @named control_rr = VehicleComponents.TorqueControlTC(; slip_target=slip_target_rear, launch_torque=launch_torque, k=k, Ti=Ti, Ni=Ni, __overrides = control_rr_overrides))
+  __dyad_bind_final!(__bindings, control_rr, Symbol[], :slip_target, slip_target_rear)
+  __dyad_bind_final!(__bindings, control_rr, Symbol[], :launch_torque, launch_torque)
+  __dyad_bind_final!(__bindings, control_rr, Symbol[], :k, k)
+  __dyad_bind_final!(__bindings, control_rr, Symbol[], :Ti, Ti)
+  __dyad_bind_final!(__bindings, control_rr, Symbol[], :Ni, Ni)
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -208,6 +164,6 @@
   push!(__eqs, connect(control_rr.demand, demand_rr))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export TorqueControlLaunch

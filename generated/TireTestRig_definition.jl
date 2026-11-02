@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   TireTestRig(; name, unloaded_radius, stroke, freq, speed, static_deflection, kappa_start, kappa_end, slip_ramp_time, alpha_start, alpha_end, steer_ramp_time)
+   TireTestRig(; name, unloaded_radius, stroke, freq, speed, static_deflection, kappa_start, kappa_end, slip_ramp_time, alpha_start, alpha_end, steer_ramp_time, __overrides)
 
 ## Parameters:
 
@@ -23,7 +23,7 @@
 | `alpha_end`         |                          | rad  |   0.0 |
 | `steer_ramp_time`         |                          | s  |   1.0 |
 """
-@component function TireTestRig(; name = nothing, unloaded_radius=VehicleComponents.params.tires.UNLOADED_RADIUS, stroke=0.0254, freq=0.5, speed=Float64(0.0), static_deflection=Float64(0.0), kappa_start=Float64(0.0), kappa_end=Float64(0.0), slip_ramp_time=Float64(1.0), alpha_start=Float64(0.0), alpha_end=Float64(0.0), steer_ramp_time=Float64(1.0), kwargs...)
+@component function TireTestRig(; name = nothing, var"unloaded_radius"=VehicleComponents.params.tires.UNLOADED_RADIUS, var"stroke"=0.0254, var"freq"=0.5, var"speed"=Float64(0.0), var"static_deflection"=Float64(0.0), var"kappa_start"=Float64(0.0), var"kappa_end"=Float64(0.0), var"slip_ramp_time"=Float64(1.0), var"alpha_start"=Float64(0.0), var"alpha_end"=Float64(0.0), var"steer_ramp_time"=Float64(1.0), __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -31,7 +31,7 @@
     @named model = TireTestRig()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -40,6 +40,19 @@
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "unloaded_radius") && (unloaded_radius = pop!(__overrides, "unloaded_radius"))
+  haskey(__overrides, "stroke") && (stroke = pop!(__overrides, "stroke"))
+  haskey(__overrides, "freq") && (freq = pop!(__overrides, "freq"))
+  haskey(__overrides, "speed") && (speed = pop!(__overrides, "speed"))
+  haskey(__overrides, "static_deflection") && (static_deflection = pop!(__overrides, "static_deflection"))
+  haskey(__overrides, "kappa_start") && (kappa_start = pop!(__overrides, "kappa_start"))
+  haskey(__overrides, "kappa_end") && (kappa_end = pop!(__overrides, "kappa_end"))
+  haskey(__overrides, "slip_ramp_time") && (slip_ramp_time = pop!(__overrides, "slip_ramp_time"))
+  haskey(__overrides, "alpha_start") && (alpha_start = pop!(__overrides, "alpha_start"))
+  haskey(__overrides, "alpha_end") && (alpha_end = pop!(__overrides, "alpha_end"))
+  haskey(__overrides, "steer_ramp_time") && (steer_ramp_time = pop!(__overrides, "steer_ramp_time"))
 
   ### Structural Parameters (functions)
 
@@ -59,37 +72,37 @@
   ### Symbolic Parameters
   __local__unloaded_radius = unloaded_radius
   append!(__params, @parameters (unloaded_radius::Real))
-  __initial_conditions[unloaded_radius] = __local__unloaded_radius
+  __dyad_seed_parameter!(__initial_conditions, __bindings, unloaded_radius, __local__unloaded_radius)
   __local__stroke = stroke
   append!(__params, @parameters (stroke::Real))
-  __initial_conditions[stroke] = __local__stroke
+  __dyad_seed_parameter!(__initial_conditions, __bindings, stroke, __local__stroke)
   __local__freq = freq
   append!(__params, @parameters (freq::Real))
-  __initial_conditions[freq] = __local__freq
+  __dyad_seed_parameter!(__initial_conditions, __bindings, freq, __local__freq)
   __local__speed = speed
   append!(__params, @parameters (speed::Real))
-  __initial_conditions[speed] = __local__speed
+  __dyad_seed_parameter!(__initial_conditions, __bindings, speed, __local__speed)
   __local__static_deflection = static_deflection
   append!(__params, @parameters (static_deflection::Real))
-  __initial_conditions[static_deflection] = __local__static_deflection
+  __dyad_seed_parameter!(__initial_conditions, __bindings, static_deflection, __local__static_deflection)
   __local__kappa_start = kappa_start
   append!(__params, @parameters (kappa_start::Real))
-  __initial_conditions[kappa_start] = __local__kappa_start
+  __dyad_seed_parameter!(__initial_conditions, __bindings, kappa_start, __local__kappa_start)
   __local__kappa_end = kappa_end
   append!(__params, @parameters (kappa_end::Real))
-  __initial_conditions[kappa_end] = __local__kappa_end
+  __dyad_seed_parameter!(__initial_conditions, __bindings, kappa_end, __local__kappa_end)
   __local__slip_ramp_time = slip_ramp_time
   append!(__params, @parameters (slip_ramp_time::Real))
-  __initial_conditions[slip_ramp_time] = __local__slip_ramp_time
+  __dyad_seed_parameter!(__initial_conditions, __bindings, slip_ramp_time, __local__slip_ramp_time)
   __local__alpha_start = alpha_start
   append!(__params, @parameters (alpha_start::Real))
-  __initial_conditions[alpha_start] = __local__alpha_start
+  __dyad_seed_parameter!(__initial_conditions, __bindings, alpha_start, __local__alpha_start)
   __local__alpha_end = alpha_end
   append!(__params, @parameters (alpha_end::Real))
-  __initial_conditions[alpha_end] = __local__alpha_end
+  __dyad_seed_parameter!(__initial_conditions, __bindings, alpha_end, __local__alpha_end)
   __local__steer_ramp_time = steer_ramp_time
   append!(__params, @parameters (steer_ramp_time::Real))
-  __initial_conditions[steer_ramp_time] = __local__steer_ramp_time
+  __dyad_seed_parameter!(__initial_conditions, __bindings, steer_ramp_time, __local__steer_ramp_time)
 
   ### Final Parameters (assignments)
   __bindings[spin_rate_start] = (1 + kappa_start) * speed / unloaded_radius
@@ -108,40 +121,40 @@
   ### Components
   # Subcomponent world of type MultibodyComponents.World
   world_overrides = __pop_subcomponent_overrides!(__overrides, "world")
-  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
+  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, __symbol_overrides(world_overrides)...))
   # Subcomponent tire of type VehicleComponents.TireMF61
   tire_overrides = __pop_subcomponent_overrides!(__overrides, "tire")
-  push!(__systems, @named tire = VehicleComponents.TireMF61(; is_left=true, unloaded_radius=unloaded_radius, tire_overrides...))
+  push!(__systems, @named tire = VehicleComponents.TireMF61(; is_left=true, unloaded_radius=unloaded_radius, __overrides = tire_overrides))
   # Subcomponent mount of type MultibodyComponents.FixedTranslation
   mount_overrides = __pop_subcomponent_overrides!(__overrides, "mount")
-  push!(__systems, @named mount = MultibodyComponents.FixedTranslation(; r=[Float64(0), Float64(0), unloaded_radius - static_deflection], render=false, mount_overrides...))
+  push!(__systems, @named mount = MultibodyComponents.FixedTranslation(; r=[Float64(0), Float64(0), unloaded_radius - static_deflection], render=false, __overrides = mount_overrides))
   # Subcomponent carriage of type MultibodyComponents.Prismatic
   carriage_overrides = __pop_subcomponent_overrides!(__overrides, "carriage")
-  push!(__systems, @named carriage = MultibodyComponents.Prismatic(; n=[Float64(1), Float64(0), Float64(0)], render=false, carriage_overrides...))
+  push!(__systems, @named carriage = MultibodyComponents.Prismatic(; n=[Float64(1), Float64(0), Float64(0)], render=false, __overrides = carriage_overrides))
   # Subcomponent carriage_position of type TranslationalComponents.Sources.Position
   carriage_position_overrides = __pop_subcomponent_overrides!(__overrides, "carriage_position")
-  push!(__systems, @named carriage_position = TranslationalComponents.Sources.Position(; carriage_position_overrides...))
+  push!(__systems, @named carriage_position = TranslationalComponents.Sources.Position(; __overrides = carriage_position_overrides))
   # Subcomponent prismatic of type MultibodyComponents.Prismatic
   prismatic_overrides = __pop_subcomponent_overrides!(__overrides, "prismatic")
-  push!(__systems, @named prismatic = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, prismatic_overrides...))
+  push!(__systems, @named prismatic = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, __overrides = prismatic_overrides))
   # Subcomponent wheel_position of type TranslationalComponents.Sources.Position
   wheel_position_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_position")
-  push!(__systems, @named wheel_position = TranslationalComponents.Sources.Position(; wheel_position_overrides...))
+  push!(__systems, @named wheel_position = TranslationalComponents.Sources.Position(; __overrides = wheel_position_overrides))
   # Subcomponent steer of type MultibodyComponents.Revolute
   steer_overrides = __pop_subcomponent_overrides!(__overrides, "steer")
-  push!(__systems, @named steer = MultibodyComponents.Revolute(; n=[Float64(0), Float64(0), Float64(1)], render=false, steer_overrides...))
+  push!(__systems, @named steer = MultibodyComponents.Revolute(; n=[Float64(0), Float64(0), Float64(1)], render=false, __overrides = steer_overrides))
   # Subcomponent steer_position of type RotationalComponents.Sources.Position
   steer_position_overrides = __pop_subcomponent_overrides!(__overrides, "steer_position")
-  push!(__systems, @named steer_position = RotationalComponents.Sources.Position(; steer_position_overrides...))
+  push!(__systems, @named steer_position = RotationalComponents.Sources.Position(; __overrides = steer_position_overrides))
   # Subcomponent spin of type RotationalComponents.Sources.Position
   spin_overrides = __pop_subcomponent_overrides!(__overrides, "spin")
-  push!(__systems, @named spin = RotationalComponents.Sources.Position(; spin_overrides...))
+  push!(__systems, @named spin = RotationalComponents.Sources.Position(; __overrides = spin_overrides))
   # Subcomponent spin_ground of type RotationalComponents.Components.Fixed
   spin_ground_overrides = __pop_subcomponent_overrides!(__overrides, "spin_ground")
-  push!(__systems, @named spin_ground = RotationalComponents.Components.Fixed(; spin_ground_overrides...))
+  push!(__systems, @named spin_ground = RotationalComponents.Components.Fixed(; __overrides = spin_ground_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -174,6 +187,6 @@
   push!(__eqs, connect(spin_ground.spline, spin.support))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export TireTestRig

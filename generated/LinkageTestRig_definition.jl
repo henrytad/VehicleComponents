@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   LinkageTestRig(; name, wheel_center, tierod_inner, stroke, freq)
+   LinkageTestRig(; name, wheel_center, tierod_inner, stroke, freq, __overrides)
 
 ## Parameters:
 
@@ -16,7 +16,7 @@
 | `stroke`         |                          | m  |   0.0254 |
 | `freq`         |                          | Hz  |   0.5 |
 """
-@component function LinkageTestRig(; name = nothing, wheel_center=VehicleComponents.params.suspension.front.geometry.linkages.left.wheel_center, tierod_inner=VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner, stroke=0.0254, freq=0.5, kwargs...)
+@component function LinkageTestRig(; name = nothing, var"wheel_center"=VehicleComponents.params.suspension.front.geometry.linkages.left.wheel_center, var"tierod_inner"=VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner, var"stroke"=0.0254, var"freq"=0.5, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -24,7 +24,7 @@
     @named model = LinkageTestRig()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -33,6 +33,12 @@
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "wheel_center") && (wheel_center = pop!(__overrides, "wheel_center"))
+  haskey(__overrides, "tierod_inner") && (tierod_inner = pop!(__overrides, "tierod_inner"))
+  haskey(__overrides, "stroke") && (stroke = pop!(__overrides, "stroke"))
+  haskey(__overrides, "freq") && (freq = pop!(__overrides, "freq"))
 
   ### Structural Parameters (functions)
 
@@ -51,16 +57,16 @@
   ### Symbolic Parameters
   __local__wheel_center = wheel_center
   append!(__params, @parameters (wheel_center[1:3]::Real))
-  __initial_conditions[wheel_center] = __local__wheel_center
+  __dyad_seed_parameter!(__initial_conditions, __bindings, wheel_center, __local__wheel_center)
   __local__tierod_inner = tierod_inner
   append!(__params, @parameters (tierod_inner[1:3]::Real))
-  __initial_conditions[tierod_inner] = __local__tierod_inner
+  __dyad_seed_parameter!(__initial_conditions, __bindings, tierod_inner, __local__tierod_inner)
   __local__stroke = stroke
   append!(__params, @parameters (stroke::Real))
-  __initial_conditions[stroke] = __local__stroke
+  __dyad_seed_parameter!(__initial_conditions, __bindings, stroke, __local__stroke)
   __local__freq = freq
   append!(__params, @parameters (freq::Real))
-  __initial_conditions[freq] = __local__freq
+  __dyad_seed_parameter!(__initial_conditions, __bindings, freq, __local__freq)
 
   ### Final Parameters (assignments)
   __bindings[actuation_rod_length] = 0.1
@@ -78,28 +84,28 @@
   ### Components
   # Subcomponent world of type MultibodyComponents.World
   world_overrides = __pop_subcomponent_overrides!(__overrides, "world")
-  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
+  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, __symbol_overrides(world_overrides)...))
   # Subcomponent fixed of type MultibodyComponents.Fixed
   fixed_overrides = __pop_subcomponent_overrides!(__overrides, "fixed")
-  push!(__systems, @named fixed = MultibodyComponents.Fixed(; r=base, render=false, fixed_overrides...))
+  push!(__systems, @named fixed = MultibodyComponents.Fixed(; r=base, render=false, __overrides = fixed_overrides))
   # Subcomponent prismatic of type MultibodyComponents.Prismatic
   prismatic_overrides = __pop_subcomponent_overrides!(__overrides, "prismatic")
-  push!(__systems, @named prismatic = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, prismatic_overrides...))
+  push!(__systems, @named prismatic = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, __overrides = prismatic_overrides))
   # Subcomponent actuation_rod of type MultibodyComponents.SphericalSpherical
   actuation_rod_overrides = __pop_subcomponent_overrides!(__overrides, "actuation_rod")
-  push!(__systems, @named actuation_rod = MultibodyComponents.SphericalSpherical(; r_0=[Float64(0), Float64(0), actuation_rod_length], render=false, actuation_rod_overrides...))
+  push!(__systems, @named actuation_rod = MultibodyComponents.SphericalSpherical(; r_0=[Float64(0), Float64(0), actuation_rod_length], render=false, __overrides = actuation_rod_overrides))
   # Subcomponent wheel_position of type TranslationalComponents.Sources.Position
   wheel_position_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_position")
-  push!(__systems, @named wheel_position = TranslationalComponents.Sources.Position(; wheel_position_overrides...))
+  push!(__systems, @named wheel_position = TranslationalComponents.Sources.Position(; __overrides = wheel_position_overrides))
   # Subcomponent mount_tierod of type MultibodyComponents.Fixed
   mount_tierod_overrides = __pop_subcomponent_overrides!(__overrides, "mount_tierod")
-  push!(__systems, @named mount_tierod = MultibodyComponents.Fixed(; r=tierod_inner, render=false, mount_tierod_overrides...))
+  push!(__systems, @named mount_tierod = MultibodyComponents.Fixed(; r=tierod_inner, render=false, __overrides = mount_tierod_overrides))
   # Subcomponent linkage of type VehicleComponents.Linkage
   linkage_overrides = __pop_subcomponent_overrides!(__overrides, "linkage")
-  push!(__systems, @named linkage = VehicleComponents.Linkage(; lca_front=VehicleComponents.params.suspension.front.geometry.linkages.left.lca_front, lca_outer=VehicleComponents.params.suspension.front.geometry.linkages.left.lca_outer, lca_rear=VehicleComponents.params.suspension.front.geometry.linkages.left.lca_rear, uca_front=VehicleComponents.params.suspension.front.geometry.linkages.left.uca_front, uca_outer=VehicleComponents.params.suspension.front.geometry.linkages.left.uca_outer, uca_rear=VehicleComponents.params.suspension.front.geometry.linkages.left.uca_rear, tierod_inner=tierod_inner, tierod_outer=VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_outer, pushrod_outer=VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer, wheel_center=wheel_center, static_camber=VehicleComponents.params.suspension.front.setup.alignment.left.static_camber, static_toe=VehicleComponents.params.suspension.front.setup.alignment.left.static_toe, linkage_overrides...))
+  push!(__systems, @named linkage = VehicleComponents.Linkage(; lca_front=VehicleComponents.params.suspension.front.geometry.linkages.left.lca_front, lca_outer=VehicleComponents.params.suspension.front.geometry.linkages.left.lca_outer, lca_rear=VehicleComponents.params.suspension.front.geometry.linkages.left.lca_rear, uca_front=VehicleComponents.params.suspension.front.geometry.linkages.left.uca_front, uca_outer=VehicleComponents.params.suspension.front.geometry.linkages.left.uca_outer, uca_rear=VehicleComponents.params.suspension.front.geometry.linkages.left.uca_rear, tierod_inner=tierod_inner, tierod_outer=VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_outer, pushrod_outer=VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer, wheel_center=wheel_center, static_camber=VehicleComponents.params.suspension.front.setup.alignment.left.static_camber, static_toe=VehicleComponents.params.suspension.front.setup.alignment.left.static_toe, __overrides = linkage_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
   __guesses[linkage.lca_rev.phi] = (0.0)
@@ -121,6 +127,6 @@
   push!(__eqs, connect(mount_tierod.frame_b, linkage.steering_rack))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export LinkageTestRig

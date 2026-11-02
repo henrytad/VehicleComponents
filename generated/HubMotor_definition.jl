@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   HubMotor(; name, gear_ratio, max_torque, max_power, omega_min)
+   HubMotor(; name, gear_ratio, max_torque, max_power, omega_min, __overrides)
 
 ## Parameters:
 
@@ -34,7 +34,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `tau_wheel`         |                          | N.m  |
 | `power`         |                          | W  |
 """
-@component function HubMotor(; name = nothing, gear_ratio=VehicleComponents.params.drivetrain.gear_ratio, max_torque=VehicleComponents.params.drivetrain.motor_max_torque, max_power=VehicleComponents.params.drivetrain.motor_max_power, omega_min=Float64(5.0), kwargs...)
+@component function HubMotor(; name = nothing, var"gear_ratio"=VehicleComponents.params.drivetrain.gear_ratio, var"max_torque"=VehicleComponents.params.drivetrain.motor_max_torque, var"max_power"=VehicleComponents.params.drivetrain.motor_max_power, var"omega_min"=Float64(5.0), __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -42,7 +42,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = HubMotor()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -51,6 +51,12 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "gear_ratio") && (gear_ratio = pop!(__overrides, "gear_ratio"))
+  haskey(__overrides, "max_torque") && (max_torque = pop!(__overrides, "max_torque"))
+  haskey(__overrides, "max_power") && (max_power = pop!(__overrides, "max_power"))
+  haskey(__overrides, "omega_min") && (omega_min = pop!(__overrides, "omega_min"))
 
   ### Structural Parameters (functions)
 
@@ -67,16 +73,16 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__gear_ratio = gear_ratio
   append!(__params, @parameters (gear_ratio::Real))
-  __initial_conditions[gear_ratio] = __local__gear_ratio
+  __dyad_seed_parameter!(__initial_conditions, __bindings, gear_ratio, __local__gear_ratio)
   __local__max_torque = max_torque
   append!(__params, @parameters (max_torque::Real))
-  __initial_conditions[max_torque] = __local__max_torque
+  __dyad_seed_parameter!(__initial_conditions, __bindings, max_torque, __local__max_torque)
   __local__max_power = max_power
   append!(__params, @parameters (max_power::Real))
-  __initial_conditions[max_power] = __local__max_power
+  __dyad_seed_parameter!(__initial_conditions, __bindings, max_power, __local__max_power)
   __local__omega_min = omega_min
   append!(__params, @parameters (omega_min::Real))
-  __initial_conditions[omega_min] = __local__omega_min
+  __dyad_seed_parameter!(__initial_conditions, __bindings, omega_min, __local__omega_min)
 
   ### Final Parameters (assignments)
 
@@ -93,23 +99,23 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Variables (assignments)
   __ovr_omega = pop!(__overrides, "omega", nothing); isnothing(__ovr_omega) || push!(__eqs, omega ~ __ovr_omega)
-  __ovr_omega__initial = pop!(__overrides, "omega__initial", nothing); isnothing(__ovr_omega__initial) || (__initial_conditions[omega] = __ovr_omega__initial)
-  __ovr_omega__guess = pop!(__overrides, "omega__guess", nothing)
+  __ovr_omega__initial = pop!(__overrides, "omega.initial", nothing); isnothing(__ovr_omega__initial) || (__initial_conditions[omega] = __ovr_omega__initial)
+  __ovr_omega__guess = pop!(__overrides, "omega.guess", nothing)
   __ovr_tau_demand = pop!(__overrides, "tau_demand", nothing); isnothing(__ovr_tau_demand) || push!(__eqs, tau_demand ~ __ovr_tau_demand)
-  __ovr_tau_demand__initial = pop!(__overrides, "tau_demand__initial", nothing); isnothing(__ovr_tau_demand__initial) || (__initial_conditions[tau_demand] = __ovr_tau_demand__initial)
-  __ovr_tau_demand__guess = pop!(__overrides, "tau_demand__guess", nothing)
+  __ovr_tau_demand__initial = pop!(__overrides, "tau_demand.initial", nothing); isnothing(__ovr_tau_demand__initial) || (__initial_conditions[tau_demand] = __ovr_tau_demand__initial)
+  __ovr_tau_demand__guess = pop!(__overrides, "tau_demand.guess", nothing)
   __ovr_tau_limit = pop!(__overrides, "tau_limit", nothing); isnothing(__ovr_tau_limit) || push!(__eqs, tau_limit ~ __ovr_tau_limit)
-  __ovr_tau_limit__initial = pop!(__overrides, "tau_limit__initial", nothing); isnothing(__ovr_tau_limit__initial) || (__initial_conditions[tau_limit] = __ovr_tau_limit__initial)
-  __ovr_tau_limit__guess = pop!(__overrides, "tau_limit__guess", nothing)
+  __ovr_tau_limit__initial = pop!(__overrides, "tau_limit.initial", nothing); isnothing(__ovr_tau_limit__initial) || (__initial_conditions[tau_limit] = __ovr_tau_limit__initial)
+  __ovr_tau_limit__guess = pop!(__overrides, "tau_limit.guess", nothing)
   __ovr_tau_motor = pop!(__overrides, "tau_motor", nothing); isnothing(__ovr_tau_motor) || push!(__eqs, tau_motor ~ __ovr_tau_motor)
-  __ovr_tau_motor__initial = pop!(__overrides, "tau_motor__initial", nothing); isnothing(__ovr_tau_motor__initial) || (__initial_conditions[tau_motor] = __ovr_tau_motor__initial)
-  __ovr_tau_motor__guess = pop!(__overrides, "tau_motor__guess", nothing)
+  __ovr_tau_motor__initial = pop!(__overrides, "tau_motor.initial", nothing); isnothing(__ovr_tau_motor__initial) || (__initial_conditions[tau_motor] = __ovr_tau_motor__initial)
+  __ovr_tau_motor__guess = pop!(__overrides, "tau_motor.guess", nothing)
   __ovr_tau_wheel = pop!(__overrides, "tau_wheel", nothing); isnothing(__ovr_tau_wheel) || push!(__eqs, tau_wheel ~ __ovr_tau_wheel)
-  __ovr_tau_wheel__initial = pop!(__overrides, "tau_wheel__initial", nothing); isnothing(__ovr_tau_wheel__initial) || (__initial_conditions[tau_wheel] = __ovr_tau_wheel__initial)
-  __ovr_tau_wheel__guess = pop!(__overrides, "tau_wheel__guess", nothing)
+  __ovr_tau_wheel__initial = pop!(__overrides, "tau_wheel.initial", nothing); isnothing(__ovr_tau_wheel__initial) || (__initial_conditions[tau_wheel] = __ovr_tau_wheel__initial)
+  __ovr_tau_wheel__guess = pop!(__overrides, "tau_wheel.guess", nothing)
   __ovr_power = pop!(__overrides, "power", nothing); isnothing(__ovr_power) || push!(__eqs, power ~ __ovr_power)
-  __ovr_power__initial = pop!(__overrides, "power__initial", nothing); isnothing(__ovr_power__initial) || (__initial_conditions[power] = __ovr_power__initial)
-  __ovr_power__guess = pop!(__overrides, "power__guess", nothing)
+  __ovr_power__initial = pop!(__overrides, "power.initial", nothing); isnothing(__ovr_power__initial) || (__initial_conditions[power] = __ovr_power__initial)
+  __ovr_power__guess = pop!(__overrides, "power.guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -119,7 +125,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named spline = __Dyad__Spline())
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
   isnothing(__ovr_omega__guess) || (__guesses[omega] = __ovr_omega__guess)
@@ -146,6 +152,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, wheel_center.tau ~ [0, 1, 0] * tau_wheel)
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export HubMotor

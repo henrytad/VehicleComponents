@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   TorqueControlTC(; name, slip_target, launch_torque, k, Ti, Ni)
+   TorqueControlTC(; name, slip_target, launch_torque, k, Ti, Ni, __overrides)
 
 ## Parameters:
 
@@ -23,7 +23,7 @@
  * `throttle` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `demand` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
 """
-@component function TorqueControlTC(; name = nothing, slip_target=nothing, launch_torque=nothing, k=nothing, Ti=nothing, Ni=nothing, kwargs...)
+@component function TorqueControlTC(; name = nothing, var"slip_target"=nothing, var"launch_torque"=nothing, var"k"=nothing, var"Ti"=nothing, var"Ni"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -31,7 +31,7 @@
     @named model = TorqueControlTC()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -40,6 +40,13 @@
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "slip_target") && (slip_target = pop!(__overrides, "slip_target"))
+  haskey(__overrides, "launch_torque") && (launch_torque = pop!(__overrides, "launch_torque"))
+  haskey(__overrides, "k") && (k = pop!(__overrides, "k"))
+  haskey(__overrides, "Ti") && (Ti = pop!(__overrides, "Ti"))
+  haskey(__overrides, "Ni") && (Ni = pop!(__overrides, "Ni"))
 
   ### Structural Parameters (functions)
 
@@ -57,19 +64,19 @@
   ### Symbolic Parameters
   __local__slip_target = slip_target
   append!(__params, @parameters (slip_target::Real))
-  __initial_conditions[slip_target] = __local__slip_target
+  __dyad_seed_parameter!(__initial_conditions, __bindings, slip_target, __local__slip_target)
   __local__launch_torque = launch_torque
   append!(__params, @parameters (launch_torque::Real))
-  __initial_conditions[launch_torque] = __local__launch_torque
+  __dyad_seed_parameter!(__initial_conditions, __bindings, launch_torque, __local__launch_torque)
   __local__k = k
   append!(__params, @parameters (k::Real))
-  __initial_conditions[k] = __local__k
+  __dyad_seed_parameter!(__initial_conditions, __bindings, k, __local__k)
   __local__Ti = Ti
   append!(__params, @parameters (Ti::Real))
-  __initial_conditions[Ti] = __local__Ti
+  __dyad_seed_parameter!(__initial_conditions, __bindings, Ti, __local__Ti)
   __local__Ni = Ni
   append!(__params, @parameters (Ni::Real))
-  __initial_conditions[Ni] = __local__Ni
+  __dyad_seed_parameter!(__initial_conditions, __bindings, Ni, __local__Ni)
 
   ### Final Parameters (assignments)
   __bindings[wp] = 0
@@ -89,55 +96,28 @@
   ### Components
   # Subcomponent slip_ref of type BlockComponents.Math.Gain
   slip_ref_overrides = __pop_subcomponent_overrides!(__overrides, "slip_ref")
-  push!(__systems, @named slip_ref = BlockComponents.Math.Gain(; slip_ref_overrides...))
-  __bindings[slip_ref.k] = slip_target
-  # Now remove initial conditions in slip_ref that correspond to the bindings just added
-  __slip_ref_ics = ModelingToolkit.get_initial_conditions(slip_ref)
-  __no_namespace_slip_ref = ModelingToolkit.toggle_namespacing(slip_ref, false)
-  __slip_ref_k = Symbolics.unwrap(__no_namespace_slip_ref.k)::Symbolics.SymbolicT
-  delete!(__slip_ref_ics, __slip_ref_k)
+  push!(__systems, @named slip_ref = BlockComponents.Math.Gain(; k=slip_target, __overrides = slip_ref_overrides))
+  __dyad_bind_final!(__bindings, slip_ref, Symbol[], :k, slip_target)
   # Subcomponent torque_ff of type BlockComponents.Math.Gain
   torque_ff_overrides = __pop_subcomponent_overrides!(__overrides, "torque_ff")
-  push!(__systems, @named torque_ff = BlockComponents.Math.Gain(; torque_ff_overrides...))
-  __bindings[torque_ff.k] = launch_torque
-  # Now remove initial conditions in torque_ff that correspond to the bindings just added
-  __torque_ff_ics = ModelingToolkit.get_initial_conditions(torque_ff)
-  __no_namespace_torque_ff = ModelingToolkit.toggle_namespacing(torque_ff, false)
-  __torque_ff_k = Symbolics.unwrap(__no_namespace_torque_ff.k)::Symbolics.SymbolicT
-  delete!(__torque_ff_ics, __torque_ff_k)
+  push!(__systems, @named torque_ff = BlockComponents.Math.Gain(; k=launch_torque, __overrides = torque_ff_overrides))
+  __dyad_bind_final!(__bindings, torque_ff, Symbol[], :k, launch_torque)
   # Subcomponent pid of type BlockComponents.Continuous.LimPID
   pid_overrides = __pop_subcomponent_overrides!(__overrides, "pid")
-  push!(__systems, @named pid = BlockComponents.Continuous.LimPID(; with_D=false, pid_overrides...))
-  __bindings[pid.k] = k
-  __bindings[pid.Ti] = Ti
-  __bindings[pid.Ni] = Ni
-  __bindings[pid.wp] = wp
-  __bindings[pid.y_max] = Float64(1)
-  __bindings[pid.y_min] = Float64(0)
-  __bindings[pid.k_ff] = Float64(1)
-  # Now remove initial conditions in pid that correspond to the bindings just added
-  __pid_ics = ModelingToolkit.get_initial_conditions(pid)
-  __no_namespace_pid = ModelingToolkit.toggle_namespacing(pid, false)
-  __pid_k = Symbolics.unwrap(__no_namespace_pid.k)::Symbolics.SymbolicT
-  delete!(__pid_ics, __pid_k)
-  __pid_Ti = Symbolics.unwrap(__no_namespace_pid.Ti)::Symbolics.SymbolicT
-  delete!(__pid_ics, __pid_Ti)
-  __pid_Ni = Symbolics.unwrap(__no_namespace_pid.Ni)::Symbolics.SymbolicT
-  delete!(__pid_ics, __pid_Ni)
-  __pid_wp = Symbolics.unwrap(__no_namespace_pid.wp)::Symbolics.SymbolicT
-  delete!(__pid_ics, __pid_wp)
-  __pid_y_max = Symbolics.unwrap(__no_namespace_pid.y_max)::Symbolics.SymbolicT
-  delete!(__pid_ics, __pid_y_max)
-  __pid_y_min = Symbolics.unwrap(__no_namespace_pid.y_min)::Symbolics.SymbolicT
-  delete!(__pid_ics, __pid_y_min)
-  __pid_k_ff = Symbolics.unwrap(__no_namespace_pid.k_ff)::Symbolics.SymbolicT
-  delete!(__pid_ics, __pid_k_ff)
+  push!(__systems, @named pid = BlockComponents.Continuous.LimPID(; with_D=false, k=k, Ti=Ti, Ni=Ni, wp=wp, y_max=Float64(1), y_min=Float64(0), k_ff=Float64(1), __overrides = pid_overrides))
+  __dyad_bind_final!(__bindings, pid, Symbol[], :k, k)
+  __dyad_bind_final!(__bindings, pid, Symbol[], :Ti, Ti)
+  __dyad_bind_final!(__bindings, pid, Symbol[], :Ni, Ni)
+  __dyad_bind_final!(__bindings, pid, Symbol[], :wp, wp)
+  __dyad_bind_final!(__bindings, pid, Symbol[], :y_max, Float64(1))
+  __dyad_bind_final!(__bindings, pid, Symbol[], :y_min, Float64(0))
+  __dyad_bind_final!(__bindings, pid, Symbol[], :k_ff, Float64(1))
   # Subcomponent gate of type BlockComponents.Math.Product
   gate_overrides = __pop_subcomponent_overrides!(__overrides, "gate")
-  push!(__systems, @named gate = BlockComponents.Math.Product(; gate_overrides...))
+  push!(__systems, @named gate = BlockComponents.Math.Product(; __overrides = gate_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -155,6 +135,6 @@
   push!(__eqs, connect(gate.y, demand))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export TorqueControlTC

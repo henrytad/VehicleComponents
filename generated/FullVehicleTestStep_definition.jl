@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   FullVehicleTestStep(; name, drive_start_time, brake_level, brake_start_time, steer_start_time, steer_angle)
+   FullVehicleTestStep(; name, drive_start_time, brake_level, brake_start_time, steer_start_time, steer_angle, __overrides)
 
 ## Parameters:
 
@@ -17,7 +17,7 @@
 | `steer_start_time`         |                          | s  |   3.0 |
 | `steer_angle`         |                          | rad  |   0.15 |
 """
-@component function FullVehicleTestStep(; name = nothing, drive_start_time=1.5, brake_level=Float64(0.0), brake_start_time=1.5, steer_start_time=Float64(3.0), steer_angle=0.15, kwargs...)
+@component function FullVehicleTestStep(; name = nothing, var"drive_start_time"=1.5, var"brake_level"=Float64(0.0), var"brake_start_time"=1.5, var"steer_start_time"=Float64(3.0), var"steer_angle"=0.15, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -25,7 +25,7 @@
     @named model = FullVehicleTestStep()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -34,6 +34,13 @@
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "drive_start_time") && (drive_start_time = pop!(__overrides, "drive_start_time"))
+  haskey(__overrides, "brake_level") && (brake_level = pop!(__overrides, "brake_level"))
+  haskey(__overrides, "brake_start_time") && (brake_start_time = pop!(__overrides, "brake_start_time"))
+  haskey(__overrides, "steer_start_time") && (steer_start_time = pop!(__overrides, "steer_start_time"))
+  haskey(__overrides, "steer_angle") && (steer_angle = pop!(__overrides, "steer_angle"))
 
   ### Structural Parameters (functions)
 
@@ -50,19 +57,19 @@
   ### Symbolic Parameters
   __local__drive_start_time = drive_start_time
   append!(__params, @parameters (drive_start_time::Real))
-  __initial_conditions[drive_start_time] = __local__drive_start_time
+  __dyad_seed_parameter!(__initial_conditions, __bindings, drive_start_time, __local__drive_start_time)
   __local__brake_level = brake_level
   append!(__params, @parameters (brake_level::Real))
-  __initial_conditions[brake_level] = __local__brake_level
+  __dyad_seed_parameter!(__initial_conditions, __bindings, brake_level, __local__brake_level)
   __local__brake_start_time = brake_start_time
   append!(__params, @parameters (brake_start_time::Real))
-  __initial_conditions[brake_start_time] = __local__brake_start_time
+  __dyad_seed_parameter!(__initial_conditions, __bindings, brake_start_time, __local__brake_start_time)
   __local__steer_start_time = steer_start_time
   append!(__params, @parameters (steer_start_time::Real))
-  __initial_conditions[steer_start_time] = __local__steer_start_time
+  __dyad_seed_parameter!(__initial_conditions, __bindings, steer_start_time, __local__steer_start_time)
   __local__steer_angle = steer_angle
   append!(__params, @parameters (steer_angle::Real))
-  __initial_conditions[steer_angle] = __local__steer_angle
+  __dyad_seed_parameter!(__initial_conditions, __bindings, steer_angle, __local__steer_angle)
 
   ### Final Parameters (assignments)
 
@@ -78,43 +85,43 @@
   ### Components
   # Subcomponent world of type MultibodyComponents.World
   world_overrides = __pop_subcomponent_overrides!(__overrides, "world")
-  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, world_overrides...))
+  push!(__systems, @named world = MultibodyComponents.World(; n=[Float64(0), Float64(0), Float64(-1)], render=false, __symbol_overrides(world_overrides)...))
   # Subcomponent throttle of type BlockComponents.Sources.Ramp
   throttle_overrides = __pop_subcomponent_overrides!(__overrides, "throttle")
-  push!(__systems, @named throttle = BlockComponents.Sources.Ramp(; duration=Float64(1.0), height=Float64(1.0), offset=Float64(0.0), start_time=drive_start_time, throttle_overrides...))
+  push!(__systems, @named throttle = BlockComponents.Sources.Ramp(; duration=Float64(1.0), height=Float64(1.0), offset=Float64(0.0), start_time=drive_start_time, __overrides = throttle_overrides))
   # Subcomponent brake of type BlockComponents.Sources.Step
   brake_overrides = __pop_subcomponent_overrides!(__overrides, "brake")
-  push!(__systems, @named brake = BlockComponents.Sources.Step(; height=brake_level, offset=Float64(0.0), start_time=brake_start_time, brake_overrides...))
+  push!(__systems, @named brake = BlockComponents.Sources.Step(; height=brake_level, offset=Float64(0.0), start_time=brake_start_time, __overrides = brake_overrides))
   # Subcomponent steer of type BlockComponents.Sources.Step
   steer_overrides = __pop_subcomponent_overrides!(__overrides, "steer")
-  push!(__systems, @named steer = BlockComponents.Sources.Step(; height=steer_angle, offset=Float64(0.0), start_time=steer_start_time, steer_overrides...))
+  push!(__systems, @named steer = BlockComponents.Sources.Step(; height=steer_angle, offset=Float64(0.0), start_time=steer_start_time, __overrides = steer_overrides))
   # Subcomponent longitudinal_joint of type MultibodyComponents.Prismatic
   longitudinal_joint_overrides = __pop_subcomponent_overrides!(__overrides, "longitudinal_joint")
-  push!(__systems, @named longitudinal_joint = MultibodyComponents.Prismatic(; n=[Float64(1), Float64(0), Float64(0)], render=false, longitudinal_joint_overrides...))
+  push!(__systems, @named longitudinal_joint = MultibodyComponents.Prismatic(; n=[Float64(1), Float64(0), Float64(0)], render=false, __overrides = longitudinal_joint_overrides))
   # Subcomponent lateral_joint of type MultibodyComponents.Prismatic
   lateral_joint_overrides = __pop_subcomponent_overrides!(__overrides, "lateral_joint")
-  push!(__systems, @named lateral_joint = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(1), Float64(0)], render=false, lateral_joint_overrides...))
+  push!(__systems, @named lateral_joint = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(1), Float64(0)], render=false, __overrides = lateral_joint_overrides))
   # Subcomponent heave_joint of type MultibodyComponents.Prismatic
   heave_joint_overrides = __pop_subcomponent_overrides!(__overrides, "heave_joint")
-  push!(__systems, @named heave_joint = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, heave_joint_overrides...))
+  push!(__systems, @named heave_joint = MultibodyComponents.Prismatic(; n=[Float64(0), Float64(0), Float64(1)], render=false, __overrides = heave_joint_overrides))
   # Subcomponent roll_joint of type MultibodyComponents.Revolute
   roll_joint_overrides = __pop_subcomponent_overrides!(__overrides, "roll_joint")
-  push!(__systems, @named roll_joint = MultibodyComponents.Revolute(; n=[Float64(1), Float64(0), Float64(0)], render=false, roll_joint_overrides...))
+  push!(__systems, @named roll_joint = MultibodyComponents.Revolute(; n=[Float64(1), Float64(0), Float64(0)], render=false, __overrides = roll_joint_overrides))
   # Subcomponent pitch_joint of type MultibodyComponents.Revolute
   pitch_joint_overrides = __pop_subcomponent_overrides!(__overrides, "pitch_joint")
-  push!(__systems, @named pitch_joint = MultibodyComponents.Revolute(; n=[Float64(0), Float64(1), Float64(0)], render=false, pitch_joint_overrides...))
+  push!(__systems, @named pitch_joint = MultibodyComponents.Revolute(; n=[Float64(0), Float64(1), Float64(0)], render=false, __overrides = pitch_joint_overrides))
   # Subcomponent yaw_joint of type MultibodyComponents.Revolute
   yaw_joint_overrides = __pop_subcomponent_overrides!(__overrides, "yaw_joint")
-  push!(__systems, @named yaw_joint = MultibodyComponents.Revolute(; n=[Float64(0), Float64(0), Float64(1)], render=false, yaw_joint_overrides...))
+  push!(__systems, @named yaw_joint = MultibodyComponents.Revolute(; n=[Float64(0), Float64(0), Float64(1)], render=false, __overrides = yaw_joint_overrides))
   # Subcomponent vehicle of type VehicleComponents.FullVehicle
   vehicle_overrides = __pop_subcomponent_overrides!(__overrides, "vehicle")
-  push!(__systems, @named vehicle = VehicleComponents.FullVehicle(; vehicle_overrides...))
+  push!(__systems, @named vehicle = VehicleComponents.FullVehicle(; __overrides = vehicle_overrides))
   # Subcomponent track of type VehicleComponents.StraightLineTrack
   track_overrides = __pop_subcomponent_overrides!(__overrides, "track")
-  push!(__systems, @named track = VehicleComponents.StraightLineTrack(; track_overrides...))
+  push!(__systems, @named track = VehicleComponents.StraightLineTrack(; __overrides = track_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
 
@@ -166,6 +173,6 @@
   push!(__eqs, connect(yaw_joint.frame_b, vehicle.rig))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export FullVehicleTestStep

@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   RollStrut(; name, dataset, color)
+   RollStrut(; name, dataset, color, __overrides)
 
 ## Parameters:
 
@@ -28,7 +28,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `s`         | Distance between the origin of frame_a and the origin of frame_b                         | m  |
 | `f`         | Total line force, negative is compression                         | N  |
 """
-@component function RollStrut(; name = nothing, dataset=nothing, color=nothing, kwargs...)
+@component function RollStrut(; name = nothing, var"dataset"=nothing, var"color"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -36,7 +36,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
     @named model = RollStrut()
   """))
 
-  __overrides = __build_overrides(kwargs)
+  __overrides = Dict{String, Any}(__overrides)
   __params = Symbolics.SymbolicT[]
   __vars = Symbolics.SymbolicT[]
   __systems = System[]
@@ -45,6 +45,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __initialization_eqs = Equation[]
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
+
+  ### Keyword argument overrides
+  haskey(__overrides, "dataset") && (dataset = pop!(__overrides, "dataset"))
+  haskey(__overrides, "color") && (color = pop!(__overrides, "color"))
 
   ### Structural Parameters (functions)
 
@@ -61,7 +65,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Symbolic Parameters
   __local__color = color
   append!(__params, @parameters (color[1:4]::Real))
-  __initial_conditions[color] = __local__color
+  __dyad_seed_parameter!(__initial_conditions, __bindings, color, __local__color)
 
   ### Final Parameters (assignments)
 
@@ -73,11 +77,11 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Variables (assignments)
   __ovr_s = pop!(__overrides, "s", nothing); isnothing(__ovr_s) || push!(__eqs, s ~ __ovr_s)
-  __ovr_s__initial = pop!(__overrides, "s__initial", nothing); isnothing(__ovr_s__initial) || (__initial_conditions[s] = __ovr_s__initial)
-  __ovr_s__guess = pop!(__overrides, "s__guess", nothing)
+  __ovr_s__initial = pop!(__overrides, "s.initial", nothing); isnothing(__ovr_s__initial) || (__initial_conditions[s] = __ovr_s__initial)
+  __ovr_s__guess = pop!(__overrides, "s.guess", nothing)
   __ovr_f = pop!(__overrides, "f", nothing); isnothing(__ovr_f) || push!(__eqs, f ~ __ovr_f)
-  __ovr_f__initial = pop!(__overrides, "f__initial", nothing); isnothing(__ovr_f__initial) || (__initial_conditions[f] = __ovr_f__initial)
-  __ovr_f__guess = pop!(__overrides, "f__guess", nothing)
+  __ovr_f__initial = pop!(__overrides, "f.initial", nothing); isnothing(__ovr_f__initial) || (__initial_conditions[f] = __ovr_f__initial)
+  __ovr_f__guess = pop!(__overrides, "f.guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -87,13 +91,13 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named frame_b = __Dyad__Frame3D())
   # Subcomponent spring of type VehicleComponents.RollSpring
   spring_overrides = __pop_subcomponent_overrides!(__overrides, "spring")
-  push!(__systems, @named spring = VehicleComponents.RollSpring(; color=color, spring_overrides...))
+  push!(__systems, @named spring = VehicleComponents.RollSpring(; color=color, __overrides = spring_overrides))
   # Subcomponent damper of type VehicleComponents.Damper
   damper_overrides = __pop_subcomponent_overrides!(__overrides, "damper")
-  push!(__systems, @named damper = VehicleComponents.Damper(; dataset=dataset, damper_overrides...))
+  push!(__systems, @named damper = VehicleComponents.Damper(; dataset=dataset, __overrides = damper_overrides))
 
   ### Check there are no unmatched overrides
-  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded."))
+  isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
   isnothing(__ovr_s__guess) || (__guesses[s] = __ovr_s__guess)
@@ -113,6 +117,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(frame_b, spring.frame_b))
 
   # Return completely constructed System
-  return System(__eqs, t, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
+  return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
 end
 export RollStrut
