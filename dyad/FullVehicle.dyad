@@ -216,6 +216,10 @@ relations
   connect(corner_fr.slip, control.slip_fr) {^id23}
   connect(corner_rl.slip, control.slip_rl) {^id24}
   connect(corner_rr.slip, control.slip_rr) {^id25}
+  connect(corner_fl.full_demand_power, control.full_demand_power_fl) {^id39}
+  connect(corner_fr.full_demand_power, control.full_demand_power_fr) {^id40}
+  connect(corner_rl.full_demand_power, control.full_demand_power_rl) {^id41}
+  connect(corner_rr.full_demand_power, control.full_demand_power_rr) {^id42}
   connect(control.demand_fl, corner_fl.motor_demand) {^id26}
   connect(control.demand_fr, corner_fr.motor_demand) {^id27}
   connect(control.demand_rl, corner_rl.motor_demand) {^id28}

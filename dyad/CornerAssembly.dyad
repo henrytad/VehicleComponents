@@ -16,6 +16,7 @@ component CornerAssembly
   brake_demand = RealInput(units = "1") {^brake_demand}
 
   slip = RealOutput() {^slip}
+  full_demand_power = RealOutput(units = "W") {^full_demand_power}
 
   wheel_center = Dyad.Frame3D() {^wheel_center}
   wheel_assembly = VehicleComponents.WheelAssembly(is_left = is_left) {^wheel_assembly}
@@ -44,6 +45,7 @@ relations
   connect(motor.wheel_center, wheel_center) {^id11}
   connect(wheel_assembly.spline, motor.spline) {^id12}
   connect(motor_demand, motor.demand) {^id13}
+  connect(motor.full_demand_power, full_demand_power) {^id18}
   connect(wheel_assembly.slip, slip) {^id14}
   connect(wheel_assembly.spline, brake.spline) {^id15}
   connect(brake_demand, brake.brake_demand) {^id16}
@@ -58,6 +60,7 @@ metadata {
     "slip": {
       "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 20, "y2": 120}}}
     },
+    "full_demand_power": {"Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 190, "y2": 290}}}},
     "wheel_center": {
       "Dyad": {"placement": {"diagram": {"x1": -40, "x2": 60, "y1": 450, "y2": 550}}}
     },

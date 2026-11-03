@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   HubMotor(; name, gear_ratio, max_torque, max_power, omega_min, __overrides)
+   HubMotor(; name, gear_ratio, max_torque, __overrides)
 
 ## Parameters:
 
@@ -13,12 +13,11 @@
 | ------------ | ----------------------------------- | ------ | --------------- |
 | `gear_ratio`         |                          | --  |   VehicleComp....gear_ratio |
 | `max_torque`         |                          | N.m  |   VehicleComp..._max_torque |
-| `max_power`         |                          | W  |   VehicleComp...r_max_power |
-| `omega_min`         |                          | rad/s  |   5.0 |
 
 ## Connectors
 
  * `demand` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `full_demand_power` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
  * `spline` - This connector represents a rotational spline with angle and torque as the potential and flow variables, respectively. ([`Spline`](@ref))
@@ -28,13 +27,11 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | Name         | Description                         | Units  | 
 | ------------ | ----------------------------------- | ------ |
 | `omega`         |                          | rad/s  |
-| `tau_demand`         |                          | N.m  |
-| `tau_limit`         |                          | N.m  |
 | `tau_motor`         |                          | N.m  |
 | `tau_wheel`         |                          | N.m  |
 | `power`         |                          | W  |
 """
-@component function HubMotor(; name = nothing, var"gear_ratio"=VehicleComponents.params.drivetrain.gear_ratio, var"max_torque"=VehicleComponents.params.drivetrain.motor_max_torque, var"max_power"=VehicleComponents.params.drivetrain.motor_max_power, var"omega_min"=Float64(5.0), __overrides = Dict{String, Any}())
+@component function HubMotor(; name = nothing, var"gear_ratio"=VehicleComponents.params.drivetrain.gear_ratio, var"max_torque"=VehicleComponents.params.drivetrain.motor_max_torque, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -55,8 +52,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Keyword argument overrides
   haskey(__overrides, "gear_ratio") && (gear_ratio = pop!(__overrides, "gear_ratio"))
   haskey(__overrides, "max_torque") && (max_torque = pop!(__overrides, "max_torque"))
-  haskey(__overrides, "max_power") && (max_power = pop!(__overrides, "max_power"))
-  haskey(__overrides, "omega_min") && (omega_min = pop!(__overrides, "omega_min"))
 
   ### Structural Parameters (functions)
 
@@ -67,6 +62,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Path Parameters (non-final)
 
   ### Final Parameters (declarations)
+  append!(__params, @parameters (max_wheel_torque::Real), [misc = "final"])
 
   ### Deferred assignment (default values that depend on final parameters)
 
@@ -77,22 +73,16 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__max_torque = max_torque
   append!(__params, @parameters (max_torque::Real))
   __dyad_seed_parameter!(__initial_conditions, __bindings, max_torque, __local__max_torque)
-  __local__max_power = max_power
-  append!(__params, @parameters (max_power::Real))
-  __dyad_seed_parameter!(__initial_conditions, __bindings, max_power, __local__max_power)
-  __local__omega_min = omega_min
-  append!(__params, @parameters (omega_min::Real))
-  __dyad_seed_parameter!(__initial_conditions, __bindings, omega_min, __local__omega_min)
 
   ### Final Parameters (assignments)
+  __bindings[max_wheel_torque] = max_torque * gear_ratio
 
   ### Final Path Parameters
   append!(__vars, @variables (demand(t)::Real), [input = true])
+  append!(__vars, @variables (full_demand_power(t)::Real), [output = true])
 
   ### Variables (declarations)
   append!(__vars, @variables (omega(t)::Real))
-  append!(__vars, @variables (tau_demand(t)::Real))
-  append!(__vars, @variables (tau_limit(t)::Real))
   append!(__vars, @variables (tau_motor(t)::Real))
   append!(__vars, @variables (tau_wheel(t)::Real))
   append!(__vars, @variables (power(t)::Real))
@@ -101,12 +91,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_omega = pop!(__overrides, "omega", nothing); isnothing(__ovr_omega) || push!(__eqs, omega ~ __ovr_omega)
   __ovr_omega__initial = pop!(__overrides, "omega.initial", nothing); isnothing(__ovr_omega__initial) || (__initial_conditions[omega] = __ovr_omega__initial)
   __ovr_omega__guess = pop!(__overrides, "omega.guess", nothing)
-  __ovr_tau_demand = pop!(__overrides, "tau_demand", nothing); isnothing(__ovr_tau_demand) || push!(__eqs, tau_demand ~ __ovr_tau_demand)
-  __ovr_tau_demand__initial = pop!(__overrides, "tau_demand.initial", nothing); isnothing(__ovr_tau_demand__initial) || (__initial_conditions[tau_demand] = __ovr_tau_demand__initial)
-  __ovr_tau_demand__guess = pop!(__overrides, "tau_demand.guess", nothing)
-  __ovr_tau_limit = pop!(__overrides, "tau_limit", nothing); isnothing(__ovr_tau_limit) || push!(__eqs, tau_limit ~ __ovr_tau_limit)
-  __ovr_tau_limit__initial = pop!(__overrides, "tau_limit.initial", nothing); isnothing(__ovr_tau_limit__initial) || (__initial_conditions[tau_limit] = __ovr_tau_limit__initial)
-  __ovr_tau_limit__guess = pop!(__overrides, "tau_limit.guess", nothing)
   __ovr_tau_motor = pop!(__overrides, "tau_motor", nothing); isnothing(__ovr_tau_motor) || push!(__eqs, tau_motor ~ __ovr_tau_motor)
   __ovr_tau_motor__initial = pop!(__overrides, "tau_motor.initial", nothing); isnothing(__ovr_tau_motor__initial) || (__initial_conditions[tau_motor] = __ovr_tau_motor__initial)
   __ovr_tau_motor__guess = pop!(__overrides, "tau_motor.guess", nothing)
@@ -129,8 +113,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Guesses
   isnothing(__ovr_omega__guess) || (__guesses[omega] = __ovr_omega__guess)
-  isnothing(__ovr_tau_demand__guess) || (__guesses[tau_demand] = __ovr_tau_demand__guess)
-  isnothing(__ovr_tau_limit__guess) || (__guesses[tau_limit] = __ovr_tau_limit__guess)
   isnothing(__ovr_tau_motor__guess) || (__guesses[tau_motor] = __ovr_tau_motor__guess)
   isnothing(__ovr_tau_wheel__guess) || (__guesses[tau_wheel] = __ovr_tau_wheel__guess)
   isnothing(__ovr_power__guess) || (__guesses[power] = __ovr_power__guess)
@@ -142,10 +124,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Equations
   push!(__eqs, omega ~ ModelingToolkit.D_nounits(spline.phi))
-  push!(__eqs, tau_demand ~ demand * max_torque * gear_ratio)
-  push!(__eqs, tau_limit ~ max_power / max(abs(omega), omega_min))
-  push!(__eqs, tau_wheel ~ min(tau_demand, tau_limit))
-  push!(__eqs, tau_motor ~ tau_wheel / gear_ratio)
+  push!(__eqs, full_demand_power ~ max_wheel_torque * abs(omega))
+  push!(__eqs, tau_wheel ~ demand * max_wheel_torque)
+  push!(__eqs, tau_motor ~ demand * max_torque)
   push!(__eqs, power ~ tau_wheel * omega)
   push!(__eqs, spline.tau ~ -tau_wheel)
   push!(__eqs, wheel_center.f ~ [0, 0, 0])
