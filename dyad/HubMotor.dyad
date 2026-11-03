@@ -3,24 +3,22 @@ component HubMotor
   Outboard motor: torque source with its reaction carried by the structure it
   is bolted to.
 
-  Takes a 0 to 1 demand. Below base speed, `max_power / (max_torque * gear_ratio)`,
-  full demand gives `max_torque`. Above it the available torque is
-  `max_power / omega`.
+  Takes a 0 to 1 torque demand and reports the mechanical power magnitude
+  at full demand and the current wheel speed to vehicle control.
   """
 
   demand = RealInput(units = "1") {^demand}
+  full_demand_power = RealOutput(units = "W") {^full_demand_power}
 
   wheel_center = Dyad.Frame3D() {^wheel_center}
   spline = Dyad.Spline() {^spline}
 
   parameter gear_ratio::Real = VehicleComponents.params.drivetrain.gear_ratio
   parameter max_torque::Torque = VehicleComponents.params.drivetrain.motor_max_torque
-  parameter max_power::Power = VehicleComponents.params.drivetrain.motor_max_power
-  parameter omega_min::AngularVelocity = 5.0
+
+  final parameter max_wheel_torque::Torque = max_torque * gear_ratio
 
   variable omega::AngularVelocity
-  variable tau_demand::Torque
-  variable tau_limit::Torque
   variable tau_motor::Torque
   variable tau_wheel::Torque
   variable power::Power
@@ -28,10 +26,9 @@ component HubMotor
 relations
 
   omega = der(spline.phi)
-  tau_demand = demand * max_torque * gear_ratio
-  tau_limit = max_power / max(abs(omega), omega_min)
-  tau_wheel = min(tau_demand, tau_limit)
-  tau_motor = tau_wheel / gear_ratio
+  full_demand_power = max_wheel_torque * abs(omega)
+  tau_wheel = demand * max_wheel_torque
+  tau_motor = demand * max_torque
   power = tau_wheel * omega
 
   spline.tau = -tau_wheel
@@ -41,6 +38,7 @@ relations
 metadata {
   "_links": {
     "demand": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
+    "full_demand_power": {"Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 20, "y2": 120}}}},
     "wheel_center": {
       "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 440, "y2": 540}}}
     },

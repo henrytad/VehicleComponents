@@ -4,6 +4,9 @@ test component FullVehicleTestStraightLine
   
   The sprung mass is connected to the world by a 6 joint stack, with yaw locked
   at zero so the car can only travel straight.
+
+  The regression overrides the shared power limit to 40 kW so its two-second
+  acceleration exercises power limiting without a longer simulation.
   """
 
   world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
@@ -95,10 +98,10 @@ metadata {
       "accelerate_and_brake": {
         "stop": 5,
         "solver": "Rodas5P",
-        "params": {"drive_start_time": 1, "drive_duration": 2, "brake_start_time": 3, "brake_level": 1},
-        "atol": {"longitudinal_joint.v": 0.01, "vehicle.rear_suspension.inboard.heave_strut.s": 0.0001},
+        "params": {"drive_start_time": 1, "drive_duration": 2, "brake_start_time": 3, "brake_level": 1, "vehicle.control.total_max_power": 40000},
+        "atol": {"longitudinal_joint.v": 0.01, "vehicle.rear_suspension.inboard.heave_strut.s": 0.0001, "vehicle.control.power_scale": 0.00001},
         "expect": {
-          "signals": ["longitudinal_joint.v", "vehicle.rear_suspension.inboard.heave_strut.s"]
+          "signals": ["longitudinal_joint.v", "vehicle.rear_suspension.inboard.heave_strut.s", "vehicle.control.power_scale"]
         }
       }
     },

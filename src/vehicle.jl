@@ -124,12 +124,11 @@ end
 end
 
 """
-One hub motor.
+Hub motor gearing and torque limit.
 """
 @kwdef struct Drivetrain
     gear_ratio::Float64
     motor_max_torque::Float64
-    motor_max_power::Float64
 end
 
 """
@@ -363,6 +362,7 @@ end
 @kwdef struct Vehicle
     name::String
     units::String
+    total_max_power::Float64  # Shared mechanical power limit across all driven wheels (W).
     suspension::Suspension
     road::Road
     dampers::Dict{String,DamperTable}
@@ -391,7 +391,6 @@ function wheelbase(vehicle::Vehicle)
     return front.geometry.linkages.left.wheel_center[1] - rear.geometry.linkages.left.wheel_center[1]
 end
 
-# include("vehicles/MR25.jl")
 # include("vehicles/MR26.jl")
 # include("vehicles/MR27.jl")
 include("vehicles/TestVehicle.jl")

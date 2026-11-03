@@ -6,6 +6,7 @@
 VEHICLE = Vehicle(
     name="TestVehicle",
     units="SI",
+    total_max_power=80000.0,
     suspension=Suspension(
         front=Axle(
             geometry=Geometry(
@@ -488,7 +489,7 @@ VEHICLE = Vehicle(
         MBELT=5.4,
     ),
     wheels=Wheels(rim_mass=3.0, rim_inertia=0.05),
-    drivetrain=Drivetrain(gear_ratio=14.0, motor_max_torque=21.0, motor_max_power=20000.0),
+    drivetrain=Drivetrain(gear_ratio=14.0, motor_max_torque=21.0),
     brakes=Brakes(max_torque=250.0, bias=0.6),
     body=Body(
         mass=250.0,

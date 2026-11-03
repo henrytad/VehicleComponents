@@ -5,7 +5,13 @@
 
 
 @doc Markdown.doc"""
-   VehicleControl(; name, __overrides)
+   VehicleControl(; name, total_max_power, __overrides)
+
+## Parameters:
+
+| Name         | Description                         | Units  |   Default value |
+| ------------ | ----------------------------------- | ------ | --------------- |
+| `total_max_power`         |                          | W  |   VehicleComp...l_max_power |
 
 ## Connectors
 
@@ -15,13 +21,24 @@
  * `slip_fr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `slip_rl` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `slip_rr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `full_demand_power_fl` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `full_demand_power_fr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `full_demand_power_rl` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `full_demand_power_rr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
  * `demand_fl` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
  * `demand_fr` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
  * `demand_rl` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
  * `demand_rr` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
  * `brake_demand` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+
+## Variables
+
+| Name         | Description                         | Units  | 
+| ------------ | ----------------------------------- | ------ |
+| `requested_power`         |                          | W  |
+| `power_scale`         |                          | --  |
 """
-@component function VehicleControl(; name = nothing, __overrides = Dict{String, Any}())
+@component function VehicleControl(; name = nothing, var"total_max_power"=VehicleComponents.params.total_max_power, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -39,6 +56,9 @@
   __eqs = Equation[]
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
 
+  ### Keyword argument overrides
+  haskey(__overrides, "total_max_power") && (total_max_power = pop!(__overrides, "total_max_power"))
+
   ### Structural Parameters (functions)
 
   ### Structural Parameters (Final)
@@ -52,6 +72,9 @@
   ### Deferred assignment (default values that depend on final parameters)
 
   ### Symbolic Parameters
+  __local__total_max_power = total_max_power
+  append!(__params, @parameters (total_max_power::Real))
+  __dyad_seed_parameter!(__initial_conditions, __bindings, total_max_power, __local__total_max_power)
 
   ### Final Parameters (assignments)
 
@@ -62,6 +85,10 @@
   append!(__vars, @variables (slip_fr(t)::Real), [input = true])
   append!(__vars, @variables (slip_rl(t)::Real), [input = true])
   append!(__vars, @variables (slip_rr(t)::Real), [input = true])
+  append!(__vars, @variables (full_demand_power_fl(t)::Real), [input = true])
+  append!(__vars, @variables (full_demand_power_fr(t)::Real), [input = true])
+  append!(__vars, @variables (full_demand_power_rl(t)::Real), [input = true])
+  append!(__vars, @variables (full_demand_power_rr(t)::Real), [input = true])
   append!(__vars, @variables (demand_fl(t)::Real), [output = true])
   append!(__vars, @variables (demand_fr(t)::Real), [output = true])
   append!(__vars, @variables (demand_rl(t)::Real), [output = true])
@@ -69,8 +96,16 @@
   append!(__vars, @variables (brake_demand(t)::Real), [output = true])
 
   ### Variables (declarations)
+  append!(__vars, @variables (requested_power(t)::Real))
+  append!(__vars, @variables (power_scale(t)::Real))
 
   ### Variables (assignments)
+  __ovr_requested_power = pop!(__overrides, "requested_power", nothing); isnothing(__ovr_requested_power) || push!(__eqs, requested_power ~ __ovr_requested_power)
+  __ovr_requested_power__initial = pop!(__overrides, "requested_power.initial", nothing); isnothing(__ovr_requested_power__initial) || (__initial_conditions[requested_power] = __ovr_requested_power__initial)
+  __ovr_requested_power__guess = pop!(__overrides, "requested_power.guess", nothing)
+  __ovr_power_scale = pop!(__overrides, "power_scale", nothing); isnothing(__ovr_power_scale) || push!(__eqs, power_scale ~ __ovr_power_scale)
+  __ovr_power_scale__initial = pop!(__overrides, "power_scale.initial", nothing); isnothing(__ovr_power_scale__initial) || (__initial_conditions[power_scale] = __ovr_power_scale__initial)
+  __ovr_power_scale__guess = pop!(__overrides, "power_scale.guess", nothing)
 
   ### Constants
   __constants = Any[]
@@ -87,6 +122,8 @@
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
 
   ### Guesses
+  isnothing(__ovr_requested_power__guess) || (__guesses[requested_power] = __ovr_requested_power__guess)
+  isnothing(__ovr_power_scale__guess) || (__guesses[power_scale] = __ovr_power_scale__guess)
 
   ### Initialization Equations
 
@@ -94,10 +131,12 @@
   __assertions = []
 
   ### Equations
-  push!(__eqs, connect(tc.demand_fl, demand_fl))
-  push!(__eqs, connect(tc.demand_fr, demand_fr))
-  push!(__eqs, connect(tc.demand_rr, demand_rr))
-  push!(__eqs, connect(tc.demand_rl, demand_rl))
+  push!(__eqs, requested_power ~ tc.demand_fl * full_demand_power_fl + tc.demand_fr * full_demand_power_fr + tc.demand_rl * full_demand_power_rl + tc.demand_rr * full_demand_power_rr)
+  push!(__eqs, power_scale ~ ifelse(requested_power > total_max_power, total_max_power / requested_power, 1))
+  push!(__eqs, demand_fl ~ tc.demand_fl * power_scale)
+  push!(__eqs, demand_fr ~ tc.demand_fr * power_scale)
+  push!(__eqs, demand_rl ~ tc.demand_rl * power_scale)
+  push!(__eqs, demand_rr ~ tc.demand_rr * power_scale)
   push!(__eqs, connect(throttle, tc.throttle))
   push!(__eqs, connect(brake, abs.brake))
   push!(__eqs, connect(slip_fl, tc.slip_fl))

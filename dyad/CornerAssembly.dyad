@@ -16,6 +16,7 @@ component CornerAssembly
   brake_demand = RealInput(units = "1") {^brake_demand}
 
   slip = RealOutput() {^slip}
+  full_demand_power = RealOutput(units = "W") {^full_demand_power}
 
   wheel_center = Dyad.Frame3D() {^wheel_center}
   wheel_assembly = VehicleComponents.WheelAssembly(is_left = is_left) {^wheel_assembly}
@@ -39,15 +40,16 @@ component CornerAssembly
 
 relations
 
-  connect(wheel_center, wheel_assembly.wheel_center) {^id9}
-  connect(wheel_center, upright.frame_a) {^id10}
-  connect(motor.wheel_center, wheel_center) {^id11}
-  connect(wheel_assembly.spline, motor.spline) {^id12}
-  connect(motor_demand, motor.demand) {^id13}
-  connect(wheel_assembly.slip, slip) {^id14}
-  connect(wheel_assembly.spline, brake.spline) {^id15}
-  connect(brake_demand, brake.brake_demand) {^id16}
-  connect(brake.wheel_center, wheel_center) {^id17}
+  connect(wheel_center, wheel_assembly.wheel_center) {^id10}
+  connect(wheel_center, upright.frame_a) {^id11}
+  connect(motor.wheel_center, wheel_center) {^id12}
+  connect(wheel_assembly.spline, motor.spline) {^id13}
+  connect(motor_demand, motor.demand) {^id14}
+  connect(motor.full_demand_power, full_demand_power) {^id15}
+  connect(wheel_assembly.slip, slip) {^id16}
+  connect(wheel_assembly.spline, brake.spline) {^id17}
+  connect(brake_demand, brake.brake_demand) {^id18}
+  connect(brake.wheel_center, wheel_center) {^id19}
 
 metadata {
   "_links": {
@@ -57,6 +59,9 @@ metadata {
     },
     "slip": {
       "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 20, "y2": 120}}}
+    },
+    "full_demand_power": {
+      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 190, "y2": 290}}}
     },
     "wheel_center": {
       "Dyad": {"placement": {"diagram": {"x1": -40, "x2": 60, "y1": 450, "y2": 550}}}
@@ -73,50 +78,67 @@ metadata {
     "upright": {
       "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 130, "y2": 230}}}
     },
-    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id10": {
+    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id11": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 170, "y": 500}, {"x": 170, "y": 180}], "E": 2}],
         "path": {}
       }
     },
-    "id11": {
+    "id12": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 170, "y": 359}, {"x": 170, "y": 500}], "E": 2}],
         "path": {}
       }
     },
-    "id12": {
+    "id13": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 590, "y": 500}, {"x": 590, "y": 360}], "E": 2}],
         "path": {}
       }
     },
-    "id13": {
+    "id14": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 250, "y": 70}, {"x": 250, "y": 317}], "E": 2}],
         "path": {}
       }
     },
-    "id14": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 760, "y": 457}, {"x": 760, "y": 70}], "E": 2}],
-        "path": {}
-      }
-    },
     "id15": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 590, "y": 500}, {"x": 590, "y": 670}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {"x": 590, "y": 317},
+              {"x": 590, "y": 250},
+              {"x": 960, "y": 250},
+              {"x": 960, "y": 240}
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
     "id16": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 210, "y": 240}, {"x": 210, "y": 627}], "E": 2}],
+        "edges": [{"S": 1, "M": [{"x": 760, "y": 457}, {"x": 760, "y": 70}], "E": 2}],
         "path": {}
       }
     },
     "id17": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 590, "y": 500}, {"x": 590, "y": 670}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id18": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 210, "y": 240}, {"x": 210, "y": 627}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id19": {
       "Dyad": {
         "edges": [{"S": 1, "M": [{"x": 170, "y": 669}, {"x": 170, "y": 500}], "E": 2}],
         "path": {}
