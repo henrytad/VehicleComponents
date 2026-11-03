@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   CornerAssembly(; name, is_left, is_front, upright_mass, upright_I_11, upright_I_22, upright_I_33, __overrides)
+   CornerAssembly(; name, is_left, is_front, upright_mass, __overrides)
 
 ## Parameters:
 
@@ -14,9 +14,6 @@
 | `is_left`         |                          | --  |    |
 | `is_front`         |                          | --  |    |
 | `upright_mass`         |                          | kg  |    |
-| `upright_I_11`         |                          | kg.m2  |    |
-| `upright_I_22`         |                          | kg.m2  |    |
-| `upright_I_33`         |                          | kg.m2  |    |
 
 ## Connectors
 
@@ -26,7 +23,7 @@
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function CornerAssembly(; name = nothing, var"is_left"=nothing, var"is_front"=nothing, var"upright_mass"=nothing, var"upright_I_11"=nothing, var"upright_I_22"=nothing, var"upright_I_33"=nothing, __overrides = Dict{String, Any}())
+@component function CornerAssembly(; name = nothing, var"is_left"=nothing, var"is_front"=nothing, var"upright_mass"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -48,9 +45,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   haskey(__overrides, "is_left") && (is_left = pop!(__overrides, "is_left"))
   haskey(__overrides, "is_front") && (is_front = pop!(__overrides, "is_front"))
   haskey(__overrides, "upright_mass") && (upright_mass = pop!(__overrides, "upright_mass"))
-  haskey(__overrides, "upright_I_11") && (upright_I_11 = pop!(__overrides, "upright_I_11"))
-  haskey(__overrides, "upright_I_22") && (upright_I_22 = pop!(__overrides, "upright_I_22"))
-  haskey(__overrides, "upright_I_33") && (upright_I_33 = pop!(__overrides, "upright_I_33"))
 
   ### Structural Parameters (functions)
 
@@ -68,15 +62,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__upright_mass = upright_mass
   append!(__params, @parameters (upright_mass::Real), [bounds = (0, Inf)])
   __dyad_seed_parameter!(__initial_conditions, __bindings, upright_mass, __local__upright_mass)
-  __local__upright_I_11 = upright_I_11
-  append!(__params, @parameters (upright_I_11::Real))
-  __dyad_seed_parameter!(__initial_conditions, __bindings, upright_I_11, __local__upright_I_11)
-  __local__upright_I_22 = upright_I_22
-  append!(__params, @parameters (upright_I_22::Real))
-  __dyad_seed_parameter!(__initial_conditions, __bindings, upright_I_22, __local__upright_I_22)
-  __local__upright_I_33 = upright_I_33
-  append!(__params, @parameters (upright_I_33::Real))
-  __dyad_seed_parameter!(__initial_conditions, __bindings, upright_I_33, __local__upright_I_33)
 
   ### Final Parameters (assignments)
 
@@ -105,7 +90,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__systems, @named brake = VehicleComponents.Brake(; is_front=is_front, __overrides = brake_overrides))
   # Subcomponent upright of type MultibodyComponents.Body
   upright_overrides = __pop_subcomponent_overrides!(__overrides, "upright")
-  push!(__systems, @named upright = MultibodyComponents.Body(; m=upright_mass, r_cm=[Float64(0), Float64(0), Float64(0)], I_11=upright_I_11, I_22=upright_I_22, I_33=upright_I_33, cylinder_radius=Float64(0), __overrides = upright_overrides))
+  push!(__systems, @named upright = MultibodyComponents.Body(; m=upright_mass, r_cm=[Float64(0), Float64(0), Float64(0)], I_11=Float64(0), I_22=Float64(0), I_33=Float64(0), cylinder_radius=Float64(0), __overrides = upright_overrides))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))

@@ -95,6 +95,22 @@ relations
   connect(speed_ref.y, speed_pid.u_s) {^id26}
 
 metadata {
+  "Dyad": {
+    "tests": {
+      "loaded_turn": {
+        "stop": 12,
+        "solver": "Rodas5P",
+        "params": {"steer_angle": 0.25, "steer_start_time": 1, "ramp_start_time": 2, "ramp_duration": 8, "v_max": 20},
+        "atol": {
+          "yaw_joint.w": 0.001,
+          "vehicle.rear_suspension.inboard.rocker_right.revolute.angle": 0.001
+        },
+        "expect": {
+          "signals": ["yaw_joint.w", "vehicle.rear_suspension.inboard.rocker_right.revolute.angle"]
+        }
+      }
+    }
+  },
   "_links": {
     "world": {
       "Dyad": {"placement": {"diagram": {"x1": 10, "x2": 110, "y1": 520, "y2": 620}}}

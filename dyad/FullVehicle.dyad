@@ -29,10 +29,7 @@ component FullVehicle
     ),
     is_left = true,
     is_front = true,
-    upright_mass = VehicleComponents.params.suspension.front.geometry.linkages.left.upright.mass,
-    upright_I_11 = VehicleComponents.params.suspension.front.geometry.linkages.left.upright.i_11,
-    upright_I_22 = VehicleComponents.params.suspension.front.geometry.linkages.left.upright.i_22,
-    upright_I_33 = VehicleComponents.params.suspension.front.geometry.linkages.left.upright.i_33
+    upright_mass = VehicleComponents.params.suspension.front.geometry.linkages.left.upright.mass
   ) {^corner_fl}
   corner_fr = VehicleComponents.CornerAssembly(
     brake(
@@ -41,10 +38,7 @@ component FullVehicle
     ),
     is_left = false,
     is_front = true,
-    upright_mass = VehicleComponents.params.suspension.front.geometry.linkages.right.upright.mass,
-    upright_I_11 = VehicleComponents.params.suspension.front.geometry.linkages.right.upright.i_11,
-    upright_I_22 = VehicleComponents.params.suspension.front.geometry.linkages.right.upright.i_22,
-    upright_I_33 = VehicleComponents.params.suspension.front.geometry.linkages.right.upright.i_33
+    upright_mass = VehicleComponents.params.suspension.front.geometry.linkages.right.upright.mass
   ) {^corner_fr}
   corner_rl = VehicleComponents.CornerAssembly(
     brake(
@@ -53,10 +47,7 @@ component FullVehicle
     ),
     is_left = true,
     is_front = false,
-    upright_mass = VehicleComponents.params.suspension.rear.geometry.linkages.left.upright.mass,
-    upright_I_11 = VehicleComponents.params.suspension.rear.geometry.linkages.left.upright.i_11,
-    upright_I_22 = VehicleComponents.params.suspension.rear.geometry.linkages.left.upright.i_22,
-    upright_I_33 = VehicleComponents.params.suspension.rear.geometry.linkages.left.upright.i_33
+    upright_mass = VehicleComponents.params.suspension.rear.geometry.linkages.left.upright.mass
   ) {^corner_rl}
   corner_rr = VehicleComponents.CornerAssembly(
     brake(
@@ -65,10 +56,7 @@ component FullVehicle
     ),
     is_left = false,
     is_front = false,
-    upright_mass = VehicleComponents.params.suspension.rear.geometry.linkages.right.upright.mass,
-    upright_I_11 = VehicleComponents.params.suspension.rear.geometry.linkages.right.upright.i_11,
-    upright_I_22 = VehicleComponents.params.suspension.rear.geometry.linkages.right.upright.i_22,
-    upright_I_33 = VehicleComponents.params.suspension.rear.geometry.linkages.right.upright.i_33
+    upright_mass = VehicleComponents.params.suspension.rear.geometry.linkages.right.upright.mass
   ) {^corner_rr}
   front_suspension = VehicleComponents.Suspension(
     wheel_center_left = VehicleComponents.params.suspension.front.geometry.linkages.left.wheel_center,

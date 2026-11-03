@@ -20,9 +20,6 @@ end
 "Rigid-body properties of an upright."
 @kwdef struct Upright
     mass::Float64
-    i_11::Float64
-    i_22::Float64
-    i_33::Float64
 end
 
 "One corner's linkage hardpoints, in chassis coordinates."
@@ -395,6 +392,8 @@ function wheelbase(vehicle::Vehicle)
 end
 
 # include("vehicles/MR25.jl")
+# include("vehicles/MR26.jl")
+# include("vehicles/MR27.jl")
 include("vehicles/TestVehicle.jl")
 
 end # module Data

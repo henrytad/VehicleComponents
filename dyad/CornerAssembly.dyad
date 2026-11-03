@@ -26,9 +26,9 @@ component CornerAssembly
   upright = MultibodyComponents.Body(
     m = upright_mass,
     r_cm = [0, 0, 0],
-    I_11 = upright_I_11,
-    I_22 = upright_I_22,
-    I_33 = upright_I_33,
+    I_11 = 0,
+    I_22 = 0,
+    I_33 = 0,
     cylinder_radius = 0
   ) {^upright}
 
@@ -36,9 +36,6 @@ component CornerAssembly
   structural parameter is_front::Boolean
 
   parameter upright_mass::Mass
-  parameter upright_I_11::Inertia
-  parameter upright_I_22::Inertia
-  parameter upright_I_33::Inertia
 
 relations
 
