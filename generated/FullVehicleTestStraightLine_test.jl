@@ -4,4 +4,23 @@
 ### Instead, update the Dyad source code and regenerate this file
 
 
-
+__dyad_run_test_case!(
+  VehicleComponents.FullVehicleTestStraightLine,
+  "accelerate_and_brake for VehicleComponents.FullVehicleTestStraightLine";
+  case_name="accelerate_and_brake",
+  component_stem="FullVehicleTestStraightLine",
+  module_path=String[],
+  start=0e+0,
+  stop=5e+0,
+  abstol=1e-6,
+  reltol=1e-6,
+  solver=ODEAlg.Rodas5P(),
+  params=Dict{String, Any}("drive_start_time" => 1, "drive_duration" => 2, "brake_start_time" => 3, "brake_level" => 1),
+  initial_conditions=Tuple[],
+  expected_initial=Tuple[],
+  expected_final=Tuple[],
+  signals=Tuple[
+    (m -> m.longitudinal_joint.v, "longitudinal_joint.v", 0.01, 1e-5),
+    (m -> m.vehicle.rear_suspension.inboard.heave_strut.s, "vehicle.rear_suspension.inboard.heave_strut.s", 0.0001, 1e-5),
+  ],
+)

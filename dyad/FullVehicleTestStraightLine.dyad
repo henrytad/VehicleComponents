@@ -91,7 +91,17 @@ relations
 metadata {
   "Dyad": {
     "experiments": {},
-    "tests": {},
+    "tests": {
+      "accelerate_and_brake": {
+        "stop": 5,
+        "solver": "Rodas5P",
+        "params": {"drive_start_time": 1, "drive_duration": 2, "brake_start_time": 3, "brake_level": 1},
+        "atol": {"longitudinal_joint.v": 0.01, "vehicle.rear_suspension.inboard.heave_strut.s": 0.0001},
+        "expect": {
+          "signals": ["longitudinal_joint.v", "vehicle.rear_suspension.inboard.heave_strut.s"]
+        }
+      }
+    },
     "labels": [
       {
         "label": "$(instance)",

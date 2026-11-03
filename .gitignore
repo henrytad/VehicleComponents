@@ -19,3 +19,5 @@
 
 # The real car data stays hidden
 /src/vehicles/MR25.jl
+/src/vehicles/MR26.jl
+/src/vehicles/MR27.jl

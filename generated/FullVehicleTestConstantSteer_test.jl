@@ -4,4 +4,23 @@
 ### Instead, update the Dyad source code and regenerate this file
 
 
-
+__dyad_run_test_case!(
+  VehicleComponents.FullVehicleTestConstantSteer,
+  "loaded_turn for VehicleComponents.FullVehicleTestConstantSteer";
+  case_name="loaded_turn",
+  component_stem="FullVehicleTestConstantSteer",
+  module_path=String[],
+  start=0e+0,
+  stop=1.2e+1,
+  abstol=1e-6,
+  reltol=1e-6,
+  solver=ODEAlg.Rodas5P(),
+  params=Dict{String, Any}("steer_angle" => 0.25, "steer_start_time" => 1, "ramp_start_time" => 2, "ramp_duration" => 8, "v_max" => 20),
+  initial_conditions=Tuple[],
+  expected_initial=Tuple[],
+  expected_final=Tuple[],
+  signals=Tuple[
+    (m -> m.yaw_joint.w, "yaw_joint.w", 0.001, 1e-5),
+    (m -> m.vehicle.rear_suspension.inboard.rocker_right.revolute.angle, "vehicle.rear_suspension.inboard.rocker_right.revolute.angle", 0.001, 1e-5),
+  ],
+)
