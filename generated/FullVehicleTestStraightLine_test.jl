@@ -22,6 +22,6 @@ __dyad_run_test_case!(
   signals=Tuple[
     (m -> m.longitudinal_joint.v, "longitudinal_joint.v", 0.01, 1e-5),
     (m -> m.vehicle.rear_suspension.inboard.heave_strut.s, "vehicle.rear_suspension.inboard.heave_strut.s", 0.0001, 1e-5),
-    (m -> m.vehicle.control.power_scale, "vehicle.control.power_scale", 1e-5, 1e-5),
+    (m -> m.vehicle.control.power_scale, "vehicle.control.power_scale", 0.00001, 1e-5),
   ],
 )

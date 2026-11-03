@@ -392,7 +392,7 @@ function wheelbase(vehicle::Vehicle)
 end
 
 # include("vehicles/MR26.jl")
-include("vehicles/MR27.jl")
-# include("vehicles/TestVehicle.jl")
+# include("vehicles/MR27.jl")
+include("vehicles/TestVehicle.jl")
 
 end # module Data
