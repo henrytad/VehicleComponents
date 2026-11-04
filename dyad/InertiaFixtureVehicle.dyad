@@ -1,0 +1,25 @@
+component InertiaFixtureVehicle
+  """Full vehicle with the four lower control arm axes exposed as attachment points."""
+  extends VehicleComponents.FullVehicle
+
+  restraint_fl = Dyad.Spline() {^restraint_fl}
+  restraint_fr = Dyad.Spline() {^restraint_fr}
+  restraint_rl = Dyad.Spline() {^restraint_rl}
+  restraint_rr = Dyad.Spline() {^restraint_rr}
+
+relations
+
+  connect(restraint_fl, front_suspension.linkage_left.lca_rev.axis)
+  connect(restraint_fr, front_suspension.linkage_right.lca_rev.axis)
+  connect(restraint_rl, rear_suspension.linkage_left.lca_rev.axis)
+  connect(restraint_rr, rear_suspension.linkage_right.lca_rev.axis)
+
+metadata {
+  "_links": {
+    "restraint_fl": {"Dyad": {"placement": {"icon": {"x1": 950, "x2": 1050, "y1": 100, "y2": 200}}}},
+    "restraint_fr": {"Dyad": {"placement": {"icon": {"x1": 950, "x2": 1050, "y1": 250, "y2": 350}}}},
+    "restraint_rl": {"Dyad": {"placement": {"icon": {"x1": 950, "x2": 1050, "y1": 600, "y2": 700}}}},
+    "restraint_rr": {"Dyad": {"placement": {"icon": {"x1": 950, "x2": 1050, "y1": 800, "y2": 900}}}}
+  }
+}
+end

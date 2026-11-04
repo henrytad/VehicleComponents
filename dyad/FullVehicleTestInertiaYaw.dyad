@@ -1,0 +1,214 @@
+test component FullVehicleTestInertiaYaw
+  """
+  Inverted pendulum method for determining yaw inertia.
+  """
+  world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
+  pivot_offset = MultibodyComponents.FixedTranslation(r = pivot_position, render = false) {^pivot_offset}
+  roll_joint = MultibodyComponents.Revolute(
+    n = [1, 0, 0],
+    n_nonzero = [true, false, false],
+    render = false
+  ) {^roll_joint}
+  pitch_joint = MultibodyComponents.Revolute(
+    n = [0, 1, 0],
+    n_nonzero = [false, true, false],
+    render = false
+  ) {^pitch_joint}
+  heave_joint = MultibodyComponents.Prismatic(n = [0, 0, 1], render = false) {^heave_joint}
+  yaw_joint = MultibodyComponents.Revolute(
+    n = [0, 0, 1],
+    n_nonzero = [false, false, true],
+    render = false
+  ) {^yaw_joint}
+  rig_offset = MultibodyComponents.FixedTranslation(r = -pivot_position, render = false) {^rig_offset}
+  yaw_spring = RotationalComponents.Components.Spring(c = yaw_stiffness, phi_rel0 = 0.0) {^yaw_spring}
+  throttle = BlockComponents.Sources.Constant(k = 0.0) {^throttle}
+  brake = BlockComponents.Sources.Constant(k = 0.0) {^brake}
+  steer = BlockComponents.Sources.Constant(k = 0.0) {^steer}
+
+  # Frictionless contact using scaling factors. LMUX removes Fx
+  # LKY, LVY, LKYC and LVYKA remove Fy. LRES and LKZC remove residual Mz.
+  # LKX also removes longitudinal slip stiffness. Keep LMUY nonzero because
+  # the aligning-moment equations divide by it.
+  vehicle = VehicleComponents.FullVehicle(
+    corner_fl(
+      wheel_assembly(
+        tire(
+          LMUX = 0, LKX = 0, LKY = 0, LVY = 0,
+          LKYC = 0, LVYKA = 0, LRES = 0, LKZC = 0
+        )
+      )
+    ),
+    corner_fr(
+      wheel_assembly(
+        tire(
+          LMUX = 0, LKX = 0, LKY = 0, LVY = 0,
+          LKYC = 0, LVYKA = 0, LRES = 0, LKZC = 0
+        )
+      )
+    ),
+    corner_rl(
+      wheel_assembly(
+        tire(
+          LMUX = 0, LKX = 0, LKY = 0, LVY = 0,
+          LKYC = 0, LVYKA = 0, LRES = 0, LKZC = 0
+        )
+      )
+    ),
+    corner_rr(
+      wheel_assembly(
+        tire(
+          LMUX = 0, LKX = 0, LKY = 0, LVY = 0,
+          LKYC = 0, LVYKA = 0, LRES = 0, LKZC = 0
+        )
+      )
+    ),
+    aero(CdA = 0.0, ClA = 0.0)
+  ) {^vehicle}
+
+  parameter yaw_stiffness::RotationalSpringConstant = 200.0
+  parameter initial_yaw::Angle = 0.05
+  final parameter pivot_position::Position[3] = VehicleComponents.params.body.cg
+
+relations
+
+  initial yaw_joint.phi = initial_yaw
+  initial yaw_joint.w = 0.0
+  initial heave_joint.s = 0.0
+  initial heave_joint.v = 0.0
+  initial roll_joint.phi = 0.0
+  initial roll_joint.w = 0.0
+  initial pitch_joint.phi = 0.0
+  initial pitch_joint.w = 0.0
+  initial vehicle.front_suspension.linkage_left.lca_rev.phi = 0.0
+  initial vehicle.front_suspension.linkage_left.lca_rev.w = 0.0
+  initial vehicle.front_suspension.linkage_right.lca_rev.phi = 0.0
+  initial vehicle.front_suspension.linkage_right.lca_rev.w = 0.0
+  initial vehicle.rear_suspension.linkage_left.lca_rev.phi = 0.0
+  initial vehicle.rear_suspension.linkage_left.lca_rev.w = 0.0
+  initial vehicle.rear_suspension.linkage_right.lca_rev.phi = 0.0
+  initial vehicle.rear_suspension.linkage_right.lca_rev.w = 0.0
+  initial vehicle.corner_fl.wheel_assembly.spin.phi = 0.0
+  initial vehicle.corner_fr.wheel_assembly.spin.phi = 0.0
+  initial vehicle.corner_rl.wheel_assembly.spin.phi = 0.0
+  initial vehicle.corner_rr.wheel_assembly.spin.phi = 0.0
+  initial vehicle.corner_fl.wheel_assembly.spin.w = 0.0
+  initial vehicle.corner_fr.wheel_assembly.spin.w = 0.0
+  initial vehicle.corner_rl.wheel_assembly.spin.w = 0.0
+  initial vehicle.corner_rr.wheel_assembly.spin.w = 0.0
+  initial vehicle.front_suspension.steering_rack.rack_drive.v = 0.0
+  initial vehicle.rear_suspension.steering_rack.rack_drive.v = 0.0
+
+  connect(throttle.y, vehicle.throttle) {^id13}
+  connect(brake.y, vehicle.brake) {^id14}
+  connect(steer.y, vehicle.steer) {^id15}
+  connect(world.frame_b, pivot_offset.frame_a) {^id16}
+  connect(pivot_offset.frame_b, roll_joint.frame_a) {^id17}
+  connect(roll_joint.frame_b, pitch_joint.frame_a) {^id18}
+  connect(pitch_joint.frame_b, heave_joint.frame_a) {^id19}
+  connect(heave_joint.frame_b, yaw_joint.frame_a) {^id20}
+  connect(yaw_joint.frame_b, rig_offset.frame_a) {^id21}
+  connect(rig_offset.frame_b, vehicle.rig) {^id22}
+  connect(yaw_joint.support, yaw_spring.spline_a) {^id23}
+  connect(yaw_joint.axis, yaw_spring.spline_b) {^id24}
+
+metadata {
+  "Dyad": {
+    "tests": {
+      "yaw_release": {
+        "stop": 2.8,
+        "solver": "Rodas5P",
+        "atol": {"yaw_joint.phi": 0.001, "yaw_joint.w": 0.001},
+        "expect": {
+          "signals": ["yaw_joint.phi", "yaw_joint.w"]
+        }
+      }
+    }
+  },
+  "_links": {
+    "world": {"Dyad": {"placement": {"diagram": {"x1": 10, "x2": 110, "y1": 10, "y2": 110}}}},
+    "pivot_offset": {
+      "Dyad": {"placement": {"diagram": {"x1": 140, "x2": 240, "y1": 10, "y2": 110}}}
+    },
+    "roll_joint": {
+      "Dyad": {"placement": {"diagram": {"x1": 260, "x2": 360, "y1": 10, "y2": 110}}}
+    },
+    "pitch_joint": {
+      "Dyad": {"placement": {"diagram": {"x1": 400, "x2": 500, "y1": 10, "y2": 110}}}
+    },
+    "heave_joint": {
+      "Dyad": {"placement": {"diagram": {"x1": 530, "x2": 630, "y1": 10, "y2": 110}}}
+    },
+    "yaw_joint": {
+      "Dyad": {"placement": {"diagram": {"x1": 660, "x2": 760, "y1": 10, "y2": 110}}}
+    },
+    "rig_offset": {
+      "Dyad": {"placement": {"diagram": {"x1": 780, "x2": 880, "y1": 10, "y2": 110}}}
+    },
+    "yaw_spring": {
+      "Dyad": {"placement": {"diagram": {"x1": 590, "x2": 690, "y1": 220, "y2": 320}}}
+    },
+    "throttle": {
+      "Dyad": {"placement": {"diagram": {"x1": 220, "x2": 320, "y1": 280, "y2": 380}}}
+    },
+    "brake": {
+      "Dyad": {"placement": {"diagram": {"x1": 220, "x2": 320, "y1": 440, "y2": 540}}}
+    },
+    "steer": {
+      "Dyad": {"placement": {"diagram": {"x1": 220, "x2": 320, "y1": 590, "y2": 690}}}
+    },
+    "vehicle": {
+      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 460, "y2": 560}}}
+    },
+    "id13": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 380, "y": 330}, {"x": 380, "y": 467}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id14": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 380, "y": 490}, {"x": 380, "y": 482}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id15": {
+      "Dyad": {
+        "edges": [{"S": 1, "M": [{"x": 380, "y": 640}, {"x": 380, "y": 498}], "E": 2}],
+        "path": {}
+      }
+    },
+    "id16": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id17": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id18": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id19": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id20": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id21": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id22": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [{"x": 910, "y": 60}, {"x": 910, "y": 640}, {"x": 500, "y": 640}],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id23": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [{"x": 675, "y": 180}, {"x": 560, "y": 180}, {"x": 560, "y": 270}],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id24": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 710, "y": 270}], "E": 2}], "path": {}}}
+  }
+}
+end

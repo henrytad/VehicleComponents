@@ -375,6 +375,23 @@ end
     control::Control
 end
 
+function vehicle_mass_and_cg(car::Vehicle; wheel_centers=nothing)
+    front = car.suspension.front.geometry.linkages
+    rear = car.suspension.rear.geometry.linkages
+    corners = (front.left, front.right, rear.left, rear.right)
+    centers = isnothing(wheel_centers) ? map(c -> c.wheel_center, corners) : wheel_centers
+    length(centers) == 4 || throw(ArgumentError("Expected four wheel centers: FL, FR, RL, RR"))
+
+    mass = car.body.mass
+    moment = mass * car.body.cg
+    for (corner, center) in zip(corners, centers)
+        corner_mass = corner.upright.mass + car.wheels.rim_mass + car.tires.MASS
+        moment += corner_mass * center
+        mass += corner_mass
+    end
+    return mass, moment / mass
+end
+
 """
     wheelbase(vehicle)
 
