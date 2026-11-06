@@ -14,11 +14,12 @@
 | `is_front`         |                          | --  |    |
 | `max_torque`         |                          | N.m  |    |
 | `brake_bias`         |                          | --  |    |
-| `omega_eps`         |                          | rad/s  |   0.5 |
+| `omega_eps`         |                          | rad/s  |    |
 
 ## Connectors
 
- * `brake_demand` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `inputs` - ([`BrakeInputs`](@ref))
+ * `outputs` - ([`BrakeOutputs`](@ref))
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
  * `spline` - This connector represents a rotational spline with angle and torque as the potential and flow variables, respectively. ([`Spline`](@ref))
@@ -30,7 +31,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `omega`         |                          | rad/s  |
 | `tau_brake`         |                          | N.m  |
 """
-@component function Brake(; name = nothing, var"is_front"=nothing, var"max_torque"=nothing, var"brake_bias"=nothing, var"omega_eps"=0.5, __overrides = Dict{String, Any}())
+@component function Brake(; name = nothing, var"is_front"=nothing, var"max_torque"=nothing, var"brake_bias"=nothing, var"omega_eps"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -82,7 +83,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings[bias_factor] = ifelse(is_front, 2 * brake_bias, 2 * (1 - brake_bias))
 
   ### Final Path Parameters
-  append!(__vars, @variables (brake_demand(t)::Real), [input = true])
 
   ### Variables (declarations)
   append!(__vars, @variables (omega(t)::Real))
@@ -100,6 +100,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named inputs = VehicleComponents.BrakeInputs())
+  push!(__systems, @named outputs = VehicleComponents.BrakeOutputs())
   push!(__systems, @named wheel_center = __Dyad__Frame3D())
   push!(__systems, @named spline = __Dyad__Spline())
 
@@ -116,8 +118,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
+  push!(__eqs, outputs.tau_brake ~ tau_brake)
   push!(__eqs, omega ~ ModelingToolkit.D_nounits(spline.phi))
-  push!(__eqs, tau_brake ~ max_torque * bias_factor * brake_demand * tanh(omega / omega_eps))
+  push!(__eqs, tau_brake ~ max_torque * bias_factor * inputs.brake_demand * tanh(omega / omega_eps))
   push!(__eqs, spline.tau ~ tau_brake)
   push!(__eqs, wheel_center.f ~ [0, 0, 0])
   push!(__eqs, wheel_center.tau ~ [0, 1, 0] * (-tau_brake))

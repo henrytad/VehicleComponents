@@ -12,156 +12,156 @@
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
 | `is_left`         |                          | --  |    |
-| `width`         |                          | m  |   VehicleComp...tires.WIDTH |
-| `unloaded_radius`         |                          | m  |   VehicleComp...ADED_RADIUS |
-| `vertical_stiffness`         |                          | N/m  |   VehicleComp...L_STIFFNESS |
-| `vertical_damping`         |                          | N.s/m  |   VehicleComp...CAL_DAMPING |
-| `FNOMIN`         |                          | N  |   VehicleComp...ires.FNOMIN |
-| `BREFF`         |                          | --  |   VehicleComp...tires.BREFF |
-| `DREFF`         |                          | --  |   VehicleComp...tires.DREFF |
-| `FREFF`         |                          | --  |   VehicleComp...tires.FREFF |
-| `longitudinal_stiffness`         | Tyre overall longitudinal stiffness. Sets the relaxation length.                         | N/m  |   VehicleComp...L_STIFFNESS |
-| `lateral_stiffness`         | Tyre overall lateral stiffness. Sets the lateral relaxation length.                         | N/m  |   VehicleComp...L_STIFFNESS |
-| `INFLPRES`         |                          | Pa  |   VehicleComp...es.INFLPRES |
-| `NOMPRES`         |                          | Pa  |   VehicleComp...res.NOMPRES |
-| `LONGVL`         |                          | m/s  |   VehicleComp...ires.LONGVL |
-| `PCX1`         | Shape factor Cfx                         | --  |   VehicleComp....tires.PCX1 |
-| `PDX1`         | Longitudinal friction Mux at Fznom                         | --  |   VehicleComp....tires.PDX1 |
-| `PDX2`         | Variation of friction Mux with load                         | --  |   VehicleComp....tires.PDX2 |
-| `PDX3`         | Variation of friction Mux with camber squared                         | --  |   VehicleComp....tires.PDX3 |
-| `PEX1`         | Longitudinal curvature Efx at Fznom                         | --  |   VehicleComp....tires.PEX1 |
-| `PEX2`         | Variation of curvature Efx with load                         | --  |   VehicleComp....tires.PEX2 |
-| `PEX3`         | Variation of curvature Efx with load squared                         | --  |   VehicleComp....tires.PEX3 |
-| `PEX4`         | Factor in curvature Efx while driving                         | --  |   VehicleComp....tires.PEX4 |
-| `PKX1`         | Longitudinal slip stiffness Kfx/Fz at Fznom                         | --  |   VehicleComp....tires.PKX1 |
-| `PKX2`         | Variation of slip stiffness Kfx/Fz with load                         | --  |   VehicleComp....tires.PKX2 |
-| `PKX3`         | Exponent in slip stiffness Kfx/Fz with load                         | --  |   VehicleComp....tires.PKX3 |
-| `PHX1`         | Horizontal shift Shx at Fznom                         | --  |   VehicleComp....tires.PHX1 |
-| `PHX2`         | Variation of shift Shx with load                         | --  |   VehicleComp....tires.PHX2 |
-| `PVX1`         | Vertical shift Svx/Fz at Fznom                         | --  |   VehicleComp....tires.PVX1 |
-| `PVX2`         | Variation of shift Svx/Fz with load                         | --  |   VehicleComp....tires.PVX2 |
-| `PPX1`         | Linear influence of inflation pressure on longitudinal slip stiffness                         | --  |   VehicleComp....tires.PPX1 |
-| `PPX2`         | Quadratic influence of inflation pressure on longitudinal slip stiffness                         | --  |   VehicleComp....tires.PPX2 |
-| `PPX3`         | Linear influence of inflation pressure on peak longitudinal friction                         | --  |   VehicleComp....tires.PPX3 |
-| `PPX4`         | Quadratic influence of inflation pressure on peak longitudinal friction                         | --  |   VehicleComp....tires.PPX4 |
-| `RBX1`         | Slope factor for combined slip Fx reduction                         | --  |   VehicleComp....tires.RBX1 |
-| `RBX2`         | Variation of slope Fx reduction with kappa                         | --  |   VehicleComp....tires.RBX2 |
-| `RBX3`         | Influence of camber on stiffness for Fx combined                         | --  |   VehicleComp....tires.RBX3 |
-| `RCX1`         | Shape factor for combined slip Fx reduction                         | --  |   VehicleComp....tires.RCX1 |
-| `REX1`         | Curvature factor of combined Fx                         | --  |   VehicleComp....tires.REX1 |
-| `REX2`         | Curvature factor of combined Fx with load                         | --  |   VehicleComp....tires.REX2 |
-| `RHX1`         | Shift factor for combined slip Fx reduction                         | --  |   VehicleComp....tires.RHX1 |
-| `PCY1`         | Shape factor Cfy                         | --  |   VehicleComp....tires.PCY1 |
-| `PDY1`         | Lateral friction Muy at Fznom                         | --  |   VehicleComp....tires.PDY1 |
-| `PDY2`         | Variation of friction Muy with load                         | --  |   VehicleComp....tires.PDY2 |
-| `PDY3`         | Variation of friction Muy with camber squared                         | --  |   VehicleComp....tires.PDY3 |
-| `PEY1`         | Lateral curvature Efy at Fznom                         | --  |   VehicleComp....tires.PEY1 |
-| `PEY2`         | Variation of curvature Efy with load                         | --  |   VehicleComp....tires.PEY2 |
-| `PEY3`         | Zero order camber dependency of curvature Efy                         | --  |   VehicleComp....tires.PEY3 |
-| `PEY4`         | Variation of curvature Efy with camber                         | --  |   VehicleComp....tires.PEY4 |
-| `PEY5`         | Variation of curvature Efy with camber squared                         | --  |   VehicleComp....tires.PEY5 |
-| `PKY1`         | Maximum value of stiffness Kfy/Fznom                         | --  |   VehicleComp....tires.PKY1 |
-| `PKY2`         | Load at which Kfy reaches maximum value, over Fznom                         | --  |   VehicleComp....tires.PKY2 |
-| `PKY3`         | Variation of Kfy/Fznom with camber                         | --  |   VehicleComp....tires.PKY3 |
-| `PKY4`         | Peak stiffness variation with camber squared                         | --  |   VehicleComp....tires.PKY4 |
-| `PKY5`         | Fz at which Kfy is maximum, variation with camber squared                         | --  |   VehicleComp....tires.PKY5 |
-| `PKY6`         | Camber stiffness factor                         | --  |   VehicleComp....tires.PKY6 |
-| `PKY7`         | Camber stiffness variation with load                         | --  |   VehicleComp....tires.PKY7 |
-| `PHY1`         | Horizontal shift Shy at Fznom                         | --  |   VehicleComp....tires.PHY1 |
-| `PHY2`         | Variation of shift Shy with load                         | --  |   VehicleComp....tires.PHY2 |
-| `PVY1`         | Vertical shift in Svy/Fz at Fznom                         | --  |   VehicleComp....tires.PVY1 |
-| `PVY2`         | Variation of shift Svy/Fz with load                         | --  |   VehicleComp....tires.PVY2 |
-| `PVY3`         | Variation of shift Svy/Fz with camber                         | --  |   VehicleComp....tires.PVY3 |
-| `PVY4`         | Variation of shift Svy/Fz with camber and load                         | --  |   VehicleComp....tires.PVY4 |
-| `PPY1`         | Linear influence of inflation pressure on cornering stiffness                         | --  |   VehicleComp....tires.PPY1 |
-| `PPY2`         | Quadratic influence of inflation pressure on cornering stiffness                         | --  |   VehicleComp....tires.PPY2 |
-| `PPY3`         | Linear influence of inflation pressure on peak lateral friction                         | --  |   VehicleComp....tires.PPY3 |
-| `PPY4`         | Quadratic influence of inflation pressure on peak lateral friction                         | --  |   VehicleComp....tires.PPY4 |
-| `PPY5`         | Influence of inflation pressure on camber stiffness                         | --  |   VehicleComp....tires.PPY5 |
-| `RBY1`         | Slope factor for combined Fy reduction                         | --  |   VehicleComp....tires.RBY1 |
-| `RBY2`         | Variation of slope Fy reduction with alpha                         | --  |   VehicleComp....tires.RBY2 |
-| `RBY3`         | Shift term for alpha in slope Fy reduction                         | --  |   VehicleComp....tires.RBY3 |
-| `RBY4`         | Influence of camber on stiffness of Fy combined                         | --  |   VehicleComp....tires.RBY4 |
-| `RCY1`         | Shape factor for combined Fy reduction                         | --  |   VehicleComp....tires.RCY1 |
-| `REY1`         | Curvature factor of combined Fy                         | --  |   VehicleComp....tires.REY1 |
-| `REY2`         | Curvature factor of combined Fy with load                         | --  |   VehicleComp....tires.REY2 |
-| `RHY1`         | Shift factor for combined Fy reduction                         | --  |   VehicleComp....tires.RHY1 |
-| `RHY2`         | Shift factor for combined Fy reduction with load                         | --  |   VehicleComp....tires.RHY2 |
-| `RVY1`         | Kappa induced side force Svyk/Muy*Fz at Fznom                         | --  |   VehicleComp....tires.RVY1 |
-| `RVY2`         | Variation of Svyk/Muy*Fz with load                         | --  |   VehicleComp....tires.RVY2 |
-| `RVY3`         | Variation of Svyk/Muy*Fz with camber                         | --  |   VehicleComp....tires.RVY3 |
-| `RVY4`         | Variation of Svyk/Muy*Fz with alpha                         | --  |   VehicleComp....tires.RVY4 |
-| `RVY5`         | Variation of Svyk/Muy*Fz with kappa                         | --  |   VehicleComp....tires.RVY5 |
-| `RVY6`         | Variation of Svyk/Muy*Fz with atan(kappa)                         | --  |   VehicleComp....tires.RVY6 |
-| `QBZ1`         | Trail slope factor for trail Bpt at Fznom                         | --  |   VehicleComp....tires.QBZ1 |
-| `QBZ2`         | Variation of slope Bpt with load                         | --  |   VehicleComp....tires.QBZ2 |
-| `QBZ3`         | Variation of slope Bpt with load squared                         | --  |   VehicleComp....tires.QBZ3 |
-| `QBZ4`         | Variation of slope Bpt with camber. PAC2002 only; 4.E40 has no term for it.                         | --  |   VehicleComp....tires.QBZ4 |
-| `QBZ5`         | Variation of slope Bpt with absolute camber                         | --  |   VehicleComp....tires.QBZ5 |
-| `QBZ6`         | Variation of slope Bpt with camber squared                         | --  |   VehicleComp....tires.QBZ6 |
-| `QBZ9`         | Slope factor Br of residual torque Mzr                         | --  |   VehicleComp....tires.QBZ9 |
-| `QBZ10`         | Slope factor Br of residual torque Mzr                         | --  |   VehicleComp...tires.QBZ10 |
-| `QCZ1`         | Shape factor Cpt for pneumatic trail                         | --  |   VehicleComp....tires.QCZ1 |
-| `QDZ1`         | Peak trail Dpt = Dpt*(Fz/Fznom*R0)                         | --  |   VehicleComp....tires.QDZ1 |
-| `QDZ2`         | Variation of peak Dpt with load                         | --  |   VehicleComp....tires.QDZ2 |
-| `QDZ3`         | Variation of peak Dpt with camber                         | --  |   VehicleComp....tires.QDZ3 |
-| `QDZ4`         | Variation of peak Dpt with camber squared                         | --  |   VehicleComp....tires.QDZ4 |
-| `QDZ6`         | Peak residual torque Dmr = Dmr/(Fz*R0)                         | --  |   VehicleComp....tires.QDZ6 |
-| `QDZ7`         | Variation of peak factor Dmr with load                         | --  |   VehicleComp....tires.QDZ7 |
-| `QDZ8`         | Variation of peak factor Dmr with camber                         | --  |   VehicleComp....tires.QDZ8 |
-| `QDZ9`         | Variation of peak factor Dmr with camber and load                         | --  |   VehicleComp....tires.QDZ9 |
-| `QDZ10`         | Variation of peak factor Dmr with camber squared                         | --  |   VehicleComp...tires.QDZ10 |
-| `QDZ11`         | Variation of peak factor Dmr with camber squared and load                         | --  |   VehicleComp...tires.QDZ11 |
-| `QEZ1`         | Trail curvature Ept at Fznom                         | --  |   VehicleComp....tires.QEZ1 |
-| `QEZ2`         | Variation of curvature Ept with load                         | --  |   VehicleComp....tires.QEZ2 |
-| `QEZ3`         | Variation of curvature Ept with load squared                         | --  |   VehicleComp....tires.QEZ3 |
-| `QEZ4`         | Variation of curvature Ept with sign of alpha-t                         | --  |   VehicleComp....tires.QEZ4 |
-| `QEZ5`         | Variation of Ept with camber and sign of alpha-t                         | --  |   VehicleComp....tires.QEZ5 |
-| `QHZ1`         | Trail horizontal shift Sht at Fznom                         | --  |   VehicleComp....tires.QHZ1 |
-| `QHZ2`         | Variation of shift Sht with load                         | --  |   VehicleComp....tires.QHZ2 |
-| `QHZ3`         | Variation of shift Sht with camber                         | --  |   VehicleComp....tires.QHZ3 |
-| `QHZ4`         | Variation of shift Sht with camber and load                         | --  |   VehicleComp....tires.QHZ4 |
-| `PPZ1`         | Linear influence of inflation pressure on pneumatic trail                         | --  |   VehicleComp....tires.PPZ1 |
-| `PPZ2`         | Influence of inflation pressure on residual aligning torque                         | --  |   VehicleComp....tires.PPZ2 |
-| `SSZ1`         | Nominal value of s/R0: effect of Fx on Mz                         | --  |   VehicleComp....tires.SSZ1 |
-| `SSZ2`         | Variation of distance s/R0 with Fy/Fznom                         | --  |   VehicleComp....tires.SSZ2 |
-| `SSZ3`         | Variation of distance s/R0 with camber                         | --  |   VehicleComp....tires.SSZ3 |
-| `SSZ4`         | Variation of distance s/R0 with load and camber                         | --  |   VehicleComp....tires.SSZ4 |
-| `LFZO`         |                          | --  |   VehicleComp....tires.LFZO |
-| `LCX`         |                          | --  |   VehicleComp...s.tires.LCX |
-| `LMUX`         |                          | --  |   VehicleComp....tires.LMUX |
-| `LEX`         |                          | --  |   VehicleComp...s.tires.LEX |
-| `LKX`         |                          | --  |   VehicleComp...s.tires.LKX |
-| `LHX`         |                          | --  |   VehicleComp...s.tires.LHX |
-| `LVX`         |                          | --  |   VehicleComp...s.tires.LVX |
-| `LCY`         |                          | --  |   VehicleComp...s.tires.LCY |
-| `LMUY`         |                          | --  |   VehicleComp....tires.LMUY |
-| `LEY`         |                          | --  |   VehicleComp...s.tires.LEY |
-| `LKY`         |                          | --  |   VehicleComp...s.tires.LKY |
-| `LHY`         |                          | --  |   VehicleComp...s.tires.LHY |
-| `LVY`         |                          | --  |   VehicleComp...s.tires.LVY |
-| `LKYC`         |                          | --  |   VehicleComp....tires.LKYC |
-| `LXAL`         |                          | --  |   VehicleComp....tires.LXAL |
-| `LYKA`         |                          | --  |   VehicleComp....tires.LYKA |
-| `LVYKA`         |                          | --  |   VehicleComp...tires.LVYKA |
-| `LTR`         |                          | --  |   VehicleComp...s.tires.LTR |
-| `LRES`         |                          | --  |   VehicleComp....tires.LRES |
-| `LKZC`         |                          | --  |   VehicleComp....tires.LKZC |
-| `LS`         |                          | --  |   VehicleComp...ms.tires.LS |
-| `LMUV`         | Slip-speed friction decay. Leave at 0 unless modelling a wet surface.                         | --  |   VehicleComp....tires.LMUV |
-| `Au`         | Digressive friction factor Au (4.E8), suggested 10                         | --  |   10 |
-| `eps_x`         | Singularity guard on Bx (4.E16). Only bites below Fz ~ eps_x / (PCX1 * PDX1).                         | N  |   0.1 |
-| `eps_y`         | Singularity guard on By (4.E26).                         | N  |   0.1 |
-| `eps_k`         | Singularity guard on Kya (4.E39).                         | N  |   0.1 |
-| `eps_gamma`         | Floor on cos(camber), so the contact frame stays defined at extreme camber.                         | --  |   0.01 |
-| `eps_v`         | Low-speed threshold (TIR VXLOW). Floors the slip denominators.                         | m/s  |   1.0 |
-| `eps_vc`         | Guard on Vc' in (4.E6a).                         | m/s  |   0.1 |
-| `eps_sigma`         | Floor on the relaxation length, which falls with Fz.                         | m  |   0.001 |
-| `damp_vlow`         | Low-speed damping coefficient k_Vlow of (7.26) over the carcass stiffness (TIR DAMP_VLOW).                         | s  |   0.001 |
+| `width`         |                          | m  |    |
+| `unloaded_radius`         |                          | m  |    |
+| `vertical_stiffness`         |                          | N/m  |    |
+| `vertical_damping`         |                          | N.s/m  |    |
+| `FNOMIN`         |                          | N  |    |
+| `BREFF`         |                          | --  |    |
+| `DREFF`         |                          | --  |    |
+| `FREFF`         |                          | --  |    |
+| `longitudinal_stiffness`         | Tyre overall longitudinal stiffness. Sets the relaxation length.                         | N/m  |    |
+| `lateral_stiffness`         | Tyre overall lateral stiffness. Sets the lateral relaxation length.                         | N/m  |    |
+| `INFLPRES`         |                          | Pa  |    |
+| `NOMPRES`         |                          | Pa  |    |
+| `LONGVL`         |                          | m/s  |    |
+| `PCX1`         | Shape factor Cfx                         | --  |    |
+| `PDX1`         | Longitudinal friction Mux at Fznom                         | --  |    |
+| `PDX2`         | Variation of friction Mux with load                         | --  |    |
+| `PDX3`         | Variation of friction Mux with camber squared                         | --  |    |
+| `PEX1`         | Longitudinal curvature Efx at Fznom                         | --  |    |
+| `PEX2`         | Variation of curvature Efx with load                         | --  |    |
+| `PEX3`         | Variation of curvature Efx with load squared                         | --  |    |
+| `PEX4`         | Factor in curvature Efx while driving                         | --  |    |
+| `PKX1`         | Longitudinal slip stiffness Kfx/Fz at Fznom                         | --  |    |
+| `PKX2`         | Variation of slip stiffness Kfx/Fz with load                         | --  |    |
+| `PKX3`         | Exponent in slip stiffness Kfx/Fz with load                         | --  |    |
+| `PHX1`         | Horizontal shift Shx at Fznom                         | --  |    |
+| `PHX2`         | Variation of shift Shx with load                         | --  |    |
+| `PVX1`         | Vertical shift Svx/Fz at Fznom                         | --  |    |
+| `PVX2`         | Variation of shift Svx/Fz with load                         | --  |    |
+| `PPX1`         | Linear influence of inflation pressure on longitudinal slip stiffness                         | --  |    |
+| `PPX2`         | Quadratic influence of inflation pressure on longitudinal slip stiffness                         | --  |    |
+| `PPX3`         | Linear influence of inflation pressure on peak longitudinal friction                         | --  |    |
+| `PPX4`         | Quadratic influence of inflation pressure on peak longitudinal friction                         | --  |    |
+| `RBX1`         | Slope factor for combined slip Fx reduction                         | --  |    |
+| `RBX2`         | Variation of slope Fx reduction with kappa                         | --  |    |
+| `RBX3`         | Influence of camber on stiffness for Fx combined                         | --  |    |
+| `RCX1`         | Shape factor for combined slip Fx reduction                         | --  |    |
+| `REX1`         | Curvature factor of combined Fx                         | --  |    |
+| `REX2`         | Curvature factor of combined Fx with load                         | --  |    |
+| `RHX1`         | Shift factor for combined slip Fx reduction                         | --  |    |
+| `PCY1`         | Shape factor Cfy                         | --  |    |
+| `PDY1`         | Lateral friction Muy at Fznom                         | --  |    |
+| `PDY2`         | Variation of friction Muy with load                         | --  |    |
+| `PDY3`         | Variation of friction Muy with camber squared                         | --  |    |
+| `PEY1`         | Lateral curvature Efy at Fznom                         | --  |    |
+| `PEY2`         | Variation of curvature Efy with load                         | --  |    |
+| `PEY3`         | Zero order camber dependency of curvature Efy                         | --  |    |
+| `PEY4`         | Variation of curvature Efy with camber                         | --  |    |
+| `PEY5`         | Variation of curvature Efy with camber squared                         | --  |    |
+| `PKY1`         | Maximum value of stiffness Kfy/Fznom                         | --  |    |
+| `PKY2`         | Load at which Kfy reaches maximum value, over Fznom                         | --  |    |
+| `PKY3`         | Variation of Kfy/Fznom with camber                         | --  |    |
+| `PKY4`         | Peak stiffness variation with camber squared                         | --  |    |
+| `PKY5`         | Fz at which Kfy is maximum, variation with camber squared                         | --  |    |
+| `PKY6`         | Camber stiffness factor                         | --  |    |
+| `PKY7`         | Camber stiffness variation with load                         | --  |    |
+| `PHY1`         | Horizontal shift Shy at Fznom                         | --  |    |
+| `PHY2`         | Variation of shift Shy with load                         | --  |    |
+| `PVY1`         | Vertical shift in Svy/Fz at Fznom                         | --  |    |
+| `PVY2`         | Variation of shift Svy/Fz with load                         | --  |    |
+| `PVY3`         | Variation of shift Svy/Fz with camber                         | --  |    |
+| `PVY4`         | Variation of shift Svy/Fz with camber and load                         | --  |    |
+| `PPY1`         | Linear influence of inflation pressure on cornering stiffness                         | --  |    |
+| `PPY2`         | Quadratic influence of inflation pressure on cornering stiffness                         | --  |    |
+| `PPY3`         | Linear influence of inflation pressure on peak lateral friction                         | --  |    |
+| `PPY4`         | Quadratic influence of inflation pressure on peak lateral friction                         | --  |    |
+| `PPY5`         | Influence of inflation pressure on camber stiffness                         | --  |    |
+| `RBY1`         | Slope factor for combined Fy reduction                         | --  |    |
+| `RBY2`         | Variation of slope Fy reduction with alpha                         | --  |    |
+| `RBY3`         | Shift term for alpha in slope Fy reduction                         | --  |    |
+| `RBY4`         | Influence of camber on stiffness of Fy combined                         | --  |    |
+| `RCY1`         | Shape factor for combined Fy reduction                         | --  |    |
+| `REY1`         | Curvature factor of combined Fy                         | --  |    |
+| `REY2`         | Curvature factor of combined Fy with load                         | --  |    |
+| `RHY1`         | Shift factor for combined Fy reduction                         | --  |    |
+| `RHY2`         | Shift factor for combined Fy reduction with load                         | --  |    |
+| `RVY1`         | Kappa induced side force Svyk/Muy*Fz at Fznom                         | --  |    |
+| `RVY2`         | Variation of Svyk/Muy*Fz with load                         | --  |    |
+| `RVY3`         | Variation of Svyk/Muy*Fz with camber                         | --  |    |
+| `RVY4`         | Variation of Svyk/Muy*Fz with alpha                         | --  |    |
+| `RVY5`         | Variation of Svyk/Muy*Fz with kappa                         | --  |    |
+| `RVY6`         | Variation of Svyk/Muy*Fz with atan(kappa)                         | --  |    |
+| `QBZ1`         | Trail slope factor for trail Bpt at Fznom                         | --  |    |
+| `QBZ2`         | Variation of slope Bpt with load                         | --  |    |
+| `QBZ3`         | Variation of slope Bpt with load squared                         | --  |    |
+| `QBZ4`         | Variation of slope Bpt with camber. PAC2002 only; 4.E40 has no term for it.                         | --  |    |
+| `QBZ5`         | Variation of slope Bpt with absolute camber                         | --  |    |
+| `QBZ6`         | Variation of slope Bpt with camber squared                         | --  |    |
+| `QBZ9`         | Slope factor Br of residual torque Mzr                         | --  |    |
+| `QBZ10`         | Slope factor Br of residual torque Mzr                         | --  |    |
+| `QCZ1`         | Shape factor Cpt for pneumatic trail                         | --  |    |
+| `QDZ1`         | Peak trail Dpt = Dpt*(Fz/Fznom*R0)                         | --  |    |
+| `QDZ2`         | Variation of peak Dpt with load                         | --  |    |
+| `QDZ3`         | Variation of peak Dpt with camber                         | --  |    |
+| `QDZ4`         | Variation of peak Dpt with camber squared                         | --  |    |
+| `QDZ6`         | Peak residual torque Dmr = Dmr/(Fz*R0)                         | --  |    |
+| `QDZ7`         | Variation of peak factor Dmr with load                         | --  |    |
+| `QDZ8`         | Variation of peak factor Dmr with camber                         | --  |    |
+| `QDZ9`         | Variation of peak factor Dmr with camber and load                         | --  |    |
+| `QDZ10`         | Variation of peak factor Dmr with camber squared                         | --  |    |
+| `QDZ11`         | Variation of peak factor Dmr with camber squared and load                         | --  |    |
+| `QEZ1`         | Trail curvature Ept at Fznom                         | --  |    |
+| `QEZ2`         | Variation of curvature Ept with load                         | --  |    |
+| `QEZ3`         | Variation of curvature Ept with load squared                         | --  |    |
+| `QEZ4`         | Variation of curvature Ept with sign of alpha-t                         | --  |    |
+| `QEZ5`         | Variation of Ept with camber and sign of alpha-t                         | --  |    |
+| `QHZ1`         | Trail horizontal shift Sht at Fznom                         | --  |    |
+| `QHZ2`         | Variation of shift Sht with load                         | --  |    |
+| `QHZ3`         | Variation of shift Sht with camber                         | --  |    |
+| `QHZ4`         | Variation of shift Sht with camber and load                         | --  |    |
+| `PPZ1`         | Linear influence of inflation pressure on pneumatic trail                         | --  |    |
+| `PPZ2`         | Influence of inflation pressure on residual aligning torque                         | --  |    |
+| `SSZ1`         | Nominal value of s/R0: effect of Fx on Mz                         | --  |    |
+| `SSZ2`         | Variation of distance s/R0 with Fy/Fznom                         | --  |    |
+| `SSZ3`         | Variation of distance s/R0 with camber                         | --  |    |
+| `SSZ4`         | Variation of distance s/R0 with load and camber                         | --  |    |
+| `LFZO`         |                          | --  |    |
+| `LCX`         |                          | --  |    |
+| `LMUX`         |                          | --  |    |
+| `LEX`         |                          | --  |    |
+| `LKX`         |                          | --  |    |
+| `LHX`         |                          | --  |    |
+| `LVX`         |                          | --  |    |
+| `LCY`         |                          | --  |    |
+| `LMUY`         |                          | --  |    |
+| `LEY`         |                          | --  |    |
+| `LKY`         |                          | --  |    |
+| `LHY`         |                          | --  |    |
+| `LVY`         |                          | --  |    |
+| `LKYC`         |                          | --  |    |
+| `LXAL`         |                          | --  |    |
+| `LYKA`         |                          | --  |    |
+| `LVYKA`         |                          | --  |    |
+| `LTR`         |                          | --  |    |
+| `LRES`         |                          | --  |    |
+| `LKZC`         |                          | --  |    |
+| `LS`         |                          | --  |    |
+| `LMUV`         | Slip-speed friction decay. Leave at 0 unless modelling a wet surface.                         | --  |    |
+| `Au`         | Digressive friction factor Au (4.E8), suggested 10                         | --  |    |
+| `eps_x`         | Singularity guard on Bx (4.E16). Only bites below Fz ~ eps_x / (PCX1 * PDX1).                         | N  |    |
+| `eps_y`         | Singularity guard on By (4.E26).                         | N  |    |
+| `eps_k`         | Singularity guard on Kya (4.E39).                         | N  |    |
+| `eps_gamma`         | Floor on cos(camber), so the contact frame stays defined at extreme camber.                         | --  |    |
+| `eps_v`         | Low-speed threshold (TIR VXLOW). Floors the slip denominators.                         | m/s  |    |
+| `eps_vc`         | Guard on Vc' in (4.E6a).                         | m/s  |    |
+| `eps_sigma`         | Floor on the relaxation length, which falls with Fz.                         | m  |    |
+| `damp_vlow`         | Low-speed damping coefficient k_Vlow of (7.26) over the carcass stiffness (TIR DAMP_VLOW).                         | s  |    |
 
 ## Connectors
 
- * `slip` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `outputs` - ([`TireMF61Outputs`](@ref))
  * `spline` - This connector represents a rotational spline with angle and torque as the potential and flow variables, respectively. ([`Spline`](@ref))
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
@@ -176,7 +176,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `rho`         | Radial deflection (>= 0)                         | m  |
 | `loaded_radius`         | Loaded radius                         | m  |
 | `Re`         | Effective rolling radius                         | m  |
-| `rho_Fz0`         | Tyre deflection at the nominal load                         | m  |
 | `Fz_raw`         | Spring-damper force before the tension clamp                         | N  |
 | `Fz`         | Vertical contact force pushing the wheel up (>= 0)                         | N  |
 | `x_w`         | Longitudinal position of the wheel centre                         | m  |
@@ -204,9 +203,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `alpha_sl`         | Equivalent slip angle at which the (7.25) limiter arms, 3*Dy/CFalpha                         | --  |
 | `alpha_prime`         | Transient lateral slip tan(alpha') (7.26). What the Magic Formula is fed.                         | --  |
 | `sigma_alpha`         | Lateral relaxation length (7.12)                         | m  |
-| `Fz0_prime`         |                          | N  |
 | `dfz`         |                          | --  |
-| `dpi`         |                          | --  |
 | `gamma_star`         |                          | --  |
 | `lam_mux_star`         |                          | --  |
 | `lam_mux_prime`         |                          | --  |
@@ -216,7 +213,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `mu_x`         |                          | --  |
 | `Kxk_norm`         |                          | --  |
 | `Kxk`         |                          | --  |
-| `Cx`         |                          | --  |
 | `Dx`         |                          | N  |
 | `Bx`         |                          | --  |
 | `Ex_raw`         |                          | --  |
@@ -225,8 +221,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `SVx`         |                          | N  |
 | `kappa_x`         |                          | --  |
 | `Fx0`         | Pure-slip longitudinal force (4.E9)                         | N  |
-| `SHxa`         |                          | --  |
-| `Cxa`         |                          | --  |
 | `Bxa`         |                          | --  |
 | `Exa_raw`         |                          | --  |
 | `Exa`         |                          | --  |
@@ -235,7 +229,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `Gxa`         |                          | --  |
 | `Fx`         | Combined-slip longitudinal force (4.E50)                         | N  |
 | `mu_y`         |                          | --  |
-| `Cy`         |                          | --  |
 | `Dy`         |                          | N  |
 | `Kya`         |                          | N  |
 | `Kya_prime`         |                          | N  |
@@ -249,7 +242,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `alpha_y`         |                          | --  |
 | `Fy0`         | Pure-slip lateral force (4.E19)                         | N  |
 | `SHyk`         |                          | --  |
-| `Cyk`         |                          | --  |
 | `Byk`         |                          | --  |
 | `Eyk_raw`         |                          | --  |
 | `Eyk`         |                          | --  |
@@ -263,7 +255,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `SHt`         |                          | --  |
 | `alpha_t`         |                          | --  |
 | `Bt`         |                          | --  |
-| `Ct`         |                          | --  |
 | `Dt0`         |                          | m  |
 | `Dt`         |                          | m  |
 | `Et_raw`         |                          | --  |
@@ -271,7 +262,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `SHf`         |                          | --  |
 | `alpha_r`         |                          | --  |
 | `Br`         |                          | --  |
-| `Cr`         |                          | --  |
 | `Dr`         |                          | N.m  |
 | `alpha_t_eq`         |                          | --  |
 | `alpha_r_eq`         |                          | --  |
@@ -288,7 +278,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `tau_wy`         |                          | N.m  |
 | `tau_wz`         |                          | N.m  |
 """
-@component function TireMF61(; name = nothing, var"is_left"=nothing, var"width"=VehicleComponents.params.tires.WIDTH, var"unloaded_radius"=VehicleComponents.params.tires.UNLOADED_RADIUS, var"vertical_stiffness"=VehicleComponents.params.tires.VERTICAL_STIFFNESS, var"vertical_damping"=VehicleComponents.params.tires.VERTICAL_DAMPING, var"FNOMIN"=VehicleComponents.params.tires.FNOMIN, var"BREFF"=VehicleComponents.params.tires.BREFF, var"DREFF"=VehicleComponents.params.tires.DREFF, var"FREFF"=VehicleComponents.params.tires.FREFF, var"longitudinal_stiffness"=VehicleComponents.params.tires.LONGITUDINAL_STIFFNESS, var"lateral_stiffness"=VehicleComponents.params.tires.LATERAL_STIFFNESS, var"INFLPRES"=VehicleComponents.params.tires.INFLPRES, var"NOMPRES"=VehicleComponents.params.tires.NOMPRES, var"LONGVL"=VehicleComponents.params.tires.LONGVL, var"PCX1"=VehicleComponents.params.tires.PCX1, var"PDX1"=VehicleComponents.params.tires.PDX1, var"PDX2"=VehicleComponents.params.tires.PDX2, var"PDX3"=VehicleComponents.params.tires.PDX3, var"PEX1"=VehicleComponents.params.tires.PEX1, var"PEX2"=VehicleComponents.params.tires.PEX2, var"PEX3"=VehicleComponents.params.tires.PEX3, var"PEX4"=VehicleComponents.params.tires.PEX4, var"PKX1"=VehicleComponents.params.tires.PKX1, var"PKX2"=VehicleComponents.params.tires.PKX2, var"PKX3"=VehicleComponents.params.tires.PKX3, var"PHX1"=VehicleComponents.params.tires.PHX1, var"PHX2"=VehicleComponents.params.tires.PHX2, var"PVX1"=VehicleComponents.params.tires.PVX1, var"PVX2"=VehicleComponents.params.tires.PVX2, var"PPX1"=VehicleComponents.params.tires.PPX1, var"PPX2"=VehicleComponents.params.tires.PPX2, var"PPX3"=VehicleComponents.params.tires.PPX3, var"PPX4"=VehicleComponents.params.tires.PPX4, var"RBX1"=VehicleComponents.params.tires.RBX1, var"RBX2"=VehicleComponents.params.tires.RBX2, var"RBX3"=VehicleComponents.params.tires.RBX3, var"RCX1"=VehicleComponents.params.tires.RCX1, var"REX1"=VehicleComponents.params.tires.REX1, var"REX2"=VehicleComponents.params.tires.REX2, var"RHX1"=VehicleComponents.params.tires.RHX1, var"PCY1"=VehicleComponents.params.tires.PCY1, var"PDY1"=VehicleComponents.params.tires.PDY1, var"PDY2"=VehicleComponents.params.tires.PDY2, var"PDY3"=VehicleComponents.params.tires.PDY3, var"PEY1"=VehicleComponents.params.tires.PEY1, var"PEY2"=VehicleComponents.params.tires.PEY2, var"PEY3"=VehicleComponents.params.tires.PEY3, var"PEY4"=VehicleComponents.params.tires.PEY4, var"PEY5"=VehicleComponents.params.tires.PEY5, var"PKY1"=VehicleComponents.params.tires.PKY1, var"PKY2"=VehicleComponents.params.tires.PKY2, var"PKY3"=VehicleComponents.params.tires.PKY3, var"PKY4"=VehicleComponents.params.tires.PKY4, var"PKY5"=VehicleComponents.params.tires.PKY5, var"PKY6"=VehicleComponents.params.tires.PKY6, var"PKY7"=VehicleComponents.params.tires.PKY7, var"PHY1"=VehicleComponents.params.tires.PHY1, var"PHY2"=VehicleComponents.params.tires.PHY2, var"PVY1"=VehicleComponents.params.tires.PVY1, var"PVY2"=VehicleComponents.params.tires.PVY2, var"PVY3"=VehicleComponents.params.tires.PVY3, var"PVY4"=VehicleComponents.params.tires.PVY4, var"PPY1"=VehicleComponents.params.tires.PPY1, var"PPY2"=VehicleComponents.params.tires.PPY2, var"PPY3"=VehicleComponents.params.tires.PPY3, var"PPY4"=VehicleComponents.params.tires.PPY4, var"PPY5"=VehicleComponents.params.tires.PPY5, var"RBY1"=VehicleComponents.params.tires.RBY1, var"RBY2"=VehicleComponents.params.tires.RBY2, var"RBY3"=VehicleComponents.params.tires.RBY3, var"RBY4"=VehicleComponents.params.tires.RBY4, var"RCY1"=VehicleComponents.params.tires.RCY1, var"REY1"=VehicleComponents.params.tires.REY1, var"REY2"=VehicleComponents.params.tires.REY2, var"RHY1"=VehicleComponents.params.tires.RHY1, var"RHY2"=VehicleComponents.params.tires.RHY2, var"RVY1"=VehicleComponents.params.tires.RVY1, var"RVY2"=VehicleComponents.params.tires.RVY2, var"RVY3"=VehicleComponents.params.tires.RVY3, var"RVY4"=VehicleComponents.params.tires.RVY4, var"RVY5"=VehicleComponents.params.tires.RVY5, var"RVY6"=VehicleComponents.params.tires.RVY6, var"QBZ1"=VehicleComponents.params.tires.QBZ1, var"QBZ2"=VehicleComponents.params.tires.QBZ2, var"QBZ3"=VehicleComponents.params.tires.QBZ3, var"QBZ4"=VehicleComponents.params.tires.QBZ4, var"QBZ5"=VehicleComponents.params.tires.QBZ5, var"QBZ6"=VehicleComponents.params.tires.QBZ6, var"QBZ9"=VehicleComponents.params.tires.QBZ9, var"QBZ10"=VehicleComponents.params.tires.QBZ10, var"QCZ1"=VehicleComponents.params.tires.QCZ1, var"QDZ1"=VehicleComponents.params.tires.QDZ1, var"QDZ2"=VehicleComponents.params.tires.QDZ2, var"QDZ3"=VehicleComponents.params.tires.QDZ3, var"QDZ4"=VehicleComponents.params.tires.QDZ4, var"QDZ6"=VehicleComponents.params.tires.QDZ6, var"QDZ7"=VehicleComponents.params.tires.QDZ7, var"QDZ8"=VehicleComponents.params.tires.QDZ8, var"QDZ9"=VehicleComponents.params.tires.QDZ9, var"QDZ10"=VehicleComponents.params.tires.QDZ10, var"QDZ11"=VehicleComponents.params.tires.QDZ11, var"QEZ1"=VehicleComponents.params.tires.QEZ1, var"QEZ2"=VehicleComponents.params.tires.QEZ2, var"QEZ3"=VehicleComponents.params.tires.QEZ3, var"QEZ4"=VehicleComponents.params.tires.QEZ4, var"QEZ5"=VehicleComponents.params.tires.QEZ5, var"QHZ1"=VehicleComponents.params.tires.QHZ1, var"QHZ2"=VehicleComponents.params.tires.QHZ2, var"QHZ3"=VehicleComponents.params.tires.QHZ3, var"QHZ4"=VehicleComponents.params.tires.QHZ4, var"PPZ1"=VehicleComponents.params.tires.PPZ1, var"PPZ2"=VehicleComponents.params.tires.PPZ2, var"SSZ1"=VehicleComponents.params.tires.SSZ1, var"SSZ2"=VehicleComponents.params.tires.SSZ2, var"SSZ3"=VehicleComponents.params.tires.SSZ3, var"SSZ4"=VehicleComponents.params.tires.SSZ4, var"LFZO"=VehicleComponents.params.tires.LFZO, var"LCX"=VehicleComponents.params.tires.LCX, var"LMUX"=VehicleComponents.params.tires.LMUX, var"LEX"=VehicleComponents.params.tires.LEX, var"LKX"=VehicleComponents.params.tires.LKX, var"LHX"=VehicleComponents.params.tires.LHX, var"LVX"=VehicleComponents.params.tires.LVX, var"LCY"=VehicleComponents.params.tires.LCY, var"LMUY"=VehicleComponents.params.tires.LMUY, var"LEY"=VehicleComponents.params.tires.LEY, var"LKY"=VehicleComponents.params.tires.LKY, var"LHY"=VehicleComponents.params.tires.LHY, var"LVY"=VehicleComponents.params.tires.LVY, var"LKYC"=VehicleComponents.params.tires.LKYC, var"LXAL"=VehicleComponents.params.tires.LXAL, var"LYKA"=VehicleComponents.params.tires.LYKA, var"LVYKA"=VehicleComponents.params.tires.LVYKA, var"LTR"=VehicleComponents.params.tires.LTR, var"LRES"=VehicleComponents.params.tires.LRES, var"LKZC"=VehicleComponents.params.tires.LKZC, var"LS"=VehicleComponents.params.tires.LS, var"LMUV"=VehicleComponents.params.tires.LMUV, var"Au"=Float64(10), var"eps_x"=0.1, var"eps_y"=0.1, var"eps_k"=0.1, var"eps_gamma"=0.01, var"eps_v"=Float64(1.0), var"eps_vc"=0.1, var"eps_sigma"=0.001, var"damp_vlow"=0.001, __overrides = Dict{String, Any}())
+@component function TireMF61(; name = nothing, var"is_left"=nothing, var"width"=nothing, var"unloaded_radius"=nothing, var"vertical_stiffness"=nothing, var"vertical_damping"=nothing, var"FNOMIN"=nothing, var"BREFF"=nothing, var"DREFF"=nothing, var"FREFF"=nothing, var"longitudinal_stiffness"=nothing, var"lateral_stiffness"=nothing, var"INFLPRES"=nothing, var"NOMPRES"=nothing, var"LONGVL"=nothing, var"PCX1"=nothing, var"PDX1"=nothing, var"PDX2"=nothing, var"PDX3"=nothing, var"PEX1"=nothing, var"PEX2"=nothing, var"PEX3"=nothing, var"PEX4"=nothing, var"PKX1"=nothing, var"PKX2"=nothing, var"PKX3"=nothing, var"PHX1"=nothing, var"PHX2"=nothing, var"PVX1"=nothing, var"PVX2"=nothing, var"PPX1"=nothing, var"PPX2"=nothing, var"PPX3"=nothing, var"PPX4"=nothing, var"RBX1"=nothing, var"RBX2"=nothing, var"RBX3"=nothing, var"RCX1"=nothing, var"REX1"=nothing, var"REX2"=nothing, var"RHX1"=nothing, var"PCY1"=nothing, var"PDY1"=nothing, var"PDY2"=nothing, var"PDY3"=nothing, var"PEY1"=nothing, var"PEY2"=nothing, var"PEY3"=nothing, var"PEY4"=nothing, var"PEY5"=nothing, var"PKY1"=nothing, var"PKY2"=nothing, var"PKY3"=nothing, var"PKY4"=nothing, var"PKY5"=nothing, var"PKY6"=nothing, var"PKY7"=nothing, var"PHY1"=nothing, var"PHY2"=nothing, var"PVY1"=nothing, var"PVY2"=nothing, var"PVY3"=nothing, var"PVY4"=nothing, var"PPY1"=nothing, var"PPY2"=nothing, var"PPY3"=nothing, var"PPY4"=nothing, var"PPY5"=nothing, var"RBY1"=nothing, var"RBY2"=nothing, var"RBY3"=nothing, var"RBY4"=nothing, var"RCY1"=nothing, var"REY1"=nothing, var"REY2"=nothing, var"RHY1"=nothing, var"RHY2"=nothing, var"RVY1"=nothing, var"RVY2"=nothing, var"RVY3"=nothing, var"RVY4"=nothing, var"RVY5"=nothing, var"RVY6"=nothing, var"QBZ1"=nothing, var"QBZ2"=nothing, var"QBZ3"=nothing, var"QBZ4"=nothing, var"QBZ5"=nothing, var"QBZ6"=nothing, var"QBZ9"=nothing, var"QBZ10"=nothing, var"QCZ1"=nothing, var"QDZ1"=nothing, var"QDZ2"=nothing, var"QDZ3"=nothing, var"QDZ4"=nothing, var"QDZ6"=nothing, var"QDZ7"=nothing, var"QDZ8"=nothing, var"QDZ9"=nothing, var"QDZ10"=nothing, var"QDZ11"=nothing, var"QEZ1"=nothing, var"QEZ2"=nothing, var"QEZ3"=nothing, var"QEZ4"=nothing, var"QEZ5"=nothing, var"QHZ1"=nothing, var"QHZ2"=nothing, var"QHZ3"=nothing, var"QHZ4"=nothing, var"PPZ1"=nothing, var"PPZ2"=nothing, var"SSZ1"=nothing, var"SSZ2"=nothing, var"SSZ3"=nothing, var"SSZ4"=nothing, var"LFZO"=nothing, var"LCX"=nothing, var"LMUX"=nothing, var"LEX"=nothing, var"LKX"=nothing, var"LHX"=nothing, var"LVX"=nothing, var"LCY"=nothing, var"LMUY"=nothing, var"LEY"=nothing, var"LKY"=nothing, var"LHY"=nothing, var"LVY"=nothing, var"LKYC"=nothing, var"LXAL"=nothing, var"LYKA"=nothing, var"LVYKA"=nothing, var"LTR"=nothing, var"LRES"=nothing, var"LKZC"=nothing, var"LS"=nothing, var"LMUV"=nothing, var"Au"=nothing, var"eps_x"=nothing, var"eps_y"=nothing, var"eps_k"=nothing, var"eps_gamma"=nothing, var"eps_v"=nothing, var"eps_vc"=nothing, var"eps_sigma"=nothing, var"damp_vlow"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -477,6 +467,16 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__params, @parameters (sty_grey_medium[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (sty_grey_dark[1:4]::Real), [misc = "final"])
   append!(__params, @parameters (side::Real), [misc = "final"])
+  append!(__params, @parameters (rho_Fz0::Real), [description = "Tyre deflection at the nominal load (Pacejka eq. 9.230)", misc = "final"])
+  append!(__params, @parameters (Fz0_prime::Real), [misc = "final"])
+  append!(__params, @parameters (dpi::Real), [misc = "final"])
+  append!(__params, @parameters (Cx::Real), [misc = "final"])
+  append!(__params, @parameters (Cy::Real), [misc = "final"])
+  append!(__params, @parameters (SHxa::Real), [misc = "final"])
+  append!(__params, @parameters (Cxa::Real), [misc = "final"])
+  append!(__params, @parameters (Cyk::Real), [misc = "final"])
+  append!(__params, @parameters (Ct::Real), [misc = "final"])
+  append!(__params, @parameters (Cr::Real), [misc = "final"])
 
   ### Deferred assignment (default values that depend on final parameters)
 
@@ -934,9 +934,18 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings[sty_grey_medium] = [0.328125, 0.3515625, 0.375, 1]
   __bindings[sty_grey_dark] = [0.1953125, 0.21484375, 0.234375, 1]
   __bindings[side] = ifelse(is_left, 1.0, -1.0)
+  __bindings[rho_Fz0] = FNOMIN / vertical_stiffness
+  __bindings[Fz0_prime] = LFZO * FNOMIN
+  __bindings[dpi] = (INFLPRES - NOMPRES) / NOMPRES
+  __bindings[Cx] = PCX1 * LCX
+  __bindings[Cy] = PCY1 * LCY
+  __bindings[SHxa] = RHX1
+  __bindings[Cxa] = RCX1
+  __bindings[Cyk] = RCY1
+  __bindings[Ct] = QCZ1
+  __bindings[Cr] = 1
 
   ### Final Path Parameters
-  append!(__vars, @variables (slip(t)::Real), [output = true])
 
   ### Variables (declarations)
   append!(__vars, @variables (z_w(t)::Real), [description = "Height of the wheel centre above the road directly below it"])
@@ -945,7 +954,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (rho(t)::Real), [description = "Radial deflection (>= 0)"])
   append!(__vars, @variables (loaded_radius(t)::Real), [description = "Loaded radius"])
   append!(__vars, @variables (Re(t)::Real), [description = "Effective rolling radius"])
-  append!(__vars, @variables (rho_Fz0(t)::Real), [description = "Tyre deflection at the nominal load"])
   append!(__vars, @variables (Fz_raw(t)::Real), [description = "Spring-damper force before the tension clamp"])
   append!(__vars, @variables (Fz(t)::Real), [description = "Vertical contact force pushing the wheel up (>= 0)"])
   append!(__vars, @variables (x_w(t)::Real), [description = "Longitudinal position of the wheel centre"])
@@ -973,9 +981,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (alpha_sl(t)::Real), [description = "Equivalent slip angle at which the (7.25) limiter arms, 3*Dy/CFalpha"])
   append!(__vars, @variables (alpha_prime(t)::Real), [description = "Transient lateral slip tan(alpha') (7.26). What the Magic Formula is fed."])
   append!(__vars, @variables (sigma_alpha(t)::Real), [description = "Lateral relaxation length (7.12)"])
-  append!(__vars, @variables (Fz0_prime(t)::Real))
   append!(__vars, @variables (dfz(t)::Real))
-  append!(__vars, @variables (dpi(t)::Real))
   append!(__vars, @variables (gamma_star(t)::Real))
   append!(__vars, @variables (lam_mux_star(t)::Real))
   append!(__vars, @variables (lam_mux_prime(t)::Real))
@@ -985,7 +991,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (mu_x(t)::Real))
   append!(__vars, @variables (Kxk_norm(t)::Real))
   append!(__vars, @variables (Kxk(t)::Real))
-  append!(__vars, @variables (Cx(t)::Real))
   append!(__vars, @variables (Dx(t)::Real))
   append!(__vars, @variables (Bx(t)::Real))
   append!(__vars, @variables (Ex_raw(t)::Real))
@@ -994,8 +999,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (SVx(t)::Real))
   append!(__vars, @variables (kappa_x(t)::Real))
   append!(__vars, @variables (Fx0(t)::Real), [description = "Pure-slip longitudinal force (4.E9)"])
-  append!(__vars, @variables (SHxa(t)::Real))
-  append!(__vars, @variables (Cxa(t)::Real))
   append!(__vars, @variables (Bxa(t)::Real))
   append!(__vars, @variables (Exa_raw(t)::Real))
   append!(__vars, @variables (Exa(t)::Real))
@@ -1004,7 +1007,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (Gxa(t)::Real))
   append!(__vars, @variables (Fx(t)::Real), [description = "Combined-slip longitudinal force (4.E50)"])
   append!(__vars, @variables (mu_y(t)::Real))
-  append!(__vars, @variables (Cy(t)::Real))
   append!(__vars, @variables (Dy(t)::Real))
   append!(__vars, @variables (Kya(t)::Real))
   append!(__vars, @variables (Kya_prime(t)::Real))
@@ -1018,7 +1020,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (alpha_y(t)::Real))
   append!(__vars, @variables (Fy0(t)::Real), [description = "Pure-slip lateral force (4.E19)"])
   append!(__vars, @variables (SHyk(t)::Real))
-  append!(__vars, @variables (Cyk(t)::Real))
   append!(__vars, @variables (Byk(t)::Real))
   append!(__vars, @variables (Eyk_raw(t)::Real))
   append!(__vars, @variables (Eyk(t)::Real))
@@ -1032,7 +1033,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (SHt(t)::Real))
   append!(__vars, @variables (alpha_t(t)::Real))
   append!(__vars, @variables (Bt(t)::Real))
-  append!(__vars, @variables (Ct(t)::Real))
   append!(__vars, @variables (Dt0(t)::Real))
   append!(__vars, @variables (Dt(t)::Real))
   append!(__vars, @variables (Et_raw(t)::Real))
@@ -1040,7 +1040,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   append!(__vars, @variables (SHf(t)::Real))
   append!(__vars, @variables (alpha_r(t)::Real))
   append!(__vars, @variables (Br(t)::Real))
-  append!(__vars, @variables (Cr(t)::Real))
   append!(__vars, @variables (Dr(t)::Real))
   append!(__vars, @variables (alpha_t_eq(t)::Real))
   append!(__vars, @variables (alpha_r_eq(t)::Real))
@@ -1076,9 +1075,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_Re = pop!(__overrides, "Re", nothing); isnothing(__ovr_Re) || push!(__eqs, Re ~ __ovr_Re)
   __ovr_Re__initial = pop!(__overrides, "Re.initial", nothing); isnothing(__ovr_Re__initial) || (__initial_conditions[Re] = __ovr_Re__initial)
   __ovr_Re__guess = pop!(__overrides, "Re.guess", nothing)
-  __ovr_rho_Fz0 = pop!(__overrides, "rho_Fz0", nothing); isnothing(__ovr_rho_Fz0) || push!(__eqs, rho_Fz0 ~ __ovr_rho_Fz0)
-  __ovr_rho_Fz0__initial = pop!(__overrides, "rho_Fz0.initial", nothing); isnothing(__ovr_rho_Fz0__initial) || (__initial_conditions[rho_Fz0] = __ovr_rho_Fz0__initial)
-  __ovr_rho_Fz0__guess = pop!(__overrides, "rho_Fz0.guess", nothing)
   __ovr_Fz_raw = pop!(__overrides, "Fz_raw", nothing); isnothing(__ovr_Fz_raw) || push!(__eqs, Fz_raw ~ __ovr_Fz_raw)
   __ovr_Fz_raw__initial = pop!(__overrides, "Fz_raw.initial", nothing); isnothing(__ovr_Fz_raw__initial) || (__initial_conditions[Fz_raw] = __ovr_Fz_raw__initial)
   __ovr_Fz_raw__guess = pop!(__overrides, "Fz_raw.guess", nothing)
@@ -1160,15 +1156,9 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_sigma_alpha = pop!(__overrides, "sigma_alpha", nothing); isnothing(__ovr_sigma_alpha) || push!(__eqs, sigma_alpha ~ __ovr_sigma_alpha)
   __ovr_sigma_alpha__initial = pop!(__overrides, "sigma_alpha.initial", nothing); isnothing(__ovr_sigma_alpha__initial) || (__initial_conditions[sigma_alpha] = __ovr_sigma_alpha__initial)
   __ovr_sigma_alpha__guess = pop!(__overrides, "sigma_alpha.guess", nothing)
-  __ovr_Fz0_prime = pop!(__overrides, "Fz0_prime", nothing); isnothing(__ovr_Fz0_prime) || push!(__eqs, Fz0_prime ~ __ovr_Fz0_prime)
-  __ovr_Fz0_prime__initial = pop!(__overrides, "Fz0_prime.initial", nothing); isnothing(__ovr_Fz0_prime__initial) || (__initial_conditions[Fz0_prime] = __ovr_Fz0_prime__initial)
-  __ovr_Fz0_prime__guess = pop!(__overrides, "Fz0_prime.guess", nothing)
   __ovr_dfz = pop!(__overrides, "dfz", nothing); isnothing(__ovr_dfz) || push!(__eqs, dfz ~ __ovr_dfz)
   __ovr_dfz__initial = pop!(__overrides, "dfz.initial", nothing); isnothing(__ovr_dfz__initial) || (__initial_conditions[dfz] = __ovr_dfz__initial)
   __ovr_dfz__guess = pop!(__overrides, "dfz.guess", nothing)
-  __ovr_dpi = pop!(__overrides, "dpi", nothing); isnothing(__ovr_dpi) || push!(__eqs, dpi ~ __ovr_dpi)
-  __ovr_dpi__initial = pop!(__overrides, "dpi.initial", nothing); isnothing(__ovr_dpi__initial) || (__initial_conditions[dpi] = __ovr_dpi__initial)
-  __ovr_dpi__guess = pop!(__overrides, "dpi.guess", nothing)
   __ovr_gamma_star = pop!(__overrides, "gamma_star", nothing); isnothing(__ovr_gamma_star) || push!(__eqs, gamma_star ~ __ovr_gamma_star)
   __ovr_gamma_star__initial = pop!(__overrides, "gamma_star.initial", nothing); isnothing(__ovr_gamma_star__initial) || (__initial_conditions[gamma_star] = __ovr_gamma_star__initial)
   __ovr_gamma_star__guess = pop!(__overrides, "gamma_star.guess", nothing)
@@ -1196,9 +1186,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_Kxk = pop!(__overrides, "Kxk", nothing); isnothing(__ovr_Kxk) || push!(__eqs, Kxk ~ __ovr_Kxk)
   __ovr_Kxk__initial = pop!(__overrides, "Kxk.initial", nothing); isnothing(__ovr_Kxk__initial) || (__initial_conditions[Kxk] = __ovr_Kxk__initial)
   __ovr_Kxk__guess = pop!(__overrides, "Kxk.guess", nothing)
-  __ovr_Cx = pop!(__overrides, "Cx", nothing); isnothing(__ovr_Cx) || push!(__eqs, Cx ~ __ovr_Cx)
-  __ovr_Cx__initial = pop!(__overrides, "Cx.initial", nothing); isnothing(__ovr_Cx__initial) || (__initial_conditions[Cx] = __ovr_Cx__initial)
-  __ovr_Cx__guess = pop!(__overrides, "Cx.guess", nothing)
   __ovr_Dx = pop!(__overrides, "Dx", nothing); isnothing(__ovr_Dx) || push!(__eqs, Dx ~ __ovr_Dx)
   __ovr_Dx__initial = pop!(__overrides, "Dx.initial", nothing); isnothing(__ovr_Dx__initial) || (__initial_conditions[Dx] = __ovr_Dx__initial)
   __ovr_Dx__guess = pop!(__overrides, "Dx.guess", nothing)
@@ -1223,12 +1210,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_Fx0 = pop!(__overrides, "Fx0", nothing); isnothing(__ovr_Fx0) || push!(__eqs, Fx0 ~ __ovr_Fx0)
   __ovr_Fx0__initial = pop!(__overrides, "Fx0.initial", nothing); isnothing(__ovr_Fx0__initial) || (__initial_conditions[Fx0] = __ovr_Fx0__initial)
   __ovr_Fx0__guess = pop!(__overrides, "Fx0.guess", nothing)
-  __ovr_SHxa = pop!(__overrides, "SHxa", nothing); isnothing(__ovr_SHxa) || push!(__eqs, SHxa ~ __ovr_SHxa)
-  __ovr_SHxa__initial = pop!(__overrides, "SHxa.initial", nothing); isnothing(__ovr_SHxa__initial) || (__initial_conditions[SHxa] = __ovr_SHxa__initial)
-  __ovr_SHxa__guess = pop!(__overrides, "SHxa.guess", nothing)
-  __ovr_Cxa = pop!(__overrides, "Cxa", nothing); isnothing(__ovr_Cxa) || push!(__eqs, Cxa ~ __ovr_Cxa)
-  __ovr_Cxa__initial = pop!(__overrides, "Cxa.initial", nothing); isnothing(__ovr_Cxa__initial) || (__initial_conditions[Cxa] = __ovr_Cxa__initial)
-  __ovr_Cxa__guess = pop!(__overrides, "Cxa.guess", nothing)
   __ovr_Bxa = pop!(__overrides, "Bxa", nothing); isnothing(__ovr_Bxa) || push!(__eqs, Bxa ~ __ovr_Bxa)
   __ovr_Bxa__initial = pop!(__overrides, "Bxa.initial", nothing); isnothing(__ovr_Bxa__initial) || (__initial_conditions[Bxa] = __ovr_Bxa__initial)
   __ovr_Bxa__guess = pop!(__overrides, "Bxa.guess", nothing)
@@ -1253,9 +1234,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_mu_y = pop!(__overrides, "mu_y", nothing); isnothing(__ovr_mu_y) || push!(__eqs, mu_y ~ __ovr_mu_y)
   __ovr_mu_y__initial = pop!(__overrides, "mu_y.initial", nothing); isnothing(__ovr_mu_y__initial) || (__initial_conditions[mu_y] = __ovr_mu_y__initial)
   __ovr_mu_y__guess = pop!(__overrides, "mu_y.guess", nothing)
-  __ovr_Cy = pop!(__overrides, "Cy", nothing); isnothing(__ovr_Cy) || push!(__eqs, Cy ~ __ovr_Cy)
-  __ovr_Cy__initial = pop!(__overrides, "Cy.initial", nothing); isnothing(__ovr_Cy__initial) || (__initial_conditions[Cy] = __ovr_Cy__initial)
-  __ovr_Cy__guess = pop!(__overrides, "Cy.guess", nothing)
   __ovr_Dy = pop!(__overrides, "Dy", nothing); isnothing(__ovr_Dy) || push!(__eqs, Dy ~ __ovr_Dy)
   __ovr_Dy__initial = pop!(__overrides, "Dy.initial", nothing); isnothing(__ovr_Dy__initial) || (__initial_conditions[Dy] = __ovr_Dy__initial)
   __ovr_Dy__guess = pop!(__overrides, "Dy.guess", nothing)
@@ -1295,9 +1273,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_SHyk = pop!(__overrides, "SHyk", nothing); isnothing(__ovr_SHyk) || push!(__eqs, SHyk ~ __ovr_SHyk)
   __ovr_SHyk__initial = pop!(__overrides, "SHyk.initial", nothing); isnothing(__ovr_SHyk__initial) || (__initial_conditions[SHyk] = __ovr_SHyk__initial)
   __ovr_SHyk__guess = pop!(__overrides, "SHyk.guess", nothing)
-  __ovr_Cyk = pop!(__overrides, "Cyk", nothing); isnothing(__ovr_Cyk) || push!(__eqs, Cyk ~ __ovr_Cyk)
-  __ovr_Cyk__initial = pop!(__overrides, "Cyk.initial", nothing); isnothing(__ovr_Cyk__initial) || (__initial_conditions[Cyk] = __ovr_Cyk__initial)
-  __ovr_Cyk__guess = pop!(__overrides, "Cyk.guess", nothing)
   __ovr_Byk = pop!(__overrides, "Byk", nothing); isnothing(__ovr_Byk) || push!(__eqs, Byk ~ __ovr_Byk)
   __ovr_Byk__initial = pop!(__overrides, "Byk.initial", nothing); isnothing(__ovr_Byk__initial) || (__initial_conditions[Byk] = __ovr_Byk__initial)
   __ovr_Byk__guess = pop!(__overrides, "Byk.guess", nothing)
@@ -1337,9 +1312,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_Bt = pop!(__overrides, "Bt", nothing); isnothing(__ovr_Bt) || push!(__eqs, Bt ~ __ovr_Bt)
   __ovr_Bt__initial = pop!(__overrides, "Bt.initial", nothing); isnothing(__ovr_Bt__initial) || (__initial_conditions[Bt] = __ovr_Bt__initial)
   __ovr_Bt__guess = pop!(__overrides, "Bt.guess", nothing)
-  __ovr_Ct = pop!(__overrides, "Ct", nothing); isnothing(__ovr_Ct) || push!(__eqs, Ct ~ __ovr_Ct)
-  __ovr_Ct__initial = pop!(__overrides, "Ct.initial", nothing); isnothing(__ovr_Ct__initial) || (__initial_conditions[Ct] = __ovr_Ct__initial)
-  __ovr_Ct__guess = pop!(__overrides, "Ct.guess", nothing)
   __ovr_Dt0 = pop!(__overrides, "Dt0", nothing); isnothing(__ovr_Dt0) || push!(__eqs, Dt0 ~ __ovr_Dt0)
   __ovr_Dt0__initial = pop!(__overrides, "Dt0.initial", nothing); isnothing(__ovr_Dt0__initial) || (__initial_conditions[Dt0] = __ovr_Dt0__initial)
   __ovr_Dt0__guess = pop!(__overrides, "Dt0.guess", nothing)
@@ -1361,9 +1333,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __ovr_Br = pop!(__overrides, "Br", nothing); isnothing(__ovr_Br) || push!(__eqs, Br ~ __ovr_Br)
   __ovr_Br__initial = pop!(__overrides, "Br.initial", nothing); isnothing(__ovr_Br__initial) || (__initial_conditions[Br] = __ovr_Br__initial)
   __ovr_Br__guess = pop!(__overrides, "Br.guess", nothing)
-  __ovr_Cr = pop!(__overrides, "Cr", nothing); isnothing(__ovr_Cr) || push!(__eqs, Cr ~ __ovr_Cr)
-  __ovr_Cr__initial = pop!(__overrides, "Cr.initial", nothing); isnothing(__ovr_Cr__initial) || (__initial_conditions[Cr] = __ovr_Cr__initial)
-  __ovr_Cr__guess = pop!(__overrides, "Cr.guess", nothing)
   __ovr_Dr = pop!(__overrides, "Dr", nothing); isnothing(__ovr_Dr) || push!(__eqs, Dr ~ __ovr_Dr)
   __ovr_Dr__initial = pop!(__overrides, "Dr.initial", nothing); isnothing(__ovr_Dr__initial) || (__initial_conditions[Dr] = __ovr_Dr__initial)
   __ovr_Dr__guess = pop!(__overrides, "Dr.guess", nothing)
@@ -1414,6 +1383,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named outputs = VehicleComponents.TireMF61Outputs())
   push!(__systems, @named spline = __Dyad__Spline())
   push!(__systems, @named wheel_center = __Dyad__Frame3D())
   # Subcomponent road of type VehicleComponents.RoadSurface
@@ -1443,7 +1413,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_rho__guess) || (__guesses[rho] = __ovr_rho__guess)
   isnothing(__ovr_loaded_radius__guess) || (__guesses[loaded_radius] = __ovr_loaded_radius__guess)
   isnothing(__ovr_Re__guess) || (__guesses[Re] = __ovr_Re__guess)
-  isnothing(__ovr_rho_Fz0__guess) || (__guesses[rho_Fz0] = __ovr_rho_Fz0__guess)
   isnothing(__ovr_Fz_raw__guess) || (__guesses[Fz_raw] = __ovr_Fz_raw__guess)
   isnothing(__ovr_Fz__guess) || (__guesses[Fz] = __ovr_Fz__guess)
   isnothing(__ovr_x_w__guess) || (__guesses[x_w] = __ovr_x_w__guess)
@@ -1471,9 +1440,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_alpha_sl__guess) || (__guesses[alpha_sl] = __ovr_alpha_sl__guess)
   isnothing(__ovr_alpha_prime__guess) || (__guesses[alpha_prime] = __ovr_alpha_prime__guess)
   isnothing(__ovr_sigma_alpha__guess) || (__guesses[sigma_alpha] = __ovr_sigma_alpha__guess)
-  isnothing(__ovr_Fz0_prime__guess) || (__guesses[Fz0_prime] = __ovr_Fz0_prime__guess)
   isnothing(__ovr_dfz__guess) || (__guesses[dfz] = __ovr_dfz__guess)
-  isnothing(__ovr_dpi__guess) || (__guesses[dpi] = __ovr_dpi__guess)
   isnothing(__ovr_gamma_star__guess) || (__guesses[gamma_star] = __ovr_gamma_star__guess)
   isnothing(__ovr_lam_mux_star__guess) || (__guesses[lam_mux_star] = __ovr_lam_mux_star__guess)
   isnothing(__ovr_lam_mux_prime__guess) || (__guesses[lam_mux_prime] = __ovr_lam_mux_prime__guess)
@@ -1483,7 +1450,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_mu_x__guess) || (__guesses[mu_x] = __ovr_mu_x__guess)
   isnothing(__ovr_Kxk_norm__guess) || (__guesses[Kxk_norm] = __ovr_Kxk_norm__guess)
   isnothing(__ovr_Kxk__guess) || (__guesses[Kxk] = __ovr_Kxk__guess)
-  isnothing(__ovr_Cx__guess) || (__guesses[Cx] = __ovr_Cx__guess)
   isnothing(__ovr_Dx__guess) || (__guesses[Dx] = __ovr_Dx__guess)
   isnothing(__ovr_Bx__guess) || (__guesses[Bx] = __ovr_Bx__guess)
   isnothing(__ovr_Ex_raw__guess) || (__guesses[Ex_raw] = __ovr_Ex_raw__guess)
@@ -1492,8 +1458,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_SVx__guess) || (__guesses[SVx] = __ovr_SVx__guess)
   isnothing(__ovr_kappa_x__guess) || (__guesses[kappa_x] = __ovr_kappa_x__guess)
   isnothing(__ovr_Fx0__guess) || (__guesses[Fx0] = __ovr_Fx0__guess)
-  isnothing(__ovr_SHxa__guess) || (__guesses[SHxa] = __ovr_SHxa__guess)
-  isnothing(__ovr_Cxa__guess) || (__guesses[Cxa] = __ovr_Cxa__guess)
   isnothing(__ovr_Bxa__guess) || (__guesses[Bxa] = __ovr_Bxa__guess)
   isnothing(__ovr_Exa_raw__guess) || (__guesses[Exa_raw] = __ovr_Exa_raw__guess)
   isnothing(__ovr_Exa__guess) || (__guesses[Exa] = __ovr_Exa__guess)
@@ -1502,7 +1466,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_Gxa__guess) || (__guesses[Gxa] = __ovr_Gxa__guess)
   isnothing(__ovr_Fx__guess) || (__guesses[Fx] = __ovr_Fx__guess)
   isnothing(__ovr_mu_y__guess) || (__guesses[mu_y] = __ovr_mu_y__guess)
-  isnothing(__ovr_Cy__guess) || (__guesses[Cy] = __ovr_Cy__guess)
   isnothing(__ovr_Dy__guess) || (__guesses[Dy] = __ovr_Dy__guess)
   isnothing(__ovr_Kya__guess) || (__guesses[Kya] = __ovr_Kya__guess)
   isnothing(__ovr_Kya_prime__guess) || (__guesses[Kya_prime] = __ovr_Kya_prime__guess)
@@ -1516,7 +1479,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_alpha_y__guess) || (__guesses[alpha_y] = __ovr_alpha_y__guess)
   isnothing(__ovr_Fy0__guess) || (__guesses[Fy0] = __ovr_Fy0__guess)
   isnothing(__ovr_SHyk__guess) || (__guesses[SHyk] = __ovr_SHyk__guess)
-  isnothing(__ovr_Cyk__guess) || (__guesses[Cyk] = __ovr_Cyk__guess)
   isnothing(__ovr_Byk__guess) || (__guesses[Byk] = __ovr_Byk__guess)
   isnothing(__ovr_Eyk_raw__guess) || (__guesses[Eyk_raw] = __ovr_Eyk_raw__guess)
   isnothing(__ovr_Eyk__guess) || (__guesses[Eyk] = __ovr_Eyk__guess)
@@ -1530,7 +1492,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_SHt__guess) || (__guesses[SHt] = __ovr_SHt__guess)
   isnothing(__ovr_alpha_t__guess) || (__guesses[alpha_t] = __ovr_alpha_t__guess)
   isnothing(__ovr_Bt__guess) || (__guesses[Bt] = __ovr_Bt__guess)
-  isnothing(__ovr_Ct__guess) || (__guesses[Ct] = __ovr_Ct__guess)
   isnothing(__ovr_Dt0__guess) || (__guesses[Dt0] = __ovr_Dt0__guess)
   isnothing(__ovr_Dt__guess) || (__guesses[Dt] = __ovr_Dt__guess)
   isnothing(__ovr_Et_raw__guess) || (__guesses[Et_raw] = __ovr_Et_raw__guess)
@@ -1538,7 +1499,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   isnothing(__ovr_SHf__guess) || (__guesses[SHf] = __ovr_SHf__guess)
   isnothing(__ovr_alpha_r__guess) || (__guesses[alpha_r] = __ovr_alpha_r__guess)
   isnothing(__ovr_Br__guess) || (__guesses[Br] = __ovr_Br__guess)
-  isnothing(__ovr_Cr__guess) || (__guesses[Cr] = __ovr_Cr__guess)
   isnothing(__ovr_Dr__guess) || (__guesses[Dr] = __ovr_Dr__guess)
   isnothing(__ovr_alpha_t_eq__guess) || (__guesses[alpha_t_eq] = __ovr_alpha_t_eq__guess)
   isnothing(__ovr_alpha_r_eq__guess) || (__guesses[alpha_r_eq] = __ovr_alpha_r_eq__guess)
@@ -1563,16 +1523,22 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
-  push!(__eqs, road.x ~ x_w)
-  push!(__eqs, road.y ~ y_w)
-  push!(__eqs, z_w ~ getindex(getproperty(wheel_center, :r_0), 3) - road.z)
+  push!(__eqs, road.inputs.x ~ x_w)
+  push!(__eqs, road.inputs.y ~ y_w)
+  push!(__eqs, outputs.Fx ~ Fx)
+  push!(__eqs, outputs.Fy ~ Fy)
+  push!(__eqs, outputs.Fz ~ Fz)
+  push!(__eqs, outputs.alpha ~ alpha)
+  push!(__eqs, outputs.omega ~ omega)
+  push!(__eqs, outputs.Re ~ Re)
+  push!(__eqs, outputs.slip ~ kappa)
+  push!(__eqs, z_w ~ getindex(getproperty(wheel_center, :r_0), 3) - road.outputs.z)
   push!(__eqs, v_z ~ ModelingToolkit.D_nounits(z_w))
   push!(__eqs, z_bottom ~ z_w - unloaded_radius)
   push!(__eqs, rho ~ ifelse(z_bottom < 0, -z_bottom, 0))
   push!(__eqs, loaded_radius ~ unloaded_radius - rho)
   push!(__eqs, Fz_raw ~ vertical_stiffness * rho - vertical_damping * v_z)
   push!(__eqs, Fz ~ ifelse(rho > 0, ifelse(Fz_raw > 0, Fz_raw, 0), 0))
-  push!(__eqs, rho_Fz0 ~ FNOMIN / vertical_stiffness)
   push!(__eqs, Re ~ unloaded_radius - rho_Fz0 * (DREFF * atan(BREFF * (rho / rho_Fz0)) + FREFF * (rho / rho_Fz0)))
   push!(__eqs, gamma_star ~ side * getindex(getproperty(wheel_center, :R), 2, 3))
   push!(__eqs, cos_gamma ~ sqrt(max(1 - gamma_star ^ 2, eps_gamma ^ 2)))
@@ -1591,9 +1557,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, V_c ~ sqrt(V_x ^ 2 + V_y ^ 2))
   push!(__eqs, cos_alpha ~ V_x / (V_c + eps_vc))
   push!(__eqs, sgn_Vx ~ ifelse(V_x >= 0, 1, -1))
-  push!(__eqs, Fz0_prime ~ LFZO * FNOMIN)
   push!(__eqs, dfz ~ (Fz - Fz0_prime) / Fz0_prime)
-  push!(__eqs, dpi ~ (INFLPRES - NOMPRES) / NOMPRES)
   push!(__eqs, lam_mux_star ~ LMUX / (1 + LMUV * (V_s / LONGVL)))
   push!(__eqs, lam_muy_star ~ LMUY / (1 + LMUV * (V_s / LONGVL)))
   push!(__eqs, lam_mux_prime ~ Au * lam_mux_star / (1 + (Au - 1) * lam_mux_star))
@@ -1602,7 +1566,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, mu_x ~ (PDX1 + PDX2 * dfz) * (1 + PPX3 * dpi + PPX4 * dpi ^ 2) * (1 - PDX3 * gamma_star ^ 2) * lam_mux_star)
   push!(__eqs, Kxk_norm ~ (PKX1 + PKX2 * dfz) * exp(PKX3 * dfz) * (1 + PPX1 * dpi + PPX2 * dpi ^ 2) * LKX)
   push!(__eqs, Kxk ~ Fz * Kxk_norm)
-  push!(__eqs, Cx ~ PCX1 * LCX)
   push!(__eqs, Dx ~ mu_x * Fz)
   push!(__eqs, Bx ~ Kxk / (Cx * Dx + eps_x))
   push!(__eqs, SHx ~ (PHX1 + PHX2 * dfz) * LHX * lam_low)
@@ -1617,7 +1580,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, SVx ~ Fz * (PVX1 + PVX2 * dfz) * LVX * lam_mux_prime * lam_low)
   push!(__eqs, Fx0 ~ Dx * sin(Cx * atan(Bx * kappa_x - Ex * (Bx * kappa_x - atan(Bx * kappa_x)))) + SVx)
   push!(__eqs, mu_y ~ (PDY1 + PDY2 * dfz) * (1 + PPY3 * dpi + PPY4 * dpi ^ 2) * (1 - PDY3 * gamma_star ^ 2) * lam_muy_star)
-  push!(__eqs, Cy ~ PCY1 * LCY)
   push!(__eqs, Dy ~ mu_y * Fz)
   push!(__eqs, Kya ~ PKY1 * Fz0_prime * (1 + PPY1 * dpi) * (1 - PKY3 * abs(gamma_star)) * sin(PKY4 * atan((Fz / Fz0_prime) / ((PKY2 + PKY5 * gamma_star ^ 2) * (1 + PPY2 * dpi)))) * LKY)
   push!(__eqs, Kya_prime ~ Kya + ifelse(Kya >= 0, eps_k, -eps_k))
@@ -1634,8 +1596,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, Ey ~ ifelse(Ey_raw > 1, 1, Ey_raw))
   push!(__eqs, SVy ~ Fz * (PVY1 + PVY2 * dfz) * LVY * lam_muy_prime * lam_low + SVyg)
   push!(__eqs, Fy0 ~ Dy * sin(Cy * atan(By * alpha_y - Ey * (By * alpha_y - atan(By * alpha_y)))) + SVy)
-  push!(__eqs, SHxa ~ RHX1)
-  push!(__eqs, Cxa ~ RCX1)
   push!(__eqs, Bxa ~ (RBX1 + RBX3 * gamma_star ^ 2) * cos(atan(RBX2 * kappa_prime)) * LXAL)
   push!(__eqs, Exa_raw ~ REX1 + REX2 * dfz)
   push!(__eqs, Exa ~ ifelse(Exa_raw > 1, 1, Exa_raw))
@@ -1644,7 +1604,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, Gxa ~ cos(Cxa * atan(Bxa * alpha_s - Exa * (Bxa * alpha_s - atan(Bxa * alpha_s)))) / Gxa0)
   push!(__eqs, Fx ~ Gxa * Fx0)
   push!(__eqs, SHyk ~ RHY1 + RHY2 * dfz)
-  push!(__eqs, Cyk ~ RCY1)
   push!(__eqs, Byk ~ (RBY1 + RBY4 * gamma_star ^ 2) * cos(atan(RBY2 * (alpha_prime - RBY3))) * LYKA)
   push!(__eqs, Eyk_raw ~ REY1 + REY2 * dfz)
   push!(__eqs, Eyk ~ ifelse(Eyk_raw > 1, 1, Eyk_raw))
@@ -1658,7 +1617,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, SHt ~ QHZ1 + QHZ2 * dfz + (QHZ3 + QHZ4 * dfz) * gamma_star)
   push!(__eqs, alpha_t ~ alpha_prime + SHt)
   push!(__eqs, Bt ~ (QBZ1 + QBZ2 * dfz + QBZ3 * dfz ^ 2) * (1 + QBZ5 * abs(gamma_star) + QBZ6 * gamma_star ^ 2) * (LKY / lam_muy_star))
-  push!(__eqs, Ct ~ QCZ1)
   push!(__eqs, Dt0 ~ Fz * (unloaded_radius / Fz0_prime) * (QDZ1 + QDZ2 * dfz) * (1 - PPZ1 * dpi) * LTR * sgn_Vx)
   push!(__eqs, Dt ~ Dt0 * (1 + QDZ3 * abs(gamma_star) + QDZ4 * gamma_star ^ 2))
   push!(__eqs, Et_raw ~ (QEZ1 + QEZ2 * dfz + QEZ3 * dfz ^ 2) * (1 + (QEZ4 + QEZ5 * gamma_star) * (2 / π) * atan(Bt * Ct * alpha_t)))
@@ -1666,7 +1624,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, SHf ~ SHy + SVy / Kya_prime)
   push!(__eqs, alpha_r ~ alpha_prime + SHf)
   push!(__eqs, Br ~ QBZ9 * LKY / lam_muy_star + QBZ10 * By * Cy)
-  push!(__eqs, Cr ~ 1)
   push!(__eqs, Dr ~ Fz * unloaded_radius * ((QDZ6 + QDZ7 * dfz) * LRES + ((QDZ8 + QDZ9 * dfz) * (1 + PPZ2 * dpi) + (QDZ10 + QDZ11 * dfz) * abs(gamma_star)) * gamma_star * LKZC) * lam_muy_star * sgn_Vx * cos_alpha)
   push!(__eqs, alpha_t_eq ~ sqrt(alpha_t ^ 2 + (Kxk / Kya_prime) ^ 2 * kappa_prime ^ 2) * ifelse(alpha_t >= 0, 1, -1))
   push!(__eqs, alpha_r_eq ~ sqrt(alpha_r ^ 2 + (Kxk / Kya_prime) ^ 2 * kappa_prime ^ 2) * ifelse(alpha_r >= 0, 1, -1))
@@ -1685,7 +1642,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, wheel_center.f ~ -wheel_center.R * [f_wx, f_wy, Fz])
   push!(__eqs, wheel_center.tau ~ -wheel_center.R * [tau_wx, tau_wy, tau_wz])
   push!(__eqs, spline.tau ~ Fx * loaded_radius)
-  push!(__eqs, slip ~ kappa)
 
   # Return completely constructed System
   return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

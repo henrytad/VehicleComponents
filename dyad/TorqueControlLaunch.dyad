@@ -32,74 +32,116 @@ component TorqueControlLaunch
     final Ni = Ni
   ) {^control_rr}
 
-  parameter slip_target_front::Real = VehicleComponents.params.control.slip_target_front
-  parameter slip_target_rear::Real = VehicleComponents.params.control.slip_target_rear
-  parameter launch_torque::Real = VehicleComponents.params.control.launch_torque
-  parameter k::Real = VehicleComponents.params.control.slip_loop_gain
-  parameter Ti::Time = VehicleComponents.params.control.slip_loop_Ti
-  parameter Ni::Real = VehicleComponents.params.control.slip_loop_Ni
+  parameter slip_target_front::Real
+  parameter slip_target_rear::Real
+  parameter launch_torque::Real
+  parameter k::Real
+  parameter Ti::Time
+  parameter Ni::Real
 
 relations
 
-  connect(throttle, control_fl.throttle, control_fr.throttle, control_rl.throttle, control_rr.throttle) {^id5}
-  connect(slip_fl, control_fl.slip) {^id6}
-  connect(slip_fr, control_fr.slip) {^id7}
-  connect(slip_rl, control_rl.slip) {^id8}
-  connect(slip_rr, control_rr.slip) {^id9}
-  connect(control_fl.demand, demand_fl) {^id10}
-  connect(control_fr.demand, demand_fr) {^id11}
-  connect(control_rl.demand, demand_rl) {^id12}
-  connect(control_rr.demand, demand_rr) {^id13}
+  # Inputs
+  control_fl.inputs.throttle = inputs.throttle
+  control_fr.inputs.throttle = inputs.throttle
+  control_rl.inputs.throttle = inputs.throttle
+  control_rr.inputs.throttle = inputs.throttle
+  control_fl.inputs.slip = inputs.slip_fl
+  control_fr.inputs.slip = inputs.slip_fr
+  control_rl.inputs.slip = inputs.slip_rl
+  control_rr.inputs.slip = inputs.slip_rr
+
+  # Outputs
+  outputs.demand_fl = control_fl.outputs.demand
+  outputs.demand_fr = control_fr.outputs.demand
+  outputs.demand_rl = control_rl.outputs.demand
+  outputs.demand_rr = control_rr.outputs.demand
 
 metadata {
   "Dyad": {
     "labels": [
-      {"label": "$(instance)", "x": 500, "y": 1100, "rot": 0},
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "rot": 0
+      },
       {
         "label": "F $(slip_target_front) / R $(slip_target_rear)",
         "x": 500,
         "y": 800,
         "rot": 0
       }
-    ]
+    ],
+    "panel": {
+      "control": "tabs",
+      "children": {
+        "Traction": {
+          "contents": [
+            "slip_target_front",
+            "slip_target_rear",
+            "launch_torque"
+          ]
+        },
+        "Controller": {
+          "contents": [
+            "k",
+            "Ti",
+            "Ni"
+          ]
+        }
+      }
+    }
   },
   "_links": {
     "control_fl": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 230, "y2": 330}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 230,
+            "y2": 330
+          }
+        }
+      }
     },
     "control_fr": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 380, "y2": 480}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 380,
+            "y2": 480
+          }
+        }
+      }
     },
     "control_rl": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 520, "y2": 620}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 520,
+            "y2": 620
+          }
+        }
+      }
     },
     "control_rr": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 660, "y2": 760}}}
-    },
-    "id5": {
       "Dyad": {
-        "edges": [
-          {"S": 1, "M": [{"x": 250, "y": 70}, {"x": 250, "y": 256}], "E": 2},
-          {"S": 1, "M": [{"x": 250, "y": 70}, {"x": 250, "y": 406}], "E": 3},
-          {"S": 1, "M": [{"x": 250, "y": 70}, {"x": 250, "y": 546}], "E": 4},
-          {"S": 1, "M": [{"x": 250, "y": 70}, {"x": 250, "y": 686}], "E": 5}
-        ],
-        "path": {}
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 660,
+            "y2": 760
+          }
+        }
       }
-    },
-    "id6": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id8": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id10": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 960, "y": 280}, {"x": 960, "y": 290}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id12": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id13": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+    }
   }
 }
 end

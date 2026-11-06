@@ -4,22 +4,20 @@ using GLMakie, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, P
 using ADTypes: AutoFiniteDiff
 using Statistics: mean
 
-car = VehicleComponents.params
 d = 0.5
 g = 9.80665
 initial_pitch = deg2rad(2)
 dt = 0.01
 t_end = 12.0
 
-mass, cg = VehicleComponents.Data.vehicle_mass_and_cg(car)
-
-@named model = VehicleComponents.FullVehicleTestInertiaPitch()
+@named model = FullVehicleTestInertiaPitch()
 ssys = multibody(model)
 prob = ODEProblem(ssys, [
-    ssys.reference_cg => cg,
     ssys.pivot_height => d,
     ssys.initial_pitch => initial_pitch,
 ], (0.0, t_end))
+mass, cg = VehicleComponents.vehicle_mass_and_cg(prob, ssys.vehicle)
+prob = remake(prob; p=[ssys.reference_cg => cg])
 sol = solve(prob, Rodas5P(autodiff=AutoFiniteDiff()); adaptive=false, dt=dt, save_everystep=true)
 
 # Determine the period and, thus, the Iyy
@@ -30,4 +28,4 @@ period = mean(diff(crossings)) * dt
 frequency = 1 / period
 Iyy = mass * g * d * (period / (2π))^2 - mass * d^2
 
-println("$(car.name): T = $(round(period; digits=4)) s, f = $(round(frequency; digits=4)) Hz, Iyy = $(round(Iyy; digits=2)) kg·m²")
+println("T = $(round(period; digits=4)) s, f = $(round(frequency; digits=4)) Hz, Iyy = $(round(Iyy; digits=2)) kg·m²")

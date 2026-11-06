@@ -10,7 +10,7 @@ ramp_duration = 240.0
 v_max = 140 / 3.6
 t_end = t_ramp_start + ramp_duration + 5.0
 
-@named model = VehicleComponents.FullVehicleTestConstantSteer()
+@named model = FullVehicleTestConstantSteer()
 ssys = multibody(model)
 D = Differential(ModelingToolkit.get_iv(ssys))
 # TODO: Remove guesses once MTK avoids symbolic guess expansion for linear initialization:
@@ -31,7 +31,6 @@ VehicleComponents.Telemetry.write_telemetry(
     model, sol;
     rate=200,
     run="constant_steer",
-    vehicle_id=VehicleComponents.params.name,
     venue="ISO 4138 constant steer",
     event="FullVehicleTestConstantSteer",
     comment="$(steer_angle) rad held from $(t_steer) s; " *

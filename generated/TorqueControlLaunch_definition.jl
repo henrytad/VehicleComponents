@@ -11,26 +11,19 @@
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `slip_target_front`         |                          | --  |   VehicleComp...arget_front |
-| `slip_target_rear`         |                          | --  |   VehicleComp...target_rear |
-| `launch_torque`         |                          | --  |   VehicleComp...unch_torque |
-| `k`         |                          | --  |   VehicleComp...p_loop_gain |
-| `Ti`         |                          | s  |   VehicleComp...lip_loop_Ti |
-| `Ni`         |                          | --  |   VehicleComp...lip_loop_Ni |
+| `slip_target_front`         |                          | --  |    |
+| `slip_target_rear`         |                          | --  |    |
+| `launch_torque`         |                          | --  |    |
+| `k`         |                          | --  |    |
+| `Ti`         |                          | s  |    |
+| `Ni`         |                          | --  |    |
 
 ## Connectors
 
- * `throttle` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip_fl` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip_fr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip_rl` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip_rr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `demand_fl` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
- * `demand_fr` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
- * `demand_rl` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
- * `demand_rr` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `inputs` - ([`TorqueControlInputs`](@ref))
+ * `outputs` - ([`TorqueControlOutputs`](@ref))
 """
-@component function TorqueControlLaunch(; name = nothing, var"slip_target_front"=VehicleComponents.params.control.slip_target_front, var"slip_target_rear"=VehicleComponents.params.control.slip_target_rear, var"launch_torque"=VehicleComponents.params.control.launch_torque, var"k"=VehicleComponents.params.control.slip_loop_gain, var"Ti"=VehicleComponents.params.control.slip_loop_Ti, var"Ni"=VehicleComponents.params.control.slip_loop_Ni, __overrides = Dict{String, Any}())
+@component function TorqueControlLaunch(; name = nothing, var"slip_target_front"=nothing, var"slip_target_rear"=nothing, var"launch_torque"=nothing, var"k"=nothing, var"Ti"=nothing, var"Ni"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -91,15 +84,6 @@
   ### Final Parameters (assignments)
 
   ### Final Path Parameters
-  append!(__vars, @variables (throttle(t)::Real), [input = true])
-  append!(__vars, @variables (slip_fl(t)::Real), [input = true])
-  append!(__vars, @variables (slip_fr(t)::Real), [input = true])
-  append!(__vars, @variables (slip_rl(t)::Real), [input = true])
-  append!(__vars, @variables (slip_rr(t)::Real), [input = true])
-  append!(__vars, @variables (demand_fl(t)::Real), [output = true])
-  append!(__vars, @variables (demand_fr(t)::Real), [output = true])
-  append!(__vars, @variables (demand_rl(t)::Real), [output = true])
-  append!(__vars, @variables (demand_rr(t)::Real), [output = true])
 
   ### Variables (declarations)
 
@@ -109,6 +93,8 @@
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named inputs = VehicleComponents.TorqueControlInputs())
+  push!(__systems, @named outputs = VehicleComponents.TorqueControlOutputs())
   # Subcomponent control_fl of type VehicleComponents.TorqueControlTC
   control_fl_overrides = __pop_subcomponent_overrides!(__overrides, "control_fl")
   push!(__systems, @named control_fl = VehicleComponents.TorqueControlTC(; slip_target=slip_target_front, launch_torque=launch_torque, k=k, Ti=Ti, Ni=Ni, __overrides = control_fl_overrides))
@@ -153,15 +139,18 @@
   __assertions = []
 
   ### Equations
-  push!(__eqs, connect(throttle, control_fl.throttle, control_fr.throttle, control_rl.throttle, control_rr.throttle))
-  push!(__eqs, connect(slip_fl, control_fl.slip))
-  push!(__eqs, connect(slip_fr, control_fr.slip))
-  push!(__eqs, connect(slip_rl, control_rl.slip))
-  push!(__eqs, connect(slip_rr, control_rr.slip))
-  push!(__eqs, connect(control_fl.demand, demand_fl))
-  push!(__eqs, connect(control_fr.demand, demand_fr))
-  push!(__eqs, connect(control_rl.demand, demand_rl))
-  push!(__eqs, connect(control_rr.demand, demand_rr))
+  push!(__eqs, control_fl.inputs.throttle ~ inputs.throttle)
+  push!(__eqs, control_fr.inputs.throttle ~ inputs.throttle)
+  push!(__eqs, control_rl.inputs.throttle ~ inputs.throttle)
+  push!(__eqs, control_rr.inputs.throttle ~ inputs.throttle)
+  push!(__eqs, control_fl.inputs.slip ~ inputs.slip_fl)
+  push!(__eqs, control_fr.inputs.slip ~ inputs.slip_fr)
+  push!(__eqs, control_rl.inputs.slip ~ inputs.slip_rl)
+  push!(__eqs, control_rr.inputs.slip ~ inputs.slip_rr)
+  push!(__eqs, outputs.demand_fl ~ control_fl.outputs.demand)
+  push!(__eqs, outputs.demand_fr ~ control_fr.outputs.demand)
+  push!(__eqs, outputs.demand_rl ~ control_rl.outputs.demand)
+  push!(__eqs, outputs.demand_rr ~ control_rr.outputs.demand)
 
   # Return completely constructed System
   return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

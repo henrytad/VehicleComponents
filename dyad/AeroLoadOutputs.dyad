@@ -1,0 +1,14 @@
+connector AeroLoadOutputs
+  output q::Pressure
+  output drag::Force
+  output downforce::Force
+  output downforce_front::Force
+  output downforce_rear::Force
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

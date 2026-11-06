@@ -11,7 +11,8 @@ component Brake
   `brake_bias` splits the fixed total between the axles.
   """
 
-  brake_demand = RealInput(units = "1") {^brake_demand}
+  inputs = BrakeInputs() {^inputs}
+  outputs = BrakeOutputs() {^outputs}
 
   wheel_center = Dyad.Frame3D() {^wheel_center}
   spline = Dyad.Spline() {^spline}
@@ -20,7 +21,7 @@ component Brake
 
   parameter max_torque::Torque
   parameter brake_bias::Real
-  parameter omega_eps::AngularVelocity = 0.5
+  parameter omega_eps::AngularVelocity
   
   final parameter bias_factor::Real = ifelse(is_front, 2 * brake_bias, 2 * (1 - brake_bias))
 
@@ -29,8 +30,12 @@ component Brake
 
 relations
 
+  # Outputs
+  outputs.tau_brake = tau_brake
+
+  # Equations
   omega = der(spline.phi)
-  tau_brake = max_torque * bias_factor * brake_demand * tanh(omega / omega_eps)
+  tau_brake = max_torque * bias_factor * inputs.brake_demand * tanh(omega / omega_eps)
 
   spline.tau = tau_brake
 
@@ -39,13 +44,109 @@ relations
 
 metadata {
   "_links": {
-    "brake_demand": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
     "wheel_center": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 440, "y2": 540}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 440,
+            "y2": 540
+          },
+          "icon": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 440,
+            "y2": 540
+          }
+        }
+      }
     },
     "spline": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 450,
+            "y2": 550
+          },
+          "icon": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 450,
+            "y2": 550
+          }
+        }
+      }
+    },
+    "inputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": -50.0,
+            "y1": 100.0,
+            "x2": 50.0,
+            "y2": 200.0
+          }
+        }
+      }
+    },
+    "outputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": 950.0,
+            "y1": 100.0,
+            "x2": 1050.0,
+            "y2": 200.0
+          }
+        }
+      }
     }
+  },
+  "Dyad": {
+    "panel": {
+      "control": "tabs",
+      "children": {
+        "Braking": {
+          "contents": [
+            "max_torque",
+            "brake_bias"
+          ]
+        },
+        "Numerics": {
+          "contents": [
+            "omega_eps"
+          ]
+        },
+        "Mounting": {
+          "contents": [
+            "is_front"
+          ]
+        }
+      }
+    },
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "layer": "icon"
+      }
+    ]
   }
 }
 end

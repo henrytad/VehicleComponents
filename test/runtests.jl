@@ -14,4 +14,5 @@ function __dyad_run_test_case!(
     invoke(__dyad_run_test_case!, Tuple{Any,AbstractString}, rig, name; solver, kwargs...)
 end
 
+include("damper_maps.jl")
 include("../generated/tests.jl")

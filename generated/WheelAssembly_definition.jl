@@ -5,26 +5,25 @@
 
 
 @doc Markdown.doc"""
-   WheelAssembly(; name, is_left, rim_mass, rim_inertia, tire_mass, tire_inertia, __overrides)
+   WheelAssembly(; name, rim_mass, rim_inertia, tire_mass, tire_inertia, __overrides)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `is_left`         |                          | --  |    |
-| `rim_mass`         |                          | kg  |   VehicleComp...ls.rim_mass |
-| `rim_inertia`         |                          | kg.m2  |   VehicleComp...rim_inertia |
-| `tire_mass`         |                          | kg  |   VehicleComp....tires.MASS |
-| `tire_inertia`         |                          | kg.m2  |   VehicleComp...s.tires.IYY |
+| `rim_mass`         |                          | kg  |    |
+| `rim_inertia`         |                          | kg.m2  |    |
+| `tire_mass`         |                          | kg  |    |
+| `tire_inertia`         |                          | kg.m2  |    |
 
 ## Connectors
 
- * `slip` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `outputs` - ([`WheelAssemblyOutputs`](@ref))
  * `spline` - This connector represents a rotational spline with angle and torque as the potential and flow variables, respectively. ([`Spline`](@ref))
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function WheelAssembly(; name = nothing, var"is_left"=nothing, var"rim_mass"=VehicleComponents.params.wheels.rim_mass, var"rim_inertia"=VehicleComponents.params.wheels.rim_inertia, var"tire_mass"=VehicleComponents.params.tires.MASS, var"tire_inertia"=VehicleComponents.params.tires.IYY, __overrides = Dict{String, Any}())
+@component function WheelAssembly(; name = nothing, var"rim_mass"=nothing, var"rim_inertia"=nothing, var"tire_mass"=nothing, var"tire_inertia"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -43,7 +42,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
 
   ### Keyword argument overrides
-  haskey(__overrides, "is_left") && (is_left = pop!(__overrides, "is_left"))
   haskey(__overrides, "rim_mass") && (rim_mass = pop!(__overrides, "rim_mass"))
   haskey(__overrides, "rim_inertia") && (rim_inertia = pop!(__overrides, "rim_inertia"))
   haskey(__overrides, "tire_mass") && (tire_mass = pop!(__overrides, "tire_mass"))
@@ -82,7 +80,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings[spin_inertia] = rim_inertia + tire_inertia
 
   ### Final Path Parameters
-  append!(__vars, @variables (slip(t)::Real), [output = true])
 
   ### Variables (declarations)
 
@@ -92,11 +89,12 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named outputs = VehicleComponents.WheelAssemblyOutputs())
   push!(__systems, @named spline = __Dyad__Spline())
   push!(__systems, @named wheel_center = __Dyad__Frame3D())
   # Subcomponent tire of type VehicleComponents.TireMF61
   tire_overrides = __pop_subcomponent_overrides!(__overrides, "tire")
-  push!(__systems, @named tire = VehicleComponents.TireMF61(; is_left=is_left, __overrides = tire_overrides))
+  push!(__systems, @named tire = VehicleComponents.TireMF61(; __overrides = tire_overrides))
   # Subcomponent spin of type RotationalComponents.Components.Inertia
   spin_overrides = __pop_subcomponent_overrides!(__overrides, "spin")
   push!(__systems, @named spin = RotationalComponents.Components.Inertia(; J=spin_inertia, __overrides = spin_overrides))
@@ -115,11 +113,17 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
+  push!(__eqs, outputs.Fx ~ tire.outputs.Fx)
+  push!(__eqs, outputs.Fy ~ tire.outputs.Fy)
+  push!(__eqs, outputs.Fz ~ tire.outputs.Fz)
+  push!(__eqs, outputs.alpha ~ tire.outputs.alpha)
+  push!(__eqs, outputs.omega ~ tire.outputs.omega)
+  push!(__eqs, outputs.Re ~ tire.outputs.Re)
+  push!(__eqs, outputs.slip ~ tire.outputs.slip)
   push!(__eqs, connect(wheel_center, tire.wheel_center))
   push!(__eqs, connect(wheel_center, wheel_body.frame_a))
   push!(__eqs, connect(spline, spin.spline_a))
   push!(__eqs, connect(spin.spline_b, tire.spline))
-  push!(__eqs, connect(tire.slip, slip))
 
   # Return completely constructed System
   return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

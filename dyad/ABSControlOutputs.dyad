@@ -1,0 +1,11 @@
+connector ABSControlOutputs
+  output brake_demand::Real(units = "1")
+  output intervention::Real(units = "1")
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

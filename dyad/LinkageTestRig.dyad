@@ -15,22 +15,22 @@ test component LinkageTestRig
 
   # Linkage
   linkage = VehicleComponents.Linkage(
-    lca_front = VehicleComponents.params.suspension.front.geometry.linkages.left.lca_front,
-    lca_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.lca_outer,
-    lca_rear = VehicleComponents.params.suspension.front.geometry.linkages.left.lca_rear,
-    uca_front = VehicleComponents.params.suspension.front.geometry.linkages.left.uca_front,
-    uca_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.uca_outer,
-    uca_rear = VehicleComponents.params.suspension.front.geometry.linkages.left.uca_rear,
+    lca_front = [0.1, 0.195, 0.2085],
+    lca_outer = [0.005, 0.56, 0.2135],
+    lca_rear = [-0.1, 0.205, 0.1985],
+    uca_front = [0.08, 0.245, 0.3885],
+    uca_outer = [-0.01, 0.53, 0.4135],
+    uca_rear = [-0.08, 0.255, 0.3785],
     tierod_inner = tierod_inner,
-    tierod_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_outer,
-    pushrod_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer,
+    tierod_outer = [0.075, 0.55, 0.2435],
+    pushrod_outer = [0.0, 0.48, 0.4235],
     wheel_center = wheel_center,
-    static_camber = VehicleComponents.params.suspension.front.setup.alignment.left.static_camber,
-    static_toe = VehicleComponents.params.suspension.front.setup.alignment.left.static_toe
+    static_camber = 0.0,
+    static_toe = 0.0
   ) {^linkage}
 
-  parameter wheel_center::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.left.wheel_center
-  parameter tierod_inner::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner
+  parameter wheel_center::Position[3] = [0.0, 0.6, 0.3135]
+  parameter tierod_inner::Position[3] = [0.08, 0.22, 0.2335]
  
   # Rig hardware
   final parameter actuation_rod_length::Length = 0.1
@@ -42,11 +42,14 @@ test component LinkageTestRig
 
 relations
 
+  # Inputs
+  wheel_position.s_ref = stroke * sin(2 * π * freq * time)
+
+  # Initialization
   initial wheel_position.v = 0.0
   guess linkage.lca_rev.phi = 0.0
 
-  wheel_position.s_ref = stroke * sin(2 * π * freq * time)
-
+  # Connections
   connect(fixed.frame_b, prismatic.frame_a) {^id7}
   connect(prismatic.frame_b, actuation_rod.frame_a) {^id8}
   connect(prismatic.support, wheel_position.support) {^id9}
@@ -72,7 +75,11 @@ metadata {
             "linkage.toe": 0.0,
             "linkage.wc_height": 0.0
           },
-          "signals": ["linkage.camber", "linkage.toe", "linkage.wc_height"]
+          "signals": [
+            "linkage.camber",
+            "linkage.toe",
+            "linkage.wc_height"
+          ]
         }
       }
     },
@@ -86,16 +93,27 @@ metadata {
         "attrs": {}
       }
     ],
-    "icons": {"default": "dyad://Dyad/Default.svg"},
+    "icons": {
+      "default": "dyad://Dyad/Default.svg"
+    },
     "path": {},
-    "doc": {"behavior": true},
+    "doc": {
+      "behavior": true
+    },
     "deprecated": null
   },
   "_links": {
     "world": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 220, "y1": 130, "x2": 320, "y2": 230, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 220,
+            "y1": 130,
+            "x2": 320,
+            "y2": 230,
+            "rot": 0
+          }
         },
         "tags": []
       }
@@ -103,7 +121,14 @@ metadata {
     "fixed": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 720, "y1": 640, "x2": 820, "y2": 740, "rot": 270}
+          "diagram": {
+            "iconName": "default",
+            "x1": 720,
+            "y1": 640,
+            "x2": 820,
+            "y2": 740,
+            "rot": 270
+          }
         },
         "tags": []
       }
@@ -111,7 +136,14 @@ metadata {
     "prismatic": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 720, "y1": 450, "x2": 820, "y2": 550, "rot": 270}
+          "diagram": {
+            "iconName": "default",
+            "x1": 720,
+            "y1": 450,
+            "x2": 820,
+            "y2": 550,
+            "rot": 270
+          }
         },
         "tags": []
       }
@@ -119,7 +151,14 @@ metadata {
     "actuation_rod": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 720, "y1": 260, "x2": 820, "y2": 360, "rot": 270}
+          "diagram": {
+            "iconName": "default",
+            "x1": 720,
+            "y1": 260,
+            "x2": 820,
+            "y2": 360,
+            "rot": 270
+          }
         },
         "tags": []
       }
@@ -127,36 +166,140 @@ metadata {
     "wheel_position": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 550, "y1": 450, "x2": 650, "y2": 550, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 550,
+            "y1": 450,
+            "x2": 650,
+            "y2": 550,
+            "rot": 0
+          }
         },
         "tags": []
       }
     },
     "mount_tierod": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 400, "y2": 500}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 400,
+            "y2": 500
+          }
+        }
+      }
     },
-    "id13": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id13": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
     "linkage": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 450, "y1": 130, "x2": 550, "y2": 230, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 450,
+            "y1": 130,
+            "x2": 550,
+            "y2": 230,
+            "rot": 0
+          }
         },
         "tags": []
       }
     },
-    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
-    "id8": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
-    "id9": {
+    "id7": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 820, "y": 600}, {"x": 600, "y": 600}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
         "renderStyle": "standard"
       }
     },
-    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
-    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id8": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "renderStyle": "standard"
+      }
+    },
+    "id9": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 820,
+                "y": 600
+              },
+              {
+                "x": 600,
+                "y": 600
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "renderStyle": "standard"
+      }
+    },
+    "id10": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "renderStyle": "standard"
+      }
+    },
+    "id11": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "renderStyle": "standard"
+      }
+    },
     "id12": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 770, "y": 180}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 770,
+                "y": 180
+              }
+            ],
+            "E": 2
+          }
+        ],
         "renderStyle": "standard"
       }
     }

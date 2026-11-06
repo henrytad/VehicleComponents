@@ -1,0 +1,12 @@
+connector FullVehicleInputs
+  input throttle::Real(units = "1")
+  input brake::Real(units = "1")
+  input steer::Real(units = "rad")
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealInput.svg"
+    }
+  }
+}
+end

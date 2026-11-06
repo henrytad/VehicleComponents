@@ -1,0 +1,21 @@
+connector CornerAssemblyOutputs
+  output slip::Real(units = "1")
+  output full_demand_power::Real(units = "W")
+  output Fx::Force
+  output Fy::Force
+  output Fz::Force
+  output alpha::Angle
+  output omega::AngularVelocity
+  output Re::Length
+  output tau_motor::Torque
+  output tau_wheel::Torque
+  output power::Power
+  output tau_brake::Torque
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

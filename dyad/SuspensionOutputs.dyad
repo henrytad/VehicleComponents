@@ -1,0 +1,29 @@
+connector SuspensionOutputs
+  output wc_heave::Length
+  output wc_roll::Length
+  output s_heave::Length
+  output f_heave::Force
+  output s_roll::Length
+  output f_roll::Force
+  output toe_left::Angle
+  output camber_left::Angle
+  output wc_height_left::Length
+  output f_lca_left::Force[3]
+  output f_uca_left::Force[3]
+  output f_push_left::Force[3]
+  output f_uca_ball_left::Force[3]
+  output toe_right::Angle
+  output camber_right::Angle
+  output wc_height_right::Length
+  output f_lca_right::Force[3]
+  output f_uca_right::Force[3]
+  output f_push_right::Force[3]
+  output f_uca_ball_right::Force[3]
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

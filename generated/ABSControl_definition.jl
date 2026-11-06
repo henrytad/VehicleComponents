@@ -11,18 +11,13 @@
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `slip_target`         |                          | --  |   VehicleComp...slip_target |
-| `k`         |                          | --  |   VehicleComp...ol.abs_gain |
+| `slip_target`         |                          | --  |    |
+| `k`         |                          | --  |    |
 
 ## Connectors
 
- * `brake` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip_fl` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip_fr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip_rl` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip_rr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `brake_demand` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
- * `intervention` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `inputs` - ([`ABSControlInputs`](@ref))
+ * `outputs` - ([`ABSControlOutputs`](@ref))
 
 ## Variables
 
@@ -32,11 +27,11 @@
 | `excess_fr`         |                          | --  |
 | `excess_rl`         |                          | --  |
 | `excess_rr`         |                          | --  |
-| `excess`         |                          | --  |
+| `max_excess`         |                          | --  |
 | `p_action`         |                          | --  |
 | `brake_scale`         |                          | --  |
 """
-@component function ABSControl(; name = nothing, var"slip_target"=VehicleComponents.params.control.abs_slip_target, var"k"=VehicleComponents.params.control.abs_gain, __overrides = Dict{String, Any}())
+@component function ABSControl(; name = nothing, var"slip_target"=nothing, var"k"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -81,20 +76,13 @@
   ### Final Parameters (assignments)
 
   ### Final Path Parameters
-  append!(__vars, @variables (brake(t)::Real), [input = true])
-  append!(__vars, @variables (slip_fl(t)::Real), [input = true])
-  append!(__vars, @variables (slip_fr(t)::Real), [input = true])
-  append!(__vars, @variables (slip_rl(t)::Real), [input = true])
-  append!(__vars, @variables (slip_rr(t)::Real), [input = true])
-  append!(__vars, @variables (brake_demand(t)::Real), [output = true])
-  append!(__vars, @variables (intervention(t)::Real), [output = true])
 
   ### Variables (declarations)
   append!(__vars, @variables (excess_fl(t)::Real))
   append!(__vars, @variables (excess_fr(t)::Real))
   append!(__vars, @variables (excess_rl(t)::Real))
   append!(__vars, @variables (excess_rr(t)::Real))
-  append!(__vars, @variables (excess(t)::Real))
+  append!(__vars, @variables (max_excess(t)::Real))
   append!(__vars, @variables (p_action(t)::Real))
   append!(__vars, @variables (brake_scale(t)::Real))
 
@@ -111,9 +99,9 @@
   __ovr_excess_rr = pop!(__overrides, "excess_rr", nothing); isnothing(__ovr_excess_rr) || push!(__eqs, excess_rr ~ __ovr_excess_rr)
   __ovr_excess_rr__initial = pop!(__overrides, "excess_rr.initial", nothing); isnothing(__ovr_excess_rr__initial) || (__initial_conditions[excess_rr] = __ovr_excess_rr__initial)
   __ovr_excess_rr__guess = pop!(__overrides, "excess_rr.guess", nothing)
-  __ovr_excess = pop!(__overrides, "excess", nothing); isnothing(__ovr_excess) || push!(__eqs, excess ~ __ovr_excess)
-  __ovr_excess__initial = pop!(__overrides, "excess.initial", nothing); isnothing(__ovr_excess__initial) || (__initial_conditions[excess] = __ovr_excess__initial)
-  __ovr_excess__guess = pop!(__overrides, "excess.guess", nothing)
+  __ovr_max_excess = pop!(__overrides, "max_excess", nothing); isnothing(__ovr_max_excess) || push!(__eqs, max_excess ~ __ovr_max_excess)
+  __ovr_max_excess__initial = pop!(__overrides, "max_excess.initial", nothing); isnothing(__ovr_max_excess__initial) || (__initial_conditions[max_excess] = __ovr_max_excess__initial)
+  __ovr_max_excess__guess = pop!(__overrides, "max_excess.guess", nothing)
   __ovr_p_action = pop!(__overrides, "p_action", nothing); isnothing(__ovr_p_action) || push!(__eqs, p_action ~ __ovr_p_action)
   __ovr_p_action__initial = pop!(__overrides, "p_action.initial", nothing); isnothing(__ovr_p_action__initial) || (__initial_conditions[p_action] = __ovr_p_action__initial)
   __ovr_p_action__guess = pop!(__overrides, "p_action.guess", nothing)
@@ -125,6 +113,8 @@
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named inputs = VehicleComponents.ABSControlInputs())
+  push!(__systems, @named outputs = VehicleComponents.ABSControlOutputs())
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
@@ -134,7 +124,7 @@
   isnothing(__ovr_excess_fr__guess) || (__guesses[excess_fr] = __ovr_excess_fr__guess)
   isnothing(__ovr_excess_rl__guess) || (__guesses[excess_rl] = __ovr_excess_rl__guess)
   isnothing(__ovr_excess_rr__guess) || (__guesses[excess_rr] = __ovr_excess_rr__guess)
-  isnothing(__ovr_excess__guess) || (__guesses[excess] = __ovr_excess__guess)
+  isnothing(__ovr_max_excess__guess) || (__guesses[max_excess] = __ovr_max_excess__guess)
   isnothing(__ovr_p_action__guess) || (__guesses[p_action] = __ovr_p_action__guess)
   isnothing(__ovr_brake_scale__guess) || (__guesses[brake_scale] = __ovr_brake_scale__guess)
 
@@ -144,15 +134,15 @@
   __assertions = []
 
   ### Equations
-  push!(__eqs, excess_fl ~ max(0, -slip_fl - slip_target))
-  push!(__eqs, excess_fr ~ max(0, -slip_fr - slip_target))
-  push!(__eqs, excess_rl ~ max(0, -slip_rl - slip_target))
-  push!(__eqs, excess_rr ~ max(0, -slip_rr - slip_target))
-  push!(__eqs, excess ~ max(max(excess_fl, excess_fr), max(excess_rl, excess_rr)))
-  push!(__eqs, p_action ~ k * excess)
+  push!(__eqs, outputs.intervention ~ 1 - brake_scale)
+  push!(__eqs, outputs.brake_demand ~ inputs.brake * brake_scale)
+  push!(__eqs, excess_fl ~ max(0, -inputs.slip_fl - slip_target))
+  push!(__eqs, excess_fr ~ max(0, -inputs.slip_fr - slip_target))
+  push!(__eqs, excess_rl ~ max(0, -inputs.slip_rl - slip_target))
+  push!(__eqs, excess_rr ~ max(0, -inputs.slip_rr - slip_target))
+  push!(__eqs, max_excess ~ max(max(excess_fl, excess_fr), max(excess_rl, excess_rr)))
+  push!(__eqs, p_action ~ k * max_excess)
   push!(__eqs, brake_scale ~ max(0, 1 - p_action))
-  push!(__eqs, intervention ~ 1 - brake_scale)
-  push!(__eqs, brake_demand ~ brake * brake_scale)
 
   # Return completely constructed System
   return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

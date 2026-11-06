@@ -14,32 +14,38 @@ test component InboardTestRig
   inboard = VehicleComponents.Inboard(
     pushrod_outer_left = pushrod_outer_left,
     pushrod_outer_right = pushrod_outer_right,
-    rocker_pivot_left = VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.left,
-    rocker_pivot_right = VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.right,
-    pushrod_inner_left = VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.left,
-    pushrod_inner_right = VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.right,
-    heave_pickup_left = VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.left,
-    heave_pickup_right = VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.right,
-    roll_pickup_left = VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.left,
-    roll_pickup_right = VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.right,
+    rocker_pivot_left = [-0.03, 0.12, 0.6235],
+    rocker_pivot_right = [-0.03, -0.12, 0.6235],
+    pushrod_inner_left = [-0.03, 0.138, 0.6535],
+    pushrod_inner_right = [-0.03, -0.138, 0.6535],
+    heave_pickup_left = [-0.03, 0.114, 0.6635],
+    heave_pickup_right = [-0.03, -0.114, 0.6635],
+    roll_pickup_left = [-0.105, 0.108, 0.5865],
+    roll_pickup_right = [-0.105, -0.108, 0.6605],
     heave_strut(
       spring(
-        c = VehicleComponents.params.suspension.front.setup.heave.stiffness,
-        s_unstretched = VehicleComponents.params.suspension.front.setup.heave.s_unstretched,
-        perch_height = VehicleComponents.params.suspension.front.setup.heave.perch_height
+        c = 100000.0,
+        s_unstretched = 0.228,
+        perch_height = 0.0
       )
     ),
     roll_strut(
       spring(
-        c = VehicleComponents.params.suspension.front.setup.roll.stiffness,
-        s_neutral = VehicleComponents.params.suspension.front.setup.roll.s_neutral,
-        preload_travel = VehicleComponents.params.suspension.front.setup.roll.preload_travel
+        c = 70000.0,
+        s_neutral = 0.2283243,
+        preload_travel = 0.0
       )
     ),
-    heave_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper),
-    roll_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.roll.damper),
-    pushrod_adjust_left = VehicleComponents.params.suspension.front.setup.pushrod_adjust.left,
-    pushrod_adjust_right = VehicleComponents.params.suspension.front.setup.pushrod_adjust.right
+    heave_dataset = VehicleComponents.damper_dataset(
+      "dampers/heave_VC03_compression_02.csv",
+      "dampers/heave_VC03_extension_02.csv"
+    ),
+    roll_dataset = VehicleComponents.damper_dataset(
+      "dampers/roll_VC01_compression_03.csv",
+      "dampers/roll_VC01_extension_03.csv"
+    ),
+    pushrod_adjust_left = 0.0,
+    pushrod_adjust_right = 0.0
   ) {^inboard}
 
   # Left jack
@@ -53,8 +59,8 @@ test component InboardTestRig
   pushrod_position_right = TranslationalComponents.Sources.Position() {^pushrod_position_right}
   
   # Pushrod outer pickups
-  parameter pushrod_outer_left::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer
-  parameter pushrod_outer_right::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.right.pushrod_outer
+  parameter pushrod_outer_left::Position[3] = [0.0, 0.48, 0.4235]
+  parameter pushrod_outer_right::Position[3] = [0.0, -0.48, 0.4235]
 
   # Excitation, set by the rig rather than the car
   parameter heave_amplitude::Length = 0.0254
@@ -67,15 +73,19 @@ test component InboardTestRig
 
 relations
 
-  initial pushrod_position_left.v = 0.0
-  initial pushrod_position_right.v = 0.0
-
-  heave_motion = heave_amplitude * sin(2 * π * heave_freq * time)
-  roll_motion = roll_amplitude * sin(2 * π * roll_freq * time)
-
+  # Inputs
   pushrod_position_left.s_ref = heave_motion + roll_motion
   pushrod_position_right.s_ref = heave_motion - roll_motion
 
+  # Initialization
+  initial pushrod_position_left.v = 0.0
+  initial pushrod_position_right.v = 0.0
+
+  # Equations
+  heave_motion = heave_amplitude * sin(2 * π * heave_freq * time)
+  roll_motion = roll_amplitude * sin(2 * π * roll_freq * time)
+
+  # Connections
   connect(fixed_left.frame_b, prismatic_left.frame_a) {^id9}
   connect(prismatic_left.support, pushrod_position_left.support) {^id10}
   connect(pushrod_position_left.flange, prismatic_left.axis) {^id11}
@@ -92,18 +102,36 @@ metadata {
     "tests": {
       "heave": {
         "stop": 2,
-        "params": {"heave_amplitude": 0.0254, "roll_amplitude": 0},
-        "atol": {"inboard.heave_strut.s": 0.00001, "inboard.roll_strut.s": 0.00001},
+        "params": {
+          "heave_amplitude": 0.0254,
+          "roll_amplitude": 0
+        },
+        "atol": {
+          "inboard.heave_strut.s": 0.00001,
+          "inboard.roll_strut.s": 0.00001
+        },
         "expect": {
-          "signals": ["inboard.heave_strut.s", "inboard.roll_strut.s"]
+          "signals": [
+            "inboard.heave_strut.s",
+            "inboard.roll_strut.s"
+          ]
         }
       },
       "roll": {
         "stop": 2,
-        "params": {"heave_amplitude": 0, "roll_amplitude": 0.0254},
-        "atol": {"inboard.heave_strut.s": 0.00001, "inboard.roll_strut.s": 0.00001},
+        "params": {
+          "heave_amplitude": 0,
+          "roll_amplitude": 0.0254
+        },
+        "atol": {
+          "inboard.heave_strut.s": 0.00001,
+          "inboard.roll_strut.s": 0.00001
+        },
         "expect": {
-          "signals": ["inboard.heave_strut.s", "inboard.roll_strut.s"]
+          "signals": [
+            "inboard.heave_strut.s",
+            "inboard.roll_strut.s"
+          ]
         }
       }
     },
@@ -117,61 +145,257 @@ metadata {
         "attrs": {}
       }
     ],
-    "icons": {"default": "dyad://Dyad/Default.svg"},
+    "icons": {
+      "default": "dyad://Dyad/Default.svg"
+    },
     "path": {},
-    "doc": {"behavior": true},
+    "doc": {
+      "behavior": true
+    },
     "deprecated": null
   },
   "_links": {
-    "world": {"Dyad": {"placement": {"diagram": {"x1": 20, "y1": 10, "x2": 120, "y2": 110}}}},
+    "world": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 20,
+            "y1": 10,
+            "x2": 120,
+            "y2": 110
+          }
+        }
+      }
+    },
     "inboard": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "y1": 230, "x2": 550, "y2": 130}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "y1": 230,
+            "x2": 550,
+            "y2": 130
+          }
+        }
+      }
     },
     "fixed_left": {
       "Dyad": {
-        "placement": {"diagram": {"x1": 190, "x2": 290, "y1": 450, "y2": 550, "rot": 270}}
+        "placement": {
+          "diagram": {
+            "x1": 190,
+            "x2": 290,
+            "y1": 450,
+            "y2": 550,
+            "rot": 270
+          }
+        }
       }
     },
     "prismatic_left": {
       "Dyad": {
-        "placement": {"diagram": {"x1": 190, "x2": 290, "y1": 270, "y2": 370, "rot": 270}}
+        "placement": {
+          "diagram": {
+            "x1": 190,
+            "x2": 290,
+            "y1": 270,
+            "y2": 370,
+            "rot": 270
+          }
+        }
       }
     },
     "pushrod_position_left": {
-      "Dyad": {"placement": {"diagram": {"x1": 40, "x2": 140, "y1": 270, "y2": 370}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 40,
+            "x2": 140,
+            "y1": 270,
+            "y2": 370
+          }
+        }
+      }
     },
     "fixed_right": {
       "Dyad": {
-        "placement": {"diagram": {"x1": 740, "x2": 840, "y1": 450, "y2": 550, "rot": 270}}
+        "placement": {
+          "diagram": {
+            "x1": 740,
+            "x2": 840,
+            "y1": 450,
+            "y2": 550,
+            "rot": 270
+          }
+        }
       }
     },
     "prismatic_right": {
       "Dyad": {
-        "placement": {"diagram": {"x1": 740, "x2": 840, "y1": 270, "y2": 370, "rot": 270}}
+        "placement": {
+          "diagram": {
+            "x1": 740,
+            "x2": 840,
+            "y1": 270,
+            "y2": 370,
+            "rot": 270
+          }
+        }
       }
     },
     "pushrod_position_right": {
-      "Dyad": {"placement": {"diagram": {"x1": 590, "x2": 690, "y1": 270, "y2": 370}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 590,
+            "x2": 690,
+            "y1": 270,
+            "y2": 370
+          }
+        }
+      }
     },
-    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id9": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
     "id10": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 290, "y": 430}, {"x": 90, "y": 430}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 290,
+                "y": 430
+              },
+              {
+                "x": 90,
+                "y": 430
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
-    "id11": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id12": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id11": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id12": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
     "id13": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 840, "y": 430}, {"x": 640, "y": 430}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 840,
+                "y": 430
+              },
+              {
+                "x": 640,
+                "y": 430
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
-    "id14": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id15": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 240, "y": 180}], "E": 2}], "path": {}}},
-    "id16": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 790, "y": 180}], "E": 2}], "path": {}}},
-    "id17": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 500, "y": 60}], "E": 2}], "path": {}}}
+    "id14": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id15": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 240,
+                "y": 180
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id16": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 790,
+                "y": 180
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id17": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 500,
+                "y": 60
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    }
   }
 }
 end

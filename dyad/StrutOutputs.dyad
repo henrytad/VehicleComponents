@@ -1,0 +1,11 @@
+connector StrutOutputs
+  output s::Length
+  output f::Force
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

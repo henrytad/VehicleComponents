@@ -1,0 +1,14 @@
+connector HubMotorOutputs
+  output full_demand_power::Real(units = "W")
+  output omega::AngularVelocity
+  output tau_motor::Torque
+  output tau_wheel::Torque
+  output power::Power
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

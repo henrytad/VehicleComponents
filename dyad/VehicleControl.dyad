@@ -1,160 +1,124 @@
 component VehicleControl
   "Traction control with a shared drive power limit, and anti-lock brake control."
 
-  throttle = RealInput() {^throttle}
-  brake = RealInput(units = "1") {^brake}
-  slip_fl = RealInput() {^slip_fl}
-  slip_fr = RealInput() {^slip_fr}
-  slip_rl = RealInput() {^slip_rl}
-  slip_rr = RealInput() {^slip_rr}
-  full_demand_power_fl = RealInput(units = "W") {^full_demand_power_fl}
-  full_demand_power_fr = RealInput(units = "W") {^full_demand_power_fr}
-  full_demand_power_rl = RealInput(units = "W") {^full_demand_power_rl}
-  full_demand_power_rr = RealInput(units = "W") {^full_demand_power_rr}
-
-  demand_fl = RealOutput(units = "1") {^demand_fl}
-  demand_fr = RealOutput(units = "1") {^demand_fr}
-  demand_rl = RealOutput(units = "1") {^demand_rl}
-  demand_rr = RealOutput(units = "1") {^demand_rr}
-  brake_demand = RealOutput(units = "1") {^brake_demand}
+  inputs = VehicleControlInputs() {^inputs}
+  outputs = VehicleControlOutputs() {^outputs}
 
   tc = VehicleComponents.TorqueControlLaunch() {^tc}
   abs = VehicleComponents.ABSControl() {^abs}
 
-  parameter total_max_power::Power = VehicleComponents.params.total_max_power
+  parameter total_max_power::Power
   variable requested_power::Power
   variable power_scale::Real
 
 relations
 
-  requested_power = tc.demand_fl * full_demand_power_fl + tc.demand_fr * full_demand_power_fr +
-                    tc.demand_rl * full_demand_power_rl + tc.demand_rr * full_demand_power_rr
-  power_scale = ifelse(requested_power > total_max_power, total_max_power / requested_power, 1)
-  demand_fl = tc.demand_fl * power_scale
-  demand_fr = tc.demand_fr * power_scale
-  demand_rl = tc.demand_rl * power_scale
-  demand_rr = tc.demand_rr * power_scale
+  # Inputs
+  tc.inputs.throttle = inputs.throttle
+  abs.inputs.brake = inputs.brake
+  tc.inputs.slip_fl = inputs.slip_fl
+  tc.inputs.slip_fr = inputs.slip_fr
+  tc.inputs.slip_rl = inputs.slip_rl
+  tc.inputs.slip_rr = inputs.slip_rr
+  abs.inputs.slip_fl = inputs.slip_fl
+  abs.inputs.slip_fr = inputs.slip_fr
+  abs.inputs.slip_rl = inputs.slip_rl
+  abs.inputs.slip_rr = inputs.slip_rr
 
-  connect(throttle, tc.throttle) {^id18}
-  connect(brake, abs.brake) {^id19}
-  connect(slip_fl, tc.slip_fl) {^id20}
-  connect(slip_fr, tc.slip_fr) {^id21}
-  connect(slip_rl, tc.slip_rl) {^id22}
-  connect(slip_rr, tc.slip_rr) {^id23}
-  connect(slip_fl, abs.slip_fl) {^id24}
-  connect(slip_fr, abs.slip_fr) {^id25}
-  connect(slip_rl, abs.slip_rl) {^id26}
-  connect(slip_rr, abs.slip_rr) {^id27}
-  connect(abs.brake_demand, brake_demand) {^id28}
+  # Outputs
+  outputs.power_scale = power_scale
+  outputs.abs_intervention = abs.outputs.intervention
+  outputs.demand_fl = tc.outputs.demand_fl * power_scale
+  outputs.demand_fr = tc.outputs.demand_fr * power_scale
+  outputs.demand_rl = tc.outputs.demand_rl * power_scale
+  outputs.demand_rr = tc.outputs.demand_rr * power_scale
+  outputs.brake_demand = abs.outputs.brake_demand
+
+  # Equations
+  requested_power = tc.outputs.demand_fl * inputs.full_demand_power_fl + tc.outputs.demand_fr * inputs.full_demand_power_fr +
+                    tc.outputs.demand_rl * inputs.full_demand_power_rl + tc.outputs.demand_rr * inputs.full_demand_power_rr
+  power_scale = ifelse(requested_power > total_max_power, total_max_power / requested_power, 1)
 
 metadata {
-  "Dyad": {"labels": [{"label": "$(instance)", "x": 500, "y": 1100, "rot": 0}]},
+  "Dyad": {
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "rot": 0
+      }
+    ],
+    "panel": {
+      "control": "tabs",
+      "children": {
+        "Power limit": {
+          "contents": [
+            "total_max_power"
+          ]
+        }
+      }
+    }
+  },
   "_links": {
-    "throttle": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
-    "brake": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 170, "y2": 270}}}
-    },
-    "slip_fl": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 330, "y2": 430}}}
-    },
-    "slip_fr": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 480, "y2": 580}}}
-    },
-    "slip_rl": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 630, "y2": 730}}}
-    },
-    "slip_rr": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 780, "y2": 880}}}
-    },
-    "full_demand_power_fl": {"Dyad": {"placement": {"diagram": {"x1": 150, "x2": 250, "y1": -50, "y2": 50}}}},
-    "full_demand_power_fr": {"Dyad": {"placement": {"diagram": {"x1": 350, "x2": 450, "y1": -50, "y2": 50}}}},
-    "full_demand_power_rl": {"Dyad": {"placement": {"diagram": {"x1": 550, "x2": 650, "y1": -50, "y2": 50}}}},
-    "full_demand_power_rr": {"Dyad": {"placement": {"diagram": {"x1": 750, "x2": 850, "y1": -50, "y2": 50}}}},
-    "demand_fl": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 230, "y2": 330}}}
-    },
-    "demand_fr": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 380, "y2": 480}}}
-    },
-    "demand_rl": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 530, "y2": 630}}}
-    },
-    "demand_rr": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 680, "y2": 780}}}
-    },
-    "brake_demand": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 860, "y2": 960}}}
-    },
     "tc": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 320, "y2": 420}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 320,
+            "y2": 420
+          }
+        }
+      }
     },
     "abs": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 580, "y2": 680}}}
-    },
-    "id18": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 280, "y": 70}, {"x": 280, "y": 327}], "E": 2}],
-        "path": {}
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 580,
+            "y2": 680
+          }
+        }
       }
     },
-    "id19": {
+    "inputs": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 400, "y": 220}, {"x": 400, "y": 587}], "E": 2}],
-        "path": {}
+        "placement": {
+          "diagram": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": -50.0,
+            "y1": 100.0,
+            "x2": 50.0,
+            "y2": 200.0
+          }
+        }
       }
     },
-    "id20": {
+    "outputs": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 280, "y": 380}, {"x": 280, "y": 348}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id21": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 300, "y": 530}, {"x": 300, "y": 363}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id22": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 320, "y": 680}, {"x": 320, "y": 377}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id23": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 340, "y": 830}, {"x": 340, "y": 391}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id24": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 280, "y": 380}, {"x": 280, "y": 608}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id25": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 300, "y": 530}, {"x": 300, "y": 623}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id26": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 320, "y": 680}, {"x": 320, "y": 637}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id27": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 340, "y": 830}, {"x": 340, "y": 651}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id28": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 600, "y": 620}, {"x": 600, "y": 910}], "E": 2}],
-        "path": {}
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": 950.0,
+            "y1": 100.0,
+            "x2": 1050.0,
+            "y2": 200.0
+          }
+        }
       }
     }
   }

@@ -5,23 +5,36 @@
 
 
 @doc Markdown.doc"""
-   FullVehicle(; name, sprung_mass, sprung_I_11, sprung_I_22, sprung_I_33, sprung_cg, __overrides)
+   FullVehicle(; name, heave_damper_compression_front, heave_damper_extension_front, roll_damper_compression_front, roll_damper_extension_front, heave_damper_compression_rear, heave_damper_extension_rear, roll_damper_compression_rear, roll_damper_extension_rear, road_N, road_seed, road_n_min, road_n_max, vehicle_name, brake_bias, max_brake_torque, sprung_mass, sprung_I_11, sprung_I_22, sprung_I_33, sprung_cg, __overrides)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `sprung_mass`         |                          | kg  |   VehicleComp...s.body.mass |
-| `sprung_I_11`         |                          | kg.m2  |   VehicleComp...s.body.i_11 |
-| `sprung_I_22`         |                          | kg.m2  |   VehicleComp...s.body.i_22 |
-| `sprung_I_33`         |                          | kg.m2  |   VehicleComp...s.body.i_33 |
-| `sprung_cg`         |                          | m  |   VehicleComp...ams.body.cg |
+| `heave_damper_compression_front`         |                          | --  |    |
+| `heave_damper_extension_front`         |                          | --  |    |
+| `roll_damper_compression_front`         |                          | --  |    |
+| `roll_damper_extension_front`         |                          | --  |    |
+| `heave_damper_compression_rear`         |                          | --  |    |
+| `heave_damper_extension_rear`         |                          | --  |    |
+| `roll_damper_compression_rear`         |                          | --  |    |
+| `roll_damper_extension_rear`         |                          | --  |    |
+| `road_N`         |                          | --  |    |
+| `road_seed`         |                          | --  |    |
+| `road_n_min`         |                          | --  |    |
+| `road_n_max`         |                          | --  |    |
+| `vehicle_name`         |                          | --  |    |
+| `brake_bias`         |                          | --  |    |
+| `max_brake_torque`         |                          | N.m  |    |
+| `sprung_mass`         |                          | kg  |    |
+| `sprung_I_11`         |                          | kg.m2  |    |
+| `sprung_I_22`         |                          | kg.m2  |    |
+| `sprung_I_33`         |                          | kg.m2  |    |
+| `sprung_cg`         |                          | m  |    |
 
 ## Connectors
 
- * `throttle` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `brake` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `steer` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
+ * `inputs` - ([`FullVehicleInputs`](@ref))
  * `rig` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 
@@ -33,7 +46,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `a_cg`         |                          | m/s2  |
 | `v_cg`         |                          | m/s  |
 """
-@component function FullVehicle(; name = nothing, var"sprung_mass"=VehicleComponents.params.body.mass, var"sprung_I_11"=VehicleComponents.params.body.i_11, var"sprung_I_22"=VehicleComponents.params.body.i_22, var"sprung_I_33"=VehicleComponents.params.body.i_33, var"sprung_cg"=VehicleComponents.params.body.cg, __overrides = Dict{String, Any}())
+@component function FullVehicle(; name = nothing, var"heave_damper_compression_front"=nothing, var"heave_damper_extension_front"=nothing, var"roll_damper_compression_front"=nothing, var"roll_damper_extension_front"=nothing, var"heave_damper_compression_rear"=nothing, var"heave_damper_extension_rear"=nothing, var"roll_damper_compression_rear"=nothing, var"roll_damper_extension_rear"=nothing, var"road_N"=nothing, var"road_seed"=nothing, var"road_n_min"=nothing, var"road_n_max"=nothing, var"vehicle_name"=nothing, var"brake_bias"=nothing, var"max_brake_torque"=nothing, var"sprung_mass"=nothing, var"sprung_I_11"=nothing, var"sprung_I_22"=nothing, var"sprung_I_33"=nothing, var"sprung_cg"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -52,6 +65,21 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
 
   ### Keyword argument overrides
+  haskey(__overrides, "heave_damper_compression_front") && (heave_damper_compression_front = pop!(__overrides, "heave_damper_compression_front"))
+  haskey(__overrides, "heave_damper_extension_front") && (heave_damper_extension_front = pop!(__overrides, "heave_damper_extension_front"))
+  haskey(__overrides, "roll_damper_compression_front") && (roll_damper_compression_front = pop!(__overrides, "roll_damper_compression_front"))
+  haskey(__overrides, "roll_damper_extension_front") && (roll_damper_extension_front = pop!(__overrides, "roll_damper_extension_front"))
+  haskey(__overrides, "heave_damper_compression_rear") && (heave_damper_compression_rear = pop!(__overrides, "heave_damper_compression_rear"))
+  haskey(__overrides, "heave_damper_extension_rear") && (heave_damper_extension_rear = pop!(__overrides, "heave_damper_extension_rear"))
+  haskey(__overrides, "roll_damper_compression_rear") && (roll_damper_compression_rear = pop!(__overrides, "roll_damper_compression_rear"))
+  haskey(__overrides, "roll_damper_extension_rear") && (roll_damper_extension_rear = pop!(__overrides, "roll_damper_extension_rear"))
+  haskey(__overrides, "road_N") && (road_N = pop!(__overrides, "road_N"))
+  haskey(__overrides, "road_seed") && (road_seed = pop!(__overrides, "road_seed"))
+  haskey(__overrides, "road_n_min") && (road_n_min = pop!(__overrides, "road_n_min"))
+  haskey(__overrides, "road_n_max") && (road_n_max = pop!(__overrides, "road_n_max"))
+  haskey(__overrides, "vehicle_name") && (vehicle_name = pop!(__overrides, "vehicle_name"))
+  haskey(__overrides, "brake_bias") && (brake_bias = pop!(__overrides, "brake_bias"))
+  haskey(__overrides, "max_brake_torque") && (max_brake_torque = pop!(__overrides, "max_brake_torque"))
   haskey(__overrides, "sprung_mass") && (sprung_mass = pop!(__overrides, "sprung_mass"))
   haskey(__overrides, "sprung_I_11") && (sprung_I_11 = pop!(__overrides, "sprung_I_11"))
   haskey(__overrides, "sprung_I_22") && (sprung_I_22 = pop!(__overrides, "sprung_I_22"))
@@ -71,6 +99,15 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Deferred assignment (default values that depend on final parameters)
 
   ### Symbolic Parameters
+  __local__vehicle_name = vehicle_name
+  append!(__params, @parameters (vehicle_name::String))
+  __dyad_seed_parameter!(__initial_conditions, __bindings, vehicle_name, __local__vehicle_name)
+  __local__brake_bias = brake_bias
+  append!(__params, @parameters (brake_bias::Real))
+  __dyad_seed_parameter!(__initial_conditions, __bindings, brake_bias, __local__brake_bias)
+  __local__max_brake_torque = max_brake_torque
+  append!(__params, @parameters (max_brake_torque::Real))
+  __dyad_seed_parameter!(__initial_conditions, __bindings, max_brake_torque, __local__max_brake_torque)
   __local__sprung_mass = sprung_mass
   append!(__params, @parameters (sprung_mass::Real), [bounds = (0, Inf)])
   __dyad_seed_parameter!(__initial_conditions, __bindings, sprung_mass, __local__sprung_mass)
@@ -90,9 +127,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Final Parameters (assignments)
 
   ### Final Path Parameters
-  append!(__vars, @variables (throttle(t)::Real), [input = true])
-  append!(__vars, @variables (brake(t)::Real), [input = true])
-  append!(__vars, @variables (steer(t)::Real), [input = true])
 
   ### Variables (declarations)
   append!(__vars, @variables (w_cg(t)[1:3]::Real))
@@ -114,128 +148,72 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named inputs = VehicleComponents.FullVehicleInputs())
   push!(__systems, @named rig = __Dyad__Frame3D())
+  # Subcomponent outputs of type VehicleComponents.FullVehicleOutputs
+  outputs_overrides = __pop_subcomponent_overrides!(__overrides, "outputs")
+  push!(__systems, @named outputs = VehicleComponents.FullVehicleOutputs(; __overrides = outputs_overrides))
   # Subcomponent body of type MultibodyComponents.Body
   body_overrides = __pop_subcomponent_overrides!(__overrides, "body")
   push!(__systems, @named body = MultibodyComponents.Body(; m=sprung_mass, r_cm=sprung_cg, I_11=sprung_I_11, I_22=sprung_I_22, I_33=sprung_I_33, cylinder_radius=Float64(0), __overrides = body_overrides))
   # Subcomponent corner_fl of type VehicleComponents.CornerAssembly
   corner_fl_overrides = __pop_subcomponent_overrides!(__overrides, "corner_fl")
   corner_fl_dict = Dict{String, Any}()
-  corner_fl_dict["brake.brake_bias"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.brakes.bias)
-  corner_fl_dict["brake.max_torque"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.brakes.max_torque)
+  corner_fl_dict["wheel_assembly.tire.is_left"] = ModelingToolkit.default_to_parentscope(true)
+  corner_fl_dict["wheel_assembly.tire.road.N"] = ModelingToolkit.default_to_parentscope(road_N)
+  corner_fl_dict["wheel_assembly.tire.road.seed"] = ModelingToolkit.default_to_parentscope(road_seed)
+  corner_fl_dict["wheel_assembly.tire.road.n_min"] = ModelingToolkit.default_to_parentscope(road_n_min)
+  corner_fl_dict["wheel_assembly.tire.road.n_max"] = ModelingToolkit.default_to_parentscope(road_n_max)
+  corner_fl_dict["brake.is_front"] = ModelingToolkit.default_to_parentscope(true)
+  corner_fl_dict["brake.brake_bias"] = ModelingToolkit.default_to_parentscope(ModelingToolkit.default_to_parentscope(brake_bias))
+  corner_fl_dict["brake.max_torque"] = ModelingToolkit.default_to_parentscope(ModelingToolkit.default_to_parentscope(max_brake_torque))
   merge!(corner_fl_dict, corner_fl_overrides)
-  push!(__systems, @named corner_fl = VehicleComponents.CornerAssembly(; is_left=true, is_front=true, upright_mass=VehicleComponents.params.suspension.front.geometry.linkages.left.upright.mass, __overrides = corner_fl_dict))
-  __dyad_bind_final!(__bindings, corner_fl, Symbol[:brake], :brake_bias, VehicleComponents.params.brakes.bias)
-  __dyad_bind_final!(__bindings, corner_fl, Symbol[:brake], :max_torque, VehicleComponents.params.brakes.max_torque)
+  push!(__systems, @named corner_fl = VehicleComponents.CornerAssembly(; __overrides = corner_fl_dict))
   # Subcomponent corner_fr of type VehicleComponents.CornerAssembly
   corner_fr_overrides = __pop_subcomponent_overrides!(__overrides, "corner_fr")
   corner_fr_dict = Dict{String, Any}()
-  corner_fr_dict["brake.brake_bias"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.brakes.bias)
-  corner_fr_dict["brake.max_torque"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.brakes.max_torque)
+  corner_fr_dict["wheel_assembly.tire.is_left"] = ModelingToolkit.default_to_parentscope(false)
+  corner_fr_dict["wheel_assembly.tire.road.N"] = ModelingToolkit.default_to_parentscope(road_N)
+  corner_fr_dict["wheel_assembly.tire.road.seed"] = ModelingToolkit.default_to_parentscope(road_seed)
+  corner_fr_dict["wheel_assembly.tire.road.n_min"] = ModelingToolkit.default_to_parentscope(road_n_min)
+  corner_fr_dict["wheel_assembly.tire.road.n_max"] = ModelingToolkit.default_to_parentscope(road_n_max)
+  corner_fr_dict["brake.is_front"] = ModelingToolkit.default_to_parentscope(true)
+  corner_fr_dict["brake.brake_bias"] = ModelingToolkit.default_to_parentscope(ModelingToolkit.default_to_parentscope(brake_bias))
+  corner_fr_dict["brake.max_torque"] = ModelingToolkit.default_to_parentscope(ModelingToolkit.default_to_parentscope(max_brake_torque))
   merge!(corner_fr_dict, corner_fr_overrides)
-  push!(__systems, @named corner_fr = VehicleComponents.CornerAssembly(; is_left=false, is_front=true, upright_mass=VehicleComponents.params.suspension.front.geometry.linkages.right.upright.mass, __overrides = corner_fr_dict))
-  __dyad_bind_final!(__bindings, corner_fr, Symbol[:brake], :brake_bias, VehicleComponents.params.brakes.bias)
-  __dyad_bind_final!(__bindings, corner_fr, Symbol[:brake], :max_torque, VehicleComponents.params.brakes.max_torque)
+  push!(__systems, @named corner_fr = VehicleComponents.CornerAssembly(; __overrides = corner_fr_dict))
   # Subcomponent corner_rl of type VehicleComponents.CornerAssembly
   corner_rl_overrides = __pop_subcomponent_overrides!(__overrides, "corner_rl")
   corner_rl_dict = Dict{String, Any}()
-  corner_rl_dict["brake.brake_bias"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.brakes.bias)
-  corner_rl_dict["brake.max_torque"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.brakes.max_torque)
+  corner_rl_dict["wheel_assembly.tire.is_left"] = ModelingToolkit.default_to_parentscope(true)
+  corner_rl_dict["wheel_assembly.tire.road.N"] = ModelingToolkit.default_to_parentscope(road_N)
+  corner_rl_dict["wheel_assembly.tire.road.seed"] = ModelingToolkit.default_to_parentscope(road_seed)
+  corner_rl_dict["wheel_assembly.tire.road.n_min"] = ModelingToolkit.default_to_parentscope(road_n_min)
+  corner_rl_dict["wheel_assembly.tire.road.n_max"] = ModelingToolkit.default_to_parentscope(road_n_max)
+  corner_rl_dict["brake.is_front"] = ModelingToolkit.default_to_parentscope(false)
+  corner_rl_dict["brake.brake_bias"] = ModelingToolkit.default_to_parentscope(ModelingToolkit.default_to_parentscope(brake_bias))
+  corner_rl_dict["brake.max_torque"] = ModelingToolkit.default_to_parentscope(ModelingToolkit.default_to_parentscope(max_brake_torque))
   merge!(corner_rl_dict, corner_rl_overrides)
-  push!(__systems, @named corner_rl = VehicleComponents.CornerAssembly(; is_left=true, is_front=false, upright_mass=VehicleComponents.params.suspension.rear.geometry.linkages.left.upright.mass, __overrides = corner_rl_dict))
-  __dyad_bind_final!(__bindings, corner_rl, Symbol[:brake], :brake_bias, VehicleComponents.params.brakes.bias)
-  __dyad_bind_final!(__bindings, corner_rl, Symbol[:brake], :max_torque, VehicleComponents.params.brakes.max_torque)
+  push!(__systems, @named corner_rl = VehicleComponents.CornerAssembly(; __overrides = corner_rl_dict))
   # Subcomponent corner_rr of type VehicleComponents.CornerAssembly
   corner_rr_overrides = __pop_subcomponent_overrides!(__overrides, "corner_rr")
   corner_rr_dict = Dict{String, Any}()
-  corner_rr_dict["brake.brake_bias"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.brakes.bias)
-  corner_rr_dict["brake.max_torque"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.brakes.max_torque)
+  corner_rr_dict["wheel_assembly.tire.is_left"] = ModelingToolkit.default_to_parentscope(false)
+  corner_rr_dict["wheel_assembly.tire.road.N"] = ModelingToolkit.default_to_parentscope(road_N)
+  corner_rr_dict["wheel_assembly.tire.road.seed"] = ModelingToolkit.default_to_parentscope(road_seed)
+  corner_rr_dict["wheel_assembly.tire.road.n_min"] = ModelingToolkit.default_to_parentscope(road_n_min)
+  corner_rr_dict["wheel_assembly.tire.road.n_max"] = ModelingToolkit.default_to_parentscope(road_n_max)
+  corner_rr_dict["brake.is_front"] = ModelingToolkit.default_to_parentscope(false)
+  corner_rr_dict["brake.brake_bias"] = ModelingToolkit.default_to_parentscope(ModelingToolkit.default_to_parentscope(brake_bias))
+  corner_rr_dict["brake.max_torque"] = ModelingToolkit.default_to_parentscope(ModelingToolkit.default_to_parentscope(max_brake_torque))
   merge!(corner_rr_dict, corner_rr_overrides)
-  push!(__systems, @named corner_rr = VehicleComponents.CornerAssembly(; is_left=false, is_front=false, upright_mass=VehicleComponents.params.suspension.rear.geometry.linkages.right.upright.mass, __overrides = corner_rr_dict))
-  __dyad_bind_final!(__bindings, corner_rr, Symbol[:brake], :brake_bias, VehicleComponents.params.brakes.bias)
-  __dyad_bind_final!(__bindings, corner_rr, Symbol[:brake], :max_torque, VehicleComponents.params.brakes.max_torque)
+  push!(__systems, @named corner_rr = VehicleComponents.CornerAssembly(; __overrides = corner_rr_dict))
   # Subcomponent front_suspension of type VehicleComponents.Suspension
   front_suspension_overrides = __pop_subcomponent_overrides!(__overrides, "front_suspension")
-  front_suspension_dict = Dict{String, Any}()
-  front_suspension_dict["linkage_left.lca_front"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.lca_front)
-  front_suspension_dict["linkage_left.lca_rear"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.lca_rear)
-  front_suspension_dict["linkage_left.lca_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.lca_outer)
-  front_suspension_dict["linkage_left.uca_front"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.uca_front)
-  front_suspension_dict["linkage_left.uca_rear"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.uca_rear)
-  front_suspension_dict["linkage_left.uca_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.uca_outer)
-  front_suspension_dict["linkage_left.tierod_inner"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner)
-  front_suspension_dict["linkage_left.tierod_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_outer)
-  front_suspension_dict["linkage_left.static_camber"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.alignment.left.static_camber)
-  front_suspension_dict["linkage_left.static_toe"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.alignment.left.static_toe)
-  front_suspension_dict["linkage_right.lca_front"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.lca_front)
-  front_suspension_dict["linkage_right.lca_rear"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.lca_rear)
-  front_suspension_dict["linkage_right.lca_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.lca_outer)
-  front_suspension_dict["linkage_right.uca_front"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.uca_front)
-  front_suspension_dict["linkage_right.uca_rear"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.uca_rear)
-  front_suspension_dict["linkage_right.uca_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.uca_outer)
-  front_suspension_dict["linkage_right.tierod_inner"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_inner)
-  front_suspension_dict["linkage_right.tierod_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_outer)
-  front_suspension_dict["linkage_right.static_camber"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.alignment.right.static_camber)
-  front_suspension_dict["linkage_right.static_toe"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.alignment.right.static_toe)
-  front_suspension_dict["inboard.rocker_pivot_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.left)
-  front_suspension_dict["inboard.rocker_pivot_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.right)
-  front_suspension_dict["inboard.pushrod_inner_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.left)
-  front_suspension_dict["inboard.pushrod_inner_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.right)
-  front_suspension_dict["inboard.heave_pickup_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.left)
-  front_suspension_dict["inboard.heave_pickup_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.right)
-  front_suspension_dict["inboard.roll_pickup_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.left)
-  front_suspension_dict["inboard.roll_pickup_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.right)
-  front_suspension_dict["inboard.pushrod_adjust_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.pushrod_adjust.left)
-  front_suspension_dict["inboard.pushrod_adjust_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.pushrod_adjust.right)
-  front_suspension_dict["inboard.heave_strut.spring.c"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.heave.stiffness)
-  front_suspension_dict["inboard.heave_strut.spring.s_unstretched"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.heave.s_unstretched)
-  front_suspension_dict["inboard.heave_strut.spring.perch_height"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.heave.perch_height)
-  front_suspension_dict["inboard.roll_strut.spring.c"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.roll.stiffness)
-  front_suspension_dict["inboard.roll_strut.spring.s_neutral"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.roll.s_neutral)
-  front_suspension_dict["inboard.roll_strut.spring.preload_travel"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.roll.preload_travel)
-  merge!(front_suspension_dict, front_suspension_overrides)
-  push!(__systems, @named front_suspension = VehicleComponents.Suspension(; wheel_center_left=VehicleComponents.params.suspension.front.geometry.linkages.left.wheel_center, wheel_center_right=VehicleComponents.params.suspension.front.geometry.linkages.right.wheel_center, pushrod_outer_left=VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer, pushrod_outer_right=VehicleComponents.params.suspension.front.geometry.linkages.right.pushrod_outer, tierod_inner_left=VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner, tierod_inner_right=VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_inner, heave_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper), roll_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.roll.damper), __overrides = front_suspension_dict))
+  push!(__systems, @named front_suspension = VehicleComponents.Suspension(; heave_dataset=VehicleComponents.damper_dataset(heave_damper_compression_front, heave_damper_extension_front), roll_dataset=VehicleComponents.damper_dataset(roll_damper_compression_front, roll_damper_extension_front), __overrides = front_suspension_overrides))
   # Subcomponent rear_suspension of type VehicleComponents.Suspension
   rear_suspension_overrides = __pop_subcomponent_overrides!(__overrides, "rear_suspension")
-  rear_suspension_dict = Dict{String, Any}()
-  rear_suspension_dict["linkage_left.lca_front"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.left.lca_front)
-  rear_suspension_dict["linkage_left.lca_rear"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.left.lca_rear)
-  rear_suspension_dict["linkage_left.lca_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.left.lca_outer)
-  rear_suspension_dict["linkage_left.uca_front"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.left.uca_front)
-  rear_suspension_dict["linkage_left.uca_rear"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.left.uca_rear)
-  rear_suspension_dict["linkage_left.uca_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.left.uca_outer)
-  rear_suspension_dict["linkage_left.tierod_inner"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.left.tierod_inner)
-  rear_suspension_dict["linkage_left.tierod_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.left.tierod_outer)
-  rear_suspension_dict["linkage_left.static_camber"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.setup.alignment.left.static_camber)
-  rear_suspension_dict["linkage_left.static_toe"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.setup.alignment.left.static_toe)
-  rear_suspension_dict["linkage_right.lca_front"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.right.lca_front)
-  rear_suspension_dict["linkage_right.lca_rear"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.right.lca_rear)
-  rear_suspension_dict["linkage_right.lca_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.right.lca_outer)
-  rear_suspension_dict["linkage_right.uca_front"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.right.uca_front)
-  rear_suspension_dict["linkage_right.uca_rear"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.right.uca_rear)
-  rear_suspension_dict["linkage_right.uca_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.right.uca_outer)
-  rear_suspension_dict["linkage_right.tierod_inner"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.right.tierod_inner)
-  rear_suspension_dict["linkage_right.tierod_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.linkages.right.tierod_outer)
-  rear_suspension_dict["linkage_right.static_camber"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.setup.alignment.right.static_camber)
-  rear_suspension_dict["linkage_right.static_toe"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.setup.alignment.right.static_toe)
-  rear_suspension_dict["inboard.rocker_pivot_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.inboard.rocker_pivot.left)
-  rear_suspension_dict["inboard.rocker_pivot_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.inboard.rocker_pivot.right)
-  rear_suspension_dict["inboard.pushrod_inner_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.inboard.pushrod_inner.left)
-  rear_suspension_dict["inboard.pushrod_inner_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.inboard.pushrod_inner.right)
-  rear_suspension_dict["inboard.heave_pickup_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.inboard.heave_pickup.left)
-  rear_suspension_dict["inboard.heave_pickup_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.inboard.heave_pickup.right)
-  rear_suspension_dict["inboard.roll_pickup_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.inboard.roll_pickup.left)
-  rear_suspension_dict["inboard.roll_pickup_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.geometry.inboard.roll_pickup.right)
-  rear_suspension_dict["inboard.pushrod_adjust_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.setup.pushrod_adjust.left)
-  rear_suspension_dict["inboard.pushrod_adjust_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.setup.pushrod_adjust.right)
-  rear_suspension_dict["inboard.heave_strut.spring.c"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.setup.heave.stiffness)
-  rear_suspension_dict["inboard.heave_strut.spring.s_unstretched"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.setup.heave.s_unstretched)
-  rear_suspension_dict["inboard.heave_strut.spring.perch_height"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.setup.heave.perch_height)
-  rear_suspension_dict["inboard.roll_strut.spring.c"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.setup.roll.stiffness)
-  rear_suspension_dict["inboard.roll_strut.spring.s_neutral"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.setup.roll.s_neutral)
-  rear_suspension_dict["inboard.roll_strut.spring.preload_travel"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.rear.setup.roll.preload_travel)
-  merge!(rear_suspension_dict, rear_suspension_overrides)
-  push!(__systems, @named rear_suspension = VehicleComponents.Suspension(; wheel_center_left=VehicleComponents.params.suspension.rear.geometry.linkages.left.wheel_center, wheel_center_right=VehicleComponents.params.suspension.rear.geometry.linkages.right.wheel_center, pushrod_outer_left=VehicleComponents.params.suspension.rear.geometry.linkages.left.pushrod_outer, pushrod_outer_right=VehicleComponents.params.suspension.rear.geometry.linkages.right.pushrod_outer, tierod_inner_left=VehicleComponents.params.suspension.rear.geometry.linkages.left.tierod_inner, tierod_inner_right=VehicleComponents.params.suspension.rear.geometry.linkages.right.tierod_inner, heave_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.rear.setup.heave.damper), roll_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.rear.setup.roll.damper), __overrides = rear_suspension_dict))
+  push!(__systems, @named rear_suspension = VehicleComponents.Suspension(; heave_dataset=VehicleComponents.damper_dataset(heave_damper_compression_rear, heave_damper_extension_rear), roll_dataset=VehicleComponents.damper_dataset(roll_damper_compression_rear, roll_damper_extension_rear), __overrides = rear_suspension_overrides))
   # Subcomponent control of type VehicleComponents.VehicleControl
   control_overrides = __pop_subcomponent_overrides!(__overrides, "control")
   push!(__systems, @named control = VehicleComponents.VehicleControl(; __overrides = control_overrides))
@@ -260,10 +238,41 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
+  push!(__eqs, control.inputs.slip_fl ~ corner_fl.outputs.slip)
+  push!(__eqs, control.inputs.slip_fr ~ corner_fr.outputs.slip)
+  push!(__eqs, control.inputs.slip_rl ~ corner_rl.outputs.slip)
+  push!(__eqs, control.inputs.slip_rr ~ corner_rr.outputs.slip)
+  push!(__eqs, control.inputs.full_demand_power_fl ~ corner_fl.outputs.full_demand_power)
+  push!(__eqs, control.inputs.full_demand_power_fr ~ corner_fr.outputs.full_demand_power)
+  push!(__eqs, control.inputs.full_demand_power_rl ~ corner_rl.outputs.full_demand_power)
+  push!(__eqs, control.inputs.full_demand_power_rr ~ corner_rr.outputs.full_demand_power)
+  push!(__eqs, corner_fl.inputs.motor_demand ~ control.outputs.demand_fl)
+  push!(__eqs, corner_fr.inputs.motor_demand ~ control.outputs.demand_fr)
+  push!(__eqs, corner_rl.inputs.motor_demand ~ control.outputs.demand_rl)
+  push!(__eqs, corner_rr.inputs.motor_demand ~ control.outputs.demand_rr)
+  push!(__eqs, control.inputs.throttle ~ inputs.throttle)
+  push!(__eqs, control.inputs.brake ~ inputs.brake)
+  push!(__eqs, corner_fl.inputs.brake_demand ~ control.outputs.brake_demand)
+  push!(__eqs, corner_fr.inputs.brake_demand ~ control.outputs.brake_demand)
+  push!(__eqs, corner_rl.inputs.brake_demand ~ control.outputs.brake_demand)
+  push!(__eqs, corner_rr.inputs.brake_demand ~ control.outputs.brake_demand)
+  push!(__eqs, rear_suspension.inputs.steer ~ 0)
+  push!(__eqs, front_suspension.inputs.steer ~ inputs.steer)
+  push!(__eqs, outputs.body.w_cg ~ w_cg)
+  push!(__eqs, outputs.body.a_cg ~ a_cg)
+  push!(__eqs, outputs.body.v_cg ~ v_cg)
+  push!(__eqs, outputs.body.position ~ body.r_0 + MultibodyComponents.resolve1(body.frame_a.R, sprung_cg))
   push!(__eqs, w_cg ~ body_angles.angles)
   push!(__eqs, a_cg ~ body.frame_a.f / sprung_mass)
   push!(__eqs, v_cg ~ MultibodyComponents.resolve2(body.frame_a.R, body.v_cm_0))
-  push!(__eqs, rear_suspension.steer ~ 0)
+  push!(__eqs, connect(outputs.corner_fl, corner_fl.outputs))
+  push!(__eqs, connect(outputs.corner_fr, corner_fr.outputs))
+  push!(__eqs, connect(outputs.corner_rl, corner_rl.outputs))
+  push!(__eqs, connect(outputs.corner_rr, corner_rr.outputs))
+  push!(__eqs, connect(outputs.front_suspension, front_suspension.outputs))
+  push!(__eqs, connect(outputs.rear_suspension, rear_suspension.outputs))
+  push!(__eqs, connect(outputs.aero, aero.outputs))
+  push!(__eqs, connect(outputs.control, control.outputs))
   push!(__eqs, connect(body.frame_a, rig))
   push!(__eqs, connect(front_suspension.chassis, body.frame_a))
   push!(__eqs, connect(rear_suspension.chassis, body.frame_a))
@@ -271,26 +280,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(front_suspension.wheel_right, corner_fr.wheel_center))
   push!(__eqs, connect(rear_suspension.wheel_left, corner_rl.wheel_center))
   push!(__eqs, connect(rear_suspension.wheel_right, corner_rr.wheel_center))
-  push!(__eqs, connect(corner_fl.slip, control.slip_fl))
-  push!(__eqs, connect(corner_fr.slip, control.slip_fr))
-  push!(__eqs, connect(corner_rl.slip, control.slip_rl))
-  push!(__eqs, connect(corner_rr.slip, control.slip_rr))
-  push!(__eqs, connect(corner_fl.full_demand_power, control.full_demand_power_fl))
-  push!(__eqs, connect(corner_fr.full_demand_power, control.full_demand_power_fr))
-  push!(__eqs, connect(corner_rl.full_demand_power, control.full_demand_power_rl))
-  push!(__eqs, connect(corner_rr.full_demand_power, control.full_demand_power_rr))
-  push!(__eqs, connect(control.demand_fl, corner_fl.motor_demand))
-  push!(__eqs, connect(control.demand_fr, corner_fr.motor_demand))
-  push!(__eqs, connect(control.demand_rl, corner_rl.motor_demand))
-  push!(__eqs, connect(control.demand_rr, corner_rr.motor_demand))
-  push!(__eqs, connect(throttle, control.throttle))
-  push!(__eqs, connect(brake, control.brake))
-  push!(__eqs, connect(control.brake_demand, corner_fl.brake_demand))
-  push!(__eqs, connect(control.brake_demand, corner_fr.brake_demand))
-  push!(__eqs, connect(control.brake_demand, corner_rl.brake_demand))
-  push!(__eqs, connect(control.brake_demand, corner_rr.brake_demand))
   push!(__eqs, connect(rig, aero.chassis))
-  push!(__eqs, connect(steer, front_suspension.steer))
   push!(__eqs, connect(rig, body_angles.frame_a))
 
   # Return completely constructed System

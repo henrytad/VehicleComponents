@@ -11,25 +11,12 @@
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `total_max_power`         |                          | W  |   VehicleComp...l_max_power |
+| `total_max_power`         |                          | W  |    |
 
 ## Connectors
 
- * `throttle` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `brake` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip_fl` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip_fr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip_rl` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip_rr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `full_demand_power_fl` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `full_demand_power_fr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `full_demand_power_rl` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `full_demand_power_rr` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `demand_fl` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
- * `demand_fr` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
- * `demand_rl` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
- * `demand_rr` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
- * `brake_demand` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `inputs` - ([`VehicleControlInputs`](@ref))
+ * `outputs` - ([`VehicleControlOutputs`](@ref))
 
 ## Variables
 
@@ -38,7 +25,7 @@
 | `requested_power`         |                          | W  |
 | `power_scale`         |                          | --  |
 """
-@component function VehicleControl(; name = nothing, var"total_max_power"=VehicleComponents.params.total_max_power, __overrides = Dict{String, Any}())
+@component function VehicleControl(; name = nothing, var"total_max_power"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -79,21 +66,6 @@
   ### Final Parameters (assignments)
 
   ### Final Path Parameters
-  append!(__vars, @variables (throttle(t)::Real), [input = true])
-  append!(__vars, @variables (brake(t)::Real), [input = true])
-  append!(__vars, @variables (slip_fl(t)::Real), [input = true])
-  append!(__vars, @variables (slip_fr(t)::Real), [input = true])
-  append!(__vars, @variables (slip_rl(t)::Real), [input = true])
-  append!(__vars, @variables (slip_rr(t)::Real), [input = true])
-  append!(__vars, @variables (full_demand_power_fl(t)::Real), [input = true])
-  append!(__vars, @variables (full_demand_power_fr(t)::Real), [input = true])
-  append!(__vars, @variables (full_demand_power_rl(t)::Real), [input = true])
-  append!(__vars, @variables (full_demand_power_rr(t)::Real), [input = true])
-  append!(__vars, @variables (demand_fl(t)::Real), [output = true])
-  append!(__vars, @variables (demand_fr(t)::Real), [output = true])
-  append!(__vars, @variables (demand_rl(t)::Real), [output = true])
-  append!(__vars, @variables (demand_rr(t)::Real), [output = true])
-  append!(__vars, @variables (brake_demand(t)::Real), [output = true])
 
   ### Variables (declarations)
   append!(__vars, @variables (requested_power(t)::Real))
@@ -111,6 +83,8 @@
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named inputs = VehicleComponents.VehicleControlInputs())
+  push!(__systems, @named outputs = VehicleComponents.VehicleControlOutputs())
   # Subcomponent tc of type VehicleComponents.TorqueControlLaunch
   tc_overrides = __pop_subcomponent_overrides!(__overrides, "tc")
   push!(__systems, @named tc = VehicleComponents.TorqueControlLaunch(; __overrides = tc_overrides))
@@ -131,23 +105,25 @@
   __assertions = []
 
   ### Equations
-  push!(__eqs, requested_power ~ tc.demand_fl * full_demand_power_fl + tc.demand_fr * full_demand_power_fr + tc.demand_rl * full_demand_power_rl + tc.demand_rr * full_demand_power_rr)
+  push!(__eqs, tc.inputs.throttle ~ inputs.throttle)
+  push!(__eqs, abs.inputs.brake ~ inputs.brake)
+  push!(__eqs, tc.inputs.slip_fl ~ inputs.slip_fl)
+  push!(__eqs, tc.inputs.slip_fr ~ inputs.slip_fr)
+  push!(__eqs, tc.inputs.slip_rl ~ inputs.slip_rl)
+  push!(__eqs, tc.inputs.slip_rr ~ inputs.slip_rr)
+  push!(__eqs, abs.inputs.slip_fl ~ inputs.slip_fl)
+  push!(__eqs, abs.inputs.slip_fr ~ inputs.slip_fr)
+  push!(__eqs, abs.inputs.slip_rl ~ inputs.slip_rl)
+  push!(__eqs, abs.inputs.slip_rr ~ inputs.slip_rr)
+  push!(__eqs, outputs.power_scale ~ power_scale)
+  push!(__eqs, outputs.abs_intervention ~ abs.outputs.intervention)
+  push!(__eqs, outputs.demand_fl ~ tc.outputs.demand_fl * power_scale)
+  push!(__eqs, outputs.demand_fr ~ tc.outputs.demand_fr * power_scale)
+  push!(__eqs, outputs.demand_rl ~ tc.outputs.demand_rl * power_scale)
+  push!(__eqs, outputs.demand_rr ~ tc.outputs.demand_rr * power_scale)
+  push!(__eqs, outputs.brake_demand ~ abs.outputs.brake_demand)
+  push!(__eqs, requested_power ~ tc.outputs.demand_fl * inputs.full_demand_power_fl + tc.outputs.demand_fr * inputs.full_demand_power_fr + tc.outputs.demand_rl * inputs.full_demand_power_rl + tc.outputs.demand_rr * inputs.full_demand_power_rr)
   push!(__eqs, power_scale ~ ifelse(requested_power > total_max_power, total_max_power / requested_power, 1))
-  push!(__eqs, demand_fl ~ tc.demand_fl * power_scale)
-  push!(__eqs, demand_fr ~ tc.demand_fr * power_scale)
-  push!(__eqs, demand_rl ~ tc.demand_rl * power_scale)
-  push!(__eqs, demand_rr ~ tc.demand_rr * power_scale)
-  push!(__eqs, connect(throttle, tc.throttle))
-  push!(__eqs, connect(brake, abs.brake))
-  push!(__eqs, connect(slip_fl, tc.slip_fl))
-  push!(__eqs, connect(slip_fr, tc.slip_fr))
-  push!(__eqs, connect(slip_rl, tc.slip_rl))
-  push!(__eqs, connect(slip_rr, tc.slip_rr))
-  push!(__eqs, connect(slip_fl, abs.slip_fl))
-  push!(__eqs, connect(slip_fr, abs.slip_fr))
-  push!(__eqs, connect(slip_rl, abs.slip_rl))
-  push!(__eqs, connect(slip_rr, abs.slip_rr))
-  push!(__eqs, connect(abs.brake_demand, brake_demand))
 
   # Return completely constructed System
   return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

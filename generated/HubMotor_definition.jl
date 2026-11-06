@@ -11,13 +11,13 @@
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `gear_ratio`         |                          | --  |   VehicleComp....gear_ratio |
-| `max_torque`         |                          | N.m  |   VehicleComp..._max_torque |
+| `gear_ratio`         |                          | --  |    |
+| `max_torque`         |                          | N.m  |    |
 
 ## Connectors
 
- * `demand` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `full_demand_power` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `inputs` - ([`HubMotorInputs`](@ref))
+ * `outputs` - ([`HubMotorOutputs`](@ref))
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
  * `spline` - This connector represents a rotational spline with angle and torque as the potential and flow variables, respectively. ([`Spline`](@ref))
@@ -31,7 +31,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `tau_wheel`         |                          | N.m  |
 | `power`         |                          | W  |
 """
-@component function HubMotor(; name = nothing, var"gear_ratio"=VehicleComponents.params.drivetrain.gear_ratio, var"max_torque"=VehicleComponents.params.drivetrain.motor_max_torque, __overrides = Dict{String, Any}())
+@component function HubMotor(; name = nothing, var"gear_ratio"=nothing, var"max_torque"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -78,8 +78,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings[max_wheel_torque] = max_torque * gear_ratio
 
   ### Final Path Parameters
-  append!(__vars, @variables (demand(t)::Real), [input = true])
-  append!(__vars, @variables (full_demand_power(t)::Real), [output = true])
 
   ### Variables (declarations)
   append!(__vars, @variables (omega(t)::Real))
@@ -105,6 +103,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named inputs = VehicleComponents.HubMotorInputs())
+  push!(__systems, @named outputs = VehicleComponents.HubMotorOutputs())
   push!(__systems, @named wheel_center = __Dyad__Frame3D())
   push!(__systems, @named spline = __Dyad__Spline())
 
@@ -123,10 +123,14 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
+  push!(__eqs, outputs.omega ~ omega)
+  push!(__eqs, outputs.tau_motor ~ tau_motor)
+  push!(__eqs, outputs.tau_wheel ~ tau_wheel)
+  push!(__eqs, outputs.power ~ power)
+  push!(__eqs, outputs.full_demand_power ~ max_wheel_torque * abs(omega))
   push!(__eqs, omega ~ ModelingToolkit.D_nounits(spline.phi))
-  push!(__eqs, full_demand_power ~ max_wheel_torque * abs(omega))
-  push!(__eqs, tau_wheel ~ demand * max_wheel_torque)
-  push!(__eqs, tau_motor ~ demand * max_torque)
+  push!(__eqs, tau_wheel ~ inputs.demand * max_wheel_torque)
+  push!(__eqs, tau_motor ~ inputs.demand * max_torque)
   push!(__eqs, power ~ tau_wheel * omega)
   push!(__eqs, spline.tau ~ -tau_wheel)
   push!(__eqs, wheel_center.f ~ [0, 0, 0])

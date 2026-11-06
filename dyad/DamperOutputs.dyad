@@ -1,0 +1,12 @@
+connector DamperOutputs
+  output s::Length
+  output f::Force
+  output v::Velocity
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

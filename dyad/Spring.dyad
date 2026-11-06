@@ -2,27 +2,86 @@ component Spring
   extends MultibodyComponents.PartialLineForce
   extends MultibodyComponents.Renderable
 
+  outputs = SpringOutputs() {^outputs}
+
   spring_shape = MultibodyComponents.SpringShape(render = render, color = color, num_windings = num_windings, N = N, end_ratio = end_ratio, r = frame_a.r_0, length_direction = r_rel_0, length = s, width = radius)
 
   "Spring constant"
-  parameter c::TranslationalSpringConstant = 1.0
+  parameter c::TranslationalSpringConstant
   "Unstretched spring length"
-  parameter s_unstretched::Length = 0
+  parameter s_unstretched::Length
   "Perch height added to the free length"
-  parameter perch_height::Length = 0
+  parameter perch_height::Length
   "Strut length at which the spring leaves its perch"
   final parameter s_contact::Length = s_unstretched + perch_height
   "Radius in animations"
-  parameter radius::Real = 0.02
+  final parameter radius::Length = 0.02
   "Number of windings in animations"
-  parameter num_windings::Real = 15
+  final parameter num_windings::Real = 15.0
   "Number of points used to render each winding"
-  parameter N::Integer = 600
+  final parameter N::Integer = 600
   "Fraction of total length used for the tapered ends"
-  parameter end_ratio::Real = 0.1
+  final parameter end_ratio::Real = 0.1
 
 relations
 
+  # Outputs
+  outputs.s = s
+  outputs.f = f
+
+  # Equations
   f = ifelse(s > s_contact, 0, c * (s - s_contact))
 
+metadata {
+  "_links": {
+    "outputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950.0,
+            "y1": 20.0,
+            "x2": 1050.0,
+            "y2": 120.0
+          },
+          "icon": {
+            "x1": 950.0,
+            "y1": 100.0,
+            "x2": 1050.0,
+            "y2": 200.0
+          }
+        }
+      }
+    }
+  },
+  "Dyad": {
+    "panel": {
+      "control": "tabs",
+      "children": {
+        "Spring": {
+          "contents": [
+            "c",
+            "s_unstretched",
+            "perch_height"
+          ]
+        },
+        "Rendering": {
+          "contents": [
+            "radius",
+            "num_windings",
+            "N",
+            "end_ratio"
+          ]
+        }
+      }
+    },
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "layer": "icon"
+      }
+    ]
+  }
+}
 end

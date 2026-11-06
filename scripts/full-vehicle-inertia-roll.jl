@@ -4,7 +4,6 @@ using ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock
 using ADTypes: AutoFiniteDiff
 using Statistics: mean
 
-car = VehicleComponents.params
 h = 0.25
 g = 9.80665
 k_roll = 1600.0
@@ -12,16 +11,15 @@ initial_roll = deg2rad(2)
 dt = 0.01
 t_end = 12.0
 
-mass, cg = VehicleComponents.Data.vehicle_mass_and_cg(car)
-
-@named model = VehicleComponents.FullVehicleTestInertiaRoll()
+@named model = FullVehicleTestInertiaRoll()
 ssys = multibody(model)
 prob = ODEProblem(ssys, [
-    ssys.reference_cg => cg,
     ssys.pivot_depth => h,
     ssys.roll_stiffness => k_roll,
     ssys.initial_roll => initial_roll,
 ], (0.0, t_end))
+mass, cg = VehicleComponents.vehicle_mass_and_cg(prob, ssys.vehicle)
+prob = remake(prob; p=[ssys.reference_cg => cg])
 sol = solve(prob, Rodas5P(autodiff=AutoFiniteDiff()); adaptive=false, dt=dt, save_everystep=true)
 
 # Determine the period and, thus, the Ixx
@@ -34,4 +32,4 @@ k_effective = k_roll - mass * g * h
 k_effective > 0 || error("Increase k_roll above mass * g * h for a stable roll test")
 Ixx = k_effective * (period / (2π))^2 - mass * h^2
 
-println("$(car.name): T = $(round(period; digits=4)) s, f = $(round(frequency; digits=4)) Hz, Ixx = $(round(Ixx; digits=2)) kg·m²")
+println("T = $(round(period; digits=4)) s, f = $(round(frequency; digits=4)) Hz, Ixx = $(round(Ixx; digits=2)) kg·m²")

@@ -13,20 +13,20 @@
 | ------------ | ----------------------------------- | ------ | --------------- |
 | `tierod_inner_left`         |                          | m  |    |
 | `tierod_inner_right`         |                          | m  |    |
-| `rack_axis`         |                          | --  |   [0, 1, 0] |
-| `rack_ratio`         |                          | --  |   0.01 |
+| `rack_axis`         |                          | --  |    |
+| `rack_ratio`         |                          | --  |    |
 
 ## Connectors
 
+ * `inputs` - ([`SteeringRackInputs`](@ref))
  * `chassis` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
  * `tie_rod_left` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
  * `tie_rod_right` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
- * `steer` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
 """
-@component function SteeringRack(; name = nothing, var"tierod_inner_left"=nothing, var"tierod_inner_right"=nothing, var"rack_axis"=[Float64(0), Float64(1), Float64(0)], var"rack_ratio"=0.01, __overrides = Dict{String, Any}())
+@component function SteeringRack(; name = nothing, var"tierod_inner_left"=nothing, var"tierod_inner_right"=nothing, var"rack_axis"=nothing, var"rack_ratio"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -105,7 +105,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings[rack_vec] = tierod_inner_left - tierod_inner_right
 
   ### Final Path Parameters
-  append!(__vars, @variables (steer(t)::Real), [input = true])
 
   ### Variables (declarations)
 
@@ -115,6 +114,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named inputs = VehicleComponents.SteeringRackInputs())
   push!(__systems, @named chassis = __Dyad__Frame3D())
   push!(__systems, @named tie_rod_left = __Dyad__Frame3D())
   push!(__systems, @named tie_rod_right = __Dyad__Frame3D())
@@ -142,7 +142,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
-  push!(__eqs, rack_drive.s_ref ~ rack_ratio * steer)
+  push!(__eqs, rack_drive.s_ref ~ rack_ratio * inputs.steer)
   push!(__eqs, connect(chassis, rack_slide.frame_a))
   push!(__eqs, connect(rack_slide.frame_b, rack_offset.frame_a))
   push!(__eqs, connect(rack_drive.flange, rack_slide.axis))

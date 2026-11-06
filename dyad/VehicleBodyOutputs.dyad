@@ -1,0 +1,13 @@
+connector VehicleBodyOutputs
+  output w_cg::Angle[3]
+  output a_cg::Acceleration[3]
+  output v_cg::Velocity[3]
+  output position::Position[3]
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

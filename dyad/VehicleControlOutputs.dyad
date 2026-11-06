@@ -1,0 +1,16 @@
+connector VehicleControlOutputs
+  output demand_fl::Real(units = "1")
+  output demand_fr::Real(units = "1")
+  output demand_rl::Real(units = "1")
+  output demand_rr::Real(units = "1")
+  output brake_demand::Real(units = "1")
+  output power_scale::Real(units = "1")
+  output abs_intervention::Real(units = "1")
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

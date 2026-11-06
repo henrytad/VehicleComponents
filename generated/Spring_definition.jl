@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   Spring(; name, fixed_rotation_at_frame_a, fixed_rotation_at_frame_b, s_small, render, color, specular_coefficient, c, s_unstretched, perch_height, radius, num_windings, N, end_ratio, __overrides)
+   Spring(; name, fixed_rotation_at_frame_a, fixed_rotation_at_frame_b, s_small, render, color, specular_coefficient, c, s_unstretched, perch_height, __overrides)
 
 ## Parameters:
 
@@ -17,13 +17,9 @@
 | `render`         |                          | --  |   true |
 | `color`         |                          | --  |   [0.5, 0.5, 0.5, 1.0] |
 | `specular_coefficient`         |                          | --  |   1.5 |
-| `c`         | Spring constant                         | N/m  |   1.0 |
-| `s_unstretched`         | Unstretched spring length                         | m  |   0 |
-| `perch_height`         | Perch height added to the free length                         | m  |   0 |
-| `radius`         | Radius in animations                         | --  |   0.02 |
-| `num_windings`         | Number of windings in animations                         | --  |   15 |
-| `N`         | Number of points used to render each winding                         | --  |   600 |
-| `end_ratio`         | Fraction of total length used for the tapered ends                         | --  |   0.1 |
+| `c`         | Spring constant                         | N/m  |    |
+| `s_unstretched`         | Unstretched spring length                         | m  |    |
+| `perch_height`         | Perch height added to the free length                         | m  |    |
 
 ## Connectors
 
@@ -31,6 +27,7 @@
 connectors that can be connected together ([`Frame3D`](@ref))
  * `frame_b` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
+ * `outputs` - ([`SpringOutputs`](@ref))
 
 ## Variables
 
@@ -44,7 +41,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `e_a`         | Unit vector from frame_a to frame_b, resolved in frame_a                         | --  |
 | `f`         | Scalar line force (positive = tension)                         | N  |
 """
-@component function Spring(; name = nothing, var"fixed_rotation_at_frame_a"=false, var"fixed_rotation_at_frame_b"=false, var"s_small"=1e-10, var"render"=true, var"color"=[0.5, 0.5, 0.5, Float64(1.0)], var"specular_coefficient"=1.5, var"c"=Float64(1.0), var"s_unstretched"=Float64(0), var"perch_height"=Float64(0), var"radius"=0.02, var"num_windings"=Float64(15), var"N"=600, var"end_ratio"=0.1, __overrides = Dict{String, Any}())
+@component function Spring(; name = nothing, var"fixed_rotation_at_frame_a"=false, var"fixed_rotation_at_frame_b"=false, var"s_small"=1e-10, var"render"=true, var"color"=[0.5, 0.5, 0.5, Float64(1.0)], var"specular_coefficient"=1.5, var"c"=nothing, var"s_unstretched"=nothing, var"perch_height"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -72,10 +69,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   haskey(__overrides, "c") && (c = pop!(__overrides, "c"))
   haskey(__overrides, "s_unstretched") && (s_unstretched = pop!(__overrides, "s_unstretched"))
   haskey(__overrides, "perch_height") && (perch_height = pop!(__overrides, "perch_height"))
-  haskey(__overrides, "radius") && (radius = pop!(__overrides, "radius"))
-  haskey(__overrides, "num_windings") && (num_windings = pop!(__overrides, "num_windings"))
-  haskey(__overrides, "N") && (N = pop!(__overrides, "N"))
-  haskey(__overrides, "end_ratio") && (end_ratio = pop!(__overrides, "end_ratio"))
 
   ### Structural Parameters (functions)
 
@@ -87,6 +80,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
 
   ### Final Parameters (declarations)
   append!(__params, @parameters (s_contact::Real), [description = "Strut length at which the spring leaves its perch", misc = "final"])
+  append!(__params, @parameters (radius::Real), [description = "Radius in animations", misc = "final"])
+  append!(__params, @parameters (num_windings::Real), [description = "Number of windings in animations", misc = "final"])
+  append!(__params, @parameters (N::Int), [description = "Number of points used to render each winding", misc = "final"])
+  append!(__params, @parameters (end_ratio::Real), [description = "Fraction of total length used for the tapered ends", misc = "final"])
 
   ### Deferred assignment (default values that depend on final parameters)
 
@@ -112,21 +109,13 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__perch_height = perch_height
   append!(__params, @parameters (perch_height::Real), [description = "Perch height added to the free length"])
   __dyad_seed_parameter!(__initial_conditions, __bindings, perch_height, __local__perch_height)
-  __local__radius = radius
-  append!(__params, @parameters (radius::Real), [description = "Radius in animations"])
-  __dyad_seed_parameter!(__initial_conditions, __bindings, radius, __local__radius)
-  __local__num_windings = num_windings
-  append!(__params, @parameters (num_windings::Real), [description = "Number of windings in animations"])
-  __dyad_seed_parameter!(__initial_conditions, __bindings, num_windings, __local__num_windings)
-  __local__N = N
-  append!(__params, @parameters (N::Int), [description = "Number of points used to render each winding"])
-  __dyad_seed_parameter!(__initial_conditions, __bindings, N, __local__N)
-  __local__end_ratio = end_ratio
-  append!(__params, @parameters (end_ratio::Real), [description = "Fraction of total length used for the tapered ends"])
-  __dyad_seed_parameter!(__initial_conditions, __bindings, end_ratio, __local__end_ratio)
 
   ### Final Parameters (assignments)
   __bindings[s_contact] = s_unstretched + perch_height
+  __bindings[radius] = 0.02
+  __bindings[num_windings] = 15.0
+  __bindings[N] = 600
+  __bindings[end_ratio] = 0.1
 
   ### Final Path Parameters
 
@@ -168,6 +157,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Components
   push!(__systems, @named frame_a = __Dyad__Frame3D())
   push!(__systems, @named frame_b = __Dyad__Frame3D())
+  push!(__systems, @named outputs = VehicleComponents.SpringOutputs())
   # Subcomponent spring_shape of type MultibodyComponents.SpringShape
   spring_shape_overrides = __pop_subcomponent_overrides!(__overrides, "spring_shape")
   spring_shape_dict = Dict{String, Any}()
@@ -205,6 +195,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, e_a ~ r_rel_a / s)
   push!(__eqs, frame_a.f ~ -e_a * f)
   push!(__eqs, frame_b.f ~ -MultibodyComponents.resolve2(frame_b.R, MultibodyComponents.resolve1(frame_a.R, frame_a.f)))
+  push!(__eqs, outputs.s ~ s)
+  push!(__eqs, outputs.f ~ f)
   push!(__eqs, f ~ ifelse(s > s_contact, 0, c * (s - s_contact)))
 
   ### Control Structures

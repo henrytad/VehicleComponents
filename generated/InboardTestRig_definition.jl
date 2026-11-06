@@ -11,8 +11,8 @@
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `pushrod_outer_left`         |                          | m  |   VehicleComp...shrod_outer |
-| `pushrod_outer_right`         |                          | m  |   VehicleComp...shrod_outer |
+| `pushrod_outer_left`         |                          | m  |   [0.0, 0.48, 0.4235] |
+| `pushrod_outer_right`         |                          | m  |   [0.0, -0.48, 0.4235] |
 | `heave_amplitude`         |                          | m  |   0.0254 |
 | `roll_amplitude`         |                          | m  |   0.0254 |
 | `heave_freq`         |                          | Hz  |   0.5 |
@@ -25,7 +25,7 @@
 | `heave_motion`         |                          | m  |
 | `roll_motion`         |                          | m  |
 """
-@component function InboardTestRig(; name = nothing, var"pushrod_outer_left"=VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer, var"pushrod_outer_right"=VehicleComponents.params.suspension.front.geometry.linkages.right.pushrod_outer, var"heave_amplitude"=0.0254, var"roll_amplitude"=0.0254, var"heave_freq"=0.5, var"roll_freq"=1.25, __overrides = Dict{String, Any}())
+@component function InboardTestRig(; name = nothing, var"pushrod_outer_left"=[Float64(0.0), 0.48, 0.4235], var"pushrod_outer_right"=[Float64(0.0), -0.48, 0.4235], var"heave_amplitude"=0.0254, var"roll_amplitude"=0.0254, var"heave_freq"=0.5, var"roll_freq"=1.25, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -109,14 +109,14 @@
   # Subcomponent inboard of type VehicleComponents.Inboard
   inboard_overrides = __pop_subcomponent_overrides!(__overrides, "inboard")
   inboard_dict = Dict{String, Any}()
-  inboard_dict["heave_strut.spring.c"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.heave.stiffness)
-  inboard_dict["heave_strut.spring.s_unstretched"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.heave.s_unstretched)
-  inboard_dict["heave_strut.spring.perch_height"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.heave.perch_height)
-  inboard_dict["roll_strut.spring.c"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.roll.stiffness)
-  inboard_dict["roll_strut.spring.s_neutral"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.roll.s_neutral)
-  inboard_dict["roll_strut.spring.preload_travel"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.roll.preload_travel)
+  inboard_dict["heave_strut.spring.c"] = ModelingToolkit.default_to_parentscope(100000.0)
+  inboard_dict["heave_strut.spring.s_unstretched"] = ModelingToolkit.default_to_parentscope(0.228)
+  inboard_dict["heave_strut.spring.perch_height"] = ModelingToolkit.default_to_parentscope(0.0)
+  inboard_dict["roll_strut.spring.c"] = ModelingToolkit.default_to_parentscope(70000.0)
+  inboard_dict["roll_strut.spring.s_neutral"] = ModelingToolkit.default_to_parentscope(0.2283243)
+  inboard_dict["roll_strut.spring.preload_travel"] = ModelingToolkit.default_to_parentscope(0.0)
   merge!(inboard_dict, inboard_overrides)
-  push!(__systems, @named inboard = VehicleComponents.Inboard(; pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, rocker_pivot_left=VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.left, rocker_pivot_right=VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.right, pushrod_inner_left=VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.left, pushrod_inner_right=VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.right, heave_pickup_left=VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.left, heave_pickup_right=VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.right, roll_pickup_left=VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.left, roll_pickup_right=VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.right, heave_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper), roll_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.roll.damper), pushrod_adjust_left=VehicleComponents.params.suspension.front.setup.pushrod_adjust.left, pushrod_adjust_right=VehicleComponents.params.suspension.front.setup.pushrod_adjust.right, __overrides = inboard_dict))
+  push!(__systems, @named inboard = VehicleComponents.Inboard(; pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, rocker_pivot_left=[-0.03, 0.12, 0.6235], rocker_pivot_right=[-0.03, -0.12, 0.6235], pushrod_inner_left=[-0.03, 0.138, 0.6535], pushrod_inner_right=[-0.03, -0.138, 0.6535], heave_pickup_left=[-0.03, 0.114, 0.6635], heave_pickup_right=[-0.03, -0.114, 0.6635], roll_pickup_left=[-0.105, 0.108, 0.5865], roll_pickup_right=[-0.105, -0.108, 0.6605], heave_dataset=VehicleComponents.damper_dataset("dampers/heave_VC03_compression_02.csv", "dampers/heave_VC03_extension_02.csv"), roll_dataset=VehicleComponents.damper_dataset("dampers/roll_VC01_compression_03.csv", "dampers/roll_VC01_extension_03.csv"), pushrod_adjust_left=Float64(0.0), pushrod_adjust_right=Float64(0.0), __overrides = inboard_dict))
   # Subcomponent fixed_left of type MultibodyComponents.Fixed
   fixed_left_overrides = __pop_subcomponent_overrides!(__overrides, "fixed_left")
   push!(__systems, @named fixed_left = MultibodyComponents.Fixed(; r=pushrod_outer_left, render=false, __overrides = fixed_left_overrides))
@@ -151,10 +151,10 @@
   __assertions = []
 
   ### Equations
-  push!(__eqs, heave_motion ~ heave_amplitude * sin(2 * π * heave_freq * t))
-  push!(__eqs, roll_motion ~ roll_amplitude * sin(2 * π * roll_freq * t))
   push!(__eqs, pushrod_position_left.s_ref ~ heave_motion + roll_motion)
   push!(__eqs, pushrod_position_right.s_ref ~ heave_motion - roll_motion)
+  push!(__eqs, heave_motion ~ heave_amplitude * sin(2 * π * heave_freq * t))
+  push!(__eqs, roll_motion ~ roll_amplitude * sin(2 * π * roll_freq * t))
   push!(__eqs, connect(fixed_left.frame_b, prismatic_left.frame_a))
   push!(__eqs, connect(prismatic_left.support, pushrod_position_left.support))
   push!(__eqs, connect(pushrod_position_left.flange, prismatic_left.axis))

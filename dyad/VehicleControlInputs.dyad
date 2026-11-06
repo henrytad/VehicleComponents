@@ -1,0 +1,19 @@
+connector VehicleControlInputs
+  input throttle::Real(units = "1")
+  input brake::Real(units = "1")
+  input slip_fl::Real(units = "1")
+  input slip_fr::Real(units = "1")
+  input slip_rl::Real(units = "1")
+  input slip_rr::Real(units = "1")
+  input full_demand_power_fl::Real(units = "W")
+  input full_demand_power_fr::Real(units = "W")
+  input full_demand_power_rl::Real(units = "W")
+  input full_demand_power_rr::Real(units = "W")
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealInput.svg"
+    }
+  }
+}
+end

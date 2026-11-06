@@ -6,11 +6,11 @@ component WheelAssembly
   and the tire inertias are collected here into a single `spin` inertia.
   """
 
-  slip = RealOutput() {^slip}
+  outputs = WheelAssemblyOutputs() {^outputs}
 
   spline = Dyad.Spline() {^spline}
   wheel_center = Dyad.Frame3D() {^wheel_center}
-  tire = VehicleComponents.TireMF61(is_left = is_left) {^tire}
+  tire = VehicleComponents.TireMF61() {^tire}
   spin = RotationalComponents.Components.Inertia(J = spin_inertia) {^spin}
   wheel_body = MultibodyComponents.Body(
     m = wheel_mass,
@@ -21,59 +21,203 @@ component WheelAssembly
     cylinder_radius = 0
   ) {^wheel_body}
 
-  structural parameter is_left::Boolean
-
-  parameter rim_mass::Mass = VehicleComponents.params.wheels.rim_mass
-  parameter rim_inertia::Inertia = VehicleComponents.params.wheels.rim_inertia
-  parameter tire_mass::Mass = VehicleComponents.params.tires.MASS
-  parameter tire_inertia::Inertia = VehicleComponents.params.tires.IYY
+  parameter rim_mass::Mass
+  parameter rim_inertia::Inertia
+  parameter tire_mass::Mass
+  parameter tire_inertia::Inertia
 
   final parameter wheel_mass::Mass = rim_mass + tire_mass
   final parameter spin_inertia::Inertia = rim_inertia + tire_inertia
 
 relations
 
+  # Outputs
+  outputs.Fx = tire.outputs.Fx
+  outputs.Fy = tire.outputs.Fy
+  outputs.Fz = tire.outputs.Fz
+  outputs.alpha = tire.outputs.alpha
+  outputs.omega = tire.outputs.omega
+  outputs.Re = tire.outputs.Re
+  outputs.slip = tire.outputs.slip
+
+  # Connections
   connect(wheel_center, tire.wheel_center) {^id7}
   connect(wheel_center, wheel_body.frame_a) {^id8}
   connect(spline, spin.spline_a) {^id9}
   connect(spin.spline_b, tire.spline) {^id10}
-  connect(tire.slip, slip) {^id11}
 
 metadata {
   "_links": {
     "spline": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 450,
+            "y2": 550
+          },
+          "icon": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 450,
+            "y2": 550
+          }
+        }
+      }
     },
     "wheel_center": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 450, "y2": 550}}}
-    },
-    "slip": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 20, "y2": 120}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 450,
+            "y2": 550
+          },
+          "icon": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 450,
+            "y2": 550
+          }
+        }
+      }
     },
     "tire": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 450, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 450,
+            "y2": 550
+          }
+        }
+      }
     },
     "spin": {
-      "Dyad": {"placement": {"diagram": {"x1": 720, "x2": 820, "y1": 450, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 720,
+            "x2": 820,
+            "y1": 450,
+            "y2": 550
+          }
+        }
+      }
     },
     "wheel_body": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 310, "y2": 410}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 310,
+            "y2": 410
+          }
+        }
+      }
     },
-    "id7": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id7": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
     "id8": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 210, "y": 500}, {"x": 210, "y": 360}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 210,
+                "y": 500
+              },
+              {
+                "x": 210,
+                "y": 360
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
-    "id9": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id11": {
+    "id9": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 660, "y": 457}, {"x": 660, "y": 70}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
         "path": {}
       }
+    },
+    "id10": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "outputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": 950.0,
+            "y1": 100.0,
+            "x2": 1050.0,
+            "y2": 200.0
+          }
+        }
+      }
     }
+  },
+  "Dyad": {
+    "panel": {
+      "control": "tabs",
+      "children": {
+        "Mass and inertia": {
+          "contents": [
+            "rim_mass",
+            "rim_inertia",
+            "tire_mass",
+            "tire_inertia"
+          ]
+        }
+      }
+    },
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "layer": "icon"
+      }
+    ]
   }
 }
 end

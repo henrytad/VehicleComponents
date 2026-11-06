@@ -3,6 +3,8 @@ component Inboard
 
   extends Styles
 
+  outputs = InboardOutputs() {^outputs}
+
   # External frames
   chassis = Dyad.Frame3D() {^chassis}
   linkage_left = Dyad.Frame3D() {^linkage_left}
@@ -109,6 +111,13 @@ component Inboard
 
 relations
 
+  # Outputs
+  outputs.s_heave = heave_strut.outputs.s
+  outputs.f_heave = heave_strut.outputs.f
+  outputs.s_roll = roll_strut.outputs.s
+  outputs.f_roll = roll_strut.outputs.f
+
+  # Connections
   connect(mount_rocker_left.frame_a, chassis) {^id14}
   connect(mount_rocker_right.frame_a, chassis) {^id15}
   connect(rocker_left.frame_a, linkage_left) {^id16}
@@ -129,7 +138,22 @@ metadata {
     "chassis": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 450, "y1": 950, "x2": 550, "y2": 1050, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 450,
+            "y1": 950,
+            "x2": 550,
+            "y2": 1050,
+            "rot": 0
+          },
+          "icon": {
+            "iconName": "default",
+            "x1": 450,
+            "y1": 950,
+            "x2": 550,
+            "y2": 1050,
+            "rot": 0
+          }
         },
         "tags": []
       }
@@ -137,7 +161,22 @@ metadata {
     "linkage_left": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": -50, "y1": 450, "x2": 50, "y2": 550, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": -50,
+            "y1": 450,
+            "x2": 50,
+            "y2": 550,
+            "rot": 0
+          },
+          "icon": {
+            "iconName": "default",
+            "x1": -50,
+            "y1": 450,
+            "x2": 50,
+            "y2": 550,
+            "rot": 0
+          }
         },
         "tags": []
       }
@@ -145,7 +184,22 @@ metadata {
     "linkage_right": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 950, "y1": 450, "x2": 1050, "y2": 550, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 950,
+            "y1": 450,
+            "x2": 1050,
+            "y2": 550,
+            "rot": 0
+          },
+          "icon": {
+            "iconName": "default",
+            "x1": 950,
+            "y1": 450,
+            "x2": 1050,
+            "y2": 550,
+            "rot": 0
+          }
         },
         "tags": []
       }
@@ -153,7 +207,14 @@ metadata {
     "mount_rocker_left": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 390, "y1": 660, "x2": 490, "y2": 760, "rot": 270}
+          "diagram": {
+            "iconName": "default",
+            "x1": 390,
+            "y1": 660,
+            "x2": 490,
+            "y2": 760,
+            "rot": 270
+          }
         },
         "tags": []
       }
@@ -161,33 +222,101 @@ metadata {
     "mount_rocker_right": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 510, "y1": 660, "x2": 610, "y2": 760, "rot": 270}
+          "diagram": {
+            "iconName": "default",
+            "x1": 510,
+            "y1": 660,
+            "x2": 610,
+            "y2": 760,
+            "rot": 270
+          }
         },
         "tags": []
       }
     },
     "rocker_left": {
-      "Dyad": {"placement": {"diagram": {"x1": 180, "x2": 280, "y1": 450, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 180,
+            "x2": 280,
+            "y1": 450,
+            "y2": 550
+          }
+        }
+      }
     },
     "rocker_right": {
-      "Dyad": {"placement": {"diagram": {"x1": 820, "x2": 720, "y1": 450, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 820,
+            "x2": 720,
+            "y1": 450,
+            "y2": 550
+          }
+        }
+      }
     },
     "heave_arm_left": {
-      "Dyad": {"placement": {"diagram": {"x1": 310, "x2": 410, "y1": 80, "y2": 180}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 310,
+            "x2": 410,
+            "y1": 80,
+            "y2": 180
+          }
+        }
+      }
     },
     "roll_arm_left": {
-      "Dyad": {"placement": {"diagram": {"x1": 310, "x2": 410, "y1": 230, "y2": 330}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 310,
+            "x2": 410,
+            "y1": 230,
+            "y2": 330
+          }
+        }
+      }
     },
     "heave_arm_right": {
-      "Dyad": {"placement": {"diagram": {"x1": 690, "x2": 590, "y1": 80, "y2": 180}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 690,
+            "x2": 590,
+            "y1": 80,
+            "y2": 180
+          }
+        }
+      }
     },
     "roll_arm_right": {
-      "Dyad": {"placement": {"diagram": {"x1": 690, "x2": 590, "y1": 230, "y2": 330}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 690,
+            "x2": 590,
+            "y1": 230,
+            "y2": 330
+          }
+        }
+      }
     },
     "heave_strut": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 450, "y1": 80, "x2": 550, "y2": 180, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 450,
+            "y1": 80,
+            "x2": 550,
+            "y2": 180,
+            "rot": 0
+          }
         },
         "tags": []
       }
@@ -195,35 +324,289 @@ metadata {
     "roll_strut": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 450, "y1": 230, "x2": 550, "y2": 330, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 450,
+            "y1": 230,
+            "x2": 550,
+            "y2": 330,
+            "rot": 0
+          }
         },
         "tags": []
       }
     },
     "id14": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 440, "y": 1000}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 440,
+                "y": 1000
+              }
+            ],
+            "E": 2
+          }
+        ],
         "renderStyle": "standard"
       }
     },
     "id15": {
       "Dyad": {
         "renderStyle": "standard",
-        "edges": [{"S": 1, "M": [{"x": 560, "y": 1000}], "E": 2}]
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 560,
+                "y": 1000
+              }
+            ],
+            "E": 2
+          }
+        ]
       }
     },
-    "id16": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id17": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id18": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 440, "y": 500}], "E": 2}], "path": {}}},
-    "id19": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 560, "y": 500}], "E": 2}], "path": {}}},
-    "id20": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 252, "y": 130}], "E": 2}], "path": {}}},
-    "id21": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 252, "y": 280}], "E": 2}], "path": {}}},
-    "id22": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 748, "y": 130}], "E": 2}], "path": {}}},
-    "id23": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 748, "y": 280}], "E": 2}], "path": {}}},
-    "id24": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id25": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id26": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id27": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}}
+    "id16": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id17": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id18": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 440,
+                "y": 500
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id19": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 560,
+                "y": 500
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id20": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 252,
+                "y": 130
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id21": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 252,
+                "y": 280
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id22": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 748,
+                "y": 130
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id23": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 748,
+                "y": 280
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id24": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id25": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id26": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id27": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "outputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": 950.0,
+            "y1": 100.0,
+            "x2": 1050.0,
+            "y2": 200.0
+          }
+        }
+      }
+    }
+  },
+  "Dyad": {
+    "panel": {
+      "control": "tabs",
+      "children": {
+        "Setup": {
+          "contents": [
+            "pushrod_adjust_left",
+            "pushrod_adjust_right"
+          ]
+        },
+        "Left geometry": {
+          "contents": [
+            "rocker_pivot_left",
+            "pushrod_inner_left",
+            "pushrod_outer_left",
+            "heave_pickup_left",
+            "roll_pickup_left"
+          ]
+        },
+        "Right geometry": {
+          "contents": [
+            "rocker_pivot_right",
+            "pushrod_inner_right",
+            "pushrod_outer_right",
+            "heave_pickup_right",
+            "roll_pickup_right"
+          ]
+        },
+        "Damper data": {
+          "contents": [
+            "heave_dataset",
+            "roll_dataset"
+          ]
+        }
+      }
+    },
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "layer": "icon"
+      }
+    ]
   }
 }
 end

@@ -1,0 +1,16 @@
+connector LinkageOutputs
+  output toe::Angle
+  output camber::Angle
+  output wc_height::Length
+  output f_lca::Force[3]
+  output f_uca::Force[3]
+  output f_push::Force[3]
+  output f_uca_ball::Force[3]
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

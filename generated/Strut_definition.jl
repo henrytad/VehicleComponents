@@ -16,6 +16,7 @@
 
 ## Connectors
 
+ * `outputs` - ([`StrutOutputs`](@ref))
  * `frame_a` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
  * `frame_b` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
@@ -87,6 +88,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named outputs = VehicleComponents.StrutOutputs())
   push!(__systems, @named frame_a = __Dyad__Frame3D())
   push!(__systems, @named frame_b = __Dyad__Frame3D())
   # Subcomponent spring of type VehicleComponents.Spring
@@ -109,8 +111,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
-  push!(__eqs, s ~ spring.s)
-  push!(__eqs, f ~ spring.f + damper.f)
+  push!(__eqs, outputs.s ~ s)
+  push!(__eqs, outputs.f ~ f)
+  push!(__eqs, s ~ spring.outputs.s)
+  push!(__eqs, f ~ spring.outputs.f + damper.outputs.f)
   push!(__eqs, connect(frame_a, damper.frame_a))
   push!(__eqs, connect(damper.frame_b, frame_b))
   push!(__eqs, connect(frame_a, spring.frame_a))

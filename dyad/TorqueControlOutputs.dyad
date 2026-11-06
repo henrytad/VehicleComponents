@@ -1,0 +1,13 @@
+connector TorqueControlOutputs
+  output demand_fl::Real(units = "1")
+  output demand_fr::Real(units = "1")
+  output demand_rl::Real(units = "1")
+  output demand_rr::Real(units = "1")
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

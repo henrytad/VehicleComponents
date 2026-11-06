@@ -1,0 +1,11 @@
+connector RoadSurfaceInputs
+  input x::Length
+  input y::Length
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealInput.svg"
+    }
+  }
+}
+end

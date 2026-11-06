@@ -19,9 +19,8 @@
 
 ## Connectors
 
- * `slip` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `throttle` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `demand` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `inputs` - ([`TorqueControlTCInputs`](@ref))
+ * `outputs` - ([`TorqueControlTCOutputs`](@ref))
 """
 @component function TorqueControlTC(; name = nothing, var"slip_target"=nothing, var"launch_torque"=nothing, var"k"=nothing, var"Ti"=nothing, var"Ni"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
@@ -82,9 +81,6 @@
   __bindings[wp] = 0
 
   ### Final Path Parameters
-  append!(__vars, @variables (slip(t)::Real), [input = true])
-  append!(__vars, @variables (throttle(t)::Real), [input = true])
-  append!(__vars, @variables (demand(t)::Real), [output = true])
 
   ### Variables (declarations)
 
@@ -94,6 +90,8 @@
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named inputs = VehicleComponents.TorqueControlTCInputs())
+  push!(__systems, @named outputs = VehicleComponents.TorqueControlTCOutputs())
   # Subcomponent slip_ref of type BlockComponents.Math.Gain
   slip_ref_overrides = __pop_subcomponent_overrides!(__overrides, "slip_ref")
   push!(__systems, @named slip_ref = BlockComponents.Math.Gain(; k=slip_target, __overrides = slip_ref_overrides))
@@ -127,12 +125,14 @@
   __assertions = []
 
   ### Equations
-  push!(__eqs, connect(throttle, slip_ref.u, torque_ff.u, gate.u2))
+  push!(__eqs, slip_ref.u ~ inputs.throttle)
+  push!(__eqs, torque_ff.u ~ inputs.throttle)
+  push!(__eqs, gate.u2 ~ inputs.throttle)
+  push!(__eqs, pid.u_m ~ inputs.slip)
+  push!(__eqs, outputs.demand ~ gate.y)
   push!(__eqs, connect(slip_ref.y, pid.u_s))
   push!(__eqs, connect(torque_ff.y, pid.u_ff))
-  push!(__eqs, connect(slip, pid.u_m))
   push!(__eqs, connect(pid.y, gate.u1))
-  push!(__eqs, connect(gate.y, demand))
 
   # Return completely constructed System
   return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)
