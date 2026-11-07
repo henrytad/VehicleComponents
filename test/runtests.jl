@@ -1,3 +1,8 @@
+if ARGS == ["--precompile-only"]
+    @info "Test environment prepared; skipping simulations"
+    exit(0)
+end
+
 using VehicleComponents
 using Test
 using ADTypes: AutoFiniteDiff

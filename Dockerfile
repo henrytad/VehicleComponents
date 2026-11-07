@@ -35,9 +35,15 @@ RUN --mount=type=secret,id=juliahub_auth,required=true \
         -e 'using Pkg, TOML; Pkg.precompile(collect(keys(TOML.parsefile("Project.toml")["deps"])))' \
     && rm "$JULIA_AUTH"
 
+COPY . .
+RUN --mount=type=secret,id=juliahub_auth,required=true \
+    install -Dm600 /run/secrets/juliahub_auth "$JULIA_AUTH" \
+    && xvfb-run -a julia --check-bounds=yes --project=. \
+        -e 'using Pkg; Pkg.test(; test_args=["--precompile-only"])' \
+    && rm "$JULIA_AUTH"
+
 FROM setup AS tests
 
-COPY . .
 ARG TEST_FILE=""
 RUN --mount=type=secret,id=juliahub_auth,required=true \
     install -Dm600 /run/secrets/juliahub_auth "$JULIA_AUTH" \

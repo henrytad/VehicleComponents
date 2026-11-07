@@ -152,7 +152,7 @@ To run one suite, add `--build-arg TEST_FILE=generated/TireTestRig_test.jl`. The
 The runner always includes the full generated test suite. When a file is selected,
 the shared test wrapper skips other components before starting their simulations.
 
-CI first builds and caches the `setup` stage, then runs the test files listed in the matrix in `.github/workflows/tests.yml`, with up to 20 jobs in parallel. Add new test files to that list manually. Plain `Pkg.test()` still runs the full generated test suite. Test failures do not prevent the setup cache from being saved. Test-only dependencies may be prepared again in each job.
+CI first builds and caches the `setup` stage, including precompilation of the Julia test environment. Setup passes `--precompile-only` to the test runner, which exits before running simulations. The parallel jobs reuse that cache and run the tests listed in `.github/workflows/regression.yml`, with up to 20 jobs in parallel. Add new test files to that list manually. Plain `Pkg.test()` still runs the full generated test suite. Test failures do not prevent the setup cache from being saved.
 
 GitHub Actions passes the base64-encoded `JULIAHUB_TOKEN_ENCODED` repository secret directly to the Docker build.
 
