@@ -25,5 +25,10 @@ function __dyad_run_test_case!(
     invoke(__dyad_run_test_case!, Tuple{Any,AbstractString}, rig, name; component_stem, solver, kwargs...)
 end
 
-include("damper_maps.jl")
-include("../generated/tests.jl")
+if selected_test in (nothing, "damper_maps.jl")
+    include("damper_maps.jl")
+end
+
+if selected_test != "damper_maps.jl"
+    include("../generated/tests.jl")
+end
