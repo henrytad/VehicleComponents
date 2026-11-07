@@ -5,5 +5,7 @@
 !/generated/
 !/src/
 !/test/
+!/dyad/
+!/assets/
 !/Manifest.toml
 !/Project.toml

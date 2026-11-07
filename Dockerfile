@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:24.04 AS setup
 
 ARG DYAD_CHANNEL=dyad-3.5.0
 
@@ -15,6 +15,7 @@ ENV PATH=/root/.juliaup/bin:$PATH \
     JULIA_PKG_SERVER=juliahub.com \
     LIBGL_ALWAYS_SOFTWARE=1 \
     GKSwstype=100 \
+    JULIA_CPU_TARGET=generic \
     JULIA_AUTH=/root/.julia/servers/juliahub.com/auth.toml
 
 RUN juliaup add "$DYAD_CHANNEL" && juliaup default "$DYAD_CHANNEL"
@@ -37,5 +38,15 @@ RUN --mount=type=secret,id=juliahub_auth,required=true \
 COPY . .
 RUN --mount=type=secret,id=juliahub_auth,required=true \
     install -Dm600 /run/secrets/juliahub_auth "$JULIA_AUTH" \
-    && xvfb-run -a julia --check-bounds=yes --project=. -e 'using Pkg; Pkg.test()' \
+    && xvfb-run -a julia --check-bounds=yes --project=. \
+        -e 'using Pkg; Pkg.test(; test_args=["--precompile-only"])' \
+    && rm "$JULIA_AUTH"
+
+FROM setup AS tests
+
+ARG TEST_FILE=""
+RUN --mount=type=secret,id=juliahub_auth,required=true \
+    install -Dm600 /run/secrets/juliahub_auth "$JULIA_AUTH" \
+    && xvfb-run -a julia --check-bounds=yes --project=. \
+        -e 'using Pkg; file = ENV["TEST_FILE"]; Pkg.test(; test_args=isempty(file) ? String[] : [file])' \
     && rm "$JULIA_AUTH"

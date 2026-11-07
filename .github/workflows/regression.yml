@@ -1,0 +1,89 @@
+name: Regression
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Decode JuliaHub token
+        env:
+          JULIAHUB_TOKEN_ENCODED: ${{ secrets.JULIAHUB_TOKEN_ENCODED }}
+        run: |
+          test -n "$JULIAHUB_TOKEN_ENCODED"
+          umask 077
+          base64 -d <<< "$JULIAHUB_TOKEN_ENCODED" > "$RUNNER_TEMP/juliahub_auth.toml"
+
+      - name: Build and cache setup
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: setup
+          outputs: type=cacheonly
+          cache-from: type=gha,scope=julia-setup
+          cache-to: type=gha,scope=julia-setup,mode=max
+          secret-files: |
+            juliahub_auth=${{ runner.temp }}/juliahub_auth.toml
+
+  test:
+    name: Test (${{ matrix.file }})
+    needs: setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        file:
+          - generated/DamperTestRig_test.jl
+          - generated/FullVehicleTestConstantSteer_test.jl
+          - generated/FullVehicleTestInertiaPitch_test.jl
+          - generated/FullVehicleTestInertiaRoll_test.jl
+          - generated/FullVehicleTestInertiaYaw_test.jl
+          - generated/FullVehicleTestStatic_test.jl
+          - generated/FullVehicleTestStraightLine_test.jl
+          - generated/InboardTestRig_test.jl
+          - generated/LinkageTestRig_test.jl
+          - generated/SuspensionTestRig_test.jl
+          - generated/TireTestRig_test.jl
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Decode JuliaHub token
+        env:
+          JULIAHUB_TOKEN_ENCODED: ${{ secrets.JULIAHUB_TOKEN_ENCODED }}
+        run: |
+          test -n "$JULIAHUB_TOKEN_ENCODED"
+          umask 077
+          base64 -d <<< "$JULIAHUB_TOKEN_ENCODED" > "$RUNNER_TEMP/juliahub_auth.toml"
+
+      - name: Run test
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: tests
+          no-cache-filters: tests
+          build-args: |
+            TEST_FILE=${{ matrix.file }}
+          outputs: type=cacheonly
+          cache-from: type=gha,scope=julia-setup
+          secret-files: |
+            juliahub_auth=${{ runner.temp }}/juliahub_auth.toml
