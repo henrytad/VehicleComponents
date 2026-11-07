@@ -9,8 +9,6 @@ const MM = 1000
 @named model = VehicleComponents.TireTestRig()
 ssys = multibody(model)
 
-tires = VehicleComponents.params.tires
-
 # Slip sweep. The carriage rolls the wheel forward at `speed` while the spin drive
 # ramps wheel speed either side of free rolling, at a held vertical load.
 speed = 10.0
@@ -29,6 +27,7 @@ parameter_map = Dict([
 ])
 
 prob = ODEProblem(ssys, parameter_map, (0.0, stop))
+vertical_stiffness = prob.ps[ssys.tire.vertical_stiffness]
 sol = solve(prob, Rodas5P(autodiff=AutoFiniteDiff()))
 
 plot_slip_curve = Plots.plot(
@@ -86,7 +85,7 @@ lateral_map(deflection) = Dict([
 ])
 
 lateral_sols = map(sweep_loads) do fz
-    solve(ODEProblem(ssys, lateral_map(fz / tires.VERTICAL_STIFFNESS), (0.0, stop)),
+    solve(ODEProblem(ssys, lateral_map(fz / vertical_stiffness), (0.0, stop)),
         Rodas5P(autodiff=AutoFiniteDiff()))
 end
 

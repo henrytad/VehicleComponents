@@ -1,0 +1,13 @@
+connector InboardOutputs
+  output s_heave::Length
+  output f_heave::Force
+  output s_roll::Length
+  output f_roll::Force
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

@@ -22,6 +22,7 @@
 connectors that can be connected together ([`Frame3D`](@ref))
  * `frame_b` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
+ * `outputs` - ([`DamperOutputs`](@ref))
 
 ## Variables
 
@@ -123,6 +124,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Components
   push!(__systems, @named frame_a = __Dyad__Frame3D())
   push!(__systems, @named frame_b = __Dyad__Frame3D())
+  push!(__systems, @named outputs = VehicleComponents.DamperOutputs())
   # Subcomponent force_map of type BlockComponents.Tables.ParameterizedInterpolation
   force_map_overrides = __pop_subcomponent_overrides!(__overrides, "force_map")
   push!(__systems, @named force_map = BlockComponents.Tables.ParameterizedInterpolation(; interpolation_type=BlockComponents.InterpolationType.LinearInterpolation(), extrapolation_type=BlockComponents.ExtrapolationType.Linear(), dataset=dataset, __symbol_overrides(force_map_overrides)...))
@@ -155,8 +157,11 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, e_a ~ r_rel_a / s)
   push!(__eqs, frame_a.f ~ -e_a * f)
   push!(__eqs, frame_b.f ~ -MultibodyComponents.resolve2(frame_b.R, MultibodyComponents.resolve1(frame_a.R, frame_a.f)))
-  push!(__eqs, v ~ ModelingToolkit.D_nounits(s))
+  push!(__eqs, outputs.s ~ s)
+  push!(__eqs, outputs.f ~ f)
+  push!(__eqs, outputs.v ~ v)
   push!(__eqs, force_map.u ~ v)
+  push!(__eqs, v ~ ModelingToolkit.D_nounits(s))
   push!(__eqs, f ~ force_map.y)
 
   ### Control Structures

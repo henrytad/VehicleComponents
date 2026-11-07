@@ -1,0 +1,10 @@
+connector BrakeOutputs
+  output tau_brake::Torque
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

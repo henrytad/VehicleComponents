@@ -11,15 +11,15 @@
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `wheel_center_left`         |                          | m  |   VehicleComp...heel_center |
-| `wheel_center_right`         |                          | m  |   VehicleComp...heel_center |
-| `pushrod_outer_left`         |                          | m  |   VehicleComp...shrod_outer |
-| `pushrod_outer_right`         |                          | m  |   VehicleComp...shrod_outer |
+| `wheel_center_left`         |                          | m  |   [0.0, 0.6, 0.3135] |
+| `wheel_center_right`         |                          | m  |   [0.0, -0.6, 0.3135] |
+| `pushrod_outer_left`         |                          | m  |   [0.0, 0.48, 0.4235] |
+| `pushrod_outer_right`         |                          | m  |   [0.0, -0.48, 0.4235] |
 | `heave_amplitude`         |                          | m  |   0.0254 |
 | `roll_amplitude`         |                          | m  |   0.0 |
 | `freq`         |                          | Hz  |   0.5 |
 """
-@component function SuspensionTestRig(; name = nothing, var"wheel_center_left"=VehicleComponents.params.suspension.front.geometry.linkages.left.wheel_center, var"wheel_center_right"=VehicleComponents.params.suspension.front.geometry.linkages.right.wheel_center, var"pushrod_outer_left"=VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer, var"pushrod_outer_right"=VehicleComponents.params.suspension.front.geometry.linkages.right.pushrod_outer, var"heave_amplitude"=0.0254, var"roll_amplitude"=Float64(0.0), var"freq"=0.5, __overrides = Dict{String, Any}())
+@component function SuspensionTestRig(; name = nothing, var"wheel_center_left"=[Float64(0.0), 0.6, 0.3135], var"wheel_center_right"=[Float64(0.0), -0.6, 0.3135], var"pushrod_outer_left"=[Float64(0.0), 0.48, 0.4235], var"pushrod_outer_right"=[Float64(0.0), -0.48, 0.4235], var"heave_amplitude"=0.0254, var"roll_amplitude"=Float64(0.0), var"freq"=0.5, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -105,44 +105,46 @@
   # Subcomponent suspension of type VehicleComponents.Suspension
   suspension_overrides = __pop_subcomponent_overrides!(__overrides, "suspension")
   suspension_dict = Dict{String, Any}()
-  suspension_dict["linkage_left.lca_front"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.lca_front)
-  suspension_dict["linkage_left.lca_rear"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.lca_rear)
-  suspension_dict["linkage_left.lca_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.lca_outer)
-  suspension_dict["linkage_left.uca_front"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.uca_front)
-  suspension_dict["linkage_left.uca_rear"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.uca_rear)
-  suspension_dict["linkage_left.uca_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.uca_outer)
-  suspension_dict["linkage_left.tierod_inner"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner)
-  suspension_dict["linkage_left.tierod_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_outer)
-  suspension_dict["linkage_left.static_camber"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.alignment.left.static_camber)
-  suspension_dict["linkage_left.static_toe"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.alignment.left.static_toe)
-  suspension_dict["linkage_right.lca_front"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.lca_front)
-  suspension_dict["linkage_right.lca_rear"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.lca_rear)
-  suspension_dict["linkage_right.lca_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.lca_outer)
-  suspension_dict["linkage_right.uca_front"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.uca_front)
-  suspension_dict["linkage_right.uca_rear"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.uca_rear)
-  suspension_dict["linkage_right.uca_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.uca_outer)
-  suspension_dict["linkage_right.tierod_inner"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_inner)
-  suspension_dict["linkage_right.tierod_outer"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_outer)
-  suspension_dict["linkage_right.static_camber"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.alignment.right.static_camber)
-  suspension_dict["linkage_right.static_toe"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.alignment.right.static_toe)
-  suspension_dict["inboard.rocker_pivot_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.left)
-  suspension_dict["inboard.rocker_pivot_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.right)
-  suspension_dict["inboard.pushrod_inner_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.left)
-  suspension_dict["inboard.pushrod_inner_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.right)
-  suspension_dict["inboard.heave_pickup_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.left)
-  suspension_dict["inboard.heave_pickup_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.right)
-  suspension_dict["inboard.roll_pickup_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.left)
-  suspension_dict["inboard.roll_pickup_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.right)
-  suspension_dict["inboard.pushrod_adjust_left"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.pushrod_adjust.left)
-  suspension_dict["inboard.pushrod_adjust_right"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.pushrod_adjust.right)
-  suspension_dict["inboard.heave_strut.spring.c"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.heave.stiffness)
-  suspension_dict["inboard.heave_strut.spring.s_unstretched"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.heave.s_unstretched)
-  suspension_dict["inboard.heave_strut.spring.perch_height"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.heave.perch_height)
-  suspension_dict["inboard.roll_strut.spring.c"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.roll.stiffness)
-  suspension_dict["inboard.roll_strut.spring.s_neutral"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.roll.s_neutral)
-  suspension_dict["inboard.roll_strut.spring.preload_travel"] = ModelingToolkit.default_to_parentscope(VehicleComponents.params.suspension.front.setup.roll.preload_travel)
+  suspension_dict["steering_rack.rack_axis"] = ModelingToolkit.default_to_parentscope([0, 1, 0])
+  suspension_dict["steering_rack.rack_ratio"] = ModelingToolkit.default_to_parentscope(0.01)
+  suspension_dict["linkage_left.lca_front"] = ModelingToolkit.default_to_parentscope([0.1, 0.195, 0.2085])
+  suspension_dict["linkage_left.lca_rear"] = ModelingToolkit.default_to_parentscope([-0.1, 0.205, 0.1985])
+  suspension_dict["linkage_left.lca_outer"] = ModelingToolkit.default_to_parentscope([0.005, 0.56, 0.2135])
+  suspension_dict["linkage_left.uca_front"] = ModelingToolkit.default_to_parentscope([0.08, 0.245, 0.3885])
+  suspension_dict["linkage_left.uca_rear"] = ModelingToolkit.default_to_parentscope([-0.08, 0.255, 0.3785])
+  suspension_dict["linkage_left.uca_outer"] = ModelingToolkit.default_to_parentscope([-0.01, 0.53, 0.4135])
+  suspension_dict["linkage_left.tierod_inner"] = ModelingToolkit.default_to_parentscope([0.08, 0.22, 0.2335])
+  suspension_dict["linkage_left.tierod_outer"] = ModelingToolkit.default_to_parentscope([0.075, 0.55, 0.2435])
+  suspension_dict["linkage_left.static_camber"] = ModelingToolkit.default_to_parentscope(0.0)
+  suspension_dict["linkage_left.static_toe"] = ModelingToolkit.default_to_parentscope(0.0)
+  suspension_dict["linkage_right.lca_front"] = ModelingToolkit.default_to_parentscope([0.1, -0.195, 0.2085])
+  suspension_dict["linkage_right.lca_rear"] = ModelingToolkit.default_to_parentscope([-0.1, -0.205, 0.1985])
+  suspension_dict["linkage_right.lca_outer"] = ModelingToolkit.default_to_parentscope([0.005, -0.56, 0.2135])
+  suspension_dict["linkage_right.uca_front"] = ModelingToolkit.default_to_parentscope([0.08, -0.245, 0.3885])
+  suspension_dict["linkage_right.uca_rear"] = ModelingToolkit.default_to_parentscope([-0.08, -0.255, 0.3785])
+  suspension_dict["linkage_right.uca_outer"] = ModelingToolkit.default_to_parentscope([-0.01, -0.53, 0.4135])
+  suspension_dict["linkage_right.tierod_inner"] = ModelingToolkit.default_to_parentscope([0.08, -0.22, 0.2335])
+  suspension_dict["linkage_right.tierod_outer"] = ModelingToolkit.default_to_parentscope([0.075, -0.55, 0.2435])
+  suspension_dict["linkage_right.static_camber"] = ModelingToolkit.default_to_parentscope(0.0)
+  suspension_dict["linkage_right.static_toe"] = ModelingToolkit.default_to_parentscope(0.0)
+  suspension_dict["inboard.rocker_pivot_left"] = ModelingToolkit.default_to_parentscope([-0.03, 0.12, 0.6235])
+  suspension_dict["inboard.rocker_pivot_right"] = ModelingToolkit.default_to_parentscope([-0.03, -0.12, 0.6235])
+  suspension_dict["inboard.pushrod_inner_left"] = ModelingToolkit.default_to_parentscope([-0.03, 0.138, 0.6535])
+  suspension_dict["inboard.pushrod_inner_right"] = ModelingToolkit.default_to_parentscope([-0.03, -0.138, 0.6535])
+  suspension_dict["inboard.heave_pickup_left"] = ModelingToolkit.default_to_parentscope([-0.03, 0.114, 0.6635])
+  suspension_dict["inboard.heave_pickup_right"] = ModelingToolkit.default_to_parentscope([-0.03, -0.114, 0.6635])
+  suspension_dict["inboard.roll_pickup_left"] = ModelingToolkit.default_to_parentscope([-0.105, 0.108, 0.5865])
+  suspension_dict["inboard.roll_pickup_right"] = ModelingToolkit.default_to_parentscope([-0.105, -0.108, 0.6605])
+  suspension_dict["inboard.pushrod_adjust_left"] = ModelingToolkit.default_to_parentscope(0.0)
+  suspension_dict["inboard.pushrod_adjust_right"] = ModelingToolkit.default_to_parentscope(0.0)
+  suspension_dict["inboard.heave_strut.spring.c"] = ModelingToolkit.default_to_parentscope(100000.0)
+  suspension_dict["inboard.heave_strut.spring.s_unstretched"] = ModelingToolkit.default_to_parentscope(0.228)
+  suspension_dict["inboard.heave_strut.spring.perch_height"] = ModelingToolkit.default_to_parentscope(0.0)
+  suspension_dict["inboard.roll_strut.spring.c"] = ModelingToolkit.default_to_parentscope(70000.0)
+  suspension_dict["inboard.roll_strut.spring.s_neutral"] = ModelingToolkit.default_to_parentscope(0.2283243)
+  suspension_dict["inboard.roll_strut.spring.preload_travel"] = ModelingToolkit.default_to_parentscope(0.0)
   merge!(suspension_dict, suspension_overrides)
-  push!(__systems, @named suspension = VehicleComponents.Suspension(; wheel_center_left=wheel_center_left, wheel_center_right=wheel_center_right, pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, tierod_inner_left=VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner, tierod_inner_right=VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_inner, heave_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper), roll_dataset=VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.roll.damper), __overrides = suspension_dict))
+  push!(__systems, @named suspension = VehicleComponents.Suspension(; wheel_center_left=wheel_center_left, wheel_center_right=wheel_center_right, pushrod_outer_left=pushrod_outer_left, pushrod_outer_right=pushrod_outer_right, tierod_inner_left=[0.08, 0.22, 0.2335], tierod_inner_right=[0.08, -0.22, 0.2335], heave_dataset=VehicleComponents.damper_dataset("dampers/heave_VC03_compression_02.csv", "dampers/heave_VC03_extension_02.csv"), roll_dataset=VehicleComponents.damper_dataset("dampers/roll_VC01_compression_03.csv", "dampers/roll_VC01_extension_03.csv"), __overrides = suspension_dict))
   # Subcomponent fixed_left of type MultibodyComponents.Fixed
   fixed_left_overrides = __pop_subcomponent_overrides!(__overrides, "fixed_left")
   push!(__systems, @named fixed_left = MultibodyComponents.Fixed(; r=base_left, render=false, __overrides = fixed_left_overrides))
@@ -186,7 +188,7 @@
   ### Equations
   push!(__eqs, wheel_position_left.s_ref ~ (heave_amplitude + roll_amplitude) * sin(2 * π * freq * t))
   push!(__eqs, wheel_position_right.s_ref ~ (heave_amplitude - roll_amplitude) * sin(2 * π * freq * t))
-  push!(__eqs, suspension.steer ~ 0)
+  push!(__eqs, suspension.inputs.steer ~ 0)
   push!(__eqs, connect(fixed_left.frame_b, prismatic_left.frame_a))
   push!(__eqs, connect(prismatic_left.frame_b, actuation_rod_left.frame_a))
   push!(__eqs, connect(prismatic_left.support, wheel_position_left.support))

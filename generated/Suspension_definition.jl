@@ -22,13 +22,14 @@
 
 ## Connectors
 
+ * `inputs` - ([`SuspensionInputs`](@ref))
+ * `outputs` - ([`SuspensionOutputs`](@ref))
  * `chassis` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
  * `wheel_left` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
  * `wheel_right` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
- * `steer` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
 
 ## Variables
 
@@ -100,7 +101,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Final Parameters (assignments)
 
   ### Final Path Parameters
-  append!(__vars, @variables (steer(t)::Real), [input = true])
 
   ### Variables (declarations)
   append!(__vars, @variables (wc_heave(t)::Real))
@@ -118,6 +118,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named inputs = VehicleComponents.SuspensionInputs())
+  push!(__systems, @named outputs = VehicleComponents.SuspensionOutputs())
   push!(__systems, @named chassis = __Dyad__Frame3D())
   push!(__systems, @named wheel_left = __Dyad__Frame3D())
   push!(__systems, @named wheel_right = __Dyad__Frame3D())
@@ -147,8 +149,29 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
-  push!(__eqs, wc_heave ~ (linkage_left.wc_height + linkage_right.wc_height) / 2)
-  push!(__eqs, wc_roll ~ (linkage_left.wc_height - linkage_right.wc_height) / 2)
+  push!(__eqs, steering_rack.inputs.steer ~ inputs.steer)
+  push!(__eqs, outputs.wc_heave ~ wc_heave)
+  push!(__eqs, outputs.wc_roll ~ wc_roll)
+  push!(__eqs, outputs.s_heave ~ inboard.outputs.s_heave)
+  push!(__eqs, outputs.f_heave ~ inboard.outputs.f_heave)
+  push!(__eqs, outputs.s_roll ~ inboard.outputs.s_roll)
+  push!(__eqs, outputs.f_roll ~ inboard.outputs.f_roll)
+  push!(__eqs, outputs.toe_left ~ linkage_left.outputs.toe)
+  push!(__eqs, outputs.camber_left ~ linkage_left.outputs.camber)
+  push!(__eqs, outputs.wc_height_left ~ linkage_left.outputs.wc_height)
+  push!(__eqs, outputs.f_lca_left ~ linkage_left.outputs.f_lca)
+  push!(__eqs, outputs.f_uca_left ~ linkage_left.outputs.f_uca)
+  push!(__eqs, outputs.f_push_left ~ linkage_left.outputs.f_push)
+  push!(__eqs, outputs.f_uca_ball_left ~ linkage_left.outputs.f_uca_ball)
+  push!(__eqs, outputs.toe_right ~ linkage_right.outputs.toe)
+  push!(__eqs, outputs.camber_right ~ linkage_right.outputs.camber)
+  push!(__eqs, outputs.wc_height_right ~ linkage_right.outputs.wc_height)
+  push!(__eqs, outputs.f_lca_right ~ linkage_right.outputs.f_lca)
+  push!(__eqs, outputs.f_uca_right ~ linkage_right.outputs.f_uca)
+  push!(__eqs, outputs.f_push_right ~ linkage_right.outputs.f_push)
+  push!(__eqs, outputs.f_uca_ball_right ~ linkage_right.outputs.f_uca_ball)
+  push!(__eqs, wc_heave ~ (linkage_left.outputs.wc_height + linkage_right.outputs.wc_height) / 2)
+  push!(__eqs, wc_roll ~ (linkage_left.outputs.wc_height - linkage_right.outputs.wc_height) / 2)
   push!(__eqs, connect(linkage_left.chassis, chassis))
   push!(__eqs, connect(linkage_right.chassis, chassis))
   push!(__eqs, connect(inboard.chassis, chassis))
@@ -159,7 +182,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, connect(chassis, steering_rack.chassis))
   push!(__eqs, connect(steering_rack.tie_rod_left, linkage_left.steering_rack))
   push!(__eqs, connect(steering_rack.tie_rod_right, linkage_right.steering_rack))
-  push!(__eqs, connect(steer, steering_rack.steer))
 
   # Return completely constructed System
   return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

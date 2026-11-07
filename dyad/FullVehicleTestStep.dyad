@@ -37,7 +37,9 @@ test component FullVehicleTestStep
   pitch_joint = MultibodyComponents.Revolute(n = [0, 1, 0], render = false) {^pitch_joint}
   yaw_joint = MultibodyComponents.Revolute(n = [0, 0, 1], render = false) {^yaw_joint}
   
-  vehicle = VehicleComponents.FullVehicle() {^vehicle}
+  vehicle = VehicleComponents.FullVehicle(
+    apply "dyad://VehicleComponents/TestVehicle.toml"
+  ) {^vehicle}
   
   track = VehicleComponents.StraightLineTrack() {^track}
 
@@ -49,6 +51,12 @@ test component FullVehicleTestStep
 
 relations
 
+  # Inputs
+  vehicle.inputs.throttle = throttle.y
+  vehicle.inputs.brake = brake.y
+  vehicle.inputs.steer = steer.y
+
+  # Initialization
   initial longitudinal_joint.s = 0.0
   initial longitudinal_joint.v = 0.0
   initial lateral_joint.s = 0.0
@@ -80,9 +88,7 @@ relations
   initial vehicle.front_suspension.steering_rack.rack_drive.v = 0.0
   initial vehicle.rear_suspension.steering_rack.rack_drive.v = 0.0
 
-  connect(throttle.y, vehicle.throttle) {^id16}
-  connect(brake.y, vehicle.brake) {^id17}
-  connect(steer.y, vehicle.steer) {^id18}
+  # Connections
   connect(world.frame_b, lateral_joint.frame_a) {^id19}
   connect(lateral_joint.frame_b, longitudinal_joint.frame_a) {^id20}
   connect(longitudinal_joint.frame_b, heave_joint.frame_a) {^id21}
@@ -105,64 +111,251 @@ metadata {
         "attrs": {}
       }
     ],
-    "icons": {"default": "dyad://Dyad/Default.svg"},
+    "icons": {
+      "default": "dyad://Dyad/Default.svg"
+    },
     "path": {},
-    "doc": {"behavior": true},
+    "doc": {
+      "behavior": true
+    },
     "deprecated": null
   },
   "_links": {
-    "world": {"Dyad": {"placement": {"diagram": {"x1": 0, "y1": 0, "x2": 100, "y2": 100}}}},
+    "world": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 0,
+            "y1": 0,
+            "x2": 100,
+            "y2": 100
+          }
+        }
+      }
+    },
     "throttle": {
-      "Dyad": {"placement": {"diagram": {"x1": 40, "x2": 140, "y1": 330, "y2": 430}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 40,
+            "x2": 140,
+            "y1": 330,
+            "y2": 430
+          }
+        }
+      }
     },
     "brake": {
-      "Dyad": {"placement": {"diagram": {"x1": 40, "x2": 140, "y1": 470, "y2": 570}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 40,
+            "x2": 140,
+            "y1": 470,
+            "y2": 570
+          }
+        }
+      }
     },
     "steer": {
-      "Dyad": {"placement": {"diagram": {"x1": 40, "x2": 140, "y1": 610, "y2": 710}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 40,
+            "x2": 140,
+            "y1": 610,
+            "y2": 710
+          }
+        }
+      }
     },
-    "longitudinal_joint": {"Dyad": {"placement": {"diagram": {"x1": 260, "x2": 360, "y1": 0, "y2": 100}}}},
-    "lateral_joint": {"Dyad": {"placement": {"diagram": {"x1": 130, "x2": 230, "y1": 0, "y2": 100}}}},
-    "heave_joint": {"Dyad": {"placement": {"diagram": {"x1": 390, "x2": 490, "y1": 0, "y2": 100}}}},
-    "roll_joint": {"Dyad": {"placement": {"diagram": {"x1": 520, "x2": 620, "y1": 0, "y2": 100}}}},
-    "pitch_joint": {"Dyad": {"placement": {"diagram": {"x1": 650, "x2": 750, "y1": 0, "y2": 100}}}},
-    "yaw_joint": {"Dyad": {"placement": {"diagram": {"x1": 780, "x2": 880, "y1": 0, "y2": 100}}}},
+    "longitudinal_joint": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 260,
+            "x2": 360,
+            "y1": 0,
+            "y2": 100
+          }
+        }
+      }
+    },
+    "lateral_joint": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 130,
+            "x2": 230,
+            "y1": 0,
+            "y2": 100
+          }
+        }
+      }
+    },
+    "heave_joint": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 390,
+            "x2": 490,
+            "y1": 0,
+            "y2": 100
+          }
+        }
+      }
+    },
+    "roll_joint": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 520,
+            "x2": 620,
+            "y1": 0,
+            "y2": 100
+          }
+        }
+      }
+    },
+    "pitch_joint": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 650,
+            "x2": 750,
+            "y1": 0,
+            "y2": 100
+          }
+        }
+      }
+    },
+    "yaw_joint": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 780,
+            "x2": 880,
+            "y1": 0,
+            "y2": 100
+          }
+        }
+      }
+    },
     "vehicle": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 450, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 450,
+            "y2": 550
+          }
+        }
+      }
     },
     "track": {
-      "Dyad": {"placement": {"diagram": {"x1": 0, "x2": 100, "y1": 900, "y2": 1000}}}
-    },
-    "id16": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 220, "y": 380}, {"x": 220, "y": 457}], "E": 2}],
+        "placement": {
+          "diagram": {
+            "x1": 0,
+            "x2": 100,
+            "y1": 900,
+            "y2": 1000
+          }
+        }
+      }
+    },
+    "id19": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
-    "id17": {
+    "id20": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 250, "y": 520}, {"x": 250, "y": 472}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
-    "id18": {
+    "id21": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 290, "y": 660}, {"x": 290, "y": 488}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
-    "id19": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id20": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id21": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id22": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id23": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id24": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id22": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id23": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id24": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
     "id25": {
       "Dyad": {
         "edges": [
           {
             "S": 1,
-            "M": [{"x": 940, "y": 50}, {"x": 940, "y": 610}, {"x": 500, "y": 610}],
+            "M": [
+              {
+                "x": 940,
+                "y": 50
+              },
+              {
+                "x": 940,
+                "y": 610
+              },
+              {
+                "x": 500,
+                "y": 610
+              }
+            ],
             "E": 2
           }
         ],

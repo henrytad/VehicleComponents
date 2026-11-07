@@ -11,7 +11,6 @@ speed, `p_` pressure, `r_` ratio, `s_` displacement, `tq_` torque, `v_` velocity
 module Telemetry
 
 using ..Motec
-using ..Data: VEHICLE
 
 const G = 9.80665
 const DEG = 180 / pi
@@ -22,17 +21,9 @@ const GPS_LATITUDE_ORIGIN = 1.0
 const GPS_LONGITUDE_ORIGIN = 1.0
 const GPS_RATE = 20
 
-corners(car) = (
-    ("fl", car.corner_fl, car.front_suspension.linkage_left),
-    ("fr", car.corner_fr, car.front_suspension.linkage_right),
-    ("rl", car.corner_rl, car.rear_suspension.linkage_left),
-    ("rr", car.corner_rr, car.rear_suspension.linkage_right),
-)
-
-axles(car) = (("f", car.front_suspension), ("r", car.rear_suspension))
-
 function vehicle_channels(model, sol; rate::Int=100)
     car = model.vehicle
+    outputs = car.outputs
     times = range(0.0, sol.t[end], step=1 / rate)
     channels = Motec.Channel[]
     skipped = String[]
@@ -43,71 +34,72 @@ function vehicle_channels(model, sol; rate::Int=100)
     add(name, signal, scale, unit) = push!(specs, (name, signal, scale, unit))
 
     # Body
-    add("acc_x", () -> car.a_cg[1], 1 / G, "G")
-    add("acc_y", () -> car.a_cg[2], 1 / G, "G")
-    add("acc_z", () -> car.a_cg[3], 1 / G, "G")
+    add("acc_x", () -> outputs.body.a_cg[1], 1 / G, "G")
+    add("acc_y", () -> outputs.body.a_cg[2], 1 / G, "G")
+    add("acc_z", () -> outputs.body.a_cg[3], 1 / G, "G")
     add("a_yaw", () -> model.yaw_joint.phi, DEG, "deg")
     add("a_pitch", () -> model.pitch_joint.phi, DEG, "deg")
     add("a_roll", () -> model.roll_joint.phi, DEG, "deg")
     add("a_yaw_rate", () -> model.yaw_joint.w, DEG, "deg/s")
     add("a_pitch_rate", () -> model.pitch_joint.w, DEG, "deg/s")
     add("a_roll_rate", () -> model.roll_joint.w, DEG, "deg/s")
-    add("v_vx", () -> car.v_cg[1], KMH, "km/h")
-    add("v_vy", () -> car.v_cg[2], KMH, "km/h")
-    add("a_beta", () -> atan.(sample(car.v_cg[2]), sample(car.v_cg[1])), DEG, "deg")
+    add("v_vx", () -> outputs.body.v_cg[1], KMH, "km/h")
+    add("v_vy", () -> outputs.body.v_cg[2], KMH, "km/h")
+    add("a_beta", () -> atan.(sample(outputs.body.v_cg[2]), sample(outputs.body.v_cg[1])), DEG, "deg")
 
     # Driver inputs
-    add("r_throttle", () -> car.throttle, 100, "%")
-    add("r_brake", () -> car.brake, 100, "%")
-    add("a_steer", () -> car.steer, DEG, "deg")
+    add("r_throttle", () -> car.inputs.throttle, 100, "%")
+    add("r_brake", () -> car.inputs.brake, 100, "%")
+    add("a_steer", () -> car.inputs.steer, DEG, "deg")
 
     # Brake control
-    add("r_brake_abs", () -> car.control.brake_demand, 100, "%")
-    add("r_abs_intervention", () -> car.control.abs.intervention, 100, "%")
+    add("r_brake_abs", () -> outputs.control.brake_demand, 100, "%")
+    add("r_abs_intervention", () -> outputs.control.abs_intervention, 100, "%")
 
     # Aero
-    add("f_aero_drag", () -> car.aero.drag, 1, "N")
-    add("f_aero_downforce", () -> car.aero.downforce, 1, "N")
-    add("f_aero_downforce_f", () -> car.aero.downforce_front, 1, "N")
-    add("f_aero_downforce_r", () -> car.aero.downforce_rear, 1, "N")
-    add("p_dynamic", () -> car.aero.q, 1 / 100, "mbar")
+    add("f_aero_drag", () -> outputs.aero.drag, 1, "N")
+    add("f_aero_downforce", () -> outputs.aero.downforce, 1, "N")
+    add("f_aero_downforce_f", () -> outputs.aero.downforce_front, 1, "N")
+    add("f_aero_downforce_r", () -> outputs.aero.downforce_rear, 1, "N")
+    add("p_dynamic", () -> outputs.aero.q, 1 / 100, "mbar")
 
-    # Corners
-    for (tag, corner, linkage) in corners(car)
-        tire = corner.wheel_assembly.tire
-        add("v_wheel_$tag", () -> sample(tire.omega) .* sample(tire.Re), KMH, "km/h")
-        add("n_wheel_$tag", () -> tire.omega, 60 / 2pi, "rpm")
-        add("f_tire_x_$tag", () -> tire.Fx, 1, "N")
-        add("f_tire_y_$tag", () -> tire.Fy, 1, "N")
-        add("f_tire_z_$tag", () -> tire.Fz, 1, "N")
-        add("r_tire_long_slip_$tag", () -> tire.kappa, 1, "ratio")
-        add("a_tire_lateral_slip_$tag", () -> tire.alpha, DEG, "deg")
-        add("a_tire_inclination_$tag", () -> linkage.camber, DEG, "deg")
-        add("a_tire_toe_$tag", () -> linkage.toe, DEG, "deg")
-        add("s_wheel_$tag", () -> linkage.wc_height, MM, "mm")
-        add("tq_motor_$tag", () -> corner.motor.tau_motor, 1, "N.m")
-        add("pwr_motor_$tag", () -> corner.motor.power, 1 / 1000, "kW")
-        add("tq_drive_wheel_$tag", () -> corner.motor.tau_wheel, 1, "N.m")
-        add("tq_brake_wheel_$tag", () -> corner.brake.tau_brake, 1, "N.m")
-
-        # Joint loads
+    # Corner and suspension measurements use the grouped vehicle outputs.
+    for (tag, corner, suspension, side) in (
+        ("fl", outputs.corner_fl, outputs.front_suspension, "left"),
+        ("fr", outputs.corner_fr, outputs.front_suspension, "right"),
+        ("rl", outputs.corner_rl, outputs.rear_suspension, "left"),
+        ("rr", outputs.corner_rr, outputs.rear_suspension, "right"),
+    )
+        linkage = name -> getproperty(suspension, Symbol(name, "_", side))
+        add("v_wheel_$tag", () -> sample(corner.omega) .* sample(corner.Re), KMH, "km/h")
+        add("n_wheel_$tag", () -> corner.omega, 60 / 2pi, "rpm")
+        add("f_tire_x_$tag", () -> corner.Fx, 1, "N")
+        add("f_tire_y_$tag", () -> corner.Fy, 1, "N")
+        add("f_tire_z_$tag", () -> corner.Fz, 1, "N")
+        add("r_tire_long_slip_$tag", () -> corner.slip, 1, "ratio")
+        add("a_tire_lateral_slip_$tag", () -> corner.alpha, DEG, "deg")
+        add("a_tire_inclination_$tag", () -> linkage("camber"), DEG, "deg")
+        add("a_tire_toe_$tag", () -> linkage("toe"), DEG, "deg")
+        add("s_wheel_$tag", () -> linkage("wc_height"), MM, "mm")
+        add("tq_motor_$tag", () -> corner.tau_motor, 1, "N.m")
+        add("pwr_motor_$tag", () -> corner.power, 1 / 1000, "kW")
+        add("tq_drive_wheel_$tag", () -> corner.tau_wheel, 1, "N.m")
+        add("tq_brake_wheel_$tag", () -> corner.tau_brake, 1, "N.m")
         for (axis, i) in (("x", 1), ("y", 2), ("z", 3))
-            add("f_lca_$(axis)_$tag", () -> linkage.f_lca[i], 1, "N")
-            add("f_uca_ball_$(axis)_$tag", () -> linkage.f_uca_ball[i], 1, "N")
-            add("f_uca_mount_$(axis)_$tag", () -> linkage.f_uca[i], 1, "N")
-            add("f_pushrod_$(axis)_$tag", () -> linkage.f_push[i], 1, "N")
+            add("f_lca_$(axis)_$tag", () -> linkage("f_lca")[i], 1, "N")
+            add("f_uca_ball_$(axis)_$tag", () -> linkage("f_uca_ball")[i], 1, "N")
+            add("f_uca_mount_$(axis)_$tag", () -> linkage("f_uca")[i], 1, "N")
+            add("f_pushrod_$(axis)_$tag", () -> linkage("f_push")[i], 1, "N")
         end
     end
 
-    # Axles
-    for (tag, suspension) in axles(car)
-        inboard = suspension.inboard
+    for (tag, suspension) in (("f", outputs.front_suspension), ("r", outputs.rear_suspension))
         add("s_heave_$tag", () -> suspension.wc_heave, MM, "mm")
         add("s_roll_$tag", () -> suspension.wc_roll, MM, "mm")
-        add("s_damper_heave_$tag", () -> inboard.heave_strut.s, MM, "mm")
-        add("s_damper_roll_$tag", () -> inboard.roll_strut.s, MM, "mm")
-        add("f_damper_heave_$tag", () -> inboard.heave_strut.f, 1, "N")
-        add("f_damper_roll_$tag", () -> inboard.roll_strut.f, 1, "N")
+        add("s_damper_heave_$tag", () -> suspension.s_heave, MM, "mm")
+        add("s_damper_roll_$tag", () -> suspension.s_roll, MM, "mm")
+        add("f_damper_heave_$tag", () -> suspension.f_heave, 1, "N")
+        add("f_damper_roll_$tag", () -> suspension.f_roll, 1, "N")
     end
 
     signals = Any[(try spec[2]() catch; nothing end) for spec in specs]
@@ -143,19 +135,9 @@ function vehicle_channels(model, sol; rate::Int=100)
         @warn "telemetry: $(length(skipped)) channels are not in the solution" skipped
 
     # GPS coordinates in degrees, with a nonzero "pretend" origin.
-    body = sol.prob.f.sys.vehicle.body
-    function cg_world_component(i, sample_times)
-        sample_frame(signal) = Float64[sol(time, idxs=signal) for time in sample_times]
-        position = sample_frame(body.frame_a.r_0[i])
-        for j in 1:3
-            position .+= sample_frame(body.frame_a.R[i, j]) .* VEHICLE.body.cg[j]
-        end
-        return position
-    end
-
     gps_times = range(0.0, sol.t[end], step=1 / GPS_RATE)
-    gps_x = cg_world_component(1, gps_times)
-    gps_y = cg_world_component(2, gps_times)
+    gps_x = Float64[sol(time, idxs=outputs.body.position[1]) for time in gps_times]
+    gps_y = Float64[sol(time, idxs=outputs.body.position[2]) for time in gps_times]
     gps_step = hypot.(diff(gps_x), diff(gps_y))
     gps_speed = vcat(0.0, gps_step .* GPS_RATE) .* KMH
     lap_distance = vcat(0.0, cumsum(gps_step))
@@ -174,7 +156,7 @@ function vehicle_channels(model, sol; rate::Int=100)
 end
 
 function write_telemetry(model, sol; run::AbstractString, dir="output/telemetry",
-    rate::Int=100, driver="Sim", vehicle_id="",
+    rate::Int=100, driver="Sim", vehicle_id=sol.prob.ps[model.vehicle.vehicle_name],
     vehicle_desc="Full vehicle", venue="", event="", session="S1",
     comment="")
     stamp = Base.time()

@@ -28,6 +28,7 @@
 
 ## Connectors
 
+ * `outputs` - ([`InboardOutputs`](@ref))
  * `chassis` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
  * `linkage_left` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
@@ -199,6 +200,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named outputs = VehicleComponents.InboardOutputs())
   push!(__systems, @named chassis = __Dyad__Frame3D())
   push!(__systems, @named linkage_left = __Dyad__Frame3D())
   push!(__systems, @named linkage_right = __Dyad__Frame3D())
@@ -244,6 +246,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
+  push!(__eqs, outputs.s_heave ~ heave_strut.outputs.s)
+  push!(__eqs, outputs.f_heave ~ heave_strut.outputs.f)
+  push!(__eqs, outputs.s_roll ~ roll_strut.outputs.s)
+  push!(__eqs, outputs.f_roll ~ roll_strut.outputs.f)
   push!(__eqs, connect(mount_rocker_left.frame_a, chassis))
   push!(__eqs, connect(mount_rocker_right.frame_a, chassis))
   push!(__eqs, connect(rocker_left.frame_a, linkage_left))

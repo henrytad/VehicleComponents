@@ -26,6 +26,7 @@
 
 ## Connectors
 
+ * `outputs` - ([`LinkageOutputs`](@ref))
  * `wheel` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
  * `chassis` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
@@ -215,6 +216,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named outputs = VehicleComponents.LinkageOutputs())
   push!(__systems, @named wheel = __Dyad__Frame3D())
   push!(__systems, @named chassis = __Dyad__Frame3D())
   push!(__systems, @named pushrod = __Dyad__Frame3D())
@@ -286,6 +288,13 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
+  push!(__eqs, outputs.toe ~ toe)
+  push!(__eqs, outputs.camber ~ camber)
+  push!(__eqs, outputs.wc_height ~ wc_height)
+  push!(__eqs, outputs.f_lca ~ f_lca)
+  push!(__eqs, outputs.f_uca ~ f_uca)
+  push!(__eqs, outputs.f_push ~ f_push)
+  push!(__eqs, outputs.f_uca_ball ~ f_uca_ball)
   push!(__eqs, camber ~ -side * getindex(getproperty(wheel_angles, :angles), 1))
   push!(__eqs, toe ~ -side * getindex(getproperty(wheel_angles, :angles), 3))
   push!(__eqs, wc_height ~ getindex(getproperty(wheel, :r_0), 3) - wheel_center[3])

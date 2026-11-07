@@ -1,0 +1,10 @@
+connector RoadSurfaceOutputs
+  output z::Length
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealOutput.svg"
+    }
+  }
+}
+end

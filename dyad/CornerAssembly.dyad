@@ -12,18 +12,13 @@ component CornerAssembly
   the opposite.
   """
 
-  motor_demand = RealInput(units = "1") {^motor_demand}
-  brake_demand = RealInput(units = "1") {^brake_demand}
-
-  slip = RealOutput() {^slip}
-  full_demand_power = RealOutput(units = "W") {^full_demand_power}
+  inputs = CornerAssemblyInputs() {^inputs}
+  outputs = CornerAssemblyOutputs() {^outputs}
 
   wheel_center = Dyad.Frame3D() {^wheel_center}
-  wheel_assembly = VehicleComponents.WheelAssembly(is_left = is_left) {^wheel_assembly}
+  wheel_assembly = VehicleComponents.WheelAssembly() {^wheel_assembly}
   motor = VehicleComponents.HubMotor() {^motor}
-  brake = VehicleComponents.Brake(
-    is_front = is_front
-  ) {^brake}
+  brake = VehicleComponents.Brake() {^brake}
   upright = MultibodyComponents.Body(
     m = upright_mass,
     r_cm = [0, 0, 0],
@@ -33,86 +28,130 @@ component CornerAssembly
     cylinder_radius = 0
   ) {^upright}
 
-  structural parameter is_left::Boolean
-  structural parameter is_front::Boolean
-
   parameter upright_mass::Mass
 
 relations
 
+  # Inputs
+  motor.inputs.demand = inputs.motor_demand
+  brake.inputs.brake_demand = inputs.brake_demand
+
+  # Outputs
+  outputs.Fx = wheel_assembly.outputs.Fx
+  outputs.Fy = wheel_assembly.outputs.Fy
+  outputs.Fz = wheel_assembly.outputs.Fz
+  outputs.alpha = wheel_assembly.outputs.alpha
+  outputs.omega = wheel_assembly.outputs.omega
+  outputs.Re = wheel_assembly.outputs.Re
+  outputs.slip = wheel_assembly.outputs.slip
+  outputs.tau_motor = motor.outputs.tau_motor
+  outputs.tau_wheel = motor.outputs.tau_wheel
+  outputs.power = motor.outputs.power
+  outputs.full_demand_power = motor.outputs.full_demand_power
+  outputs.tau_brake = brake.outputs.tau_brake
+
+  # Connections
   connect(wheel_center, wheel_assembly.wheel_center) {^id10}
   connect(wheel_center, upright.frame_a) {^id11}
   connect(motor.wheel_center, wheel_center) {^id12}
   connect(wheel_assembly.spline, motor.spline) {^id13}
-  connect(motor_demand, motor.demand) {^id14}
-  connect(motor.full_demand_power, full_demand_power) {^id15}
-  connect(wheel_assembly.slip, slip) {^id16}
   connect(wheel_assembly.spline, brake.spline) {^id17}
-  connect(brake_demand, brake.brake_demand) {^id18}
   connect(brake.wheel_center, wheel_center) {^id19}
 
 metadata {
   "_links": {
-    "motor_demand": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
-    "brake_demand": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 190, "y2": 290}}}
-    },
-    "slip": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 20, "y2": 120}}}
-    },
-    "full_demand_power": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 190, "y2": 290}}}
-    },
     "wheel_center": {
-      "Dyad": {"placement": {"diagram": {"x1": -40, "x2": 60, "y1": 450, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": -40,
+            "x2": 60,
+            "y1": 450,
+            "y2": 550
+          },
+          "icon": {
+            "x1": -40,
+            "x2": 60,
+            "y1": 450,
+            "y2": 550
+          }
+        }
+      }
     },
     "wheel_assembly": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 450, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 450,
+            "y2": 550
+          }
+        }
+      }
     },
     "motor": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 310, "y2": 410}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 310,
+            "y2": 410
+          }
+        }
+      }
     },
     "brake": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 620, "y2": 720}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 620,
+            "y2": 720
+          }
+        }
+      }
     },
     "upright": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 130, "y2": 230}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 130,
+            "y2": 230
+          }
+        }
+      }
     },
-    "id10": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id10": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
     "id11": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 170, "y": 500}, {"x": 170, "y": 180}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id12": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 170, "y": 359}, {"x": 170, "y": 500}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id13": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 590, "y": 500}, {"x": 590, "y": 360}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id14": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 250, "y": 70}, {"x": 250, "y": 317}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id15": {
       "Dyad": {
         "edges": [
           {
             "S": 1,
             "M": [
-              {"x": 590, "y": 317},
-              {"x": 590, "y": 250},
-              {"x": 960, "y": 250},
-              {"x": 960, "y": 240}
+              {
+                "x": 170,
+                "y": 500
+              },
+              {
+                "x": 170,
+                "y": 180
+              }
             ],
             "E": 2
           }
@@ -120,30 +159,136 @@ metadata {
         "path": {}
       }
     },
-    "id16": {
+    "id12": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 760, "y": 457}, {"x": 760, "y": 70}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 170,
+                "y": 359
+              },
+              {
+                "x": 170,
+                "y": 500
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id13": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 590,
+                "y": 500
+              },
+              {
+                "x": 590,
+                "y": 360
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
     "id17": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 590, "y": 500}, {"x": 590, "y": 670}], "E": 2}],
-        "path": {}
-      }
-    },
-    "id18": {
-      "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 210, "y": 240}, {"x": 210, "y": 627}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 590,
+                "y": 500
+              },
+              {
+                "x": 590,
+                "y": 670
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
     "id19": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 170, "y": 669}, {"x": 170, "y": 500}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 170,
+                "y": 669
+              },
+              {
+                "x": 170,
+                "y": 500
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
+    },
+    "inputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": -50.0,
+            "y1": 100.0,
+            "x2": 50.0,
+            "y2": 200.0
+          }
+        }
+      }
+    },
+    "outputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": 950.0,
+            "y1": 100.0,
+            "x2": 1050.0,
+            "y2": 200.0
+          }
+        }
+      }
     }
+  },
+  "Dyad": {
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "layer": "icon"
+      }
+    ]
   }
 }
 end

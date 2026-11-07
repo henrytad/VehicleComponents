@@ -5,11 +5,13 @@ component Suspension
   Two corner linkages driven into a shared heave/roll inboard.
   """
 
+  inputs = SuspensionInputs() {^inputs}
+  outputs = SuspensionOutputs() {^outputs}
+
   # External frames
   chassis = Dyad.Frame3D() {^chassis}
   wheel_left = Dyad.Frame3D() {^wheel_left}
   wheel_right = Dyad.Frame3D() {^wheel_right}
-  steer = RealInput(units = "rad") {^steer}
 
   # Subsystems
   inboard = VehicleComponents.Inboard(
@@ -49,9 +51,34 @@ component Suspension
 
 relations
 
-  # Measurements
-  wc_heave = (linkage_left.wc_height + linkage_right.wc_height) / 2
-  wc_roll = (linkage_left.wc_height - linkage_right.wc_height) / 2
+  # Inputs
+  steering_rack.inputs.steer = inputs.steer
+
+  # Outputs
+  outputs.wc_heave = wc_heave
+  outputs.wc_roll = wc_roll
+  outputs.s_heave = inboard.outputs.s_heave
+  outputs.f_heave = inboard.outputs.f_heave
+  outputs.s_roll = inboard.outputs.s_roll
+  outputs.f_roll = inboard.outputs.f_roll
+  outputs.toe_left = linkage_left.outputs.toe
+  outputs.camber_left = linkage_left.outputs.camber
+  outputs.wc_height_left = linkage_left.outputs.wc_height
+  outputs.f_lca_left = linkage_left.outputs.f_lca
+  outputs.f_uca_left = linkage_left.outputs.f_uca
+  outputs.f_push_left = linkage_left.outputs.f_push
+  outputs.f_uca_ball_left = linkage_left.outputs.f_uca_ball
+  outputs.toe_right = linkage_right.outputs.toe
+  outputs.camber_right = linkage_right.outputs.camber
+  outputs.wc_height_right = linkage_right.outputs.wc_height
+  outputs.f_lca_right = linkage_right.outputs.f_lca
+  outputs.f_uca_right = linkage_right.outputs.f_uca
+  outputs.f_push_right = linkage_right.outputs.f_push
+  outputs.f_uca_ball_right = linkage_right.outputs.f_uca_ball
+
+  # Equations
+  wc_heave = (linkage_left.outputs.wc_height + linkage_right.outputs.wc_height) / 2
+  wc_roll = (linkage_left.outputs.wc_height - linkage_right.outputs.wc_height) / 2
 
   # Chassis
   connect(linkage_left.chassis, chassis) {^id9}
@@ -70,7 +97,6 @@ relations
   connect(chassis, steering_rack.chassis) {^id16}
   connect(steering_rack.tie_rod_left, linkage_left.steering_rack) {^id17}
   connect(steering_rack.tie_rod_right, linkage_right.steering_rack) {^id18}
-  connect(steer, steering_rack.steer) {^id19}
 
 metadata {
   "Dyad": {
@@ -86,16 +112,64 @@ metadata {
         "attrs": {}
       }
     ],
-    "icons": {"default": "dyad://Dyad/Default.svg"},
+    "icons": {
+      "default": "dyad://Dyad/Default.svg"
+    },
     "path": {},
-    "doc": {"behavior": true},
-    "deprecated": null
+    "doc": {
+      "behavior": true
+    },
+    "deprecated": null,
+    "panel": {
+      "control": "tabs",
+      "children": {
+        "Wheel centers": {
+          "contents": [
+            "wheel_center_left",
+            "wheel_center_right"
+          ]
+        },
+        "Pushrods": {
+          "contents": [
+            "pushrod_outer_left",
+            "pushrod_outer_right"
+          ]
+        },
+        "Steering": {
+          "contents": [
+            "tierod_inner_left",
+            "tierod_inner_right"
+          ]
+        },
+        "Damper data": {
+          "contents": [
+            "heave_dataset",
+            "roll_dataset"
+          ]
+        }
+      }
+    }
   },
   "_links": {
     "chassis": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 450, "y1": -50, "x2": 550, "y2": 50, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 450,
+            "y1": -50,
+            "x2": 550,
+            "y2": 50,
+            "rot": 0
+          },
+          "icon": {
+            "iconName": "default",
+            "x1": 450,
+            "y1": -50,
+            "x2": 550,
+            "y2": 50,
+            "rot": 0
+          }
         },
         "tags": []
       }
@@ -103,7 +177,22 @@ metadata {
     "wheel_left": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": -50, "y1": 450, "x2": 50, "y2": 550, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": -50,
+            "y1": 450,
+            "x2": 50,
+            "y2": 550,
+            "rot": 0
+          },
+          "icon": {
+            "iconName": "default",
+            "x1": -50,
+            "y1": 450,
+            "x2": 50,
+            "y2": 550,
+            "rot": 0
+          }
         },
         "tags": []
       }
@@ -111,52 +200,208 @@ metadata {
     "wheel_right": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 950, "y1": 450, "x2": 1050, "y2": 550, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 950,
+            "y1": 450,
+            "x2": 1050,
+            "y2": 550,
+            "rot": 0
+          },
+          "icon": {
+            "iconName": "default",
+            "x1": 950,
+            "y1": 450,
+            "x2": 1050,
+            "y2": 550,
+            "rot": 0
+          }
         },
         "tags": []
       }
     },
-    "steer": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 30, "y2": 130}}}},
     "inboard": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 450, "y1": 370, "x2": 550, "y2": 270, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 450,
+            "y1": 370,
+            "x2": 550,
+            "y2": 270,
+            "rot": 0
+          }
         },
         "tags": []
       }
     },
     "linkage_left": {
-      "Dyad": {"placement": {"diagram": {"x1": 330, "y1": 450, "x2": 230, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 330,
+            "y1": 450,
+            "x2": 230,
+            "y2": 550
+          }
+        }
+      }
     },
     "linkage_right": {
-      "Dyad": {"placement": {"diagram": {"x1": 670, "y1": 450, "x2": 770, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 670,
+            "y1": 450,
+            "x2": 770,
+            "y2": 550
+          }
+        }
+      }
     },
     "steering_rack": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 650, "y2": 750}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 650,
+            "y2": 750
+          }
+        }
+      }
     },
     "id9": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 390, "y": 500}, {"x": 390, "y": 0}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 390,
+                "y": 500
+              },
+              {
+                "x": 390,
+                "y": 0
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
     "id10": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 610, "y": 500}, {"x": 610, "y": 0}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 610,
+                "y": 500
+              },
+              {
+                "x": 610,
+                "y": 0
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
-    "id11": {"Dyad": {"renderStyle": "standard", "edges": [{"S": 1, "E": 2, "M": []}]}},
-    "id12": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 280, "y": 320}], "E": 2}], "path": {}}},
-    "id13": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 720, "y": 320}], "E": 2}], "path": {}}},
-    "id14": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id15": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id11": {
+      "Dyad": {
+        "renderStyle": "standard",
+        "edges": [
+          {
+            "S": 1,
+            "E": 2,
+            "M": []
+          }
+        ]
+      }
+    },
+    "id12": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 280,
+                "y": 320
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id13": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 720,
+                "y": 320
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id14": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id15": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
     "id16": {
       "Dyad": {
         "edges": [
           {
             "S": 1,
-            "M": [{"x": 610, "y": 0}, {"x": 610, "y": 500}, {"x": 500, "y": 500}],
+            "M": [
+              {
+                "x": 610,
+                "y": 0
+              },
+              {
+                "x": 610,
+                "y": 500
+              },
+              {
+                "x": 500,
+                "y": 500
+              }
+            ],
             "E": 2
           }
         ],
@@ -168,7 +413,20 @@ metadata {
         "edges": [
           {
             "S": 1,
-            "M": [{"x": 410, "y": 700}, {"x": 410, "y": 620}, {"x": 280, "y": 620}],
+            "M": [
+              {
+                "x": 410,
+                "y": 700
+              },
+              {
+                "x": 410,
+                "y": 620
+              },
+              {
+                "x": 280,
+                "y": 620
+              }
+            ],
             "E": 2
           }
         ],
@@ -180,17 +438,60 @@ metadata {
         "edges": [
           {
             "S": 1,
-            "M": [{"x": 590, "y": 700}, {"x": 590, "y": 620}, {"x": 720, "y": 620}],
+            "M": [
+              {
+                "x": 590,
+                "y": 700
+              },
+              {
+                "x": 590,
+                "y": 620
+              },
+              {
+                "x": 720,
+                "y": 620
+              }
+            ],
             "E": 2
           }
         ],
         "path": {}
       }
     },
-    "id19": {
+    "inputs": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 170, "y": 80}, {"x": 170, "y": 661}], "E": 2}],
-        "path": {}
+        "placement": {
+          "diagram": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": -50.0,
+            "y1": 100.0,
+            "x2": 50.0,
+            "y2": 200.0
+          }
+        }
+      }
+    },
+    "outputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": 950.0,
+            "y1": 100.0,
+            "x2": 1050.0,
+            "y2": 200.0
+          }
+        }
       }
     }
   }

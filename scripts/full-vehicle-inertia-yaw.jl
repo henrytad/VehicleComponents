@@ -4,15 +4,13 @@ using GLMakie, ModelingToolkit, MultibodyComponents, OrdinaryDiffEqRosenbrock, P
 using ADTypes: AutoFiniteDiff
 using Statistics: mean
 
-car = VehicleComponents.params
-pivot = car.body.cg
 k_yaw = 200.0
 initial_yaw = deg2rad(5)
 t_settle = 5.0
 dt = 0.01
 t_end = 25.0
 
-@named model = VehicleComponents.FullVehicleTestInertiaYaw()
+@named model = FullVehicleTestInertiaYaw()
 ssys = multibody(model)
 D = Differential(ModelingToolkit.get_iv(ssys))
 # TODO: Remove guesses once MTK avoids symbolic guess expansion for linear initialization:
@@ -21,6 +19,8 @@ prob = ODEProblem(ssys, [
     ssys.yaw_stiffness => k_yaw,
     ssys.initial_yaw => initial_yaw,
 ], (0.0, t_end); guesses=[D(D(ssys.vehicle.body.r_0[i])) => 0.0 for i in 1:3])
+pivot = [prob.ps[ssys.vehicle.sprung_cg[i]] for i in 1:3]
+prob = remake(prob; p=[ssys.pivot_position => pivot])
 sol = solve(prob, Rodas5P(autodiff=AutoFiniteDiff()); adaptive=false, dt=dt, save_everystep=true)
 
 # Determine the period and, thus, the Izz
@@ -31,7 +31,7 @@ period = mean(diff(crossings)) * dt
 Izz = k_yaw * (period / (2π))^2
 frequency = 1 / period
 
-println("$(car.name): T = $(round(period; digits=4)) s, f = $(round(frequency; digits=4)) Hz, Izz = $(round(Izz; digits=2)) kg·m²")
+println("T = $(round(period; digits=4)) s, f = $(round(frequency; digits=4)) Hz, Izz = $(round(Izz; digits=2)) kg·m²")
 
 # ===========================================================================
 # Animation

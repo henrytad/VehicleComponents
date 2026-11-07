@@ -2,7 +2,10 @@ component Damper
   """
   Nonlinear damper: force looked up from a force-velocity map.
   """
+
   extends MultibodyComponents.PartialLineForce
+
+  outputs = DamperOutputs() {^outputs}
 
   structural parameter dataset::DyadData.DyadTimeseries
 
@@ -17,8 +20,46 @@ component Damper
 
 relations
 
-  v = der(s)
+  # Outputs
+  outputs.s = s
+  outputs.f = f
+  outputs.v = v
+
+  # Equations
   force_map.u = v
+  v = der(s)
   f = force_map.y
 
+metadata {
+  "_links": {
+    "outputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950.0,
+            "y1": 20.0,
+            "x2": 1050.0,
+            "y2": 120.0
+          },
+          "icon": {
+            "x1": 950.0,
+            "y1": 100.0,
+            "x2": 1050.0,
+            "y2": 200.0
+          }
+        }
+      }
+    }
+  },
+  "Dyad": {
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "layer": "icon"
+      }
+    ]
+  }
+}
 end

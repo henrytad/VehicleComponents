@@ -1,0 +1,10 @@
+connector SuspensionInputs
+  input steer::Real(units = "rad")
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealInput.svg"
+    }
+  }
+}
+end

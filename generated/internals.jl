@@ -5,6 +5,7 @@
 
 
 using ModelingToolkit
+using TOML
 
 # The constructor API version of this generated library — the keyword
 # contract of its generated constructors (2 = the named `__overrides`
@@ -312,4 +313,350 @@ macro __dyad_switch(value, block)
       $expanded
     end
   end
+end
+
+function __dyad_parse_data_file(uri::AbstractString, path::AbstractString)
+  loweruri = lowercase(uri)
+  parsefn = endswith(loweruri, ".toml") ? TOML.parsefile : error("apply: unsupported data file type for: $(uri)")
+  local parsed
+  try
+    parsed = parsefn(path)
+  catch err
+    error("apply: failed to parse $(uri): $(sprint(showerror, err))")
+  end
+  parsed isa AbstractDict || error("apply: $(uri) is not a table: $(path)")
+  return parsed
+end
+
+function __dyad_load_parameters_dyad(pkgroot::AbstractString, pkgname::AbstractString, uri::AbstractString)
+  rest = SubString(uri, ncodeunits("dyad://") + 1)
+  sep = findfirst('/', rest)
+  if isnothing(sep) || sep == 1
+    error("apply: malformed dyad:// URI: $(uri)")
+  end
+  if String(SubString(rest, 1, sep - 1)) != pkgname
+    error("apply: cross-package data files are not supported yet: $(uri) (expected package $(pkgname))")
+  end
+  relpath = String(SubString(rest, sep + 1))
+  # A dyad:// URI is a plain package path; a query or fragment is malformed, not
+  # a file-type problem, so reject it here rather than letting it fall through to
+  # the extension check and mis-report as "unsupported data file type".
+  if occursin('?', relpath) || occursin('#', relpath)
+    error("apply: malformed dyad:// URI: $(uri)")
+  end
+  lowerrel = lowercase(relpath)
+  if !(endswith(lowerrel, ".toml"))
+    error("apply: unsupported data file type for: $(uri)")
+  end
+  assetsdir = normpath(joinpath(pkgroot, "assets"))
+  path = normpath(joinpath(assetsdir, relpath))
+  if path != assetsdir && !startswith(path, assetsdir * Base.Filesystem.path_separator)
+    error("apply: data file escapes the assets directory: $(uri)")
+  end
+  if !isfile(path)
+    error("apply: data file not found: $(path) (from $(uri))")
+  end
+  # `normpath` is lexical and does not resolve symlinks, so re-check the real
+  # path now that the file is known to exist: a symlink under `assets/` can
+  # lexically pass the guard above yet point outside the tree. `realpath`
+  # requires existence, which is why this follows the `isfile` guard.
+  canonicalassets = realpath(assetsdir)
+  canonicalpath = realpath(path)
+  if canonicalpath != canonicalassets && !startswith(canonicalpath, canonicalassets * Base.Filesystem.path_separator)
+    error("apply: data file escapes the assets directory: $(uri)")
+  end
+  # Parse the CANONICAL path — parsing the lexical one would re-resolve
+  # symlinks after the containment check and reopen the window it closed.
+  return __dyad_parse_data_file(uri, canonicalpath)
+end
+
+function __dyad_load_parameters(pkgroot::AbstractString, pkgname::AbstractString, uri::AbstractString)
+  if startswith(uri, "dyad://")
+    return __dyad_load_parameters_dyad(pkgroot, pkgname, uri)
+  else
+    error("apply: only dyad:// URIs are supported, got: $(uri)")
+  end
+end
+
+__dyad_apply_value(v) = v
+function __dyad_apply_value(v::AbstractVector)
+  (isempty(v) || !all(x -> x isa AbstractVector, v)) && return v
+  rows = [__dyad_apply_value(x) for x in v]
+  return reduce(vcat, [reshape(r, 1, size(r)...) for r in rows])
+end
+
+function __dyad_apply_convert(val, entry::NamedTuple)
+  if entry.base == "opaque" || entry.base == "Native" || isempty(entry.dims)
+    return val
+  end
+  v = length(entry.dims) < 2 ? val : __dyad_apply_value(val)
+  v isa AbstractArray || return v
+  entry.base == "Real" && return Float64.(v)
+  entry.base == "Integer" && return Int64.(v)
+  entry.base == "Boolean" && return Bool.(v)
+  entry.base == "String" && return String.(v)
+  return v
+end
+
+function __dyad_apply_kwargs(d::AbstractDict, names::NTuple{N,Symbol}, schema::AbstractDict) where {N}
+  pairs = Pair{Symbol,Any}[]
+  for n in names
+    if haskey(d, String(n))
+      entry = schema[String(n)]
+      entry.final && continue
+      push!(pairs, n => __dyad_apply_convert(d[String(n)], entry))
+    end
+  end
+  return NamedTuple(pairs)
+end
+
+function __dyad_flatten(d::AbstractDict, prefix::String, out::Dict{String,Any})
+  for (k, v) in d
+    key = isempty(prefix) ? String(k) : string(prefix, ".", String(k))
+    if v isa AbstractDict
+      __dyad_flatten(v, key, out)
+    else
+      out[key] = v
+    end
+  end
+  return out
+end
+__dyad_flatten(d::AbstractDict) = __dyad_flatten(d, "", Dict{String,Any}())
+
+function __dyad_apply_target(key::AbstractString, schema::AbstractDict)
+  # A key that IS a parameter path wins over the selector reading, so a
+  # parameter genuinely named `initial`/`guess` is not misrouted.
+  haskey(schema, key) && return (String(key), "")
+  for suffix in (".initial", ".guess")
+    if endswith(key, suffix)
+      return (String(key[1:(end - length(suffix))]), suffix[2:end])
+    end
+  end
+  return (String(key), "")
+end
+
+function __dyad_apply_scalarok(val, base::AbstractString)
+  if base == "Real"
+    return (val isa Real) && !(val isa Bool)
+  elseif base == "Integer"
+    return (val isa Integer) && !(val isa Bool)
+  elseif base == "Boolean"
+    return val isa Bool
+  elseif base == "String"
+    return val isa AbstractString
+  else
+    return true
+  end
+end
+
+# The reason a value does not match the declared base type and shape, or
+# nothing when it does.  Callers must not invoke this for opaque/Native
+# entries: it has no opaque bypass of its own, so its safety depends on the
+# opaque guard in __dyad_check_apply running first.
+function __dyad_apply_typeerror(val, base::AbstractString, dims)
+  if isempty(dims)
+    if val isa AbstractVector
+      return "expected a scalar $(base) but got an array"
+    end
+    return __dyad_apply_scalarok(val, base) ? nothing : "type mismatch (expected $(base))"
+  end
+  # One extent per axis for the WHOLE value: statically-known extents come
+  # from the declaration; an unknown (nothing) extent is fixed by the first
+  # block observed at that axis.  Tracking extents globally (not per parent)
+  # is what rejects cross-parent raggedness at rank >= 3 — an N-d array has
+  # one extent per axis, and reduce(vcat, ...) in the value conversion would
+  # otherwise throw a raw DimensionMismatch on blocks the per-parent check
+  # accepted (mirrors validateAxis in instantiate/apply.ts).
+  extents = Union{Int,Nothing}[d for d in dims]
+  return __dyad_apply_shapeerror(val, base, dims, extents, 1)
+end
+
+function __dyad_apply_shapeerror(val, base::AbstractString, dims, extents, axis::Int)
+  if axis > length(extents)
+    (val isa AbstractVector) && return "has more dimensions than the declared rank $(length(extents))"
+    return __dyad_apply_scalarok(val, base) ? nothing : "element type mismatch (expected $(base))"
+  end
+  if !(val isa AbstractVector)
+    return axis == 1 ? "expected an array of rank $(length(extents))" : "has fewer dimensions than the declared rank $(length(extents))"
+  end
+  expected = extents[axis]
+  if isnothing(expected)
+    # An empty block cannot realize an unknown non-terminal extent.
+    if isempty(val) && axis < length(extents)
+      return "is empty but must realize rank $(length(extents))"
+    end
+    extents[axis] = length(val)
+  elseif length(val) != expected
+    if dims[axis] === nothing
+      return "axis $(axis) is ragged ($(length(val)) vs $(expected))"
+    end
+    return "axis $(axis) has length $(length(val)), expected $(expected)"
+  end
+  for x in val
+    reason = __dyad_apply_shapeerror(x, base, dims, extents, axis + 1)
+    (reason === nothing) || return reason
+  end
+  return nothing
+end
+
+function __dyad_apply_opaque(entry)
+  return entry.base == "opaque" || entry.base == "Native"
+end
+
+# The nearest strict-prefix schema entry of a dotted key, or nothing.
+function __dyad_apply_prefix_entry(key::AbstractString, schema::AbstractDict)
+  parts = split(key, ".")
+  for i in (length(parts) - 1):-1:1
+    prefix = join(parts[1:i], ".")
+    haskey(schema, prefix) && return schema[prefix]
+  end
+  return nothing
+end
+
+# The schema entry that governs a flattened file key: its own entry, or — for a
+# member of an opaque field (a resolver-built value whose members are not
+# entries of their own) — the opaque ancestor.  Returns nothing for a key that
+# is neither, i.e. an unknown parameter.  Both the runtime check and the
+# non-structural overlay resolve a key through this one definition so they
+# cannot drift on what a key means or whether it is final.
+function __dyad_apply_entry(target::AbstractString, schema::AbstractDict)
+  haskey(schema, target) && return schema[target]
+  pe = __dyad_apply_prefix_entry(target, schema)
+  return (!isnothing(pe) && __dyad_apply_opaque(pe)) ? pe : nothing
+end
+
+function __dyad_check_apply(flat::AbstractDict, schema::AbstractDict, uri::AbstractString)
+  for (key, val) in flat
+    (target, attr) = __dyad_apply_target(key, schema)
+    entry = __dyad_apply_entry(target, schema)
+    if isnothing(entry)
+      error("apply: unknown parameter '$(target)' in $(uri)")
+    end
+    # final is checked before the opaque bypass so a final field still warns
+    # (final is a base-type-independent modifiability qualifier), matching the
+    # compile-time order — including a member under a final opaque ancestor.
+    if entry.final
+      @warn "apply: '$(target)' is final; its declared value is used and the applied value is ignored" uri
+      continue
+    end
+    # A nested structural parameter has no delivery channel (the constructor
+    # splat is top-level-only and the overlays exclude every structural path):
+    # warn — mirroring the compile-time apply-structural-ignored — and fall
+    # through to the type checks, matching the compile side.
+    if entry.structural && occursin('.', target)
+      @warn "apply: '$(target)' is a nested structural parameter; the applied value cannot be delivered and is ignored" uri
+    end
+    # A member's governing entry is always the opaque ancestor, so this one
+    # test covers both an opaque field and any member of it.
+    if __dyad_apply_opaque(entry)
+      continue
+    end
+    if attr == "initial" && !entry.initial
+      error("apply: '.initial' is not allowed on '$(target)' in $(uri)")
+    end
+    if attr == "guess" && !entry.guess
+      error("apply: '.guess' is not allowed on '$(target)' in $(uri)")
+    end
+    reason = __dyad_apply_typeerror(val, entry.base, entry.dims)
+    if reason !== nothing
+      error("apply: $(reason) for '$(key)' in $(uri)")
+    end
+    # Range is declared on the type (min/max), so a violating value can never
+    # be right: strict bounds, scalar Real/Integer values only (an array
+    # entry's elements are not range-checked).
+    if isempty(entry.dims) && val isa Real && !(val isa Bool)
+      if entry.min !== nothing && val < entry.min
+        error("apply: value $(val) for '$(key)' is below the minimum $(entry.min) in $(uri)")
+      end
+      if entry.max !== nothing && val > entry.max
+        error("apply: value $(val) for '$(key)' is above the maximum $(entry.max) in $(uri)")
+      end
+    end
+  end
+  return nothing
+end
+
+function __dyad_apply_lookup(d::AbstractDict, path::AbstractString)
+  cur = d
+  for seg in split(path, '.')
+    (cur isa AbstractDict && haskey(cur, String(seg))) || return nothing
+    cur = cur[String(seg)]
+  end
+  return cur
+end
+
+function __dyad_apply_overrides(d::AbstractDict, flat::AbstractDict, exclude, schema::AbstractDict)
+  out = Dict{String, Any}()
+  for (k, v) in flat
+    k in exclude && continue
+    (target, _) = __dyad_apply_target(k, schema)
+    entry = __dyad_apply_entry(target, schema)
+    # No entry means the check would already have errored; skip defensively —
+    # the same rule as __dyad_apply_symbolic_overrides, so the two overlay
+    # helpers cannot drift on this case.
+    isnothing(entry) && continue
+    # A final target (or a member under a final opaque ancestor) is dropped
+    # so its declared value wins and is never partially overwritten.
+    entry.final && continue
+    # An opaque member reached via a stripped .initial/.guess selector
+    # (k != target) has no override key of its own; leave it for the
+    # whole-table pass-through below rather than emitting a spurious
+    # `entry.initial`/`entry.guess` key the constructor would reject.
+    if haskey(schema, target) && !(__dyad_apply_opaque(entry) && k != target)
+      v = __dyad_apply_convert(v, entry)
+    else
+      # A member under a (non-final) opaque entry: covered whole below.
+      continue
+    end
+    out[k] = v
+  end
+  # An opaque entry whose file value is a nested table was flattened into
+  # members above; pass the table through whole instead (a final entry stays
+  # dropped — its declared value wins).
+  for (name, entry) in schema
+    if __dyad_apply_opaque(entry) && !entry.final
+      name in exclude && continue
+      v = __dyad_apply_lookup(d, name)
+      if v isa AbstractDict
+        out[name] = v
+      end
+    end
+  end
+  return out
+end
+
+function __dyad_symref(sys, dotted::AbstractString)
+  return foldl(getproperty, Symbol.(split(dotted, '.')); init = sys)
+end
+
+function __dyad_apply_symbolic_overrides(flat::AbstractDict, exclude, schema::AbstractDict, sys)
+  pairs = Pair[]
+  for (k, v) in flat
+    k in exclude && continue
+    (target, attr) = __dyad_apply_target(k, schema)
+    # An .initial/.guess file value cannot be applied through the analysis
+    # overrides dict (a plain-variable override loses to a component's own
+    # initial-condition equation), so it is dropped — see the doc comment.
+    (attr == "initial" || attr == "guess") && continue
+    entry = __dyad_apply_entry(target, schema)
+    # No entry means the check would already have errored; skip defensively.
+    isnothing(entry) && continue
+    # A final target keeps its declared value (the check has warned).
+    entry.final && continue
+    # An opaque/Native value is a whole table with no single symbolic ref.
+    __dyad_apply_opaque(entry) && continue
+    push!(pairs, __dyad_symref(sys, target) => __dyad_apply_convert(v, entry))
+  end
+  return pairs
+end
+
+function __dyad_apply_field(site::NamedTuple, path::AbstractString, fallback)
+  entry = __dyad_apply_entry(path, site.schema)
+  (isnothing(entry) || entry.final) && return fallback
+  value = fallback
+  for d in site.tables
+    v = __dyad_apply_lookup(d, path)
+    isnothing(v) || (value = __dyad_apply_convert(v, entry))
+  end
+  return value
 end

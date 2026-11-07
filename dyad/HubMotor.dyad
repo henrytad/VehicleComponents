@@ -7,14 +7,14 @@ component HubMotor
   at full demand and the current wheel speed to vehicle control.
   """
 
-  demand = RealInput(units = "1") {^demand}
-  full_demand_power = RealOutput(units = "W") {^full_demand_power}
+  inputs = HubMotorInputs() {^inputs}
+  outputs = HubMotorOutputs() {^outputs}
 
   wheel_center = Dyad.Frame3D() {^wheel_center}
   spline = Dyad.Spline() {^spline}
 
-  parameter gear_ratio::Real = VehicleComponents.params.drivetrain.gear_ratio
-  parameter max_torque::Torque = VehicleComponents.params.drivetrain.motor_max_torque
+  parameter gear_ratio::Real
+  parameter max_torque::Torque
 
   final parameter max_wheel_torque::Torque = max_torque * gear_ratio
 
@@ -25,10 +25,17 @@ component HubMotor
 
 relations
 
+  # Outputs
+  outputs.omega = omega
+  outputs.tau_motor = tau_motor
+  outputs.tau_wheel = tau_wheel
+  outputs.power = power
+  outputs.full_demand_power = max_wheel_torque * abs(omega)
+
+  # Equations
   omega = der(spline.phi)
-  full_demand_power = max_wheel_torque * abs(omega)
-  tau_wheel = demand * max_wheel_torque
-  tau_motor = demand * max_torque
+  tau_wheel = inputs.demand * max_wheel_torque
+  tau_motor = inputs.demand * max_torque
   power = tau_wheel * omega
 
   spline.tau = -tau_wheel
@@ -37,14 +44,99 @@ relations
 
 metadata {
   "_links": {
-    "demand": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
-    "full_demand_power": {"Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 20, "y2": 120}}}},
     "wheel_center": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 440, "y2": 540}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 440,
+            "y2": 540
+          },
+          "icon": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 440,
+            "y2": 540
+          }
+        }
+      }
     },
     "spline": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 450, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 450,
+            "y2": 550
+          },
+          "icon": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 450,
+            "y2": 550
+          }
+        }
+      }
+    },
+    "inputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": -50.0,
+            "y1": 100.0,
+            "x2": 50.0,
+            "y2": 200.0
+          }
+        }
+      }
+    },
+    "outputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": 950.0,
+            "y1": 100.0,
+            "x2": 1050.0,
+            "y2": 200.0
+          }
+        }
+      }
     }
+  },
+  "Dyad": {
+    "panel": {
+      "control": "tabs",
+      "children": {
+        "Motor": {
+          "contents": [
+            "gear_ratio",
+            "max_torque"
+          ]
+        }
+      }
+    },
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "layer": "icon"
+      }
+    ]
   }
 }
 end

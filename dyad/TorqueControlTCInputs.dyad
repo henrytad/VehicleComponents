@@ -1,0 +1,11 @@
+connector TorqueControlTCInputs
+  input slip::Real(units = "1")
+  input throttle::Real(units = "1")
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/RealInput.svg"
+    }
+  }
+}
+end

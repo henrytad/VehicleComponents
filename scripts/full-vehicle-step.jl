@@ -8,7 +8,7 @@ t_steer = 1.5
 steer_angle = 0.2
 t_end = 24.0
 
-@named model = VehicleComponents.FullVehicleTestStep()
+@named model = FullVehicleTestStep()
 ssys = multibody(model)
 D = Differential(ModelingToolkit.get_iv(ssys))
 # TODO: Remove guesses once MTK avoids symbolic guess expansion for linear initialization:
@@ -30,7 +30,6 @@ sol = solve(prob, Rodas5P(autodiff=AutoFiniteDiff()); tstops=[t_drive, t_steer])
 VehicleComponents.Telemetry.write_telemetry(
     model, sol;
     run="step_steer",
-    vehicle_id=VehicleComponents.params.name,
     venue="Step steer",
     event="FullVehicleTestStep",
     comment="drive at $(t_drive) s, $(steer_angle) rad step at $(t_steer) s"
@@ -47,21 +46,17 @@ fig, tobs, scene = render(model, sol, sol.t[1];
     x=cam_offset[1], y=cam_offset[2], z=cam_offset[3],
     up=[0, 0, 1], slider=false, size=(800, 600))
 
-body_r0 = collect(ssys.vehicle.body.frame_a.r_0)
+body_position = collect(ssys.vehicle.outputs.body.position)
 body_R = vec(ssys.vehicle.body.frame_a.R)
 
 GLMakie.record(fig, "output/full_vehicle_step.gif", timevec; framerate) do time
     tobs[] = time
 
-    r0 = sol(time, idxs=body_r0)
     R = reshape(sol(time, idxs=body_R), 3, 3)
 
-    cg_world = MultibodyComponents.resolve1(
-        R, VehicleComponents.params.body.cg
-    )
     offset_world = MultibodyComponents.resolve1(R, collect(cam_offset))
 
-    target = GLMakie.Vec3f((r0 .+ cg_world)...)
+    target = GLMakie.Vec3f(sol(time, idxs=body_position)...)
     camera = target + GLMakie.Vec3f(offset_world...)
 
     GLMakie.update_cam!(

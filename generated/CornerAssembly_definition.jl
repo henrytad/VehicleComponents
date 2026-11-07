@@ -5,26 +5,22 @@
 
 
 @doc Markdown.doc"""
-   CornerAssembly(; name, is_left, is_front, upright_mass, __overrides)
+   CornerAssembly(; name, upright_mass, __overrides)
 
 ## Parameters:
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `is_left`         |                          | --  |    |
-| `is_front`         |                          | --  |    |
 | `upright_mass`         |                          | kg  |    |
 
 ## Connectors
 
- * `motor_demand` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `brake_demand` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `slip` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
- * `full_demand_power` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `inputs` - ([`CornerAssemblyInputs`](@ref))
+ * `outputs` - ([`CornerAssemblyOutputs`](@ref))
  * `wheel_center` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 """
-@component function CornerAssembly(; name = nothing, var"is_left"=nothing, var"is_front"=nothing, var"upright_mass"=nothing, __overrides = Dict{String, Any}())
+@component function CornerAssembly(; name = nothing, var"upright_mass"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -43,8 +39,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __bindings = Dict{Symbolics.SymbolicT, Symbolics.SymbolicT}()
 
   ### Keyword argument overrides
-  haskey(__overrides, "is_left") && (is_left = pop!(__overrides, "is_left"))
-  haskey(__overrides, "is_front") && (is_front = pop!(__overrides, "is_front"))
   haskey(__overrides, "upright_mass") && (upright_mass = pop!(__overrides, "upright_mass"))
 
   ### Structural Parameters (functions)
@@ -67,10 +61,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Final Parameters (assignments)
 
   ### Final Path Parameters
-  append!(__vars, @variables (motor_demand(t)::Real), [input = true])
-  append!(__vars, @variables (brake_demand(t)::Real), [input = true])
-  append!(__vars, @variables (slip(t)::Real), [output = true])
-  append!(__vars, @variables (full_demand_power(t)::Real), [output = true])
 
   ### Variables (declarations)
 
@@ -80,16 +70,18 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named inputs = VehicleComponents.CornerAssemblyInputs())
+  push!(__systems, @named outputs = VehicleComponents.CornerAssemblyOutputs())
   push!(__systems, @named wheel_center = __Dyad__Frame3D())
   # Subcomponent wheel_assembly of type VehicleComponents.WheelAssembly
   wheel_assembly_overrides = __pop_subcomponent_overrides!(__overrides, "wheel_assembly")
-  push!(__systems, @named wheel_assembly = VehicleComponents.WheelAssembly(; is_left=is_left, __overrides = wheel_assembly_overrides))
+  push!(__systems, @named wheel_assembly = VehicleComponents.WheelAssembly(; __overrides = wheel_assembly_overrides))
   # Subcomponent motor of type VehicleComponents.HubMotor
   motor_overrides = __pop_subcomponent_overrides!(__overrides, "motor")
   push!(__systems, @named motor = VehicleComponents.HubMotor(; __overrides = motor_overrides))
   # Subcomponent brake of type VehicleComponents.Brake
   brake_overrides = __pop_subcomponent_overrides!(__overrides, "brake")
-  push!(__systems, @named brake = VehicleComponents.Brake(; is_front=is_front, __overrides = brake_overrides))
+  push!(__systems, @named brake = VehicleComponents.Brake(; __overrides = brake_overrides))
   # Subcomponent upright of type MultibodyComponents.Body
   upright_overrides = __pop_subcomponent_overrides!(__overrides, "upright")
   push!(__systems, @named upright = MultibodyComponents.Body(; m=upright_mass, r_cm=[Float64(0), Float64(0), Float64(0)], I_11=Float64(0), I_22=Float64(0), I_33=Float64(0), cylinder_radius=Float64(0), __overrides = upright_overrides))
@@ -105,15 +97,25 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
+  push!(__eqs, motor.inputs.demand ~ inputs.motor_demand)
+  push!(__eqs, brake.inputs.brake_demand ~ inputs.brake_demand)
+  push!(__eqs, outputs.Fx ~ wheel_assembly.outputs.Fx)
+  push!(__eqs, outputs.Fy ~ wheel_assembly.outputs.Fy)
+  push!(__eqs, outputs.Fz ~ wheel_assembly.outputs.Fz)
+  push!(__eqs, outputs.alpha ~ wheel_assembly.outputs.alpha)
+  push!(__eqs, outputs.omega ~ wheel_assembly.outputs.omega)
+  push!(__eqs, outputs.Re ~ wheel_assembly.outputs.Re)
+  push!(__eqs, outputs.slip ~ wheel_assembly.outputs.slip)
+  push!(__eqs, outputs.tau_motor ~ motor.outputs.tau_motor)
+  push!(__eqs, outputs.tau_wheel ~ motor.outputs.tau_wheel)
+  push!(__eqs, outputs.power ~ motor.outputs.power)
+  push!(__eqs, outputs.full_demand_power ~ motor.outputs.full_demand_power)
+  push!(__eqs, outputs.tau_brake ~ brake.outputs.tau_brake)
   push!(__eqs, connect(wheel_center, wheel_assembly.wheel_center))
   push!(__eqs, connect(wheel_center, upright.frame_a))
   push!(__eqs, connect(motor.wheel_center, wheel_center))
   push!(__eqs, connect(wheel_assembly.spline, motor.spline))
-  push!(__eqs, connect(motor_demand, motor.demand))
-  push!(__eqs, connect(motor.full_demand_power, full_demand_power))
-  push!(__eqs, connect(wheel_assembly.slip, slip))
   push!(__eqs, connect(wheel_assembly.spline, brake.spline))
-  push!(__eqs, connect(brake_demand, brake.brake_demand))
   push!(__eqs, connect(brake.wheel_center, wheel_center))
 
   # Return completely constructed System

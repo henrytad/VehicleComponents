@@ -5,7 +5,7 @@
 
 
 @doc Markdown.doc"""
-   RollSpring(; name, fixed_rotation_at_frame_a, fixed_rotation_at_frame_b, s_small, render, color, specular_coefficient, c, s_neutral, preload_travel, radius, num_windings, N, end_ratio, __overrides)
+   RollSpring(; name, fixed_rotation_at_frame_a, fixed_rotation_at_frame_b, s_small, render, color, specular_coefficient, c, s_neutral, preload_travel, __overrides)
 
 ## Parameters:
 
@@ -17,13 +17,9 @@
 | `render`         |                          | --  |   true |
 | `color`         |                          | --  |   [0.5, 0.5, 0.5, 1.0] |
 | `specular_coefficient`         |                          | --  |   1.5 |
-| `c`         | Rate of each bump spring                         | N/m  |   1.0 |
-| `s_neutral`         | Length at zero roll, where the pack carries no load                         | m  |   0 |
-| `preload_travel`         | Shim preload per spring, as travel. 0 means the springs just touch                         | m  |   0 |
-| `radius`         | Radius in animations                         | --  |   0.02 |
-| `num_windings`         | Number of windings in animations                         | --  |   15 |
-| `N`         | Number of points used to render each winding                         | --  |   600 |
-| `end_ratio`         | Fraction of total length used for the tapered ends                         | --  |   0.1 |
+| `c`         | Rate of each bump spring                         | N/m  |    |
+| `s_neutral`         | Length at zero roll, where the pack carries no load                         | m  |    |
+| `preload_travel`         | Shim preload per spring, as travel. 0 means the springs just touch                         | m  |    |
 
 ## Connectors
 
@@ -31,6 +27,7 @@
 connectors that can be connected together ([`Frame3D`](@ref))
  * `frame_b` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
+ * `outputs` - ([`RollSpringOutputs`](@ref))
 
 ## Variables
 
@@ -45,7 +42,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `f`         | Scalar line force (positive = tension)                         | N  |
 | `x`         | Deflection from the neutral length, positive in extension                         | m  |
 """
-@component function RollSpring(; name = nothing, var"fixed_rotation_at_frame_a"=false, var"fixed_rotation_at_frame_b"=false, var"s_small"=1e-10, var"render"=true, var"color"=[0.5, 0.5, 0.5, Float64(1.0)], var"specular_coefficient"=1.5, var"c"=Float64(1.0), var"s_neutral"=Float64(0), var"preload_travel"=Float64(0), var"radius"=0.02, var"num_windings"=Float64(15), var"N"=600, var"end_ratio"=0.1, __overrides = Dict{String, Any}())
+@component function RollSpring(; name = nothing, var"fixed_rotation_at_frame_a"=false, var"fixed_rotation_at_frame_b"=false, var"s_small"=1e-10, var"render"=true, var"color"=[0.5, 0.5, 0.5, Float64(1.0)], var"specular_coefficient"=1.5, var"c"=nothing, var"s_neutral"=nothing, var"preload_travel"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -73,10 +70,6 @@ connectors that can be connected together ([`Frame3D`](@ref))
   haskey(__overrides, "c") && (c = pop!(__overrides, "c"))
   haskey(__overrides, "s_neutral") && (s_neutral = pop!(__overrides, "s_neutral"))
   haskey(__overrides, "preload_travel") && (preload_travel = pop!(__overrides, "preload_travel"))
-  haskey(__overrides, "radius") && (radius = pop!(__overrides, "radius"))
-  haskey(__overrides, "num_windings") && (num_windings = pop!(__overrides, "num_windings"))
-  haskey(__overrides, "N") && (N = pop!(__overrides, "N"))
-  haskey(__overrides, "end_ratio") && (end_ratio = pop!(__overrides, "end_ratio"))
 
   ### Structural Parameters (functions)
 
@@ -87,6 +80,10 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Path Parameters (non-final)
 
   ### Final Parameters (declarations)
+  append!(__params, @parameters (radius::Real), [description = "Radius in animations", misc = "final"])
+  append!(__params, @parameters (num_windings::Real), [description = "Number of windings in animations", misc = "final"])
+  append!(__params, @parameters (N::Int), [description = "Number of points used to render each winding", misc = "final"])
+  append!(__params, @parameters (end_ratio::Real), [description = "Fraction of total length used for the tapered ends", misc = "final"])
 
   ### Deferred assignment (default values that depend on final parameters)
 
@@ -112,20 +109,12 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __local__preload_travel = preload_travel
   append!(__params, @parameters (preload_travel::Real), [description = "Shim preload per spring, as travel. 0 means the springs just touch"])
   __dyad_seed_parameter!(__initial_conditions, __bindings, preload_travel, __local__preload_travel)
-  __local__radius = radius
-  append!(__params, @parameters (radius::Real), [description = "Radius in animations"])
-  __dyad_seed_parameter!(__initial_conditions, __bindings, radius, __local__radius)
-  __local__num_windings = num_windings
-  append!(__params, @parameters (num_windings::Real), [description = "Number of windings in animations"])
-  __dyad_seed_parameter!(__initial_conditions, __bindings, num_windings, __local__num_windings)
-  __local__N = N
-  append!(__params, @parameters (N::Int), [description = "Number of points used to render each winding"])
-  __dyad_seed_parameter!(__initial_conditions, __bindings, N, __local__N)
-  __local__end_ratio = end_ratio
-  append!(__params, @parameters (end_ratio::Real), [description = "Fraction of total length used for the tapered ends"])
-  __dyad_seed_parameter!(__initial_conditions, __bindings, end_ratio, __local__end_ratio)
 
   ### Final Parameters (assignments)
+  __bindings[radius] = 0.02
+  __bindings[num_windings] = 15.0
+  __bindings[N] = 600
+  __bindings[end_ratio] = 0.1
 
   ### Final Path Parameters
 
@@ -171,6 +160,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   ### Components
   push!(__systems, @named frame_a = __Dyad__Frame3D())
   push!(__systems, @named frame_b = __Dyad__Frame3D())
+  push!(__systems, @named outputs = VehicleComponents.RollSpringOutputs())
   # Subcomponent spring_shape of type MultibodyComponents.SpringShape
   spring_shape_overrides = __pop_subcomponent_overrides!(__overrides, "spring_shape")
   spring_shape_dict = Dict{String, Any}()
@@ -209,6 +199,8 @@ connectors that can be connected together ([`Frame3D`](@ref))
   push!(__eqs, e_a ~ r_rel_a / s)
   push!(__eqs, frame_a.f ~ -e_a * f)
   push!(__eqs, frame_b.f ~ -MultibodyComponents.resolve2(frame_b.R, MultibodyComponents.resolve1(frame_a.R, frame_a.f)))
+  push!(__eqs, outputs.s ~ s)
+  push!(__eqs, outputs.f ~ f)
   push!(__eqs, x ~ s - s_neutral)
   push!(__eqs, f ~ ifelse(x > preload_travel, c * (x + preload_travel), ifelse(x < -preload_travel, c * (x - preload_travel), 2 * c * x)))
 

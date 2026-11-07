@@ -1,46 +1,58 @@
 partial component TorqueControl
   """Interface for a vehicle torque controller."""
 
-  throttle = RealInput() {^throttle}
-  slip_fl = RealInput() {^slip_fl}
-  slip_fr = RealInput() {^slip_fr}
-  slip_rl = RealInput() {^slip_rl}
-  slip_rr = RealInput() {^slip_rr}
-
-  demand_fl = RealOutput(units = "1") {^demand_fl}
-  demand_fr = RealOutput(units = "1") {^demand_fr}
-  demand_rl = RealOutput(units = "1") {^demand_rl}
-  demand_rr = RealOutput(units = "1") {^demand_rr}
+  inputs = TorqueControlInputs() {^inputs}
+  outputs = TorqueControlOutputs() {^outputs}
 
 relations
 
 metadata {
-  "Dyad": {"labels": [{"label": "$(instance)", "x": 500, "y": 1100, "rot": 0}]},
+  "Dyad": {
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "rot": 0
+      }
+    ]
+  },
   "_links": {
-    "throttle": {"Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 20, "y2": 120}}}},
-    "slip_fl": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 230, "y2": 330}}}
+    "inputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": -50.0,
+            "y1": 100.0,
+            "x2": 50.0,
+            "y2": 200.0
+          }
+        }
+      }
     },
-    "slip_fr": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 380, "y2": 480}}}
-    },
-    "slip_rl": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 520, "y2": 620}}}
-    },
-    "slip_rr": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 660, "y2": 760}}}
-    },
-    "demand_fl": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 230, "y2": 330}}}
-    },
-    "demand_fr": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 380, "y2": 480}}}
-    },
-    "demand_rl": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 520, "y2": 620}}}
-    },
-    "demand_rr": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "x2": 1050, "y1": 660, "y2": 760}}}
+    "outputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": 950.0,
+            "y1": 100.0,
+            "x2": 1050.0,
+            "y2": 200.0
+          }
+        }
+      }
     }
   }
 }

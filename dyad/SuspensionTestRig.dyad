@@ -8,64 +8,71 @@ test component SuspensionTestRig
   world = MultibodyComponents.World(n = [0, 0, -1], render = false) {^world}
 
   suspension = VehicleComponents.Suspension(
+    steering_rack(rack_axis = [0, 1, 0], rack_ratio = 0.01),
     wheel_center_left = wheel_center_left,
     wheel_center_right = wheel_center_right,
     pushrod_outer_left = pushrod_outer_left,
     pushrod_outer_right = pushrod_outer_right,
-    tierod_inner_left = VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner,
-    tierod_inner_right = VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_inner,
+    tierod_inner_left = [0.08, 0.22, 0.2335],
+    tierod_inner_right = [0.08, -0.22, 0.2335],
     linkage_left(
-      lca_front = VehicleComponents.params.suspension.front.geometry.linkages.left.lca_front,
-      lca_rear = VehicleComponents.params.suspension.front.geometry.linkages.left.lca_rear,
-      lca_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.lca_outer,
-      uca_front = VehicleComponents.params.suspension.front.geometry.linkages.left.uca_front,
-      uca_rear = VehicleComponents.params.suspension.front.geometry.linkages.left.uca_rear,
-      uca_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.uca_outer,
-      tierod_inner = VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner,
-      tierod_outer = VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_outer,
-      static_camber = VehicleComponents.params.suspension.front.setup.alignment.left.static_camber,
-      static_toe = VehicleComponents.params.suspension.front.setup.alignment.left.static_toe
+      lca_front = [0.1, 0.195, 0.2085],
+      lca_rear = [-0.1, 0.205, 0.1985],
+      lca_outer = [0.005, 0.56, 0.2135],
+      uca_front = [0.08, 0.245, 0.3885],
+      uca_rear = [-0.08, 0.255, 0.3785],
+      uca_outer = [-0.01, 0.53, 0.4135],
+      tierod_inner = [0.08, 0.22, 0.2335],
+      tierod_outer = [0.075, 0.55, 0.2435],
+      static_camber = 0.0,
+      static_toe = 0.0
     ),
     linkage_right(
-      lca_front = VehicleComponents.params.suspension.front.geometry.linkages.right.lca_front,
-      lca_rear = VehicleComponents.params.suspension.front.geometry.linkages.right.lca_rear,
-      lca_outer = VehicleComponents.params.suspension.front.geometry.linkages.right.lca_outer,
-      uca_front = VehicleComponents.params.suspension.front.geometry.linkages.right.uca_front,
-      uca_rear = VehicleComponents.params.suspension.front.geometry.linkages.right.uca_rear,
-      uca_outer = VehicleComponents.params.suspension.front.geometry.linkages.right.uca_outer,
-      tierod_inner = VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_inner,
-      tierod_outer = VehicleComponents.params.suspension.front.geometry.linkages.right.tierod_outer,
-      static_camber = VehicleComponents.params.suspension.front.setup.alignment.right.static_camber,
-      static_toe = VehicleComponents.params.suspension.front.setup.alignment.right.static_toe
+      lca_front = [0.1, -0.195, 0.2085],
+      lca_rear = [-0.1, -0.205, 0.1985],
+      lca_outer = [0.005, -0.56, 0.2135],
+      uca_front = [0.08, -0.245, 0.3885],
+      uca_rear = [-0.08, -0.255, 0.3785],
+      uca_outer = [-0.01, -0.53, 0.4135],
+      tierod_inner = [0.08, -0.22, 0.2335],
+      tierod_outer = [0.075, -0.55, 0.2435],
+      static_camber = 0.0,
+      static_toe = 0.0
     ),
     inboard(
-      rocker_pivot_left = VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.left,
-      rocker_pivot_right = VehicleComponents.params.suspension.front.geometry.inboard.rocker_pivot.right,
-      pushrod_inner_left = VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.left,
-      pushrod_inner_right = VehicleComponents.params.suspension.front.geometry.inboard.pushrod_inner.right,
-      heave_pickup_left = VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.left,
-      heave_pickup_right = VehicleComponents.params.suspension.front.geometry.inboard.heave_pickup.right,
-      roll_pickup_left = VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.left,
-      roll_pickup_right = VehicleComponents.params.suspension.front.geometry.inboard.roll_pickup.right,
-      pushrod_adjust_left = VehicleComponents.params.suspension.front.setup.pushrod_adjust.left,
-      pushrod_adjust_right = VehicleComponents.params.suspension.front.setup.pushrod_adjust.right,
+      rocker_pivot_left = [-0.03, 0.12, 0.6235],
+      rocker_pivot_right = [-0.03, -0.12, 0.6235],
+      pushrod_inner_left = [-0.03, 0.138, 0.6535],
+      pushrod_inner_right = [-0.03, -0.138, 0.6535],
+      heave_pickup_left = [-0.03, 0.114, 0.6635],
+      heave_pickup_right = [-0.03, -0.114, 0.6635],
+      roll_pickup_left = [-0.105, 0.108, 0.5865],
+      roll_pickup_right = [-0.105, -0.108, 0.6605],
+      pushrod_adjust_left = 0.0,
+      pushrod_adjust_right = 0.0,
       heave_strut(
         spring(
-          c = VehicleComponents.params.suspension.front.setup.heave.stiffness,
-          s_unstretched = VehicleComponents.params.suspension.front.setup.heave.s_unstretched,
-          perch_height = VehicleComponents.params.suspension.front.setup.heave.perch_height
+          c = 100000.0,
+          s_unstretched = 0.228,
+          perch_height = 0.0
         )
       ),
       roll_strut(
         spring(
-          c = VehicleComponents.params.suspension.front.setup.roll.stiffness,
-          s_neutral = VehicleComponents.params.suspension.front.setup.roll.s_neutral,
-          preload_travel = VehicleComponents.params.suspension.front.setup.roll.preload_travel
+          c = 70000.0,
+          s_neutral = 0.2283243,
+          preload_travel = 0.0
         )
       )
     ),
-    heave_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.heave.damper),
-    roll_dataset = VehicleComponents.damper_dataset(VehicleComponents.params.suspension.front.setup.roll.damper)
+    heave_dataset = VehicleComponents.damper_dataset(
+      "dampers/heave_VC03_compression_02.csv",
+      "dampers/heave_VC03_extension_02.csv"
+    ),
+    roll_dataset = VehicleComponents.damper_dataset(
+      "dampers/roll_VC01_compression_03.csv",
+      "dampers/roll_VC01_extension_03.csv"
+    )
   ) {^suspension}
 
   # Left jack
@@ -81,10 +88,10 @@ test component SuspensionTestRig
   wheel_position_right = TranslationalComponents.Sources.Position() {^wheel_position_right}
  
   # Shared references
-  parameter wheel_center_left::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.left.wheel_center
-  parameter wheel_center_right::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.right.wheel_center
-  parameter pushrod_outer_left::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer
-  parameter pushrod_outer_right::Position[3] = VehicleComponents.params.suspension.front.geometry.linkages.right.pushrod_outer
+  parameter wheel_center_left::Position[3] = [0.0, 0.6, 0.3135]
+  parameter wheel_center_right::Position[3] = [0.0, -0.6, 0.3135]
+  parameter pushrod_outer_left::Position[3] = [0.0, 0.48, 0.4235]
+  parameter pushrod_outer_right::Position[3] = [0.0, -0.48, 0.4235]
  
   # Rig
   final parameter jack_rod_length::Length = 0.1
@@ -98,16 +105,18 @@ test component SuspensionTestRig
  
 relations
 
+  # Inputs
+  wheel_position_left.s_ref = (heave_amplitude + roll_amplitude) * sin(2 * π * freq * time)
+  wheel_position_right.s_ref = (heave_amplitude - roll_amplitude) * sin(2 * π * freq * time)
+  suspension.inputs.steer = 0
+
+  # Initialization
   initial wheel_position_left.v = 0.0
   initial wheel_position_right.v = 0.0
   initial suspension.steering_rack.rack_drive.v = 0.0
   guess suspension.linkage_left.lca_rev.phi = 0.0
   guess suspension.linkage_right.lca_rev.phi = 0.0
 
-  wheel_position_left.s_ref = (heave_amplitude + roll_amplitude) * sin(2 * π * freq * time)
-  wheel_position_right.s_ref = (heave_amplitude - roll_amplitude) * sin(2 * π * freq * time)
-  suspension.steer = 0
- 
   # Left jack
   connect(fixed_left.frame_b, prismatic_left.frame_a) {^id16}
   connect(prismatic_left.frame_b, actuation_rod_left.frame_a) {^id17}
@@ -131,18 +140,21 @@ metadata {
     "tests": {
       "heave": {
         "stop": 2.0,
-        "params": {"heave_amplitude": 0.0254, "roll_amplitude": 0.0},
+        "params": {
+          "heave_amplitude": 0.0254,
+          "roll_amplitude": 0.0
+        },
         "atol": {
-          "suspension.wc_heave": 1e-5,
-          "suspension.wc_roll": 1e-5,
-          "suspension.linkage_left.wc_height": 1e-5,
-          "suspension.linkage_right.wc_height": 1e-5,
-          "suspension.linkage_left.camber": 1e-5,
-          "suspension.linkage_right.camber": 1e-5,
-          "suspension.linkage_left.toe": 1e-5,
-          "suspension.linkage_right.toe": 1e-5,
-          "suspension.inboard.heave_strut.s": 1e-5,
-          "suspension.inboard.roll_strut.s": 1e-5
+          "suspension.wc_heave": 1e-05,
+          "suspension.wc_roll": 1e-05,
+          "suspension.linkage_left.wc_height": 1e-05,
+          "suspension.linkage_right.wc_height": 1e-05,
+          "suspension.linkage_left.camber": 1e-05,
+          "suspension.linkage_right.camber": 1e-05,
+          "suspension.linkage_left.toe": 1e-05,
+          "suspension.linkage_right.toe": 1e-05,
+          "suspension.inboard.heave_strut.s": 1e-05,
+          "suspension.inboard.roll_strut.s": 1e-05
         },
         "expect": {
           "initial": {
@@ -167,18 +179,21 @@ metadata {
       },
       "roll": {
         "stop": 2.0,
-        "params": {"heave_amplitude": 0.0, "roll_amplitude": 0.0254},
+        "params": {
+          "heave_amplitude": 0.0,
+          "roll_amplitude": 0.0254
+        },
         "atol": {
-          "suspension.wc_heave": 1e-5,
-          "suspension.wc_roll": 1e-5,
-          "suspension.linkage_left.wc_height": 1e-5,
-          "suspension.linkage_right.wc_height": 1e-5,
-          "suspension.linkage_left.camber": 1e-5,
-          "suspension.linkage_right.camber": 1e-5,
-          "suspension.linkage_left.toe": 1e-5,
-          "suspension.linkage_right.toe": 1e-5,
-          "suspension.inboard.heave_strut.s": 1e-5,
-          "suspension.inboard.roll_strut.s": 1e-5
+          "suspension.wc_heave": 1e-05,
+          "suspension.wc_roll": 1e-05,
+          "suspension.linkage_left.wc_height": 1e-05,
+          "suspension.linkage_right.wc_height": 1e-05,
+          "suspension.linkage_left.camber": 1e-05,
+          "suspension.linkage_right.camber": 1e-05,
+          "suspension.linkage_left.toe": 1e-05,
+          "suspension.linkage_right.toe": 1e-05,
+          "suspension.inboard.heave_strut.s": 1e-05,
+          "suspension.inboard.roll_strut.s": 1e-05
         },
         "expect": {
           "initial": {
@@ -212,17 +227,39 @@ metadata {
         "attrs": {}
       }
     ],
-    "icons": {"default": "dyad://Dyad/Default.svg"},
+    "icons": {
+      "default": "dyad://Dyad/Default.svg"
+    },
     "path": {},
-    "doc": {"behavior": true},
+    "doc": {
+      "behavior": true
+    },
     "deprecated": null
   },
   "_links": {
-    "world": {"Dyad": {"placement": {"diagram": {"x1": 20, "y1": 10, "x2": 120, "y2": 110}}}},
+    "world": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 20,
+            "y1": 10,
+            "x2": 120,
+            "y2": 110
+          }
+        }
+      }
+    },
     "suspension": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 450, "y1": 130, "x2": 550, "y2": 230, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 450,
+            "y1": 130,
+            "x2": 550,
+            "y2": 230,
+            "rot": 0
+          }
         },
         "tags": []
       }
@@ -230,7 +267,14 @@ metadata {
     "fixed_right": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 720, "y1": 640, "x2": 820, "y2": 740, "rot": 270}
+          "diagram": {
+            "iconName": "default",
+            "x1": 720,
+            "y1": 640,
+            "x2": 820,
+            "y2": 740,
+            "rot": 270
+          }
         },
         "tags": []
       }
@@ -238,7 +282,14 @@ metadata {
     "prismatic_right": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 720, "y1": 450, "x2": 820, "y2": 550, "rot": 270}
+          "diagram": {
+            "iconName": "default",
+            "x1": 720,
+            "y1": 450,
+            "x2": 820,
+            "y2": 550,
+            "rot": 270
+          }
         },
         "tags": []
       }
@@ -246,7 +297,14 @@ metadata {
     "actuation_rod_left": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 200, "y1": 260, "x2": 300, "y2": 360, "rot": 270}
+          "diagram": {
+            "iconName": "default",
+            "x1": 200,
+            "y1": 260,
+            "x2": 300,
+            "y2": 360,
+            "rot": 270
+          }
         },
         "tags": []
       }
@@ -254,7 +312,14 @@ metadata {
     "actuation_rod_right": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 720, "y1": 260, "x2": 820, "y2": 360, "rot": 270}
+          "diagram": {
+            "iconName": "default",
+            "x1": 720,
+            "y1": 260,
+            "x2": 820,
+            "y2": 360,
+            "rot": 270
+          }
         },
         "tags": []
       }
@@ -262,7 +327,14 @@ metadata {
     "fixed_left": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 200, "y1": 640, "x2": 300, "y2": 740, "rot": 270}
+          "diagram": {
+            "iconName": "default",
+            "x1": 200,
+            "y1": 640,
+            "x2": 300,
+            "y2": 740,
+            "rot": 270
+          }
         },
         "tags": []
       }
@@ -270,7 +342,14 @@ metadata {
     "prismatic_left": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 200, "y1": 450, "x2": 300, "y2": 550, "rot": 270}
+          "diagram": {
+            "iconName": "default",
+            "x1": 200,
+            "y1": 450,
+            "x2": 300,
+            "y2": 550,
+            "rot": 270
+          }
         },
         "tags": []
       }
@@ -278,7 +357,14 @@ metadata {
     "wheel_position_left": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 30, "y1": 450, "x2": 130, "y2": 550, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 30,
+            "y1": 450,
+            "x2": 130,
+            "y2": 550,
+            "rot": 0
+          }
         },
         "tags": []
       }
@@ -286,42 +372,183 @@ metadata {
     "wheel_position_right": {
       "Dyad": {
         "placement": {
-          "diagram": {"iconName": "default", "x1": 550, "y1": 450, "x2": 650, "y2": 550, "rot": 0}
+          "diagram": {
+            "iconName": "default",
+            "x1": 550,
+            "y1": 450,
+            "x2": 650,
+            "y2": 550,
+            "rot": 0
+          }
         },
         "tags": []
       }
     },
-    "id11": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 499, "y": 60}], "E": 2}], "path": {}}},
+    "id11": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 499,
+                "y": 60
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
     "id12": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 250, "y": 180}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 250,
+                "y": 180
+              }
+            ],
+            "E": 2
+          }
+        ],
         "renderStyle": "standard"
       }
     },
-    "id13": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
-    "id14": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id13": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "renderStyle": "standard"
+      }
+    },
+    "id14": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "renderStyle": "standard"
+      }
+    },
     "id15": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 820, "y": 600}, {"x": 600, "y": 600}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 820,
+                "y": 600
+              },
+              {
+                "x": 600,
+                "y": 600
+              }
+            ],
+            "E": 2
+          }
+        ],
         "renderStyle": "standard"
       }
     },
-    "id16": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
-    "id17": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id16": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "renderStyle": "standard"
+      }
+    },
+    "id17": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "renderStyle": "standard"
+      }
+    },
     "id18": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 770, "y": 180}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 770,
+                "y": 180
+              }
+            ],
+            "E": 2
+          }
+        ],
         "renderStyle": "standard"
       }
     },
-    "id19": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}},
+    "id19": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "renderStyle": "standard"
+      }
+    },
     "id20": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 300, "y": 600}, {"x": 80, "y": 600}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 300,
+                "y": 600
+              },
+              {
+                "x": 80,
+                "y": 600
+              }
+            ],
+            "E": 2
+          }
+        ],
         "renderStyle": "standard"
       }
     },
-    "id21": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "renderStyle": "standard"}}
+    "id21": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "renderStyle": "standard"
+      }
+    }
   }
 }
 end

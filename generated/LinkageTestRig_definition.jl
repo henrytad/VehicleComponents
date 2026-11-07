@@ -11,12 +11,12 @@
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `wheel_center`         |                          | m  |   VehicleComp...heel_center |
-| `tierod_inner`         |                          | m  |   VehicleComp...ierod_inner |
+| `wheel_center`         |                          | m  |   [0.0, 0.6, 0.3135] |
+| `tierod_inner`         |                          | m  |   [0.08, 0.22, 0.2335] |
 | `stroke`         |                          | m  |   0.0254 |
 | `freq`         |                          | Hz  |   0.5 |
 """
-@component function LinkageTestRig(; name = nothing, var"wheel_center"=VehicleComponents.params.suspension.front.geometry.linkages.left.wheel_center, var"tierod_inner"=VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_inner, var"stroke"=0.0254, var"freq"=0.5, __overrides = Dict{String, Any}())
+@component function LinkageTestRig(; name = nothing, var"wheel_center"=[Float64(0.0), 0.6, 0.3135], var"tierod_inner"=[0.08, 0.22, 0.2335], var"stroke"=0.0254, var"freq"=0.5, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -102,7 +102,7 @@
   push!(__systems, @named mount_tierod = MultibodyComponents.Fixed(; r=tierod_inner, render=false, __overrides = mount_tierod_overrides))
   # Subcomponent linkage of type VehicleComponents.Linkage
   linkage_overrides = __pop_subcomponent_overrides!(__overrides, "linkage")
-  push!(__systems, @named linkage = VehicleComponents.Linkage(; lca_front=VehicleComponents.params.suspension.front.geometry.linkages.left.lca_front, lca_outer=VehicleComponents.params.suspension.front.geometry.linkages.left.lca_outer, lca_rear=VehicleComponents.params.suspension.front.geometry.linkages.left.lca_rear, uca_front=VehicleComponents.params.suspension.front.geometry.linkages.left.uca_front, uca_outer=VehicleComponents.params.suspension.front.geometry.linkages.left.uca_outer, uca_rear=VehicleComponents.params.suspension.front.geometry.linkages.left.uca_rear, tierod_inner=tierod_inner, tierod_outer=VehicleComponents.params.suspension.front.geometry.linkages.left.tierod_outer, pushrod_outer=VehicleComponents.params.suspension.front.geometry.linkages.left.pushrod_outer, wheel_center=wheel_center, static_camber=VehicleComponents.params.suspension.front.setup.alignment.left.static_camber, static_toe=VehicleComponents.params.suspension.front.setup.alignment.left.static_toe, __overrides = linkage_overrides))
+  push!(__systems, @named linkage = VehicleComponents.Linkage(; lca_front=[0.1, 0.195, 0.2085], lca_outer=[0.005, 0.56, 0.2135], lca_rear=[-0.1, 0.205, 0.1985], uca_front=[0.08, 0.245, 0.3885], uca_outer=[-0.01, 0.53, 0.4135], uca_rear=[-0.08, 0.255, 0.3785], tierod_inner=tierod_inner, tierod_outer=[0.075, 0.55, 0.2435], pushrod_outer=[Float64(0.0), 0.48, 0.4235], wheel_center=wheel_center, static_camber=Float64(0.0), static_toe=Float64(0.0), __overrides = linkage_overrides))
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))

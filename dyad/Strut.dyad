@@ -8,6 +8,8 @@ component Strut
   component only carries the render settings.
   """
 
+  outputs = StrutOutputs() {^outputs}
+
   frame_a = Dyad.Frame3D() {^frame_a}
   frame_b = Dyad.Frame3D() {^frame_b}
 
@@ -25,9 +27,15 @@ component Strut
 
 relations
 
-  s = spring.s
-  f = spring.f + damper.f
+  # Outputs
+  outputs.s = s
+  outputs.f = f
 
+  # Equations
+  s = spring.outputs.s
+  f = spring.outputs.f + damper.outputs.f
+
+  # Connections
   connect(frame_a, damper.frame_a) {^id5}
   connect(damper.frame_b, frame_b) {^id6}
   connect(frame_a, spring.frame_a) {^id7}
@@ -36,41 +44,192 @@ relations
 metadata {
   "_links": {
     "frame_a": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "y1": 450, "x2": 50, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": -50,
+            "y1": 450,
+            "x2": 50,
+            "y2": 550
+          },
+          "icon": {
+            "x1": -50,
+            "y1": 450,
+            "x2": 50,
+            "y2": 550
+          }
+        }
+      }
     },
     "frame_b": {
-      "Dyad": {"placement": {"diagram": {"x1": 950, "y1": 450, "x2": 1050, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "y1": 450,
+            "x2": 1050,
+            "y2": 550
+          },
+          "icon": {
+            "x1": 950,
+            "y1": 450,
+            "x2": 1050,
+            "y2": 550
+          }
+        }
+      }
     },
     "spring": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 330, "y2": 430}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 330,
+            "y2": 430
+          }
+        }
+      }
     },
     "damper": {
-      "Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 560, "y2": 660}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 560,
+            "y2": 660
+          }
+        }
+      }
     },
     "id5": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 300, "y": 500}, {"x": 300, "y": 610}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 300,
+                "y": 500
+              },
+              {
+                "x": 300,
+                "y": 610
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
     "id6": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 690, "y": 610}, {"x": 690, "y": 500}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 690,
+                "y": 610
+              },
+              {
+                "x": 690,
+                "y": 500
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
     "id7": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 300, "y": 500}, {"x": 300, "y": 380}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 300,
+                "y": 500
+              },
+              {
+                "x": 300,
+                "y": 380
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
     "id8": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 690, "y": 500}, {"x": 690, "y": 380}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 690,
+                "y": 500
+              },
+              {
+                "x": 690,
+                "y": 380
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
+    },
+    "outputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": 950.0,
+            "y1": 100.0,
+            "x2": 1050.0,
+            "y2": 200.0
+          }
+        }
+      }
     }
+  },
+  "Dyad": {
+    "panel": {
+      "control": "tabs",
+      "children": {
+        "Damper data": {
+          "contents": [
+            "dataset"
+          ]
+        },
+        "Rendering": {
+          "contents": [
+            "color"
+          ]
+        }
+      }
+    },
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "layer": "icon"
+      }
+    ]
   }
 }
 end

@@ -15,9 +15,12 @@ test component FullVehicleTestInertiaRoll
   throttle = BlockComponents.Sources.Constant(k = 0.0) {^throttle}
   brake = BlockComponents.Sources.Constant(k = 0.0) {^brake}
   steer = BlockComponents.Sources.Constant(k = 0.0) {^steer}
-  vehicle = VehicleComponents.InertiaFixtureVehicle(aero(CdA = 0.0, ClA = 0.0)) {^vehicle}
+  vehicle = VehicleComponents.InertiaFixtureVehicle(
+    apply "dyad://VehicleComponents/TestVehicle.toml", 
+    aero(CdA = 0.0, ClA = 0.0)
+  ) {^vehicle}
 
-  parameter reference_cg::Position[3] = VehicleComponents.params.body.cg
+  parameter reference_cg::Position[3] = [-0.7, 0.0, 0.2835]
   parameter pivot_depth::Length = 0.25
   parameter ground_clearance::Length = 0.3
   parameter roll_stiffness::RotationalSpringConstant = 1600.0
@@ -27,6 +30,12 @@ test component FullVehicleTestInertiaRoll
 
 relations
 
+  # Inputs
+  vehicle.inputs.throttle = throttle.y
+  vehicle.inputs.brake = brake.y
+  vehicle.inputs.steer = steer.y
+
+  # Initialization
   initial roll_joint.phi = initial_roll
   initial roll_joint.w = 0.0
   initial vehicle.corner_fl.wheel_assembly.spin.phi = 0.0
@@ -40,9 +49,7 @@ relations
   initial vehicle.front_suspension.steering_rack.rack_drive.v = 0.0
   initial vehicle.rear_suspension.steering_rack.rack_drive.v = 0.0
 
-  connect(throttle.y, vehicle.throttle) {^id14}
-  connect(brake.y, vehicle.brake) {^id15}
-  connect(steer.y, vehicle.steer) {^id16}
+  # Connections
   connect(world.frame_b, mount.frame_a) {^id17}
   connect(mount.frame_b, roll_joint.frame_a) {^id18}
   connect(roll_joint.support, roll_spring.spline_a) {^id19}
@@ -60,55 +67,275 @@ metadata {
       "roll_release": {
         "stop": 0.75,
         "solver": "Rodas5P",
-        "atol": {"roll_joint.phi": 0.009},
+        "atol": {
+          "roll_joint.phi": 0.009
+        },
         "expect": {
-          "signals": ["roll_joint.phi", "roll_joint.w"]
+          "signals": [
+            "roll_joint.phi",
+            "roll_joint.w"
+          ]
         }
       }
     }
   },
   "_links": {
-    "world": {"Dyad": {"placement": {"diagram": {"x1": 10, "x2": 110, "y1": 10, "y2": 110}}}},
-    "mount": {"Dyad": {"placement": {"diagram": {"x1": 140, "x2": 240, "y1": 10, "y2": 110}}}},
-    "roll_joint": {"Dyad": {"placement": {"diagram": {"x1": 660, "x2": 760, "y1": 10, "y2": 110}}}},
-    "rig_offset": {"Dyad": {"placement": {"diagram": {"x1": 780, "x2": 880, "y1": 10, "y2": 110}}}},
-    "throttle": {"Dyad": {"placement": {"diagram": {"x1": 220, "x2": 320, "y1": 280, "y2": 380}}}},
-    "brake": {"Dyad": {"placement": {"diagram": {"x1": 220, "x2": 320, "y1": 440, "y2": 540}}}},
-    "steer": {"Dyad": {"placement": {"diagram": {"x1": 220, "x2": 320, "y1": 590, "y2": 690}}}},
-    "vehicle": {"Dyad": {"placement": {"diagram": {"x1": 450, "x2": 550, "y1": 460, "y2": 560}}}},
-    "roll_spring": {"Dyad": {"placement": {"diagram": {"x1": 590, "x2": 690, "y1": 220, "y2": 320}}}},
-    "lock_fl": {"Dyad": {"placement": {"diagram": {"x1": 610, "x2": 710, "y1": 360, "y2": 460}}}},
-    "lock_fr": {"Dyad": {"placement": {"diagram": {"x1": 760, "x2": 860, "y1": 360, "y2": 460}}}},
-    "lock_rl": {"Dyad": {"placement": {"diagram": {"x1": 610, "x2": 710, "y1": 515, "y2": 615}}}},
-    "lock_rr": {"Dyad": {"placement": {"diagram": {"x1": 760, "x2": 860, "y1": 515, "y2": 615}}}},
-    "id14": {
-      "Dyad": {"edges": [{"S": 1, "M": [{"x": 380, "y": 330}, {"x": 380, "y": 467}], "E": 2}], "path": {}}
+    "world": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 10,
+            "x2": 110,
+            "y1": 10,
+            "y2": 110
+          }
+        }
+      }
     },
-    "id15": {
-      "Dyad": {"edges": [{"S": 1, "M": [{"x": 380, "y": 490}, {"x": 380, "y": 482}], "E": 2}], "path": {}}
+    "mount": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 140,
+            "x2": 240,
+            "y1": 10,
+            "y2": 110
+          }
+        }
+      }
     },
-    "id16": {
-      "Dyad": {"edges": [{"S": 1, "M": [{"x": 380, "y": 640}, {"x": 380, "y": 498}], "E": 2}], "path": {}}
+    "roll_joint": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 660,
+            "x2": 760,
+            "y1": 10,
+            "y2": 110
+          }
+        }
+      }
     },
-    "id17": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id18": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
-    "id19": {
+    "rig_offset": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 780,
+            "x2": 880,
+            "y1": 10,
+            "y2": 110
+          }
+        }
+      }
+    },
+    "throttle": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 220,
+            "x2": 320,
+            "y1": 280,
+            "y2": 380
+          }
+        }
+      }
+    },
+    "brake": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 220,
+            "x2": 320,
+            "y1": 440,
+            "y2": 540
+          }
+        }
+      }
+    },
+    "steer": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 220,
+            "x2": 320,
+            "y1": 590,
+            "y2": 690
+          }
+        }
+      }
+    },
+    "vehicle": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 450,
+            "x2": 550,
+            "y1": 460,
+            "y2": 560
+          }
+        }
+      }
+    },
+    "roll_spring": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 590,
+            "x2": 690,
+            "y1": 220,
+            "y2": 320
+          }
+        }
+      }
+    },
+    "lock_fl": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 610,
+            "x2": 710,
+            "y1": 360,
+            "y2": 460
+          }
+        }
+      }
+    },
+    "lock_fr": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 760,
+            "x2": 860,
+            "y1": 360,
+            "y2": 460
+          }
+        }
+      }
+    },
+    "lock_rl": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 610,
+            "x2": 710,
+            "y1": 515,
+            "y2": 615
+          }
+        }
+      }
+    },
+    "lock_rr": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 760,
+            "x2": 860,
+            "y1": 515,
+            "y2": 615
+          }
+        }
+      }
+    },
+    "id17": {
       "Dyad": {
         "edges": [
           {
             "S": 1,
-            "M": [{"x": 675, "y": 180}, {"x": 560, "y": 180}, {"x": 560, "y": 270}],
+            "M": [],
             "E": 2
           }
         ],
         "path": {}
       }
     },
-    "id20": {"Dyad": {"edges": [{"S": 1, "M": [{"x": 710, "y": 270}], "E": 2}], "path": {}}},
-    "id21": {"Dyad": {"edges": [{"S": 1, "M": [], "E": 2}], "path": {}}},
+    "id18": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id19": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 675,
+                "y": 180
+              },
+              {
+                "x": 560,
+                "y": 180
+              },
+              {
+                "x": 560,
+                "y": 270
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id20": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 710,
+                "y": 270
+              }
+            ],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
+    "id21": {
+      "Dyad": {
+        "edges": [
+          {
+            "S": 1,
+            "M": [],
+            "E": 2
+          }
+        ],
+        "path": {}
+      }
+    },
     "id22": {
       "Dyad": {
-        "edges": [{"S": 1, "M": [{"x": 910, "y": 60}, {"x": 910, "y": 640}, {"x": 500, "y": 640}], "E": 2}],
+        "edges": [
+          {
+            "S": 1,
+            "M": [
+              {
+                "x": 910,
+                "y": 60
+              },
+              {
+                "x": 910,
+                "y": 640
+              },
+              {
+                "x": 500,
+                "y": 640
+              }
+            ],
+            "E": 2
+          }
+        ],
         "path": {}
       }
     },
@@ -117,7 +344,20 @@ metadata {
         "edges": [
           {
             "S": 1,
-            "M": [{"x": 660, "y": 340}, {"x": 575, "y": 340}, {"x": 575, "y": 475}],
+            "M": [
+              {
+                "x": 660,
+                "y": 340
+              },
+              {
+                "x": 575,
+                "y": 340
+              },
+              {
+                "x": 575,
+                "y": 475
+              }
+            ],
             "E": 2
           }
         ],
@@ -129,7 +369,20 @@ metadata {
         "edges": [
           {
             "S": 1,
-            "M": [{"x": 810, "y": 330}, {"x": 565, "y": 330}, {"x": 565, "y": 490}],
+            "M": [
+              {
+                "x": 810,
+                "y": 330
+              },
+              {
+                "x": 565,
+                "y": 330
+              },
+              {
+                "x": 565,
+                "y": 490
+              }
+            ],
             "E": 2
           }
         ],
@@ -141,7 +394,20 @@ metadata {
         "edges": [
           {
             "S": 1,
-            "M": [{"x": 660, "y": 490}, {"x": 585, "y": 490}, {"x": 585, "y": 525}],
+            "M": [
+              {
+                "x": 660,
+                "y": 490
+              },
+              {
+                "x": 585,
+                "y": 490
+              },
+              {
+                "x": 585,
+                "y": 525
+              }
+            ],
             "E": 2
           }
         ],
@@ -154,11 +420,26 @@ metadata {
           {
             "S": 1,
             "M": [
-              {"x": 810, "y": 480},
-              {"x": 720, "y": 480},
-              {"x": 720, "y": 625},
-              {"x": 565, "y": 625},
-              {"x": 565, "y": 545}
+              {
+                "x": 810,
+                "y": 480
+              },
+              {
+                "x": 720,
+                "y": 480
+              },
+              {
+                "x": 720,
+                "y": 625
+              },
+              {
+                "x": 565,
+                "y": 625
+              },
+              {
+                "x": 565,
+                "y": 545
+              }
             ],
             "E": 2
           }

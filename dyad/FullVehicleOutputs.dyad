@@ -1,0 +1,200 @@
+component FullVehicleOutputs
+  body = VehicleBodyOutputs() {^body}
+  corner_fl = CornerAssemblyOutputs() {^corner_fl}
+  corner_fr = CornerAssemblyOutputs() {^corner_fr}
+  corner_rl = CornerAssemblyOutputs() {^corner_rl}
+  corner_rr = CornerAssemblyOutputs() {^corner_rr}
+  front_suspension = SuspensionOutputs() {^front_suspension}
+  rear_suspension = SuspensionOutputs() {^rear_suspension}
+  aero = AeroLoadOutputs() {^aero}
+  control = VehicleControlOutputs() {^control}
+metadata {
+  "Dyad": {
+    "icons": {
+      "default": "dyad://Dyad/Default.svg"
+    }
+  },
+  "_links": {
+    "body": {
+      "Dyad": {
+        "placement": {
+          "icon": {
+            "x1": -50,
+            "y1": 50,
+            "x2": 50,
+            "y2": 150,
+            "rot": 180
+          },
+          "diagram": {
+            "x1": -50,
+            "y1": 50,
+            "x2": 50,
+            "y2": 150,
+            "rot": 180
+          }
+        }
+      }
+    },
+    "corner_fl": {
+      "Dyad": {
+        "placement": {
+          "icon": {
+            "x1": -50,
+            "y1": 150,
+            "x2": 50,
+            "y2": 250,
+            "rot": 180
+          },
+          "diagram": {
+            "x1": -50,
+            "y1": 150,
+            "x2": 50,
+            "y2": 250,
+            "rot": 180
+          }
+        }
+      }
+    },
+    "corner_fr": {
+      "Dyad": {
+        "placement": {
+          "icon": {
+            "x1": -50,
+            "y1": 250,
+            "x2": 50,
+            "y2": 350,
+            "rot": 180
+          },
+          "diagram": {
+            "x1": -50,
+            "y1": 250,
+            "x2": 50,
+            "y2": 350,
+            "rot": 180
+          }
+        }
+      }
+    },
+    "corner_rl": {
+      "Dyad": {
+        "placement": {
+          "icon": {
+            "x1": -50,
+            "y1": 350,
+            "x2": 50,
+            "y2": 450,
+            "rot": 180
+          },
+          "diagram": {
+            "x1": -50,
+            "y1": 350,
+            "x2": 50,
+            "y2": 450,
+            "rot": 180
+          }
+        }
+      }
+    },
+    "corner_rr": {
+      "Dyad": {
+        "placement": {
+          "icon": {
+            "x1": -50,
+            "y1": 450,
+            "x2": 50,
+            "y2": 550,
+            "rot": 180
+          },
+          "diagram": {
+            "x1": -50,
+            "y1": 450,
+            "x2": 50,
+            "y2": 550,
+            "rot": 180
+          }
+        }
+      }
+    },
+    "front_suspension": {
+      "Dyad": {
+        "placement": {
+          "icon": {
+            "x1": -50,
+            "y1": 550,
+            "x2": 50,
+            "y2": 650,
+            "rot": 180
+          },
+          "diagram": {
+            "x1": -50,
+            "y1": 550,
+            "x2": 50,
+            "y2": 650,
+            "rot": 180
+          }
+        }
+      }
+    },
+    "rear_suspension": {
+      "Dyad": {
+        "placement": {
+          "icon": {
+            "x1": -50,
+            "y1": 650,
+            "x2": 50,
+            "y2": 750,
+            "rot": 180
+          },
+          "diagram": {
+            "x1": -50,
+            "y1": 650,
+            "x2": 50,
+            "y2": 750,
+            "rot": 180
+          }
+        }
+      }
+    },
+    "aero": {
+      "Dyad": {
+        "placement": {
+          "icon": {
+            "x1": -50,
+            "y1": 750,
+            "x2": 50,
+            "y2": 850,
+            "rot": 180
+          },
+          "diagram": {
+            "x1": -50,
+            "y1": 750,
+            "x2": 50,
+            "y2": 850,
+            "rot": 180
+          }
+        }
+      }
+    },
+    "control": {
+      "Dyad": {
+        "placement": {
+          "icon": {
+            "x1": -50,
+            "y1": 850,
+            "x2": 50,
+            "y2": 950,
+            "rot": 180
+          },
+          "diagram": {
+            "x1": -50,
+            "y1": 850,
+            "x2": 50,
+            "y2": 950,
+            "rot": 180
+          }
+        }
+      }
+    }
+  }
+}
+end

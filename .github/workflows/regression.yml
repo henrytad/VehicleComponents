@@ -49,6 +49,7 @@ jobs:
       max-parallel: 20
       matrix:
         file:
+          - test/damper_maps.jl
           - generated/DamperTestRig_test.jl
           - generated/FullVehicleTestConstantSteer_test.jl
           - generated/FullVehicleTestInertiaPitch_test.jl

@@ -8,14 +8,16 @@ component AeroLoad
 
   extends Styles
 
+  outputs = AeroLoadOutputs() {^outputs}
+
   chassis = Dyad.Frame3D() {^chassis}
 
-  parameter rho::Density = VehicleComponents.params.aero.rho
-  parameter CdA::Area = VehicleComponents.params.aero.CdA
-  parameter ClA::Area = VehicleComponents.params.aero.ClA
-  parameter bal_f::Real = VehicleComponents.params.aero.balance_front
-  parameter wheelbase::Length = VehicleComponents.Data.wheelbase(VehicleComponents.params)
-  parameter v_min::Velocity = 0.5
+  parameter rho::Density
+  parameter CdA::Area
+  parameter ClA::Area
+  parameter bal_f::Real
+  parameter wheelbase::Length
+  parameter v_min::Velocity
 
   final parameter x_cop::Length = (1 - bal_f) * wheelbase
   final parameter cop::Position[3] = [-x_cop, 0, 0]
@@ -35,6 +37,14 @@ component AeroLoad
 
 relations
 
+  # Outputs
+  outputs.q = q
+  outputs.drag = drag
+  outputs.downforce = downforce
+  outputs.downforce_front = downforce_front
+  outputs.downforce_rear = downforce_rear
+
+  # Equations
   x_ref = chassis.r_0[1]
   y_ref = chassis.r_0[2]
   v_x = der(x_ref)
@@ -57,8 +67,74 @@ relations
 metadata {
   "_links": {
     "chassis": {
-      "Dyad": {"placement": {"diagram": {"x1": -50, "x2": 50, "y1": 450, "y2": 550}}}
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 450,
+            "y2": 550
+          },
+          "icon": {
+            "x1": -50,
+            "x2": 50,
+            "y1": 450,
+            "y2": 550
+          }
+        }
+      }
+    },
+    "outputs": {
+      "Dyad": {
+        "placement": {
+          "diagram": {
+            "x1": 950,
+            "x2": 1050,
+            "y1": 20,
+            "y2": 120
+          },
+          "icon": {
+            "x1": 950.0,
+            "y1": 100.0,
+            "x2": 1050.0,
+            "y2": 200.0
+          }
+        }
+      }
     }
+  },
+  "Dyad": {
+    "panel": {
+      "control": "tabs",
+      "children": {
+        "Aerodynamics": {
+          "contents": [
+            "rho",
+            "CdA",
+            "ClA"
+          ]
+        },
+        "Geometry": {
+          "contents": [
+            "bal_f",
+            "wheelbase"
+          ]
+        },
+        "Numerics": {
+          "contents": [
+            "v_min"
+          ]
+        }
+      }
+    },
+    "labels": [
+      {
+        "label": "$(instance)",
+        "x": 500,
+        "y": 1100,
+        "layer": "icon"
+      }
+    ]
   }
 }
 end

@@ -8,8 +8,7 @@ ssys = multibody(model)
 prob = ODEProblem(ssys, [], (0.0, 0.4))
 sol = solve(prob, Rodas5P(autodiff=AutoFiniteDiff()))
 
-selection = VehicleComponents.params.suspension.front.setup.heave.damper
-name = "front heave: $(selection.valve_code), compression $(selection.compression_position), extension $(selection.extension_position)"
+name = "Heave"
 
 t = range(0.0, 0.4, length=2000)
 plot_curve = Plots.plot(

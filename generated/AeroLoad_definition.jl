@@ -11,15 +11,16 @@
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `rho`         |                          | kg/m3  |   VehicleComp...ms.aero.rho |
-| `CdA`         |                          | m2  |   VehicleComp...ms.aero.CdA |
-| `ClA`         |                          | m2  |   VehicleComp...ms.aero.ClA |
-| `bal_f`         |                          | --  |   VehicleComp...lance_front |
-| `wheelbase`         |                          | m  |   VehicleComp...nts.params) |
-| `v_min`         |                          | m/s  |   0.5 |
+| `rho`         |                          | kg/m3  |    |
+| `CdA`         |                          | m2  |    |
+| `ClA`         |                          | m2  |    |
+| `bal_f`         |                          | --  |    |
+| `wheelbase`         |                          | m  |    |
+| `v_min`         |                          | m/s  |    |
 
 ## Connectors
 
+ * `outputs` - ([`AeroLoadOutputs`](@ref))
  * `chassis` - Frame3D is the fundamental 3D connector used for 6DOF motion. Most components have one or several `Frame`
 connectors that can be connected together ([`Frame3D`](@ref))
 
@@ -40,7 +41,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
 | `downforce_rear`         |                          | N  |
 | `f_cop`         |                          | N  |
 """
-@component function AeroLoad(; name = nothing, var"rho"=VehicleComponents.params.aero.rho, var"CdA"=VehicleComponents.params.aero.CdA, var"ClA"=VehicleComponents.params.aero.ClA, var"bal_f"=VehicleComponents.params.aero.balance_front, var"wheelbase"=VehicleComponents.Data.wheelbase(VehicleComponents.params), var"v_min"=0.5, __overrides = Dict{String, Any}())
+@component function AeroLoad(; name = nothing, var"rho"=nothing, var"CdA"=nothing, var"ClA"=nothing, var"bal_f"=nothing, var"wheelbase"=nothing, var"v_min"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -186,6 +187,7 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named outputs = VehicleComponents.AeroLoadOutputs())
   push!(__systems, @named chassis = __Dyad__Frame3D())
 
   ### Check there are no unmatched overrides
@@ -211,6 +213,11 @@ connectors that can be connected together ([`Frame3D`](@ref))
   __assertions = []
 
   ### Equations
+  push!(__eqs, outputs.q ~ q)
+  push!(__eqs, outputs.drag ~ drag)
+  push!(__eqs, outputs.downforce ~ downforce)
+  push!(__eqs, outputs.downforce_front ~ downforce_front)
+  push!(__eqs, outputs.downforce_rear ~ downforce_rear)
   push!(__eqs, x_ref ~ getindex(getproperty(chassis, :r_0), 1))
   push!(__eqs, y_ref ~ getindex(getproperty(chassis, :r_0), 2))
   push!(__eqs, v_x ~ ModelingToolkit.D_nounits(x_ref))

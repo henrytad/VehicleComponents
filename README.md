@@ -28,6 +28,47 @@ This library was created with the Dyad Studio VS Code extension. Your Dyad model
 1. Run any of the julia files in `scripts` directory.  This will load the model library and run an analysis.
 
 
+## FullVehicle configuration
+
+Select the profile in each Dyad test rig:
+
+```dyad
+vehicle = VehicleComponents.FullVehicle(
+  apply "dyad://VehicleComponents/TestVehicle.toml"
+)
+```
+
+Switch to `MR26.toml` or `MR27.toml` and regenerate. MR profiles are ignored by Git. Editing TOML values only requires a new model instance.
+
+Select damper compression/extension CSVs independently, e.g. `heave_VC03_extension_07.csv`. Files use m/s and N; the loader converts published force signs. Source: Multimatic DSSV Valve Code Offerings, 2022-04-25.
+
+## Dyad Conventions
+
+### Variable Type
+
+| Declaration | Purpose |
+| --- | --- |
+| Input | External signal, possibly time varying: throttle, brake, steering. |
+| Parameter | Fixed per run, tunable between runs: mass, tire lambdas. |
+| Final parameter | Derived configuration or fixed constant; cannot be overridden. |
+| Structural parameter | Construction setting; changes require rebuilding. |
+| Output | Measurement needed by components, telemetry, tests, or an FMU. |
+| Variable | Internal state or calculation. |
+
+### Order of Relations Section
+
+This should be the order relation sections in a Dyad component.
+
+1. Inputs
+1. Outputs
+1. Initialization
+1. Equations
+1. Connections
+
+### Formatting and style
+
+Use default Dyad icons/colors and two-space indentation for metadata and nested modifications.
+
 ## Modeling Conventions
 
 Everything in this library, such as hardpoints, frames, outputs, and the JSON vehicle data in `assets/`, follows the conventions below.
@@ -162,4 +203,8 @@ JuliaHub credentials expire, and CI fails at the dependency-install step when th
 
 ```powershell
 [Convert]::ToBase64String([IO.File]::ReadAllBytes("$HOME\.julia\servers\juliahub.com\auth.toml")) | Set-Clipboard
+```
+
+```linux
+base64 -w 0 "$HOME/.julia/servers/juliahub.com/auth.toml" | wl-copy
 ```

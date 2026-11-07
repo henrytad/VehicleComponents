@@ -11,19 +11,18 @@
 
 | Name         | Description                         | Units  |   Default value |
 | ------------ | ----------------------------------- | ------ | --------------- |
-| `N`         |                          | --  |   64 |
-| `seed`         |                          | --  |   1 |
-| `n_min`         |                          | --  |   0.02 |
-| `n_max`         |                          | --  |   3.0 |
-| `roughness`         | Road roughness coefficient. 0 is a smooth road                         | --  |   VehicleComp...d.roughness |
+| `N`         |                          | --  |    |
+| `seed`         |                          | --  |    |
+| `n_min`         |                          | --  |    |
+| `n_max`         |                          | --  |    |
+| `roughness`         | Road roughness coefficient. 0 is a smooth road                         | --  |    |
 
 ## Connectors
 
- * `x` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `y` - This connector represents a real signal as an input to a component ([`RealInput`](@ref))
- * `z` - This connector represents a real signal as an output from a component ([`RealOutput`](@ref))
+ * `inputs` - ([`RoadSurfaceInputs`](@ref))
+ * `outputs` - ([`RoadSurfaceOutputs`](@ref))
 """
-@component function RoadSurface(; name = nothing, var"N"=64, var"seed"=1, var"n_min"=0.02, var"n_max"=Float64(3.0), var"roughness"=VehicleComponents.params.road.roughness, __overrides = Dict{String, Any}())
+@component function RoadSurface(; name = nothing, var"N"=nothing, var"seed"=nothing, var"n_min"=nothing, var"n_max"=nothing, var"roughness"=nothing, __overrides = Dict{String, Any}())
   isnothing(name) && throw(ArgumentError("""
     The `name` keyword must be provided. Please consider using the `@named` macro,
     like so:
@@ -76,9 +75,6 @@
   __bindings[phase] = VehicleComponents.road_wave_phase(N, seed, n_min, n_max)
 
   ### Final Path Parameters
-  append!(__vars, @variables (x(t)::Real), [input = true])
-  append!(__vars, @variables (y(t)::Real), [input = true])
-  append!(__vars, @variables (z(t)::Real), [output = true])
 
   ### Variables (declarations)
 
@@ -88,6 +84,8 @@
   __constants = Any[]
 
   ### Components
+  push!(__systems, @named inputs = VehicleComponents.RoadSurfaceInputs())
+  push!(__systems, @named outputs = VehicleComponents.RoadSurfaceOutputs())
 
   ### Check there are no unmatched overrides
   isempty(__overrides) || throw(ArgumentError("overrides: [$(join(keys(__overrides), ", "))] don't match names found in model. These names may exist in the model but could have been conditionally excluded. Override keys are dotted paths as written in Dyad source (e.g. inner.rate)."))
@@ -100,7 +98,7 @@
   __assertions = []
 
   ### Equations
-  push!(__eqs, z ~ VehicleComponents.road_height(amplitude, kx, ky, phase, roughness, x, y))
+  push!(__eqs, outputs.z ~ VehicleComponents.road_height(amplitude, kx, ky, phase, roughness, inputs.x, inputs.y))
 
   # Return completely constructed System
   return System(__eqs, ModelingToolkit.t_nounits, __vars, __params; systems=__systems, initial_conditions=__initial_conditions, guesses=__guesses, name, initialization_eqs=__initialization_eqs, bindings=__bindings, assertions=__assertions)

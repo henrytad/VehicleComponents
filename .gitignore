@@ -18,6 +18,5 @@
 !/README.md
 
 # The real car data stays hidden
-/src/vehicles/MR25.jl
-/src/vehicles/MR26.jl
-/src/vehicles/MR27.jl
+/assets/MR26.toml
+/assets/MR27.toml
