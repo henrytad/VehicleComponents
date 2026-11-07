@@ -7,7 +7,7 @@ using ModelingToolkit
     asset_dir = joinpath(@__DIR__, "..", "assets", "dampers")
     names = [
         "$(architecture)_$(code)_$(direction)_$(lpad(position, 2, '0')).csv"
-        for architecture in ("heave", "roll", "corner")
+        for architecture in ("heave", "roll")
         for code in ("VC01", "VC02", "VC03")
         for direction in ("compression", "extension")
         for position in 0:11
