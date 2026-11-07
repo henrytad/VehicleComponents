@@ -196,3 +196,7 @@ JuliaHub credentials expire, and CI fails at the dependency-install step when th
 ```powershell
 [Convert]::ToBase64String([IO.File]::ReadAllBytes("$HOME\.julia\servers\juliahub.com\auth.toml")) | Set-Clipboard
 ```
+
+```linux
+base64 -w 0 "$HOME/.julia/servers/juliahub.com/auth.toml" | wl-copy
+```

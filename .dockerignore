@@ -2,6 +2,7 @@
 /*
 
 # Allowlist
+!/assets/
 !/generated/
 !/src/
 !/test/
