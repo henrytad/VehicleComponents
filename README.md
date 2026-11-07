@@ -139,12 +139,20 @@ Runs the test suite in the same Linux environment CI uses. The image build insta
    ```powershell
    docker buildx build `
       --progress=plain `
+      --no-cache-filter tests `
       --output type=cacheonly `
       --secret id=juliahub_auth,src="$HOME\.julia\servers\juliahub.com\auth.toml" `
       .
    ```
 
 The build uses your JuliaHub credentials to download Dyad packages; the secret is available only while dependencies are installed and is not retained in the image. The command exits non-zero if dependency installation or a test fails. It does not compile `.dyad` sources, so regenerate `generated/` in Dyad Studio and commit it whenever a model changes.
+
+To run one suite, add `--build-arg TEST_FILE=generated/TireTestRig_test.jl`. The `--no-cache-filter tests` option reruns tests while preserving the setup cache.
+
+The runner always includes the full generated test suite. When a file is selected,
+the shared test wrapper skips other components before starting their simulations.
+
+CI first builds and caches the `setup` stage, then runs the test files listed in the matrix in `.github/workflows/tests.yml`, with up to 20 jobs in parallel. Add new test files to that list manually. Plain `Pkg.test()` still runs the full generated test suite. Test failures do not prevent the setup cache from being saved. Test-only dependencies may be prepared again in each job.
 
 GitHub Actions passes the base64-encoded `JULIAHUB_TOKEN_ENCODED` repository secret directly to the Docker build.
 
